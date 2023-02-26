@@ -1,12 +1,18 @@
-const http = require('http');
-const fs = require('fs');
-const debug = require('debug');
+import { watchComponents } from './utils.js';
+import http from 'http'
+import fs from 'fs'
+import debug from 'debug';
 
-const log = debug('server');
+const log = debug('server')
 
 const SERVER_PORT = 8002;
 
 const page404 = fs.readFileSync('public/404.html');
+
+const templatePath = './public/templates'
+const componentsPath = './public/components'
+
+watchComponents(templatePath, componentsPath);
 
 const server = http.createServer((request, response) => {
     log('REQUEST', request.method, request.url);
