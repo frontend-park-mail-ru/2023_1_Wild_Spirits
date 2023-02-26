@@ -1,5 +1,5 @@
 .header__logo {
-    position: absolute;
+    position: static;
 }
 
 .header__head {
