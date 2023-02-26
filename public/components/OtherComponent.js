@@ -1,20 +1,11 @@
-export class OtherComponent {
-    #parent;
+import { Component } from "./Component.js";
+import OtherComponentTemplate from "./OtherComponent.handlebars.js";
+
+export class OtherComponent extends Component {
     #counter;
-    constructor(parent) {
-        this.#parent = parent;
-        this.#counter = 0;
-    }
-
-    rerender() {
-        // Clear events
-        // ...
-
-        this.#parent.rerender();
-        console.log("R OC");
-
-        // Set events
-        // this.initEvents();
+    constructor(parent, { count }) {
+        super(parent);
+        this.#counter = count;
     }
 
     btnClick = () => {
@@ -24,25 +15,18 @@ export class OtherComponent {
     };
 
     removeEvents() {
-        const btn = document.getElementById("test-button");
-        if (btn) {
-            btn.removeEventListener("click", this.btnClick);
-        } else {
-            console.log("No btn");
-        }
+        const btn = document.getElementById(this.id);
+        btn.removeEventListener("click", this.btnClick);
     }
 
     addEvents() {
-        const btn = document.getElementById("test-button");
+        const btn = document.getElementById(this.id);
         btn.addEventListener("click", this.btnClick);
     }
 
     render() {
-        return `
-            <div> 
-                Other Component ${this.#counter}
-                <input id="test-button" type="button" value="Test" />
-            </div>
-        `;
+        const tmp = OtherComponentTemplate({ counter: this.#counter, id: this.id });
+
+        return tmp;
     }
 }
