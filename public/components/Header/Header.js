@@ -1,16 +1,13 @@
-import { Component } from "./Component.js";
-import OtherComponentTemplate from "./OtherComponent.handlebars.js";
+import { Component } from "/components/Component.js";
+import HeaderTemplate from "/compiled/Header/Header.handlebars.js";
 
-export class OtherComponent extends Component {
-    #counter;
-    constructor(parent, { count }) {
+export class Header extends Component {
+    constructor(parent) {
         super(parent);
-        this.#counter = count;
     }
 
     btnClick = () => {
         console.log("OC click");
-        this.#counter++;
         this.rerender();
     };
 
@@ -25,8 +22,6 @@ export class OtherComponent extends Component {
     }
 
     render() {
-        const tmp = OtherComponentTemplate({ counter: this.#counter, id: this.id });
-
-        return tmp;
+        return HeaderTemplate();
     }
 }

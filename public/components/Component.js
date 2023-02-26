@@ -29,7 +29,7 @@ export class Component {
     }
 
     removeChildEvents() {
-        this.children.forEach((child) => {
+        this.#children.forEach((child) => {
             try {
                 child.removeEvents();
             } catch (e) {
@@ -39,7 +39,13 @@ export class Component {
     }
 
     addChildEvents() {
-        this.#children.forEach((child) => child.addEvents());
+        this.#children.forEach((child) => {
+            try {
+                child.addEvents();
+            } catch (e) {
+                console.log(e);
+            }
+        });
     }
 
     rerender() {

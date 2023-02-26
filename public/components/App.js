@@ -1,13 +1,12 @@
-import { Component } from "./Component.js";
-import { OtherComponent } from "./OtherComponent.js";
+import { Component } from "/components/Component.js";
+import { Header } from "./Header/Header.js";
+import AppTemplate from "/compiled/App.handlebars.js";
 
 export class App extends Component {
-    #pageComponent;
-    #pageComponent2;
+    #headerComponent;
     constructor(parent) {
         super(parent);
-        this.#pageComponent = this.createComponent(OtherComponent, { count: 1 });
-        this.#pageComponent2 = this.createComponent(OtherComponent, { count: 88 });
+        this.#headerComponent = this.createComponent(Header);
     }
 
     rerender() {
@@ -17,12 +16,7 @@ export class App extends Component {
     }
 
     render() {
-        return `
-            <div> 
-                React App :) 
-                ${this.#pageComponent.render()} 
-                ${this.#pageComponent2.render()} 
-            </div>
-        `;
+        const template = AppTemplate({ header: this.#headerComponent.render(), content: "Content", footer: "Footer" });
+        return template;
     }
 }
