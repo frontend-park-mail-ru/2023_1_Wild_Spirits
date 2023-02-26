@@ -1,9 +1,3 @@
-// const fs = require('fs');
-// const path = require('path')
-// const debug = require('debug');
-// const log = debug('server');
-// let Handlebars = require("handlebars");
-
 import fs from 'fs';
 import path from 'path';
 import debug from 'debug';

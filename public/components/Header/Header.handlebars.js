@@ -1,0 +1,3 @@
+export default Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div>\n    <div class=\"header__logo\">\n        <img src=\"/assets/logo.png\" alt=\"Logo\" />\n    </div>\n\n    <div class=\"header__head\">\n        Event Radar 2\n    </div>\n\n    <div class=\"header__menu\">\n        Some Menu Items\n    </div>\n</div>";
+},"useData":true});
