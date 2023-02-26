@@ -17,11 +17,18 @@ const server = http.createServer((request, response) => {
     const filepath = `./public${normalizedUrl}`;
     log('filepath ::', filepath);
 
-
     log(normalizedUrl.split('.').at(-1))
-    if(normalizedUrl.split('.').at(-1) == 'js') {
+
+    const extension = normalizedUrl.split('.').at(-1)
+
+    log(extension)
+
+    if (extension == 'js') {
         log('set mime type js')
         response.setHeader('Content-Type', 'text/javascript');
+    } else if (extension == 'svg') {
+        log('set mime type image/svg+xml');
+        response.setHeader('Content-Type', 'image/svg+xml');
     }
 
     fs.readFile(filepath, (err, data) => {
