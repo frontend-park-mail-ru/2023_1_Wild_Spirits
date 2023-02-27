@@ -28,6 +28,8 @@ export class Header extends Component {
 
         putSVGInline('logo-full', `svg-container-${this.id}`);
 
-        return HeaderTemplate({id: this.id});
+        const categories = ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"]
+
+        return HeaderTemplate({id: this.id, categories: categories, selectedId: 2});
     }
 }

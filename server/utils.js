@@ -3,7 +3,11 @@ import path from 'path';
 import debug from 'debug';
 import Handlebars from 'handlebars';
 
+import registerHelpers from '../public/handlebarsHelpers.js';
+
 const log = debug('server');
+
+registerHelpers(Handlebars);
 
 function checkAndCreateDir(dirPath) {
     if (!fs.existsSync(dirPath)) {
@@ -38,7 +42,11 @@ function watchComponents(tempDirPath, compDirPath) {
     traverseComponents(tempDirPath, compDirPath, (from, to, fileName) => {
         const filePath = path.join(from, fileName);
         fs.watch(filePath, (_, fileName) => {
-            compileTemplate(path.join(from, fileName), path.join(to, fileName + '.js'));
+            try {
+                compileTemplate(path.join(from, fileName), path.join(to, fileName + '.js'));
+            } catch (e) {
+                log(e);
+            }
         });  
     });
 }

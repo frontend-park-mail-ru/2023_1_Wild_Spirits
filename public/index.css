@@ -1,1 +1,5 @@
-@import "/components/Header/styles.css"
+@import "/components/Header/styles.css";
+
+:root {
+    --main-selected-color: #26A69A
+}

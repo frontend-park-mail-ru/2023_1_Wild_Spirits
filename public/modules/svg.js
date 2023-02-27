@@ -30,10 +30,9 @@ async function putSVGInline(imgName, containerId) {
 
     const img = getSVGInline(imgName)
 
-    container.then((element)=>{
-        img.then((img)=>{
-            element.innerHTML = img;
-        });
+    let element = await container;
+    img.then((img)=>{
+        element.innerHTML = img;
     });
 }
 

@@ -1,7 +1,55 @@
 .header__logo {
-    position: static;
+    position: absolute;
+}
+
+.header__logo svg {
+    width: 100px;
+    height: 100px;
+    padding-top: 0;
 }
 
 .header__head {
-    margin-left: 128px;
+    margin-left: 100px;
+
+    font-size: 48px;
+}
+
+.header__menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+}
+
+.header__top__line {
+    display: flex;
+    justify-content: space-between;
+}
+
+.category {
+    margin: 0 10px;
+    padding: 0 10px;
+    font-size: 32px;
+}
+
+.category-selected {
+    background-color: var(--main-selected-color);
+    color: white;
+}
+
+.header__bottom__line {
+    display: flex;
+    justify-content: center;
+    padding-left: 100px;
+}
+
+.delimiter {
+    width: 0;
+    height: auto;
+
+    border: 1px solid black;
 }
