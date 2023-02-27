@@ -1,13 +1,35 @@
-<div>
-    <div class="header__logo">
-        <img src="/assets/logo.png" alt="Logo" />
+<div class="header">
+    <div class="header__logo" id="svg-container-{{id}}">
     </div>
 
-    <div class="header__head">
-        Event Radar
+    <div class="header__top__line">
+        <div class="header__head">
+            Event Radar
+        </div>
+
+        <div>
+            Москва
+        </div>
+
+        <div>
+            <input>
+        </div>
+
+        <div>
+            Вход/Регистрация
+        </div>
     </div>
 
-    <div class="header__menu">
-        Some Menu Items
+    <div class="header__bottom__line">
+        {{#each categories }}
+            <div class="category {{#ifEq @index ../selectedId}}category-selected{{/ifEq}}">
+                {{this}}
+            </div>
+
+            {{#unless @last}}
+                <div class="delimiter"></div>
+            {{/unless}}
+        {{/each}}
     </div>
+
 </div>
