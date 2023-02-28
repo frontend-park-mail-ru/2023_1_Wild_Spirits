@@ -22,7 +22,7 @@
 
     <div class="header__bottom__line">
         {{#each categories }}
-            <a class="header__category {{#ifEq @index ../selectedId}}category-selected{{/ifEq}}">
+            <a id="category-{{@index}}" class="header__category {{#ifEq @index ../selectedId}}category-selected{{/ifEq}}">
                 {{this}}
             </a>
 

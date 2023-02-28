@@ -26,15 +26,8 @@ async function waitForElement(elementId) {
 }
 
 async function putSVGInline(imgName, containerId) {
-    console.log('put svg', imgName, containerId)
-    // let container = waitForElement(containerId);
-
-    const container = document.getElementById(containerId);
-
-    const img = getSVGInline(imgName)
-
-    // let element = await container;
-    img.then((img)=>{
+    getSVGInline(imgName).then((img)=>{
+        const container = document.getElementById(containerId);
         container.innerHTML = img;
     });
 }

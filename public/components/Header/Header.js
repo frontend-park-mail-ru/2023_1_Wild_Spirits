@@ -10,17 +10,26 @@ export class Header extends Component {
         this.selectedId = null;
     }
 
+    linkClick = (event) => {
+        console.log(this);
+        const id = event.target.id.split('-').at(-1);
+        this.#selectedId = id;
+        this.rerender();
+    }
+
     removeEvents() {
+        const links = document.getElementsByClassName('header__category');
+
+        for (let i = 0; i < links.length; i++) {
+            links[i].removeEventListener('click', this.linkClick);
+        }
     }
 
     addEvents() {
         const links = document.getElementsByClassName('header__category');
 
         for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener('click',  ()=>{
-                this.#selectedId = i;
-                this.rerender();
-            });
+            links[i].addEventListener('click', this.linkClick);
         }
         putSVGInline('logo-full', `svg-container-${this.id}`);
     }
