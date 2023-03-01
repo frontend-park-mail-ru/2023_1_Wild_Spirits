@@ -1,0 +1,32 @@
+.event-card__marked {
+    display: flex;
+}
+
+.event-card__marked-text-block {
+    margin-top: 4px;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.event-card__marked-text {
+    margin-bottom: 10px;
+}
+
+.event-card__logo-block {
+    width: 32px;
+    margin-right: 5px;
+}
+
+.event-card__logo {
+    display: flex;
+    margin: auto;
+}
+
+.event-card__button-block {
+    margin-top: 10px;
+    display: flex;
+}
+
+.event-card__button-link {
+    margin: auto;
+}

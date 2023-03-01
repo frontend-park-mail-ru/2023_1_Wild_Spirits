@@ -1,12 +1,15 @@
 import { Component } from "/components/Component.js";
 import { Header } from "./Header/Header.js";
 import AppTemplate from "/compiled/App.handlebars.js";
+import { EventCard } from "./Events/EventCard/EventCard.js";
 
 export class App extends Component {
     #headerComponent;
+    #contentComponent;
     constructor(parent) {
         super(parent);
         this.#headerComponent = this.createComponent(Header);
+        this.#contentComponent = this.createComponent(EventCard);
     }
 
     rerender() {
@@ -16,7 +19,27 @@ export class App extends Component {
     }
 
     render() {
-        const template = AppTemplate({ header: this.#headerComponent.render(), content: "Content", footer: "Footer" });
+        // if (router.getUrlExact("/link1")) {
+
+        // } else if (router.getUrlExact("/link2")) {
+
+        // } else if (router.getUrl("/link")) {
+
+        // }
+        const template = AppTemplate({
+            header: this.#headerComponent.render(),
+            content: this.#contentComponent.render(),
+            footer: "Footer",
+        });
         return template;
     }
 }
+
+class Route {}
+
+// /link1
+
+// / link / dasadas / 29 / dasda;
+// / link / yyuy / 29 / dasda;
+
+// router = new Route();

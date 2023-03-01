@@ -1,4 +1,7 @@
 @import "/components/Header/styles.css";
+@import "/components/Events/EventCard/styles.css";
+@import "common.css";
+
 
 :root {
     --main-selected-color: #26A69A
