@@ -22,12 +22,12 @@
 
     <div class="header__bottom__line">
         {{#each categories }}
-            <div class="category {{#ifEq @index ../selectedId}}category-selected{{/ifEq}}">
+            <a id="category-{{@index}}" class="header__category {{#ifEq @index ../selectedId}}category-selected{{/ifEq}}">
                 {{this}}
-            </div>
+            </a>
 
             {{#unless @last}}
-                <div class="delimiter"></div>
+                <div class="header__category__delimiter"></div>
             {{/unless}}
         {{/each}}
     </div>
