@@ -1,5 +1,26 @@
 @import "/components/Header/styles.css";
 
+@font-face {
+    font-family: "Roboto";
+    src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url('fonts/Roboto/Roboto-Thin.ttf') format('truetype');
+
+    font-weight: 300;
+    font-style: normal;
+}
+
 :root {
     --main-selected-color: #26A69A
+}
+
+body {
+    font-family: 'Roboto';
+    font-weight: normal;
 }
