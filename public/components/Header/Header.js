@@ -1,33 +1,53 @@
 import { Component } from "/components/Component.js";
 import HeaderTemplate from "/compiled/Header/Header.handlebars.js";
-import { putSVGInline } from "/modules/svg.js";
 
 export class Header extends Component {
-    #selectedId;
+    #selectedCategoryId;
+    #selectedCity;
+
+    #cities;
+
     constructor(parent) {
         super(parent);
 
-        this.selectedId = null;
+        this.#selectedCategoryId = null;
+
+        this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
+        this.#selectedCity = this.#cities[0];
     }
 
     removeEvents() {
     }
 
     addEvents() {
-        const links = document.getElementsByClassName('header__category');
+        const header = document.getElementsByClassName('header')[0];
+        const links = header.getElementsByClassName('header__category');
 
         for (let i = 0; i < links.length; i++) {
             links[i].addEventListener('click',  ()=>{
-                this.#selectedId = i;
+                this.#selectedCategoryId = i;
                 this.rerender();
             });
         }
-        putSVGInline('logo-full', `svg-container-${this.id}`);
+
+        const select = header.getElementsByTagName('select')[0];
+
+        select.value = this.#selectedCity;
+
+        select.addEventListener('change', (e)=>{
+            this.#selectedCity = select.value;
+        });
     }
 
     render() {
-        const categories = ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"]
+        const categories = ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"];
 
-        return HeaderTemplate({id: this.id, categories: categories, selectedId: this.#selectedId});
+        return HeaderTemplate({
+            id: this.id,
+            categories: categories,
+            selectedCategoryId: this.#selectedCategoryId,
+            cities: this.#cities,
+
+        });
     }
 }

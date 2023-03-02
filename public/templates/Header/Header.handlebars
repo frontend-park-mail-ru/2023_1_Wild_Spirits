@@ -1,5 +1,6 @@
 <div class="header">
     <div class="header__logo" id="svg-container-{{id}}">
+        <img src="/assets/logo-full.svg" alt="logo">
     </div>
 
     <div class="header__top__line">
@@ -7,22 +8,28 @@
             Event Radar
         </div>
 
-        <div>
-            Москва
+        <div class="header__city__selector">
+            <select>
+                {{#each cities}}
+                    <option>{{this}}</option>
+                {{/each}}
+            </select>
         </div>
 
         <div>
-            <input>
+            <input type="text" placeholder="Поиск" class="search">
         </div>
 
         <div>
-            Вход/Регистрация
+            <a class="link">
+                Вход/Регистрация
+            </a>
         </div>
     </div>
 
     <div class="header__bottom__line">
-        {{#each categories }}
-            <a class="header__category {{#ifEq @index ../selectedId}}category-selected{{/ifEq}}">
+        {{#each categories}}
+            <a class="header__category {{#ifEq @index ../selectedCategoryId}}category-selected{{/ifEq}}">
                 {{this}}
             </a>
 
