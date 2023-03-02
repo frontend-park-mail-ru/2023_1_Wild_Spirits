@@ -1,15 +1,27 @@
 import { Component } from "/components/Component.js";
 import { Header } from "./Header/Header.js";
 import AppTemplate from "/compiled/App.handlebars.js";
-import { EventCard } from "./Events/EventCard/EventCard.js";
+import { EventCard } from "/components/Events/EventCard/EventCard.js";
+import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
 
 export class App extends Component {
     #headerComponent;
     #contentComponent;
+    #modalWindowComponent;
+
+    #state;
     constructor(parent) {
         super(parent);
-        this.#headerComponent = this.createComponent(Header);
+        this.#headerComponent = this.createComponent(Header, ()=>{this.changeState('login')});
         this.#contentComponent = this.createComponent(EventCard);
+        this.#modalWindowComponent = this.createComponent(ModalWindow, ()=>{this.changeState('index')});
+
+        this.#state = 'index'
+    }
+
+    changeState(state) {
+        this.#state = state;
+        this.rerender();
     }
 
     rerender() {
@@ -19,27 +31,18 @@ export class App extends Component {
     }
 
     render() {
-        // if (router.getUrlExact("/link1")) {
+        let modalWindow = '';
+        
+        if (this.#state == 'login') {
+            modalWindow = this.#modalWindowComponent.render();
+        }
 
-        // } else if (router.getUrlExact("/link2")) {
-
-        // } else if (router.getUrl("/link")) {
-
-        // }
         const template = AppTemplate({
             header: this.#headerComponent.render(),
             content: this.#contentComponent.render(),
             footer: "Footer",
+            modalWindow: modalWindow,
         });
         return template;
     }
 }
-
-class Route {}
-
-// /link1
-
-// / link / dasadas / 29 / dasda;
-// / link / yyuy / 29 / dasda;
-
-// router = new Route();
