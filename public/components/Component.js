@@ -31,6 +31,7 @@ export class Component {
     removeChildEvents() {
         this.#children.forEach((child) => {
             try {
+                child.removeChildEvents();
                 child.removeEvents();
             } catch (e) {
                 console.log(e);
@@ -42,16 +43,18 @@ export class Component {
         this.#children.forEach((child) => {
             try {
                 child.addEvents();
+                child.addChildEvents();
             } catch (e) {
                 console.log(e);
             }
         });
     }
 
+    removeEvents() {}
+    addEvents() {}
+
     rerender() {
-        this.removeChildEvents();
         this.#parent.rerender();
-        this.addChildEvents();
     }
 
     render() {
