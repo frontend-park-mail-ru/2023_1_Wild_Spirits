@@ -4,7 +4,7 @@ import { Ajax } from "./modules/ajax.js";
 
 window.ajax = new Ajax();
 window.ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
-window.ajax.host = "http://localhost:34444/api";
+window.ajax.host = "http://95.163.213.222/api";
 
 registerHelpers(Handlebars);
 

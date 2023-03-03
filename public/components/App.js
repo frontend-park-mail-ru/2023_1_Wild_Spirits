@@ -1,7 +1,7 @@
 import { Component } from "/components/Component.js";
 import { Header } from "./Header/Header.js";
 import AppTemplate from "/compiled/App.handlebars.js";
-import { EventCard } from "./Events/EventCard/EventCard.js";
+import { EventList } from "./Events/EventList/EventList.js";
 
 export class App extends Component {
     #headerComponent;
@@ -9,7 +9,7 @@ export class App extends Component {
     constructor(parent) {
         super(parent);
         this.#headerComponent = this.createComponent(Header);
-        this.#contentComponent = this.createComponent(EventCard);
+        this.#contentComponent = this.createComponent(EventList);
     }
 
     rerender() {

@@ -3,24 +3,26 @@ import EventCardTemplate from "/compiled/Events/EventCard/EventCard.handlebars.j
 import EventCardMarkerTemplate from "/compiled/Events/EventCard/EventCardMarker.handlebars.js";
 
 export class EventCard extends Component {
-    constructor(parent) {
+    #props;
+    constructor(parent, props) {
         super(parent);
+        this.#props = props;
     }
 
     render() {
         return EventCardTemplate({
-            img_src: "assets/event_test.png",
-            title: "Мне сказали, что названиеобычно длиннее одного слова",
-            description: "С таким названием длинное-предлинное описание уже не кажется таким уж длинным ",
+            img: this.#props.img,
+            name: this.#props.name,
+            desc: this.#props.desc,
             dates: EventCardMarkerTemplate({
                 img_src: "/assets/calendar_icon.png",
                 title: "Даты",
-                items: ["1 марта 18:00-21:00", "2 марта"],
+                items: this.#props.dates,
             }),
             places: EventCardMarkerTemplate({
                 img_src: "/assets/position_icon.png",
                 title: "Места",
-                items: ["Парк Лужники", "МЦДЦ Москва-Сити"],
+                items: this.#props.places,
             }),
         });
     }
