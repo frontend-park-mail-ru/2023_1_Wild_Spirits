@@ -25,6 +25,7 @@
 :root {
     --main-selected-color: #26A69A;
     --link-color: #008666;
+    --input-el-color: #42C3CA;
 }
 
 body {

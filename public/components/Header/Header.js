@@ -20,6 +20,12 @@ export class Header extends Component {
 
         this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
         this.#selectedCity = this.#cities[0];
+
+        this.registerEvent(() => document.getElementsByTagName('select')[0], 'change', this.#selectCity);
+        this.registerEvent(() => document.getElementsByClassName('header__category'), 'click', this.#linkClick);
+
+        this.registerEvent(() => document.getElementById('login-link'), 'click', this.#onLogin);
+        this.registerEvent(() => document.getElementById('signup-link'), 'click', this.#onSignup);
     }
 
     #linkClick = (event) => {
@@ -32,44 +38,9 @@ export class Header extends Component {
         this.#selectedCity = e.target.value;
     }
 
-    removeEvents() {
-        const header = document.getElementsByClassName('header')[0];
-        const links = header.getElementsByClassName('header__category');
-
-        for (let i = 0; i < links.length; i++) {
-            links[i].removeEventListener("click", this.#linkClick);
-        }
-
-        const select = header.getElementsByTagName('select')[0];
-
-        select.removeEventListener('change', this.#selectCity);
-
-        const loginLink = document.getElementById('login-link');
-        loginLink.removeEventListener('click', this.#onLogin);
-
-        const signupLink = document.getElementById('signup-link');
-        signupLink.removeEventListener('click', this.#onSignup);
-    }
-
-    addEvents() {
-        const header = document.getElementsByClassName('header')[0];
-        const links = header.getElementsByClassName('header__category');
-
-        for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener('click', this.#linkClick);
-        }
-
-        const select = header.getElementsByTagName('select')[0];
-
+    postRender() {
+        const select = document.getElementsByTagName('select')[0];
         select.value = this.#selectedCity;
-
-        select.addEventListener('change', this.#selectCity);
-
-        const loginLink = document.getElementById('login-link');
-        loginLink.addEventListener('click', this.#onLogin);
-
-        const signupLink = document.getElementById('signup-link');
-        signupLink.addEventListener('click', this.#onSignup);
     }
 
     render() {

@@ -4,6 +4,15 @@ export class Component {
     #parent;
     #children = [];
 
+    /*
+    // type EventMap = {
+    //   el: () => HTMLElementCollection;
+    //   event: string;
+    //   callback: (event) => void;
+    // }
+    */
+    #eventMaps = [];
+
     constructor(parent) {
         this.#parent = parent;
         this.#id = Component.#staticId++;
@@ -22,10 +31,17 @@ export class Component {
     }
 
     createComponent(type, ...args) {
-        // console.log(...args);
         const newComponent = new type(this, ...args);
         this.#children.push(newComponent);
         return newComponent;
+    }
+
+    registerEvent(el, event, callback) {
+        this.#eventMaps.push({
+            el: el,
+            event: event,
+            callback: callback
+        });
     }
 
     removeChildEvents() {
@@ -43,6 +59,7 @@ export class Component {
         this.#children.forEach((child) => {
             try {
                 child.addEvents();
+                child.postRender();
                 child.addChildEvents();
             } catch (e) {
                 console.log(e);
@@ -50,8 +67,36 @@ export class Component {
         });
     }
 
-    removeEvents() {}
-    addEvents() {}
+    postRender() {}
+
+    removeEvents() {
+        for (const eventMap of this.#eventMaps) {
+
+            const element = eventMap.el();
+
+            if (element instanceof HTMLElement) {
+                element.removeEventListener(eventMap.event, eventMap.callback);
+            } else if (element instanceof HTMLCollection) {
+                for (const el of element) {
+                    el.removeEventListener(eventMap.event, eventMap.callback);
+                }
+            }
+        }
+    }
+    addEvents() {
+        for (const eventMap of this.#eventMaps) {
+
+            const element = eventMap.el();
+
+            if (element instanceof HTMLElement) {
+                element.addEventListener(eventMap.event, eventMap.callback);
+            } else if (element instanceof HTMLCollection) {
+                for (let i = 0; i < element.length; i++) {
+                    element[i].addEventListener(eventMap.event, eventMap.callback);
+                }
+            }
+        }
+    }
 
     rerender() {
         this.#parent.rerender();

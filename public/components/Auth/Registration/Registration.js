@@ -4,6 +4,8 @@ import RegistrationTemplate from "/compiled/Auth/Registration/Registration.handl
 export class Registration extends Component {
     constructor(parent) {
         super(parent)
+
+        this.registerEvent(()=>document.getElementById('register-form'), 'submit', this.#formSubmit);
     }
 
     #formSubmit(event) {
@@ -13,22 +15,6 @@ export class Registration extends Component {
 
         for (const entry of formData.entries()) {
             console.log(entry)
-        }
-    }
-
-    removeEvents() {
-        const form = document.getElementById("register-form");
-
-        if (form) {
-            form.removeEventListener('submit', this.#formSubmit);
-        }
-    }
-
-    addEvents() {
-        const form = document.getElementById("register-form");
-
-        if (form) {
-            form.addEventListener('submit', this.#formSubmit);
         }
     }
 

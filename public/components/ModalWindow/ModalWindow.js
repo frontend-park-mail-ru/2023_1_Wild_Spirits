@@ -8,31 +8,12 @@ export class ModalWindow extends Component {
         super(parent)
 
         this.#onEscape = onEscape;
+
+        this.registerEvent(()=>document.getElementsByClassName('modal')[0], 'click', this.#onEscape);
+        this.registerEvent(()=>document.getElementsByClassName('modal__form__container')[0], 'click', this.#stopEventPropagation);
     }
 
     #stopEventPropagation = (e) => e.stopPropagation();
-
-    removeEvents() {
-        const modal = document.getElementsByClassName('modal')[0];
-
-        if (modal) {
-            modal.removeEventListener('click', this.#onEscape);
-
-            const form = document.getElementsByClassName('modal__form__container')[0];
-            form.removeEventListener('click', this.#stopEventPropagation);
-        }
-    }
-
-    addEvents() {
-        const modal = document.getElementsByClassName('modal')[0];
-
-        if (modal) {
-            modal.addEventListener('click', this.#onEscape);
-
-            const form = document.getElementsByClassName('modal__form__container')[0];
-            form.addEventListener('click', this.#stopEventPropagation);
-        }
-    }
 
     render(content) {
         return ModalWindowTemplate({modal_content: content});

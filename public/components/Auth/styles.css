@@ -34,14 +34,14 @@
     color: currentColor;
     width: 1em;
     height: 1em;
-    border: 1px solid #42C3CA;
+    border: 1px solid var(--input-el-color);
     border-radius: 0.15em;
     transform: translateY(-0.075em);
 }
 
 .input-group input[type="checkbox"]::before {
     content: "";
-    background: #42C3CA;
+    background: var(--input-el-color);
     width: 0.5em;
     height: 0.5em;
     transform: scale(0);
