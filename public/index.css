@@ -20,10 +20,15 @@
 }
 
 :root {
-    --main-selected-color: #26A69A
+    --main-selected-color: #26A69A;
+    --link-color: #008666;
 }
 
 body {
     font-family: 'Roboto';
     font-weight: normal;
+}
+
+.link {
+    color: var(--link-color);
 }
