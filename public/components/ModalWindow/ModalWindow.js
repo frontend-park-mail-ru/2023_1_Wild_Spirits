@@ -34,7 +34,7 @@ export class ModalWindow extends Component {
         }
     }
 
-    render() {
-        return ModalWindowTemplate();
+    render(content) {
+        return ModalWindowTemplate({modal_content: content});
     }
 }
