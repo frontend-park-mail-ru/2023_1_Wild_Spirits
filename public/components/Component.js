@@ -22,7 +22,7 @@ export class Component {
     }
 
     createComponent(type, ...args) {
-        console.log(...args);
+        // console.log(...args);
         const newComponent = new type(this, ...args);
         this.#children.push(newComponent);
         return newComponent;

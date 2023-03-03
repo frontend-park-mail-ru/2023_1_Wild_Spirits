@@ -5,12 +5,18 @@ export class Header extends Component {
     #selectedCategoryId;
     #selectedCity;
 
+    #onLogin;
+
     #cities;
 
-    constructor(parent) {
+    constructor(parent, onLogin) {
         super(parent);
 
-        this.#selectedCategoryId = null;
+        this.#onLogin = onLogin;
+
+        this.#selectedCategoryId         // const modal = document.getElementsByClassName('modal')[0];
+
+        // modal.removeEventListener('click', this.closeModal);= null;
 
         this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
         this.#selectedCity = this.#cities[0];
@@ -28,6 +34,9 @@ export class Header extends Component {
         for (let i = 0; i < links.length; i++) {
             links[i].removeEventListener("click", this.linkClick);
         }
+
+        // const loginLink = header.getElementById('login-link');
+        // loginLink.removeEventListener('click', this.#onLogin);
     }
 
     addEvents() {
@@ -45,6 +54,9 @@ export class Header extends Component {
         select.addEventListener('change', (e)=>{
             this.#selectedCity = select.value;
         });
+
+        const loginLink = document.getElementById('login-link');
+        loginLink.addEventListener('click', this.#onLogin);
     }
 
     render() {

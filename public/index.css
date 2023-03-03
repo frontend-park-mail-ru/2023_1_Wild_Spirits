@@ -1,5 +1,6 @@
 @import "common.css";
 @import "/components/Header/styles.css";
+@import "/components/ModalWindow/styles.css";
 @import "/components/Events/EventCard/styles.css";
 @import "/components/Events/EventList/styles.css";
 
