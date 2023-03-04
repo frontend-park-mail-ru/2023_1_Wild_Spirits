@@ -32,7 +32,3 @@ body {
     font-family: 'Roboto';
     font-weight: normal;
 }
-
-.link {
-    color: var(--link-color);
-}
