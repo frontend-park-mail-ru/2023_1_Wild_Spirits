@@ -14,11 +14,10 @@ export class EventList extends Component {
             .get({ url: "/events" })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    events = json.body.events;
-                } else {
+                    this.#events = json.body.events;
                 }
             })
-            .catch((err) => {
+            .catch(() => {
                 this.#events = [];
                 for (let i = 0; i < 20; i++) {
                     this.#events.push(
