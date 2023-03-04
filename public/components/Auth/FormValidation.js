@@ -1,6 +1,6 @@
 export default (superclass) => class extends superclass {
-    formSubmit(event) {
-        const validate = (field, value) => {
+    validate(form) {
+        const validateField = (field, value) => {
             if (field === 'email') {
                 if (!value.includes('@'))
                     return "почта должна содержать символ '@'";
@@ -8,22 +8,29 @@ export default (superclass) => class extends superclass {
     
             return '';
         }
-
-        event.preventDefault();
-
-        const form = event.target;
                 
         const formData = new FormData(form);
+
+        let isValid = true;
 
         for (const entry of formData.entries()) {
             const warningEl = form.querySelector(`input[name=${entry[0]}] + .warning`);
 
             if (entry[1] === '') {
                 warningEl.textContent = "поле не может быть пустым"
+                isValid = false;
             } else {
-                warningEl.textContent = validate(...entry);
+                warningEl.textContent = validateField(...entry);
             }
         }
 
+        console.log(formData)
+
+        if (formData.get("password") !== formData.get("passwordConfirmation")) {
+            const warningEl = form.querySelector("input[name=passwordConfirmation] + .warning");
+            warningEl.textContent = "пароли не совпадают";
+        }
+
+        return isValid
     }
 }
