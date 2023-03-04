@@ -5,7 +5,9 @@
     "handlebars": "^4.7.7"
   },
   "scripts": {
-    "start": "node server",
+    "start": "echo export default {HOST:\"http://95.163.213.222:8000\"} > ./public/config.js & node server",
+    "dev": "echo export default {HOST:\"http://localhost:8000\"} > ./public/config.js & node server",
+    "predev": "npm run build:templates",
     "prestart": "npm run build:templates",
     "build:templates": "node server/componentInit.js"
   },

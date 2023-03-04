@@ -1,11 +1,12 @@
 import registerHelpers from "./handlebarsHelpers.js";
 import { App } from "./components/App.js";
 import { Ajax } from "./modules/ajax.js";
+import config from "./config.js";
 
 window.ajax = new Ajax();
 window.ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 // window.ajax.host = "http://95.163.213.222:8000";
-window.ajax.host = "http://localhost:8000";
+window.ajax.host = config.HOST;
 
 registerHelpers(Handlebars);
 
