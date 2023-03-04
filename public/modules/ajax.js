@@ -15,7 +15,7 @@ export class Ajax {
     }
 
     urlPropsToString(urlProps) {
-        if (!urlProps) {
+        if (!Object.keys(urlProps).length) {
             return "";
         }
         return (
@@ -26,19 +26,20 @@ export class Ajax {
         );
     }
 
-    get({ url, urlProps = [], headers = {} }) {
+    get({ url, urlProps = {}, headers = {} }) {
         return this.#ajax({ method: "GET", url, urlProps, body: {}, headers });
     }
 
-    post({ url, urlProps = [], body = {}, headers = {} }) {
-        return this.#ajax({ method: "POST", url, urlProps, body, headers });
+    post({ url, urlProps = {}, body = {}, headers = {}, credentials = false }) {
+        return this.#ajax({ method: "POST", url, urlProps, body, headers, credentials });
     }
 
-    async #ajax({ method, url, urlProps, body, headers }) {
+    async #ajax({ method, url, urlProps, body, headers, credentials = false }) {
         const response = await fetch(this.#host + url + this.urlPropsToString(urlProps), {
             method,
             mode: "cors",
-            body: JSON.stringify(body),
+            credentials: credentials ? "include" : undefined,
+            body: Object.keys(body).length ? JSON.stringify(body) : undefined,
             headers: { ...this.#headers, ...headers },
         });
 

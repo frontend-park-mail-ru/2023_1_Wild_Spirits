@@ -14,11 +14,8 @@ export class EventList extends Component {
             .get({ url: "/events" })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    console.log(json);
                     events = json.body.events;
-                    console.log(err);
                 } else {
-                    console.log(err);
                 }
             })
             .catch((err) => {
