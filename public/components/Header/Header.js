@@ -6,57 +6,41 @@ export class Header extends Component {
     #selectedCity;
 
     #onLogin;
+    #onSignup
 
     #cities;
 
-    constructor(parent, onLogin) {
+    constructor(parent, onLogin, onSignup) {
         super(parent);
 
         this.#onLogin = onLogin;
+        this.#onSignup = onSignup;
 
-        this.#selectedCategoryId         // const modal = document.getElementsByClassName('modal')[0];
-
-        // modal.removeEventListener('click', this.closeModal);= null;
+        this.#selectedCategoryId
 
         this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
         this.#selectedCity = this.#cities[0];
+
+        this.registerEvent(() => document.getElementsByTagName('select')[0], 'change', this.#selectCity);
+        this.registerEvent(() => document.getElementsByClassName('header__category'), 'click', this.#linkClick);
+
+        this.registerEvent(() => document.getElementById('login-link'), 'click', this.#onLogin);
+        this.registerEvent(() => document.getElementById('signup-link'), 'click', this.#onSignup);
     }
 
-    linkClick = (event) => {
+    #linkClick = (event) => {
         const id = event.target.id.split("-").at(-1);
         this.#selectedCategoryId = id;
         this.rerender();
     };
 
-    removeEvents() {
-        const links = document.getElementsByClassName("header__category");
-
-        for (let i = 0; i < links.length; i++) {
-            links[i].removeEventListener("click", this.linkClick);
-        }
-
-        // const loginLink = header.getElementById('login-link');
-        // loginLink.removeEventListener('click', this.#onLogin);
+    #selectCity = (e) => {
+        this.#selectedCity = e.target.value;
     }
 
-    addEvents() {
-        const header = document.getElementsByClassName('header')[0];
-        const links = header.getElementsByClassName('header__category');
-
-        for (let i = 0; i < links.length; i++) {
-            links[i].addEventListener('click', this.linkClick);
-        }
-
-        const select = header.getElementsByTagName('select')[0];
-
+    postRender() {
+        const select = document.getElementsByTagName('select')[0];
         select.value = this.#selectedCity;
-
-        select.addEventListener('change', (e)=>{
-            this.#selectedCity = select.value;
-        });
-
-        const loginLink = document.getElementById('login-link');
-        loginLink.addEventListener('click', this.#onLogin);
     }
 
     render() {

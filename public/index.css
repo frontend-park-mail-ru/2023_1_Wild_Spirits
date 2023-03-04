@@ -1,6 +1,7 @@
 @import "common.css";
 @import "/components/Header/styles.css";
 @import "/components/ModalWindow/styles.css";
+@import "/components/Auth/styles.css";
 @import "/components/Events/EventCard/styles.css";
 @import "/components/Events/EventList/styles.css";
 
@@ -24,6 +25,7 @@
 :root {
     --main-selected-color: #26A69A;
     --link-color: #008666;
+    --input-el-color: #42C3CA;
 }
 
 body {
