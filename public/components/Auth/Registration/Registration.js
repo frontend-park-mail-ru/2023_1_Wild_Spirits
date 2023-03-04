@@ -3,8 +3,14 @@ import FormValidation from "/components/Auth/FormValidation.js";
 import RegistrationTemplate from "/compiled/Auth/Registration/Registration.handlebars.js";
 
 export class Registration extends FormValidation(Component) {
-    constructor(parent) {
+    #setUserData;
+    #escapeModal;
+
+    constructor(parent, setUserData, escapeModal) {
         super(parent);
+
+        this.#setUserData = setUserData;
+        this.#escapeModal = escapeModal;
 
         this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
     }
@@ -29,6 +35,8 @@ export class Registration extends FormValidation(Component) {
                 .then(({ json, response }) => {
                     if (response.ok) {
                         console.log(response.status, json);
+                        this.#setUserData(json.body.user, false);
+                        this.#escapeModal();
                     }
                 })
                 .catch((err) => {

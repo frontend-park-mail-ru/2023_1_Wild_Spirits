@@ -5,6 +5,7 @@ import { EventList } from "/components/Events/EventList/EventList.js";
 import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
 import { Login } from "/components/Auth/Login/Login.js";
 import { Registration } from "/components/Auth/Registration/Registration.js";
+import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState.js";
 
 export class App extends Component {
     #headerComponent;
@@ -15,6 +16,9 @@ export class App extends Component {
     #registerComponent;
 
     #state;
+
+    #userData = undefined;
+
     constructor(parent) {
         super(parent);
         window.ajax
@@ -25,6 +29,7 @@ export class App extends Component {
             .then(({ json, response }) => {
                 if (response.ok) {
                     console.log(response.status, json);
+                    this.setUserData(json.body.user);
                 }
             })
             .catch((err) => {
@@ -33,22 +38,34 @@ export class App extends Component {
 
         this.#headerComponent = this.createComponent(
             Header,
-            () => this.changeState("login"),
-            () => this.changeState("register")
+            () => this.changeState(LOGIN),
+            () => this.changeState(REGISTER),
+            () => this.#userData
         );
         this.#contentComponent = this.createComponent(EventList);
-        this.#modalWindowComponent = this.createComponent(ModalWindow, () => this.changeState("index"));
+        this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);
 
-        this.#loginComponent = this.createComponent(Login);
-        this.#registerComponent = this.createComponent(Registration);
+        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal);
+        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal);
 
-        this.#state = "index";
+        this.#state = INDEX;
     }
+
+    escapeModal = () => {
+        this.changeState(INDEX);
+    };
 
     changeState(state) {
         this.#state = state;
         this.rerender();
     }
+
+    setUserData = (userData, needRerender = true) => {
+        this.#userData = userData;
+        if (needRerender) {
+            this.rerender();
+        }
+    };
 
     rerender() {
         this.removeChildEvents();
@@ -57,15 +74,12 @@ export class App extends Component {
     }
 
     render() {
-        let modalWindowContent = "";
         let modalWindow = "";
 
         if (this.#state == "login") {
-            modalWindowContent = this.#loginComponent.render();
-            modalWindow = this.#modalWindowComponent.render(modalWindowContent);
+            modalWindow = this.#modalWindowComponent.render(this.#loginComponent.render());
         } else if (this.#state == "register") {
-            modalWindowContent = this.#registerComponent.render();
-            modalWindow = this.#modalWindowComponent.render(modalWindowContent);
+            modalWindow = this.#modalWindowComponent.render(this.#registerComponent.render());
         }
 
         const template = AppTemplate({

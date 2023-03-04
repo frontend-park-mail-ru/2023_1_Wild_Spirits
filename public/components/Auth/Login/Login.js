@@ -3,9 +3,14 @@ import FormValidation from "/components/Auth/FormValidation.js";
 import LoginTemplate from "/compiled/Auth/Login/Login.handlebars.js";
 
 export class Login extends FormValidation(Component) {
-    constructor(parent) {
+    #setUserData;
+    #escapeModal;
+
+    constructor(parent, setUserData, escapeModal) {
         super(parent);
 
+        this.#setUserData = setUserData;
+        this.#escapeModal = escapeModal;
         this.registerEvent(() => document.getElementById("login-form"), "submit", this.#formSubmit);
     }
 
@@ -25,6 +30,8 @@ export class Login extends FormValidation(Component) {
                 .then(({ json, response }) => {
                     if (response.ok) {
                         console.log(response.status, json);
+                        this.#setUserData(json.body.user, false);
+                        this.#escapeModal();
                     }
                 })
                 .catch((err) => {

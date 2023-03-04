@@ -71,3 +71,17 @@
     background-color: var(--input-el-color);
     color: white;
 }
+
+.profile-link {
+    display: flex;
+}
+
+.profile-link__img-block {
+    margin-right: 5px;
+}
+
+.profile-link__img {
+    width: 69px;
+    height: 69px;
+    border-radius: 1000px;
+}
