@@ -7,6 +7,7 @@ import { EventList } from "/components/Events/EventList/EventList.js";
 import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
 import { Login } from "/components/Auth/Login/Login.js"
 import { Registration } from "/components/Auth/Registration/Registration.js";
+import { Calendar } from "/components/Calendar/Calendar.js"
 
 /**
  * @classdesc Main app component
@@ -20,6 +21,8 @@ export class App extends Component {
 
     #loginComponent;
     #registerComponent;
+
+    #calendarComponent;
 
     #state;
     constructor(parent) {
@@ -36,6 +39,8 @@ export class App extends Component {
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
+
+        this.#calendarComponent = this.createComponent(Calendar);
 
         this.#state = "index";
     }
@@ -72,6 +77,7 @@ export class App extends Component {
             content: this.#contentComponent.render(),
             footer: "Footer",
             modalWindow: modalWindow,
+            calendar: this.#calendarComponent.render()
         });
         return template;
     }

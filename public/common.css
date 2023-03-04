@@ -8,7 +8,7 @@
     --lm-card-inner-border-radius: calc(var(--lm-card-border-radius) - (var(--lm-card-border-width)));
     display: flex;
     flex-direction: column;
-    width: 340px;
+    width: 290px;
     border: var(--lm-card-border-width) solid #000000;
     border-radius: var(--lm-card-border-radius);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -20,6 +20,7 @@
 }
 
 .card__img {
+    width: 100%;
     object-fit: cover;
     border-top-left-radius: var(--lm-card-inner-border-radius);
     border-top-right-radius: var(--lm-card-inner-border-radius);
@@ -86,4 +87,26 @@
 .link:hover {
     text-decoration: underline;
     text-underline-offset: 0.15em;
+}
+
+.row {
+    display: flex;
+}
+
+.content {
+    flex: 60%;
+
+}
+
+.sidebar {
+    flex: 25%;
+}    
+
+@media screen and (max-width: 800px) {
+    .row {
+        display: block;
+    }
+    .sidebar {
+        display: none;
+    }
 }

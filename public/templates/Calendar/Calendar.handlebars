@@ -1,0 +1,29 @@
+<div class="calendar">
+    <div class="calendar-header">
+        <button class="arrow-button">
+            <img src="/assets/arrow-icon.svg">
+        </button>
+        <span>Февраль</span>
+        <button class="arrow-button">
+            <img src="/assets/arrow-icon.svg" class="reversed">
+        </button>
+    </div>
+    <table>
+        <tr class="top-row">
+            <th>ПН</th>
+            <th>ВТ</th>
+            <th>СР</th>
+            <th>ЧТ</th>
+            <th>ПТ</th>
+            <th>СБ</th>
+            <th>ВС</th>
+        </tr>
+        {{#each weeks}}
+            <tr>
+                {{#each this}}
+                    <td><button class="calendar-date">{{this}}</button></td>
+                {{/each}}
+            </tr>
+        {{/each}}
+    </table>
+</div>
