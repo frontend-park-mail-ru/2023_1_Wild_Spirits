@@ -1,6 +1,13 @@
+/** @module Components */
+
 import { Component } from "/components/Component.js";
 import HeaderTemplate from "/compiled/Header/Header.handlebars.js";
 
+/**
+ * @class
+ * @extends Component
+ * Component for navbar
+ */
 export class Header extends Component {
     #selectedCategoryId;
     #selectedCity;
@@ -22,18 +29,26 @@ export class Header extends Component {
         this.#selectedCity = this.#cities[0];
 
         this.registerEvent(() => document.getElementsByTagName('select')[0], 'change', this.#selectCity);
-        this.registerEvent(() => document.getElementsByClassName('header__category'), 'click', this.#linkClick);
+        this.registerEvent(() => document.getElementsByClassName('header__category'), 'click', this.#categoryLinkClick);
 
         this.registerEvent(() => document.getElementById('login-link'), 'click', this.#onLogin);
         this.registerEvent(() => document.getElementById('signup-link'), 'click', this.#onSignup);
     }
 
-    #linkClick = (event) => {
+    /**
+     * handles category selection
+     * @param {Event} event 
+     */
+    #categoryLinkClick = (event) => {
         const id = event.target.id.split("-").at(-1);
         this.#selectedCategoryId = id;
         this.rerender();
     };
 
+    /**
+     * handles city selection
+     * @param {Event} e 
+     */
     #selectCity = (e) => {
         this.#selectedCity = e.target.value;
     }

@@ -1,7 +1,14 @@
+/** @module Components */
+
 import { Component } from "/components/Component.js";
 import EventCardTemplate from "/compiled/Events/EventCard/EventCard.handlebars.js";
 import EventCardMarkerTemplate from "/compiled/Events/EventCard/EventCardMarker.handlebars.js";
 
+/**
+ * event card component
+ * @class
+ * @extends Component
+ */
 export class EventCard extends Component {
     #props;
     constructor(parent, props) {

@@ -1,30 +1,18 @@
+/** @module svg */
+
+/**
+ * async function that fetches svg image from assets
+ * @param {string} imgName - name of image file
+ */
 async function getSVGInline(imgName) {
     return fetch(`assets/${imgName}.svg`).then((response)=>response.text());
 }
 
-async function waitForElement(elementId) {
-    let el = document.getElementById(elementId);
-
-    if (el != undefined)
-        return el;
-
-    let promise = new Promise((resolve, reject) => {
-        const observer = new MutationObserver((mutation)=>{
-            console.log(mutation)
-            let el = document.getElementById(elementId);
-            console.log(el);
-    
-            if (el != undefined) {
-                observer.disconnect();
-                resolve(el);
-            }
-        });
-        observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
-    });
-
-    return promise;
-}
-
+/**
+ * async function that fetches svg image from assets and inlines it into document
+ * @param {string} imgName - name of image file 
+ * @param {string} containerId - id of html element inside which image is inlined into 
+ */
 async function putSVGInline(imgName, containerId) {
     getSVGInline(imgName).then((img)=>{
         const container = document.getElementById(containerId);
