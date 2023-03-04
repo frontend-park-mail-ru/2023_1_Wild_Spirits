@@ -1,6 +1,11 @@
 import { Component } from "/components/Component.js";
 import ModalWindowTemplate from "/compiled/ModalWindow/ModalWindow.handlebars.js";
 
+/**
+ * Modal window component
+ * @class
+ * @extends Component
+ */
 export class ModalWindow extends Component {
     #escapeModal;
 
@@ -17,6 +22,10 @@ export class ModalWindow extends Component {
         );
     }
 
+    /**
+     * Stops event propagation for modal window not closing at clicking modal form
+     * @param {Event} e
+     */
     #stopEventPropagation = (e) => e.stopPropagation();
 
     render(content) {

@@ -1,7 +1,14 @@
+/** @module Components */
+
 import { Component } from "/components/Component.js";
 import { EventCard } from "/components/Events/EventCard/EventCard.js";
 import EventListTemplate from "/compiled/Events/EventList/EventList.handlebars.js";
 
+/**
+ * Event list component
+ * @class
+ * @extends Component
+ */
 export class EventList extends Component {
     #events = undefined;
     constructor(parent) {
@@ -9,6 +16,9 @@ export class EventList extends Component {
         this.loadEvents();
     }
 
+    /**
+     * fill itself with events from server
+     */
     loadEvents() {
         window.ajax
             .get({ url: "/events" })
@@ -17,7 +27,8 @@ export class EventList extends Component {
                     this.#events = json.body.events;
                 }
             })
-            .catch(() => {
+            .catch((err) => {
+                console.log(err)
                 this.#events = [];
                 for (let i = 0; i < 20; i++) {
                     this.#events.push(

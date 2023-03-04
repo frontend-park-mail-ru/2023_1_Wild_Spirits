@@ -1,7 +1,14 @@
-import { Component } from "/components/Component.js";
-import FormValidation from "/components/Auth/FormValidation.js";
-import LoginTemplate from "/compiled/Auth/Login/Login.handlebars.js";
+/** @module Components */
 
+import { Component } from '/components/Component.js';
+import FormValidation from '/components/Auth/FormValidation.js';
+import LoginTemplate from '/compiled/Auth/Login/Login.handlebars.js';
+
+/**
+ * Login component
+ * @class
+ * @extends Component
+ */
 export class Login extends FormValidation(Component) {
     #setUserData;
     #escapeModal;
@@ -14,6 +21,10 @@ export class Login extends FormValidation(Component) {
         this.registerEvent(() => document.getElementById("login-form"), "submit", this.#formSubmit);
     }
 
+    /**
+     * Form submit event handler
+     * @param {Event} event 
+     */
     #formSubmit = (event) => {
         event.preventDefault();
 

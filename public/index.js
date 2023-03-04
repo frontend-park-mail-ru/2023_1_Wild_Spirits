@@ -8,6 +8,7 @@ window.ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 // window.ajax.host = "http://95.163.213.222:8000";
 window.ajax.host = config.HOST;
 
+// eslint-disable-next-line no-undef
 registerHelpers(Handlebars);
 
 const root = document.getElementById("app");

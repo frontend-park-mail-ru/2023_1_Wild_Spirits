@@ -1,3 +1,5 @@
+/** @module server */
+
 import fs from 'fs';
 import path from 'path';
 import debug from 'debug';
@@ -9,12 +11,21 @@ const log = debug('server');
 
 registerHelpers(Handlebars);
 
+/**
+ * check the existance of directory; creates it if it doesn't exist
+ * @param {path} dirPath - path to the directory
+ */
 function checkAndCreateDir(dirPath) {
     if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath);
     }
 }
 
+/**
+ * compiles templates
+ * @param {path} tempPath - path to directory with templates
+ * @param {path} compPath - path to directory with compiled templates
+ */
 function compileTemplate(tempPath, compPath) {
 
     log('rendering', tempPath, 'to', compPath);
@@ -24,6 +35,12 @@ function compileTemplate(tempPath, compPath) {
     fs.writeFileSync(compPath, compiled);
 }
 
+/**
+ * traverses directory and handles all found files
+ * @param {path} tempDirPath 
+ * @param {path} compDirPath 
+ * @callback callback - file handler
+ */
 function traverseComponents(tempDirPath, compDirPath, callback) {
     checkAndCreateDir(compDirPath);
     const fileNames = fs.readdirSync(tempDirPath);
@@ -38,6 +55,11 @@ function traverseComponents(tempDirPath, compDirPath, callback) {
     }
 }
 
+/**
+ * starts watching files in tempDir; compiles them if change detected
+ * @param {path} tempDirPath 
+ * @param {path} compDirPath 
+ */
 function watchComponents(tempDirPath, compDirPath) {
     traverseComponents(tempDirPath, compDirPath, (from, to, fileName) => {
         const filePath = path.join(from, fileName);
@@ -51,9 +73,13 @@ function watchComponents(tempDirPath, compDirPath) {
     });
 }
 
+/**
+ * compiles all templates from tempDir to compDir saving the hierarchy
+ * @param {path} tempDirPath 
+ * @param {path} compDirPath 
+ */
 function compileComponents(tempDirPath, compDirPath) {
     traverseComponents(tempDirPath, compDirPath, (from, to, fileName) => {
-        const filePath = path.join(from, fileName);
         compileTemplate(path.join(from, fileName), path.join(to, fileName + '.js'));
     });
 }

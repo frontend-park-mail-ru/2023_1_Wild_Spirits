@@ -1,3 +1,5 @@
+/** @module Components */
+
 import { Component } from "/components/Component.js";
 import { Header } from "/components/Header/Header.js";
 import AppTemplate from "/compiled/App.handlebars.js";
@@ -7,6 +9,11 @@ import { Login } from "/components/Auth/Login/Login.js";
 import { Registration } from "/components/Auth/Registration/Registration.js";
 import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState.js";
 
+/**
+ * @classdesc Main app component
+ * @class
+ * @extends Component
+ */
 export class App extends Component {
     #headerComponent;
     #contentComponent;
@@ -55,6 +62,10 @@ export class App extends Component {
         this.changeState(INDEX);
     };
 
+    /**
+     * callback for changing app state
+     * @param {string} state
+     */
     changeState(state) {
         this.#state = state;
         this.rerender();
