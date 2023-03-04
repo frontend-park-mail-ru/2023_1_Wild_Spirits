@@ -1,6 +1,13 @@
+/** @module Components */
+
 import { Component } from '/components/Component.js';
 import ModalWindowTemplate from '/compiled/ModalWindow/ModalWindow.handlebars.js';
 
+/**
+ * Modal window component
+ * @class
+ * @extends Component
+ */
 export class ModalWindow extends Component {
 
     #onEscape;
@@ -13,6 +20,10 @@ export class ModalWindow extends Component {
         this.registerEvent(()=>document.getElementsByClassName('modal__form__container')[0], 'click', this.#stopEventPropagation);
     }
 
+    /**
+     * Stops event propagation for modal window not closing at clicking modal form
+     * @param {Event} e 
+     */
     #stopEventPropagation = (e) => e.stopPropagation();
 
     render(content) {

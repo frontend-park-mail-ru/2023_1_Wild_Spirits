@@ -1,3 +1,9 @@
+/** @module Components */
+
+/**
+ * @class
+ * @classdesc base Component class
+ */
 export class Component {
     static #staticId = 0;
     #id;
@@ -6,36 +12,71 @@ export class Component {
 
     /*
     // type EventMap = {
-    //   el: () => HTMLElementCollection;
+    //   el: () => HTMLElement | HtmlCollection;
     //   event: string;
     //   callback: (event) => void;
     // }
     */
     #eventMaps = [];
 
+    /**
+     * @constructor
+     * @param {Component} parent 
+     */
     constructor(parent) {
         this.#parent = parent;
         this.#id = Component.#staticId++;
     }
 
+    /**
+     * id
+     * @type {number}
+     */
     get id() {
         return this.#id;
     }
 
+    /**
+     * parent
+     * @type {Component}
+     */
     get parent() {
         return this.#parent;
     }
 
+    /**
+     * children
+     * @type {HTMLCollection}
+     */
     get children() {
         return this.#children;
     }
 
+    /**
+     * creates a new child component
+     * @param {Class.<Component>} type - component class which should be created
+     * @param  {...any} args - arguments passed to new component
+     * @returns {Component} - a newly created component
+     */
     createComponent(type, ...args) {
         const newComponent = new type(this, ...args);
         this.#children.push(newComponent);
         return newComponent;
     }
 
+    /**
+     * Description of element getter function
+     * @name HTMLElementGetter
+     * @function
+     * @returns {HTMLElement | HTMLCollection}
+     */
+
+    /**
+     * register an event handler
+     * @param {HTMLELEmentGetter} el - function that returns html element
+     * @param {string} event - name of event 
+     * @param {function} callback - event handler
+     */
     registerEvent(el, event, callback) {
         this.#eventMaps.push({
             el: el,
@@ -44,6 +85,9 @@ export class Component {
         });
     }
 
+    /**
+     * removes registered event handlers from children
+     */
     removeChildEvents() {
         this.#children.forEach((child) => {
             try {
@@ -55,6 +99,9 @@ export class Component {
         });
     }
 
+    /**
+     * adds registered event handlers to children
+     */
     addChildEvents() {
         this.#children.forEach((child) => {
             try {
@@ -67,8 +114,14 @@ export class Component {
         });
     }
 
+    /**
+     * function called right after render and addEvents
+     */
     postRender() {}
 
+    /**
+     * removes registered event handlers
+     */
     removeEvents() {
         for (const eventMap of this.#eventMaps) {
 
@@ -83,6 +136,10 @@ export class Component {
             }
         }
     }
+
+    /**
+     * adds registered event handlers
+     */
     addEvents() {
         for (const eventMap of this.#eventMaps) {
 
@@ -98,10 +155,17 @@ export class Component {
         }
     }
 
+    /**
+     * rerenders components
+     */
     rerender() {
         this.#parent.rerender();
     }
 
+    /**
+     * renders component
+     * @returns {string} - html text
+     */
     render() {
         return "";
     }
