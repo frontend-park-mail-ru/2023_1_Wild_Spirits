@@ -2,12 +2,14 @@
   "type": "module",
   "dependencies": {
     "debug": "^4.3.4",
-    "eslint": "^8.34.0",
     "handlebars": "^4.7.7"
   },
   "scripts": {
     "start": "node server",
     "prestart": "npm run build:templates",
     "build:templates": "node server/componentInit.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.35.0"
   }
 }
