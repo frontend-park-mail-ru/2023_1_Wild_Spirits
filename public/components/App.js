@@ -3,7 +3,7 @@ import { Header } from "/components/Header/Header.js";
 import AppTemplate from "/compiled/App.handlebars.js";
 import { EventList } from "/components/Events/EventList/EventList.js";
 import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
-import { Login } from "/components/Auth/Login/Login.js"
+import { Login } from "/components/Auth/Login/Login.js";
 import { Registration } from "/components/Auth/Registration/Registration.js";
 
 export class App extends Component {
@@ -17,15 +17,27 @@ export class App extends Component {
     #state;
     constructor(parent) {
         super(parent);
-        this.#headerComponent = this.createComponent(Header, () => {
-            this.changeState("login");
-        }, () => {
-            this.changeState("register");
-        });
+        window.ajax
+            .get({
+                url: "/authorized",
+                credentials: true,
+            })
+            .then(({ json, response }) => {
+                if (response.ok) {
+                    console.log(response.status, json);
+                }
+            })
+            .catch((err) => {
+                console.log("catch:", err);
+            });
+
+        this.#headerComponent = this.createComponent(
+            Header,
+            () => this.changeState("login"),
+            () => this.changeState("register")
+        );
         this.#contentComponent = this.createComponent(EventList);
-        this.#modalWindowComponent = this.createComponent(ModalWindow, () => {
-            this.changeState("index");
-        });
+        this.#modalWindowComponent = this.createComponent(ModalWindow, () => this.changeState("index"));
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);

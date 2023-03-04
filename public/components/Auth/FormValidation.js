@@ -15,6 +15,9 @@ export default (superclass) =>
 
             for (const entry of formData.entries()) {
                 const warningEl = form.querySelector(`input[name=${entry[0]}] + .warning`);
+                if (!warningEl) {
+                    continue;
+                }
 
                 if (entry[1] === "") {
                     warningEl.textContent = "поле не может быть пустым";

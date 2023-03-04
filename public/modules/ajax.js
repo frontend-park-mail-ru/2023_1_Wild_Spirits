@@ -26,8 +26,8 @@ export class Ajax {
         );
     }
 
-    get({ url, urlProps = {}, headers = {} }) {
-        return this.#ajax({ method: "GET", url, urlProps, body: {}, headers });
+    get({ url, urlProps = {}, headers = {}, credentials = false }) {
+        return this.#ajax({ method: "GET", url, urlProps, body: {}, headers, credentials });
     }
 
     post({ url, urlProps = {}, body = {}, headers = {}, credentials = false }) {
