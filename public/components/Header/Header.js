@@ -4,6 +4,7 @@ import { Component } from "/components/Component.js";
 import HeaderTemplate from "/compiled/Header/Header.handlebars.js";
 import UnauthorizedLinkTemplate from "/compiled/Auth/ProfileLink/UnauthorizedLink.handlebars.js";
 import AuthorizedLinkTemplate from "/compiled/Auth/ProfileLink/AuthorizedLink.handlebars.js";
+import config from "/config.js";
 
 /**
  * @class
@@ -16,20 +17,20 @@ export class Header extends Component {
 
     #onLogin;
     #onSignup;
+    #setUserData;
 
     #cities;
 
     #getUserData;
 
-    constructor(parent, onLogin, onSignup, getUserData) {
+    constructor(parent, onLogin, onSignup, getUserData, setUserData) {
         super(parent);
 
         this.#getUserData = getUserData;
 
         this.#onLogin = onLogin;
         this.#onSignup = onSignup;
-
-        // this.#selectedCategoryId;
+        this.#setUserData = setUserData;
 
         this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
         this.#selectedCity = this.#cities[0];
@@ -39,7 +40,26 @@ export class Header extends Component {
 
         this.registerEvent(() => document.getElementById("login-link"), "click", this.#onLogin);
         this.registerEvent(() => document.getElementById("signup-link"), "click", this.#onSignup);
+        this.registerEvent(() => document.getElementById("profile-link-logout"), "click", this.#onLogout);
     }
+
+    #onLogout = () => {
+        window.ajax
+            .post({
+                url: "/logout",
+                credentials: true,
+            })
+            .then(({ json, response }) => {
+                if (response.ok) {
+                    console.log(response.status, json);
+                    window.ajax.removeHeaders("x-csrf-token");
+                    this.#setUserData(undefined);
+                }
+            })
+            .catch((err) => {
+                console.log("catch:", err);
+            });
+    };
 
     /**
      * handles category selection
@@ -72,7 +92,12 @@ export class Header extends Component {
             categories: categories,
             selectedCategoryId: this.#selectedCategoryId,
             cities: this.#cities,
-            profileLink: this.#getUserData() ? AuthorizedLinkTemplate(this.#getUserData()) : UnauthorizedLinkTemplate(),
+            profileLink: this.#getUserData()
+                ? AuthorizedLinkTemplate({
+                      name: this.#getUserData().name,
+                      img: config.HOST + this.#getUserData().img,
+                  })
+                : UnauthorizedLinkTemplate(),
         });
     }
 }

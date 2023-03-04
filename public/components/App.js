@@ -35,7 +35,10 @@ export class App extends Component {
             })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    console.log(response.status, json);
+                    const csrf = response.headers.get("x-csrf-token");
+                    if (response.headers.get("x-csrf-token")) {
+                        window.ajax.addHeaders({ "x-csrf-token": csrf });
+                    }
                     this.setUserData(json.body.user);
                 }
             })
@@ -47,7 +50,8 @@ export class App extends Component {
             Header,
             () => this.changeState(LOGIN),
             () => this.changeState(REGISTER),
-            () => this.#userData
+            () => this.#userData,
+            this.setUserData
         );
         this.#contentComponent = this.createComponent(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);

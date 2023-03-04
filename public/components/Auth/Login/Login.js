@@ -1,8 +1,8 @@
 /** @module Components */
 
-import { Component } from '/components/Component.js';
-import FormValidation from '/components/Auth/FormValidation.js';
-import LoginTemplate from '/compiled/Auth/Login/Login.handlebars.js';
+import { Component } from "/components/Component.js";
+import FormValidation from "/components/Auth/FormValidation.js";
+import LoginTemplate from "/compiled/Auth/Login/Login.handlebars.js";
 
 /**
  * Login component
@@ -23,7 +23,7 @@ export class Login extends FormValidation(Component) {
 
     /**
      * Form submit event handler
-     * @param {Event} event 
+     * @param {Event} event
      */
     #formSubmit = (event) => {
         event.preventDefault();
@@ -40,7 +40,10 @@ export class Login extends FormValidation(Component) {
                 })
                 .then(({ json, response }) => {
                     if (response.ok) {
-                        console.log(response.status, json);
+                        const csrf = response.headers.get("x-csrf-token");
+                        if (response.headers.get("x-csrf-token")) {
+                            window.ajax.addHeaders({ "x-csrf-token": csrf });
+                        }
                         this.#setUserData(json.body.user, false);
                         this.#escapeModal();
                     }

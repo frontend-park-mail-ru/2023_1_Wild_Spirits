@@ -45,7 +45,10 @@ export class Registration extends FormValidation(Component) {
                 })
                 .then(({ json, response }) => {
                     if (response.ok) {
-                        console.log(response.status, json);
+                        const csrf = response.headers.get("x-csrf-token");
+                        if (response.headers.get("x-csrf-token")) {
+                            window.ajax.addHeaders({ "x-csrf-token": csrf });
+                        }
                         this.#setUserData(json.body.user, false);
                         this.#escapeModal();
                     }
@@ -55,16 +58,6 @@ export class Registration extends FormValidation(Component) {
                 });
         }
     };
-
-    // #formSubmit(event) {
-    //     event.preventDefault();
-
-    //     const formData = new FormData(event.target);
-
-    //     for (const entry of formData.entries()) {
-    //         console.log(entry)
-    //     }
-    // }
 
     render() {
         return RegistrationTemplate();
