@@ -147,6 +147,10 @@
 
 }
 
+.sidebar {
+    max-width: 380px;
+}
+
 @media screen and (max-width: 800px) {
     .row {
         display: block;

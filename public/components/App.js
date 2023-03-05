@@ -7,7 +7,8 @@ import { EventList } from "/components/Events/EventList/EventList.js";
 import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
 import { Login } from "/components/Auth/Login/Login.js";
 import { Registration } from "/components/Auth/Registration/Registration.js";
-import { Calendar } from "/components/Calendar/Calendar.js"
+import { Calendar } from "/components/Calendar/Calendar.js";
+import { Tags } from "/components/Tags/Tags.js";
 import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState.js";
 
 /**
@@ -24,6 +25,8 @@ export class App extends Component {
     #registerComponent;
 
     #calendarComponent;
+
+    #tagsComponent;
 
     #state;
 
@@ -63,6 +66,8 @@ export class App extends Component {
         this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal, ()=>this.changeState(LOGIN));
 
         this.#calendarComponent = this.createComponent(Calendar);
+
+        this.#tagsComponent = this.createComponent(Tags);
 
         this.#state = INDEX;
     }
@@ -107,7 +112,8 @@ export class App extends Component {
             content: this.#contentComponent.render(),
             footer: "Footer",
             modalWindow: modalWindow,
-            calendar: this.#calendarComponent.render()
+            calendar: this.#calendarComponent.render(),
+            tags: this.#tagsComponent.render()
         });
         return template;
     }
