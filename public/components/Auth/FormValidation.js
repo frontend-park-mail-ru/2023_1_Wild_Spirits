@@ -39,13 +39,20 @@ export default (superclass) =>
                 }
             }
 
-            if (formData.get("password") !== formData.get("passwordConfirmation")) {
-                const warningEl = form.querySelector("input[name=passwordConfirmation] + .warning");
-                if (warningEl) {
-                    warningEl.textContent = "пароли не совпадают";
-                }
-            }
-
             return isValid;
+        }
+
+        warningMsg(message) {
+            const errorMessages = {
+                "User already exists": "Такой пользователь уже зарегестрирован",
+                "User not authorized": "Неверный логин или пароль",
+                "Wrong credentials": "Неверный логин или пароль"
+            };
+
+            const warning = errorMessages[message];
+
+            const warningEl = document.getElementById("common-warning");
+
+            warningEl.innerText = warning ? warning : message;
         }
     }

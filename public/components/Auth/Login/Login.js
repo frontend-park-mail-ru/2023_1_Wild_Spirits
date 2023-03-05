@@ -48,6 +48,9 @@ export class Login extends FormValidation(Component) {
                         }
                         this.#setUserData(json.body.user, false);
                         this.#escapeModal();
+                    } else {
+                        console.log(json);
+                        this.warningMsg(json.errorMsg)
                     }
                 })
                 .catch((err) => {

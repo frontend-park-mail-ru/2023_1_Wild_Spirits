@@ -21,6 +21,31 @@ export class Registration extends FormValidation(Component) {
 
         this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
         this.registerEvent(() => document.getElementById("redirect-login-link"), "click", redirectToLogin);
+
+        this.registerEvent(() => document.querySelector('input[type=checkbox][name=accept]'), "change", this.#toggleForm)
+    }
+
+    /**
+     * toggles form submit button
+     */
+    #toggleForm = () => {
+        const submitButton = document.getElementById("register-submit-button");
+        submitButton.disabled = !submitButton.disabled;
+    }
+
+    validate(form) {
+        if (!super.validate(form)) {
+            return false;
+        }
+
+        const formData = new FormData(form);
+
+        if (formData.get("password") !== formData.get("passwordConfirmation")) {
+            const warningEl = form.querySelector("input[name=passwordConfirmation] + .warning");
+            warningEl.textContent = "пароли не совпадают";
+        }
+
+        return true;
     }
 
     /**
@@ -52,6 +77,8 @@ export class Registration extends FormValidation(Component) {
                         }
                         this.#setUserData(json.body.user, false);
                         this.#escapeModal();
+                    } else {
+                        this.warningMsg(json.errorMsg);
                     }
                 })
                 .catch((err) => {
