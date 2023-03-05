@@ -13,13 +13,14 @@ export class Registration extends FormValidation(Component) {
     #setUserData;
     #escapeModal;
 
-    constructor(parent, setUserData, escapeModal) {
+    constructor(parent, setUserData, escapeModal, redirectToLogin) {
         super(parent);
 
         this.#setUserData = setUserData;
         this.#escapeModal = escapeModal;
 
         this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
+        this.registerEvent(() => document.getElementById("redirect-login-link"), "click", redirectToLogin);
     }
 
     /**
