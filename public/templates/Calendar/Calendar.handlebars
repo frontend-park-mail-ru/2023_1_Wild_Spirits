@@ -1,11 +1,11 @@
 <div class="calendar">
     <div class="calendar-header">
-        <button class="arrow-button">
+        <button class="arrow-button" id="prevMonthBtn">
             <img src="/assets/arrow-icon.svg">
         </button>
-        <span>Февраль</span>
+        <span>{{month}}</span>
         <button class="arrow-button">
-            <img src="/assets/arrow-icon.svg" class="reversed">
+            <img src="/assets/arrow-icon.svg" class="reversed" id="nextMonthBtn">
         </button>
     </div>
     <table>
@@ -21,7 +21,7 @@
         {{#each weeks}}
             <tr>
                 {{#each this}}
-                    <td><button class="calendar-date">{{this}}</button></td>
+                    <td><button class="calendar-date current {{#unless this.active}}disabled{{/unless}}">{{this.date}}</button></td>
                 {{/each}}
             </tr>
         {{/each}}
