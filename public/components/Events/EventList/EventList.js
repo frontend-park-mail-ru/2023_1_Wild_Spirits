@@ -17,15 +17,11 @@ export class EventList extends Component {
         this.loadEvents();
     }
 
-    parseDay(date, time) {
-        let datetime = [];
-        if (date) {
-            datetime.push(date);
+    parseTimes(start, end) {
+        if (start && end) {
+            return start + " - " + end;
         }
-        if (time) {
-            datetime.push(time);
-        }
-        return datetime.join(" ");
+        return start ? start : end;
     }
 
     /**
@@ -38,14 +34,17 @@ export class EventList extends Component {
                 if (response.ok) {
                     this.#events = [];
                     json.body.events.map((event) => {
+                        const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
                         let dates = [];
-                        if (event.dates.dateStart || event.dates.timeStart) {
-                            dates.push("Начало: " + this.parseDay(event.dates.dateStart, event.dates.timeStart));
+                        if (dateStart) {
+                            dates.push("Начало: " + dateStart);
                         }
-                        if (event.dates.dateEnd || event.dates.timeEnd) {
-                            dates.push("Конец: " + this.parseDay(event.dates.dateEnd, event.dates.timeEnd));
+                        if (dateEnd) {
+                            dates.push("Конец: \u00A0\u00A0\u00A0" + dateEnd);
                         }
-
+                        if (timeStart || timeEnd) {
+                            dates.push(this.parseTimes(timeStart, timeEnd));
+                        }
                         this.#events.push(
                             new EventCard(this, {
                                 id: event.id,

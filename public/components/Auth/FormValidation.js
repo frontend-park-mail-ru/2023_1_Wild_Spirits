@@ -44,7 +44,7 @@ export default (superclass) =>
 
         warningMsg(message) {
             const errorMessages = {
-                "User already exists": "Такой пользователь уже зарегестрирован",
+                "User already exists": "Такой пользователь уже зарегистрирован",
                 "User not authorized": "Неверный логин или пароль",
                 "Wrong credentials": "Неверный логин или пароль"
             };

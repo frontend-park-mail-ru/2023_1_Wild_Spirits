@@ -31,7 +31,6 @@ export class Login extends FormValidation(Component) {
         event.preventDefault();
 
         const formData = new FormData(event.target);
-        console.log(formData.get("password"));
 
         if (this.validate(event.target)) {
             window.ajax
@@ -49,7 +48,6 @@ export class Login extends FormValidation(Component) {
                         this.#setUserData(json.body.user, false);
                         this.#escapeModal();
                     } else {
-                        console.log(json);
                         this.warningMsg(json.errorMsg)
                     }
                 })

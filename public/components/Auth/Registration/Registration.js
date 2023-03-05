@@ -43,6 +43,8 @@ export class Registration extends FormValidation(Component) {
         if (formData.get("password") !== formData.get("passwordConfirmation")) {
             const warningEl = form.querySelector("input[name=passwordConfirmation] + .warning");
             warningEl.textContent = "пароли не совпадают";
+
+            return false;
         }
 
         return true;
