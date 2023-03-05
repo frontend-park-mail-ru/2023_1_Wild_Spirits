@@ -3,6 +3,7 @@
 import { Component } from "/components/Component.js";
 import { EventCard } from "/components/Events/EventCard/EventCard.js";
 import EventListTemplate from "/compiled/Events/EventList/EventList.handlebars.js";
+import config from "/config.js";
 
 /**
  * Event list component
@@ -16,6 +17,17 @@ export class EventList extends Component {
         this.loadEvents();
     }
 
+    parseDay(date, time) {
+        let datetime = [];
+        if (date) {
+            datetime.push(date);
+        }
+        if (time) {
+            datetime.push(time);
+        }
+        return datetime.join(" ");
+    }
+
     /**
      * fill itself with events from server
      */
@@ -24,16 +36,23 @@ export class EventList extends Component {
             .get({ url: "/events" })
             .then(({ json, response }) => {
                 if (response.ok) {
+                    this.#events = [];
                     json.body.events.map((event) => {
+                        let dates = [];
+                        if (event.dates.dateStart || event.dates.timeStart) {
+                            dates.push("Начало: " + this.parseDay(event.dates.dateStart, event.dates.timeStart));
+                        }
+                        if (event.dates.dateEnd || event.dates.timeEnd) {
+                            dates.push("Конец: " + this.parseDay(event.dates.dateEnd, event.dates.timeEnd));
+                        }
+
                         this.#events.push(
                             new EventCard(this, {
+                                id: event.id,
                                 name: event.name,
-                                img: event.img,
+                                img: config.HOST + event.img,
                                 desc: event.desc,
-                                dates: [
-                                    event.dates.dateStart + " " + event.dates.timeStart,
-                                    event.dates.dateEnd + " " + event.dates.timeEnd,
-                                ],
+                                dates,
                                 places: event.places,
                             })
                         );

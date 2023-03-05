@@ -18,6 +18,7 @@ export class EventCard extends Component {
 
     render() {
         return EventCardTemplate({
+            eventId: this.#props.id,
             img: this.#props.img,
             name: this.#props.name,
             desc: this.#props.desc,
