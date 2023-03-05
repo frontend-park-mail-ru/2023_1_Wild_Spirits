@@ -11,6 +11,8 @@
     background-color: var(--main-selected-color);
     color: white;
 
+    cursor: pointer;
+
     border: 1px solid var(--main-selected-color);
     border-radius: 15px;
 

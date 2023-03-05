@@ -34,4 +34,6 @@
 body {
     font-family: 'Roboto';
     font-weight: normal;
+
+    cursor: default;
 }
