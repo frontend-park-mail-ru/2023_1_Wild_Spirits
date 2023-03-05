@@ -59,8 +59,8 @@ export class App extends Component {
         this.#contentComponent = this.createComponent(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);
 
-        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal);
-        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal);
+        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal, ()=>this.changeState(REGISTER));
+        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal, ()=>this.changeState(LOGIN));
 
         this.#calendarComponent = this.createComponent(Calendar);
 
@@ -96,9 +96,9 @@ export class App extends Component {
     render() {
         let modalWindow = "";
 
-        if (this.#state == "login") {
+        if (this.#state == LOGIN) {
             modalWindow = this.#modalWindowComponent.render(this.#loginComponent.render());
-        } else if (this.#state == "register") {
+        } else if (this.#state == REGISTER) {
             modalWindow = this.#modalWindowComponent.render(this.#registerComponent.render());
         }
 

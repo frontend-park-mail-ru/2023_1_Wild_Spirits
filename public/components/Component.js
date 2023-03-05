@@ -144,6 +144,7 @@ export class Component {
             const element = eventMap.el();
 
             if (element instanceof HTMLElement) {
+                console.log(element)
                 element.addEventListener(eventMap.event, eventMap.callback);
             } else if (element instanceof HTMLCollection) {
                 for (let i = 0; i < element.length; i++) {
