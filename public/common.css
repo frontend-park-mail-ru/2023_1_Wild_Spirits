@@ -107,7 +107,6 @@
 .link:hover {
     text-decoration: underline;
     text-underline-offset: 0.15em;
-<<<<<<< HEAD
 }
 
 .row {
@@ -131,6 +130,3 @@
         display: none;
     }
 }
-=======
-}
->>>>>>> de436cf0e99991a5bb8e1b6ebc8dd7b4cca6e012
