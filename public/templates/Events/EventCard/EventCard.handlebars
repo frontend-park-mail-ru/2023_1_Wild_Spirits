@@ -2,7 +2,7 @@
     <div class="card__img-block">
         <img class="card__img" src="{{img}}" alt="{{name}}" />
     </div>
-    <div class="card__body">
+    <div class="card__body event-card__body">
         <div class="card__title">
             {{name}}
         </div>
@@ -13,10 +13,10 @@
         {{{dates}}}
         <hr class="card__hr" />
         {{{places}}}
-        <div class="event-card__button-block">
-            <a href="/events/{{eventId}}" class="router-link event-card__button-link">
-                <input class="button" type="button" value="Узнать подробности" />
-            </a>
-        </div>
+    </div>
+    <div class="event-card__button-block">
+        <a href="/events/{{eventId}}" class="router-link event-card__button-link">
+            <input class="button" type="button" value="Узнать подробности" />
+        </a>
     </div>
 </div>

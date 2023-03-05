@@ -1,3 +1,11 @@
+.event-card {
+    position: relative;
+}
+
+.event-card__body {
+    margin-bottom: 80px;
+}
+
 .event-card__marked {
     display: flex;
 }
@@ -25,8 +33,11 @@
 .event-card__button-block {
     margin-top: 10px;
     display: flex;
+    position: absolute;
+    width: 100%;
+    bottom: 20px;
 }
 
 .event-card__button-link {
-    margin: auto;
+    margin: 0 auto;
 }
