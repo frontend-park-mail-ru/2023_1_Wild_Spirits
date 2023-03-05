@@ -5,9 +5,10 @@ import { Header } from "/components/Header/Header.js";
 import AppTemplate from "/compiled/App.handlebars.js";
 import { EventList } from "/components/Events/EventList/EventList.js";
 import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
-import { Login } from "/components/Auth/Login/Login.js"
+import { Login } from "/components/Auth/Login/Login.js";
 import { Registration } from "/components/Auth/Registration/Registration.js";
 import { Calendar } from "/components/Calendar/Calendar.js"
+import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState.js";
 
 /**
  * @classdesc Main app component
@@ -25,34 +26,66 @@ export class App extends Component {
     #calendarComponent;
 
     #state;
+
+    #userData = undefined;
+
     constructor(parent) {
         super(parent);
-        this.#headerComponent = this.createComponent(Header, () => {
-            this.changeState("login");
-        }, () => {
-            this.changeState("register");
-        });
-        this.#contentComponent = this.createComponent(EventList);
-        this.#modalWindowComponent = this.createComponent(ModalWindow, () => {
-            this.changeState("index");
-        });
+        window.ajax
+            .get({
+                url: "/authorized",
+                credentials: true,
+            })
+            .then(({ json, response }) => {
+                if (response.ok) {
+                    const csrf = response.headers.get("x-csrf-token");
+                    if (response.headers.get("x-csrf-token")) {
+                        window.ajax.addHeaders({ "x-csrf-token": csrf });
+                    }
+                    this.setUserData(json.body.user);
+                }
+            })
+            .catch((err) => {
+                console.log("catch:", err);
+            });
 
-        this.#loginComponent = this.createComponent(Login);
-        this.#registerComponent = this.createComponent(Registration);
+        this.#headerComponent = this.createComponent(
+            Header,
+            () => this.changeState(LOGIN),
+            () => this.changeState(REGISTER),
+            () => this.#userData,
+            this.setUserData
+        );
+        this.#contentComponent = this.createComponent(EventList);
+        this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);
+
+        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal);
+        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal);
 
         this.#calendarComponent = this.createComponent(Calendar);
 
-        this.#state = "index";
+        this.#state = INDEX;
     }
+
+    escapeModal = () => {
+        this.changeState(INDEX);
+    };
 
     /**
      * callback for changing app state
-     * @param {string} state 
+     * @param {string} state
      */
     changeState(state) {
         this.#state = state;
         this.rerender();
     }
+
+    setUserData = (userData, needRerender = true) => {
+        this.#userData = userData;
+        if (needRerender) {
+            this.rerender();
+        }
+    };
 
     rerender() {
         this.removeChildEvents();
@@ -61,15 +94,12 @@ export class App extends Component {
     }
 
     render() {
-        let modalWindowContent = "";
         let modalWindow = "";
 
         if (this.#state == "login") {
-            modalWindowContent = this.#loginComponent.render();
-            modalWindow = this.#modalWindowComponent.render(modalWindowContent);
+            modalWindow = this.#modalWindowComponent.render(this.#loginComponent.render());
         } else if (this.#state == "register") {
-            modalWindowContent = this.#registerComponent.render();
-            modalWindow = this.#modalWindowComponent.render(modalWindowContent);
+            modalWindow = this.#modalWindowComponent.render(this.#registerComponent.render());
         }
 
         const template = AppTemplate({

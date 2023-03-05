@@ -5,7 +5,7 @@ export class Ajax {
     #host = "";
     #headers = {};
 
-    /** 
+    /**
      * host address
      * @param {string} value - host address
      */
@@ -53,10 +53,11 @@ export class Ajax {
      * @param {Object} options.urlProps - query parameters
      * @param {string} options.body - body of the request
      * @param {Object} options.headers - request headers
+     * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    get({ url, urlProps = {}, headers = {} }) {
-        return this.#ajax({ method: "GET", url, urlProps, body: {}, headers });
+    get({ url, urlProps = {}, headers = {}, credentials = false }) {
+        return this.#ajax({ method: "GET", url, urlProps, body: {}, headers, credentials });
     }
 
     /**

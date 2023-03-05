@@ -1,1 +1,1 @@
-export default {HOST:"http://95.163.213.222:8000"}
+export default {HOST:"http://localhost:8000"}  

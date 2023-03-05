@@ -21,7 +21,7 @@ export class Component {
 
     /**
      * @constructor
-     * @param {Component} parent 
+     * @param {Component} parent
      */
     constructor(parent) {
         this.#parent = parent;
@@ -74,14 +74,14 @@ export class Component {
     /**
      * register an event handler
      * @param {HTMLELEmentGetter} el - function that returns html element
-     * @param {string} event - name of event 
+     * @param {string} event - name of event
      * @param {function} callback - event handler
      */
     registerEvent(el, event, callback) {
         this.#eventMaps.push({
             el: el,
             event: event,
-            callback: callback
+            callback: callback,
         });
     }
 
@@ -124,7 +124,6 @@ export class Component {
      */
     removeEvents() {
         for (const eventMap of this.#eventMaps) {
-
             const element = eventMap.el();
 
             if (element instanceof HTMLElement) {
@@ -142,7 +141,6 @@ export class Component {
      */
     addEvents() {
         for (const eventMap of this.#eventMaps) {
-
             const element = eventMap.el();
 
             if (element instanceof HTMLElement) {

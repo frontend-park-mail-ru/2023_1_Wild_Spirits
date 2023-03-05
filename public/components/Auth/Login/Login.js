@@ -1,8 +1,8 @@
 /** @module Components */
 
-import { Component } from '/components/Component.js';
-import FormValidation from '/components/Auth/FormValidation.js';
-import LoginTemplate from '/compiled/Auth/Login/Login.handlebars.js';
+import { Component } from "/components/Component.js";
+import FormValidation from "/components/Auth/FormValidation.js";
+import LoginTemplate from "/compiled/Auth/Login/Login.handlebars.js";
 
 /**
  * Login component
@@ -10,15 +10,20 @@ import LoginTemplate from '/compiled/Auth/Login/Login.handlebars.js';
  * @extends Component
  */
 export class Login extends FormValidation(Component) {
-    constructor(parent) {
+    #setUserData;
+    #escapeModal;
+
+    constructor(parent, setUserData, escapeModal) {
         super(parent);
 
+        this.#setUserData = setUserData;
+        this.#escapeModal = escapeModal;
         this.registerEvent(() => document.getElementById("login-form"), "submit", this.#formSubmit);
     }
 
     /**
      * Form submit event handler
-     * @param {Event} event 
+     * @param {Event} event
      */
     #formSubmit = (event) => {
         event.preventDefault();
@@ -35,7 +40,12 @@ export class Login extends FormValidation(Component) {
                 })
                 .then(({ json, response }) => {
                     if (response.ok) {
-                        console.log(response.status, json);
+                        const csrf = response.headers.get("x-csrf-token");
+                        if (response.headers.get("x-csrf-token")) {
+                            window.ajax.addHeaders({ "x-csrf-token": csrf });
+                        }
+                        this.#setUserData(json.body.user, false);
+                        this.#escapeModal();
                     }
                 })
                 .catch((err) => {

@@ -10,21 +10,54 @@ import RegistrationTemplate from "/compiled/Auth/Registration/Registration.handl
  * @extends Component
  */
 export class Registration extends FormValidation(Component) {
-    constructor(parent) {
-        super(parent)
+    #setUserData;
+    #escapeModal;
 
-        this.registerEvent(()=>document.getElementById('register-form'), 'submit', this.#formSubmit);
+    constructor(parent, setUserData, escapeModal) {
+        super(parent);
+
+        this.#setUserData = setUserData;
+        this.#escapeModal = escapeModal;
+
+        this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
     }
 
     /**
      * form submit event handler
-     * @param {Event} event 
+     * @param {Event} event
      */
     #formSubmit = (event) => {
         event.preventDefault();
 
-        this.validate(event.target);
-    }
+        const formData = new FormData(event.target);
+        console.log(formData.get("password"));
+
+        if (this.validate(event.target)) {
+            window.ajax
+                .post({
+                    url: "/register",
+                    credentials: true,
+                    body: {
+                        email: formData.get("email"),
+                        pass: formData.get("password"),
+                        username: formData.get("nickname"),
+                    },
+                })
+                .then(({ json, response }) => {
+                    if (response.ok) {
+                        const csrf = response.headers.get("x-csrf-token");
+                        if (response.headers.get("x-csrf-token")) {
+                            window.ajax.addHeaders({ "x-csrf-token": csrf });
+                        }
+                        this.#setUserData(json.body.user, false);
+                        this.#escapeModal();
+                    }
+                })
+                .catch((err) => {
+                    console.log("catch:", err);
+                });
+        }
+    };
 
     render() {
         return RegistrationTemplate();
