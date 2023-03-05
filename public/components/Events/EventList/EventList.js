@@ -24,11 +24,25 @@ export class EventList extends Component {
             .get({ url: "/events" })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    this.#events = json.body.events;
+                    json.body.events.map((event) => {
+                        this.#events.push(
+                            new EventCard(this, {
+                                name: event.name,
+                                img: event.img,
+                                desc: event.desc,
+                                dates: [
+                                    event.dates.dateStart + " " + event.dates.timeStart,
+                                    event.dates.dateEnd + " " + event.dates.timeEnd,
+                                ],
+                                places: event.places,
+                            })
+                        );
+                    });
+                    this.rerender();
                 }
             })
             .catch((err) => {
-                console.log(err)
+                console.log(err);
                 this.#events = [];
                 for (let i = 0; i < 20; i++) {
                     this.#events.push(
