@@ -1,0 +1,39 @@
+@import "common.css";
+@import "/components/Header/styles.css";
+@import "/components/ModalWindow/styles.css";
+@import "/components/Auth/styles.css";
+@import "/components/Events/EventCard/styles.css";
+@import "/components/Events/EventList/styles.css";
+@import "/components/Calendar/styles.css";
+@import "/components/Tags/styles.css";
+
+
+@font-face {
+    font-family: "Roboto";
+    src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url('fonts/Roboto/Roboto-Thin.ttf') format('truetype');
+
+    font-weight: 300;
+    font-style: normal;
+}
+
+:root {
+    --main-selected-color: #26A69A;
+    --link-color: #008666;
+    --input-el-color: #42C3CA;
+    --disabled-input-el-color: #9ed8db;
+}
+
+body {
+    font-family: 'Roboto';
+    font-weight: normal;
+
+    cursor: default;
+}

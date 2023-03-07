@@ -1,0 +1,40 @@
+<div class="header">
+    <div class="header__logo" id="svg-container-{{id}}">
+        <img src="/assets/logo-full.svg" alt="logo">
+    </div>
+
+    <div class="header__top__line">
+        <div class="header__head">
+            Event Radar
+        </div>
+
+        <div class="header__city__selector">
+            <select>
+                {{#each cities}}
+                    <option>{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+
+        <div>
+            <input type="text" placeholder="Поиск" class="search">
+        </div>
+
+        <div class="profile-link">
+            {{{profileLink}}}
+        </div>
+    </div>
+
+    <div class="header__bottom__line">
+        {{#each categories }}
+            <a id="category-{{@index}}" class="header__category {{#ifEq @index ../selectedCategoryId}}category-selected{{/ifEq}}">
+                {{this}}
+            </a>
+
+            {{#unless @last}}
+                <div class="header__category__delimiter"></div>
+            {{/unless}}
+        {{/each}}
+    </div>
+
+</div>
