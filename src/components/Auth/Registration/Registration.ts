@@ -1,30 +1,30 @@
 /** @module Components */
 
-import { Component } from "/components/Component.js";
-import FormValidation from "/components/Auth/FormValidation.js";
-import LoginTemplate from "/compiled/Auth/Login/Login.handlebars.js";
+import { Component } from "components/Component";
+import FormValidation from "components/Auth/FormValidation";
+import RegistrationTemplate from "compiled/Auth/Registration/Registration.handlebars";
 
 /**
- * Login component
+ * Registration component
  * @class
  * @extends Component
  */
-export class Login extends FormValidation(Component) {
+export class Registration extends FormValidation(Component) {
     #setUserData;
     #escapeModal;
 
-    constructor(parent, setUserData, escapeModal, redirectToRegister) {
+    constructor(parent, setUserData, escapeModal, redirectToLogin) {
         super(parent);
 
         this.#setUserData = setUserData;
         this.#escapeModal = escapeModal;
 
-        this.registerEvent(() => document.getElementById("login-form"), "submit", this.#formSubmit);
-        this.registerEvent(() => document.getElementById("redirect-register-link"), "click", redirectToRegister);
+        this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
+        this.registerEvent(() => document.getElementById("redirect-login-link"), "click", redirectToLogin);
     }
 
     /**
-     * Form submit event handler
+     * form submit event handler
      * @param {Event} event
      */
     #formSubmit = (event) => {
@@ -36,9 +36,13 @@ export class Login extends FormValidation(Component) {
         if (this.validate(event.target)) {
             window.ajax
                 .post({
-                    url: "/login",
+                    url: "/register",
                     credentials: true,
-                    body: { email: formData.get("email"), pass: formData.get("password") },
+                    body: {
+                        email: formData.get("email"),
+                        pass: formData.get("password"),
+                        username: formData.get("nickname"),
+                    },
                 })
                 .then(({ json, response }) => {
                     if (response.ok) {
@@ -57,6 +61,6 @@ export class Login extends FormValidation(Component) {
     };
 
     render() {
-        return LoginTemplate();
+        return RegistrationTemplate();
     }
 }

@@ -1,8 +1,8 @@
 /** @module Components */
 
-import { Component } from "/components/Component.js";
-import EventCardTemplate from "/compiled/Events/EventCard/EventCard.handlebars.js";
-import EventCardMarkerTemplate from "/compiled/Events/EventCard/EventCardMarker.handlebars.js";
+import { Component } from "components/Component";
+import EventCardTemplate from "compiled/Events/EventCard/EventCard.handlebars";
+import EventCardMarkerTemplate from "compiled/Events/EventCard/EventCardMarker.handlebars";
 
 /**
  * event card component

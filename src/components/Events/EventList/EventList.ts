@@ -1,9 +1,9 @@
 /** @module Components */
 
-import { Component } from "/components/Component.js";
-import { EventCard } from "/components/Events/EventCard/EventCard.js";
-import EventListTemplate from "/compiled/Events/EventList/EventList.handlebars.js";
-import config from "/config.js";
+import { Component } from "components/Component";
+import { EventCard } from "components/Events/EventCard/EventCard";
+import EventListTemplate from "compiled/Events/EventList/EventList.handlebars";
+import config from "config";
 
 /**
  * Event list component

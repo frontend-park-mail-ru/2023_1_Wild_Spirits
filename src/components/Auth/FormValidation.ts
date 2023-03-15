@@ -8,10 +8,10 @@ export default (superclass) =>
     class extends superclass {
         /**
          * method that validates form
-        * @class FormValidation
-        * @param {HTMLElement} form - validated form
-        * @returns {bool} - is form valid
-        */
+         * @class FormValidation
+         * @param {HTMLElement} form - validated form
+         * @returns {bool} - is form valid
+         */
         validate(form) {
             const validateField = (field, value) => {
                 if (field === "email") {
@@ -48,4 +48,4 @@ export default (superclass) =>
 
             return isValid;
         }
-    }
+    };

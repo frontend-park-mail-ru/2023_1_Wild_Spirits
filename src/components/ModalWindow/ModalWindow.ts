@@ -1,5 +1,5 @@
-import { Component } from "/components/Component.js";
-import ModalWindowTemplate from "/compiled/ModalWindow/ModalWindow.handlebars.js";
+import { Component } from "components/Component";
+import ModalWindowTemplate from "compiled/ModalWindow/ModalWindow.handlebars";
 
 /**
  * Modal window component

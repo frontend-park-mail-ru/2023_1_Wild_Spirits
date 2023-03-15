@@ -1,10 +1,10 @@
 /** @module Components */
 
-import { Component } from "/components/Component.js";
-import HeaderTemplate from "/compiled/Header/Header.handlebars.js";
-import UnauthorizedLinkTemplate from "/compiled/Auth/ProfileLink/UnauthorizedLink.handlebars.js";
-import AuthorizedLinkTemplate from "/compiled/Auth/ProfileLink/AuthorizedLink.handlebars.js";
-import config from "/config.js";
+import { Component } from "components/Component";
+import HeaderTemplate from "compiled/Header/Header.handlebars";
+import UnauthorizedLinkTemplate from "compiled/Auth/ProfileLink/UnauthorizedLink.handlebars";
+import AuthorizedLinkTemplate from "compiled/Auth/ProfileLink/AuthorizedLink.handlebars";
+import config from "config";
 
 /**
  * @class

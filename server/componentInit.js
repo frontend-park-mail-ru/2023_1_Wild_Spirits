@@ -1,6 +1,6 @@
-import { compileComponents } from './utils.js';
+import { compileComponents } from "./utils.js";
 
-const templatePath = "./public/templates";
-const componentsPath = "./public/compiled";
+const templatePath = "./src/templates";
+const componentsPath = "./src/compiled";
 
 compileComponents(templatePath, componentsPath);

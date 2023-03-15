@@ -1,14 +1,14 @@
 /** @module Components */
 
-import { Component } from "/components/Component.js";
-import { Header } from "/components/Header/Header.js";
-import AppTemplate from "/compiled/App.handlebars.js";
-import { EventList } from "/components/Events/EventList/EventList.js";
-import { ModalWindow } from "/components/ModalWindow/ModalWindow.js";
-import { Login } from "/components/Auth/Login/Login.js";
-import { Registration } from "/components/Auth/Registration/Registration.js";
-import { Calendar } from "/components/Calendar/Calendar.js"
-import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState.js";
+import { Component } from "components/Component";
+import { Header } from "components/Header/Header";
+import AppTemplate from "compiled/App.handlebars";
+import { EventList } from "components/Events/EventList/EventList";
+import { ModalWindow } from "components/ModalWindow/ModalWindow";
+import { Login } from "components/Auth/Login/Login";
+import { Registration } from "components/Auth/Registration/Registration";
+import { Calendar } from "components/Calendar/Calendar";
+import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState";
 
 /**
  * @classdesc Main app component
@@ -16,7 +16,7 @@ import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState.js";
  * @extends Component
  */
 export class App extends Component {
-    #headerComponent;
+    #headerComponent: Header;
     #contentComponent;
     #modalWindowComponent;
 
@@ -59,8 +59,12 @@ export class App extends Component {
         this.#contentComponent = this.createComponent(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);
 
-        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal, ()=>this.changeState(REGISTER));
-        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal, ()=>this.changeState(LOGIN));
+        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal, () =>
+            this.changeState(REGISTER)
+        );
+        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal, () =>
+            this.changeState(LOGIN)
+        );
 
         this.#calendarComponent = this.createComponent(Calendar);
 
@@ -107,7 +111,7 @@ export class App extends Component {
             content: this.#contentComponent.render(),
             footer: "Footer",
             modalWindow: modalWindow,
-            calendar: this.#calendarComponent.render()
+            calendar: this.#calendarComponent.render(),
         });
         return template;
     }

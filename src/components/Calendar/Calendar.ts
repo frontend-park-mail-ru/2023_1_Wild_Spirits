@@ -1,7 +1,7 @@
 /** @module Components */
 
-import { Component } from "/components/Component.js";
-import CalendarTemplate from "/compiled/Calendar/Calendar.handlebars.js";
+import { Component } from "components/Component";
+import CalendarTemplate from "compiled/Calendar/Calendar.handlebars";
 
 /**
  * @class
@@ -11,15 +11,28 @@ import CalendarTemplate from "/compiled/Calendar/Calendar.handlebars.js";
 export class Calendar extends Component {
     #month;
 
-    static months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    static months = [
+        "Январь",
+        "Февраль",
+        "Март",
+        "Апрель",
+        "Май",
+        "Июнь",
+        "Июль",
+        "Август",
+        "Сентябрь",
+        "Октябрь",
+        "Ноябрь",
+        "Декабрь",
+    ];
     constructor(parent) {
-        super(parent)
+        super(parent);
 
         this.#month = new Date().getMonth();
 
-        this.registerEvent(()=>document.getElementsByClassName("calendar-date"), "click", this.#toggleDate);
-        this.registerEvent(()=>document.getElementById("prevMonthBtn"), "click", this.#decrementMonth);
-        this.registerEvent(()=>document.getElementById("nextMonthBtn"), "click", this.#incrementMonth);
+        this.registerEvent(() => document.getElementsByClassName("calendar-date"), "click", this.#toggleDate);
+        this.registerEvent(() => document.getElementById("prevMonthBtn"), "click", this.#decrementMonth);
+        this.registerEvent(() => document.getElementById("nextMonthBtn"), "click", this.#incrementMonth);
     }
 
     #toggleDate(event) {
@@ -33,13 +46,13 @@ export class Calendar extends Component {
     }
 
     #incrementMonth = () => {
-        this.#month++
+        this.#month++;
         this.rerender();
     };
     #decrementMonth = () => {
         this.#month--;
         this.rerender();
-    }
+    };
 
     render() {
         const currentDate = new Date();
@@ -52,25 +65,25 @@ export class Calendar extends Component {
         const firstDate = 2 - firstMonthDay;
         let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
 
-        let days = []
+        let days = [];
         for (let d = firstDate; d <= lastDate; d++) {
             const date = new Date(currentYear, currentMonth, d);
             days.push({
                 date: date.getDate(),
-                active: d > 0 && d <= lastMonthDate.getDate()
+                active: d > 0 && d <= lastMonthDate.getDate(),
             });
         }
 
         const rows = Math.ceil(days.length / 7);
 
-        let weeks = []
+        let weeks = [];
         for (let i = 0; i < rows; i++) {
             weeks.push(days.slice(i * 7, (i + 1) * 7));
         }
 
         return CalendarTemplate({
             month: Calendar.months[this.#month],
-            weeks: weeks
+            weeks: weeks,
         });
     }
 }

@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "allowJs": true,
+        "noEmit": true,
+        "strict": true,
+        "isolatedModules": true,
+        "baseUrl": "./src",
+        "allowImportingTsExtensions": true
+    },
+    "include": ["./src"]
+}
