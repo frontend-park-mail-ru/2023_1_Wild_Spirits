@@ -3,6 +3,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import CopyWebpackPlugin from "copy-webpack-plugin";
 
 const filename = fileURLToPath(import.meta.url);
 
@@ -25,14 +26,24 @@ const config = {
                 loader: "babel-loader",
             },
             {
+                test: /\.css$/,
+                exclude: /node_modules/,
+                use: ["style-loader", "css-loader"],
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)$/,
+                loader: "file-loader",
+                options: {
+                    // publicPath: "assets",
+                    outputPath: "assets",
+                    name: "[name].[ext]",
+                },
+            },
+            {
                 test: /\.handlebars$/,
                 loader: "handlebars-loader",
                 options: {
                     helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
-                    //precompileOptions: {
-                    //    knownHelpersOnly: false,
-                    //},
-                    //runtime: path.resolve(__dirname, "./src/modules/handlebars.cjs"),
                 },
             },
         ],
@@ -45,9 +56,10 @@ const config = {
             scriptLoading: "blocking",
             inject: "body",
         }),
+        new CopyWebpackPlugin({ patterns: [{ from: path.resolve(__dirname, "./src/assets"), to: "assets" }] }),
     ],
     resolve: {
-        extensions: [".js", ".ts"],
+        extensions: [".js", ".ts", "css", "img"],
         modules: [__dirname + "/src", "node_modules"],
         alias: {
             handlebars: "handlebars/dist/handlebars.js",
@@ -56,6 +68,9 @@ const config = {
     },
     mode: "development",
     devServer: {
+        devMiddleware: {
+            writeToDisk: true,
+        },
         static: {
             directory: path.resolve(__dirname, "./dist"),
         },

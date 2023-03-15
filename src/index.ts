@@ -1,4 +1,4 @@
-import registerHelpers from "handlebarsHelpers";
+import "./index.css";
 import { App } from "components/App";
 import { Ajax } from "modules/ajax";
 import config from "config";

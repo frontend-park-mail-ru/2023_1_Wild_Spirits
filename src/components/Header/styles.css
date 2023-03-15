@@ -82,13 +82,10 @@ select {
     padding-right: 50px;
     font-size: 24px;
 
-
-    background: right url('/assets/down-arrow-icon.svg') no-repeat;
-
     outline: none;
 }
 
-select>option{
+select>option {
     background-color: white;
 }
 
@@ -100,5 +97,4 @@ select>option{
     background-color: transparent;
     box-shadow: none;
     width: 250px;
-    background: right url('/assets/search-icon.svg') no-repeat;
 }
