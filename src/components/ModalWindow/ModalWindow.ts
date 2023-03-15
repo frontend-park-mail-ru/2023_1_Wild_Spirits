@@ -1,5 +1,5 @@
 import { Component } from "components/Component";
-import ModalWindowTemplate from "compiled/ModalWindow/ModalWindow.handlebars";
+import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 
 /**
  * Modal window component

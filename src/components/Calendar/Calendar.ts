@@ -1,7 +1,7 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import CalendarTemplate from "compiled/Calendar/Calendar.handlebars";
+import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
 
 /**
  * @class

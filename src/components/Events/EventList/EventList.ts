@@ -2,7 +2,7 @@
 
 import { Component } from "components/Component";
 import { EventCard } from "components/Events/EventCard/EventCard";
-import EventListTemplate from "compiled/Events/EventList/EventList.handlebars";
+import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 import config from "config";
 
 /**

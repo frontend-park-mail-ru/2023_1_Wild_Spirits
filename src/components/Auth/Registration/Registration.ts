@@ -2,7 +2,7 @@
 
 import { Component } from "components/Component";
 import FormValidation from "components/Auth/FormValidation";
-import RegistrationTemplate from "compiled/Auth/Registration/Registration.handlebars";
+import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
 /**
  * Registration component

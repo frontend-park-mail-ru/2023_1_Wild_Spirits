@@ -1,9 +1,9 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import HeaderTemplate from "compiled/Header/Header.handlebars";
-import UnauthorizedLinkTemplate from "compiled/Auth/ProfileLink/UnauthorizedLink.handlebars";
-import AuthorizedLinkTemplate from "compiled/Auth/ProfileLink/AuthorizedLink.handlebars";
+import HeaderTemplate from "templates/Header/Header.handlebars";
+import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
+import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 import config from "config";
 
 /**

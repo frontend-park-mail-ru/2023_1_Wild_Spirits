@@ -2,7 +2,7 @@
 
 import { Component } from "components/Component";
 import { Header } from "components/Header/Header";
-import AppTemplate from "compiled/App.handlebars";
+import AppTemplate from "templates/App.handlebars";
 import { EventList } from "components/Events/EventList/EventList";
 import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { Login } from "components/Auth/Login/Login";

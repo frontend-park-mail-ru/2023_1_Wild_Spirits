@@ -11,7 +11,6 @@ console.log(__dirname, path.resolve(__dirname, "dist"), path.join(__dirname, "di
 
 const config = {
     entry: {
-        handlebars: "./src/handlebars.runtime.min-v4.7.7.js",
         app: "./src/index.ts",
     },
     output: {
@@ -24,6 +23,17 @@ const config = {
                 test: /\.(ts|js)$/,
                 exclude: /node_modules/,
                 loader: "babel-loader",
+            },
+            {
+                test: /\.handlebars$/,
+                loader: "handlebars-loader",
+                options: {
+                    helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
+                    //precompileOptions: {
+                    //    knownHelpersOnly: false,
+                    //},
+                    //runtime: path.resolve(__dirname, "./src/modules/handlebars.cjs"),
+                },
             },
         ],
     },
@@ -39,6 +49,10 @@ const config = {
     resolve: {
         extensions: [".js", ".ts"],
         modules: [__dirname + "/src", "node_modules"],
+        alias: {
+            handlebars: "handlebars/dist/handlebars.js",
+            //"handlebars.runtime": "handlebars/dist/handlebars.runtime.js",
+        },
     },
     mode: "development",
     devServer: {

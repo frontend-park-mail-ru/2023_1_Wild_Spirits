@@ -1,8 +1,8 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import EventCardTemplate from "compiled/Events/EventCard/EventCard.handlebars";
-import EventCardMarkerTemplate from "compiled/Events/EventCard/EventCardMarker.handlebars";
+import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
+import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 
 /**
  * event card component

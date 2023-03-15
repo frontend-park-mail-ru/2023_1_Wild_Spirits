@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production",
-    "predev": "npm run build:templates",
     "build:templates": "node server/componentInit.js"
   },
   "devDependencies": {
@@ -18,6 +17,7 @@
     "@babel/preset-typescript": "^7.21.0",
     "babel-loader": "^9.1.2",
     "eslint": "^8.35.0",
+    "handlebars-loader": "^1.7.3",
     "html-webpack-plugin": "^5.5.0",
     "path": "^0.12.7",
     "typescript": "^4.9.5",
