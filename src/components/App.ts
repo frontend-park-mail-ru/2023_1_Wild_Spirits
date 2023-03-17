@@ -50,8 +50,8 @@ export class App extends Component {
                     this.setUserData({ userData: json.body.user });
                 }
             })
-            .catch((err) => {
-                console.log("catch:", err);
+            .catch((error) => {
+                console.log("catch:", error);
             });
 
         this.#headerComponent = this.createComponent(
