@@ -1,6 +1,8 @@
 /** @module Components */
 
 import { Component } from "components/Component";
+
+// @ts-ignore
 import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
 
 /**
@@ -25,7 +27,7 @@ export class Calendar extends Component {
         "Ноябрь",
         "Декабрь",
     ];
-    constructor(parent) {
+    constructor(parent: Component) {
         super(parent);
 
         this.#month = new Date().getMonth();
@@ -35,8 +37,8 @@ export class Calendar extends Component {
         this.registerEvent(() => document.getElementById("nextMonthBtn"), "click", this.#incrementMonth);
     }
 
-    #toggleDate(event) {
-        const date = event.target;
+    #toggleDate(event: PointerEvent) {
+        const date = event.target as Element;
 
         if (date.classList.contains("active")) {
             date.classList.remove("active");

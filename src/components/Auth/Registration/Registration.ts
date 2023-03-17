@@ -1,7 +1,12 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import FormValidation from "components/Auth/FormValidation";
+import { validateForm } from "components/Auth/FormValidation";
+import { ajax } from "modules/ajax";
+import { ResponseUserLight } from "responses/ResponsesUser";
+import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
+
+// @ts-ignore
 import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
 /**
@@ -9,11 +14,16 @@ import RegistrationTemplate from "templates/Auth/Registration/Registration.handl
  * @class
  * @extends Component
  */
-export class Registration extends FormValidation(Component) {
+export class Registration extends Component {
     #setUserData;
     #escapeModal;
 
-    constructor(parent, setUserData, escapeModal, redirectToLogin) {
+    constructor(
+        parent: Component,
+        setUserData: SetUserDataFunc,
+        escapeModal: EscapeModalFunc,
+        redirectToLogin: RedirectTo
+    ) {
         super(parent);
 
         this.#setUserData = setUserData;
@@ -27,35 +37,34 @@ export class Registration extends FormValidation(Component) {
      * form submit event handler
      * @param {Event} event
      */
-    #formSubmit = (event) => {
+    #formSubmit = (event: SubmitEvent) => {
         event.preventDefault();
 
-        const formData = new FormData(event.target);
+        const formData = new FormData(event.target as HTMLFormElement);
         console.log(formData.get("password"));
 
-        if (this.validate(event.target)) {
-            window.ajax
-                .post({
-                    url: "/register",
-                    credentials: true,
-                    body: {
-                        email: formData.get("email"),
-                        pass: formData.get("password"),
-                        username: formData.get("nickname"),
-                    },
-                })
+        if (validateForm(event.target as HTMLFormElement)) {
+            ajax.post<ResponseUserLight>({
+                url: "/register",
+                credentials: true,
+                body: {
+                    email: formData.get("email"),
+                    pass: formData.get("password"),
+                    username: formData.get("nickname"),
+                },
+            })
                 .then(({ json, response }) => {
                     if (response.ok) {
                         const csrf = response.headers.get("x-csrf-token");
-                        if (response.headers.get("x-csrf-token")) {
-                            window.ajax.addHeaders({ "x-csrf-token": csrf });
+                        if (csrf) {
+                            ajax.addHeaders({ "x-csrf-token": csrf });
                         }
-                        this.#setUserData(json.body.user, false);
+                        this.#setUserData({ userData: json.body.user, needRerender: false });
                         this.#escapeModal();
                     }
                 })
-                .catch((err) => {
-                    console.log("catch:", err);
+                .catch((error) => {
+                    console.log("catch:", error);
                 });
         }
     };

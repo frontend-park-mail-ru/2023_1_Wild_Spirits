@@ -1,15 +1,39 @@
 /** @module ajax */
 
+type HeadersType = Record<string, string>;
+type UrlPropsType = Record<string, string>;
+
+interface AjaxProps {
+    url: string;
+    urlProps?: UrlPropsType;
+    body?: any;
+    headers?: HeadersType;
+    credentials?: boolean;
+}
+
+interface AjaxResult<T> {
+    json: T;
+    response: Response;
+}
+
+export namespace AjaxMethod {
+    export const GET = "GET";
+    export const POST = "POST";
+    export const DELETE = "DELETE";
+    export const PUT = "PUT";
+    export const PATCH = "PATCH";
+    export type MethodType = typeof GET | typeof POST | typeof DELETE | typeof PUT | typeof PATCH;
+}
 /** class representing an asynchronous request. */
-export class Ajax {
-    #host = "";
-    #headers = {};
+class Ajax {
+    #host: string = "";
+    #headers: HeadersType = {};
 
     /**
      * host address
      * @param {string} value - host address
      */
-    set host(value) {
+    set host(value: string) {
         this.#host = value;
     }
 
@@ -17,7 +41,7 @@ export class Ajax {
      * Add headers to request
      * @param {Object} values - headers to add
      */
-    addHeaders(values) {
+    addHeaders(values: HeadersType) {
         this.#headers = { ...this.#headers, ...values };
     }
 
@@ -25,7 +49,7 @@ export class Ajax {
      * Removes header by its name
      * @param {string} key - name of the header to be removed
      */
-    removeHeaders(key) {
+    removeHeaders(key: string) {
         delete this.#headers[key];
     }
 
@@ -34,14 +58,14 @@ export class Ajax {
      * @param {Object} urlProps - query parameters
      * @returns {string} - query parameters string
      */
-    urlPropsToString(urlProps) {
-        if (!Object.keys(urlProps).length) {
+    urlPropsToString(urlProps: UrlPropsType | undefined): string {
+        if (!urlProps) {
             return "";
         }
         return (
             "?" +
             Object.entries(urlProps)
-                .map(({ key, value }) => `${key}=${value}`)
+                .map(([key, value]) => `${key}=${value}`)
                 .join("&")
         );
     }
@@ -56,8 +80,8 @@ export class Ajax {
      * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    get({ url, urlProps = {}, headers = {}, credentials = false }) {
-        return this.#ajax({ method: "GET", url, urlProps, body: {}, headers, credentials });
+    get<T>(props: AjaxProps): Promise<AjaxResult<T>> {
+        return this.#ajax<T>(AjaxMethod.GET, props);
     }
 
     /**
@@ -70,16 +94,19 @@ export class Ajax {
      * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    post({ url, urlProps = {}, body = {}, headers = {}, credentials = false }) {
-        return this.#ajax({ method: "POST", url, urlProps, body, headers, credentials });
+    post<T>(props: AjaxProps): Promise<AjaxResult<T>> {
+        return this.#ajax<T>(AjaxMethod.POST, props);
     }
 
-    async #ajax({ method, url, urlProps, body, headers, credentials = false }) {
+    async #ajax<T>(
+        method: AjaxMethod.MethodType,
+        { url, urlProps, body = {}, headers = {}, credentials = false }: AjaxProps
+    ): Promise<AjaxResult<T>> {
         const response = await fetch(this.#host + url + this.urlPropsToString(urlProps), {
             method,
             mode: "cors",
             credentials: credentials ? "include" : undefined,
-            body: Object.keys(body).length ? JSON.stringify(body) : undefined,
+            body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
             headers: { ...this.#headers, ...headers },
         });
 
@@ -88,3 +115,5 @@ export class Ajax {
         return { json, response };
     }
 }
+
+export let ajax = new Ajax();

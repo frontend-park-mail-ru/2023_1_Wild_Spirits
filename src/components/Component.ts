@@ -1,14 +1,21 @@
 /** @module Components */
 
+export type ComponentParentType = Component | HTMLElement;
+
+type EventMapElement = () => HTMLElement | HTMLCollection | null;
+type EventMapType = keyof HTMLElementEventMap;
+type EventMapEvent = (event: Event) => void;
+type GenericEventMapEvent<T extends Event> = (event: T) => void;
+
 /**
  * @class
  * @classdesc base Component class
  */
 export class Component {
-    static #staticId = 0;
-    #id;
-    #parent;
-    #children = [];
+    static #staticId: number = 0;
+    #id: number;
+    #parent: ComponentParentType;
+    #children: Component[] = [];
 
     /*
     // type EventMap = {
@@ -17,13 +24,13 @@ export class Component {
     //   callback: (event) => void;
     // }
     */
-    #eventMaps = [];
+    #eventMaps: { element: EventMapElement; eventName: EventMapType; callback: EventMapEvent }[] = [];
 
     /**
      * @constructor
      * @param {Component} parent
      */
-    constructor(parent) {
+    constructor(parent: ComponentParentType) {
         this.#parent = parent;
         this.#id = Component.#staticId++;
     }
@@ -58,8 +65,8 @@ export class Component {
      * @param  {...any} args - arguments passed to new component
      * @returns {Component} - a newly created component
      */
-    createComponent(type, ...args) {
-        const newComponent = new type(this, ...args);
+    createComponent<T extends Component>(c: { new (parent: Component, ...args: any): T }, ...args: any): T {
+        const newComponent = new c(this, ...args);
         this.#children.push(newComponent);
         return newComponent;
     }
@@ -73,15 +80,19 @@ export class Component {
 
     /**
      * register an event handler
-     * @param {HTMLELEmentGetter} el - function that returns html element
-     * @param {string} event - name of event
+     * @param {HTMLELementGetter} element - function that returns html element
+     * @param {string} eventName - name of event
      * @param {function} callback - event handler
      */
-    registerEvent(el, event, callback) {
+    registerEvent<T extends Event>(
+        element: EventMapElement,
+        eventName: EventMapType,
+        callback: GenericEventMapEvent<T>
+    ) {
         this.#eventMaps.push({
-            el: el,
-            event: event,
-            callback: callback,
+            element,
+            eventName,
+            callback: callback as EventMapEvent,
         });
     }
 
@@ -93,8 +104,8 @@ export class Component {
             try {
                 child.removeChildEvents();
                 child.removeEvents();
-            } catch (e) {
-                console.log(e);
+            } catch (error) {
+                console.log(error);
             }
         });
     }
@@ -108,8 +119,8 @@ export class Component {
                 child.addEvents();
                 child.postRender();
                 child.addChildEvents();
-            } catch (e) {
-                console.log(e);
+            } catch (error) {
+                console.log(error);
             }
         });
     }
@@ -124,13 +135,13 @@ export class Component {
      */
     removeEvents() {
         for (const eventMap of this.#eventMaps) {
-            const element = eventMap.el();
+            const element = eventMap.element();
 
             if (element instanceof HTMLElement) {
-                element.removeEventListener(eventMap.event, eventMap.callback);
+                element.removeEventListener(eventMap.eventName, eventMap.callback);
             } else if (element instanceof HTMLCollection) {
                 for (const el of element) {
-                    el.removeEventListener(eventMap.event, eventMap.callback);
+                    el.removeEventListener(eventMap.eventName, eventMap.callback);
                 }
             }
         }
@@ -141,14 +152,13 @@ export class Component {
      */
     addEvents() {
         for (const eventMap of this.#eventMaps) {
-            const element = eventMap.el();
+            const element = eventMap.element();
 
             if (element instanceof HTMLElement) {
-                console.log(element)
-                element.addEventListener(eventMap.event, eventMap.callback);
+                element.addEventListener(eventMap.eventName, eventMap.callback);
             } else if (element instanceof HTMLCollection) {
                 for (let i = 0; i < element.length; i++) {
-                    element[i].addEventListener(eventMap.event, eventMap.callback);
+                    element[i].addEventListener(eventMap.eventName, eventMap.callback);
                 }
             }
         }
@@ -158,14 +168,16 @@ export class Component {
      * rerenders components
      */
     rerender() {
-        this.#parent.rerender();
+        if (this.#parent instanceof Component) {
+            this.#parent.rerender();
+        }
     }
 
     /**
      * renders component
      * @returns {string} - html text
      */
-    render() {
+    render(): string {
         return "";
     }
 }

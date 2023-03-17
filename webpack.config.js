@@ -4,11 +4,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
+import webpack from "webpack";
 
 const filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(filename);
-console.log(__dirname, path.resolve(__dirname, "dist"), path.join(__dirname, "dist"));
 
 const config = {
     entry: {
@@ -34,7 +34,6 @@ const config = {
                 test: /\.(png|jpe?g|gif|svg)$/,
                 loader: "file-loader",
                 options: {
-                    // publicPath: "assets",
                     outputPath: "assets",
                     name: "[name].[ext]",
                 },
@@ -57,6 +56,9 @@ const config = {
             inject: "body",
         }),
         new CopyWebpackPlugin({ patterns: [{ from: path.resolve(__dirname, "./src/assets"), to: "assets" }] }),
+        new webpack.SourceMapDevToolPlugin({
+            filename: "[file].map",
+        }),
     ],
     resolve: {
         extensions: [".js", ".ts", "css", "img"],
@@ -67,10 +69,11 @@ const config = {
         },
     },
     mode: "development",
+    devtool: "eval-cheap-source-map",
     devServer: {
-        devMiddleware: {
-            writeToDisk: true,
-        },
+        // devMiddleware: {
+        //     writeToDisk: true,
+        // },
         static: {
             directory: path.resolve(__dirname, "./dist"),
         },

@@ -65,8 +65,8 @@ function watchComponents(tempDirPath, compDirPath) {
         fs.watch(filePath, (_, fileName) => {
             try {
                 compileTemplate(path.join(from, fileName), path.join(to, fileName + ".js"));
-            } catch (e) {
-                log(e);
+            } catch (error) {
+                log(error);
             }
         });
     });

@@ -2,8 +2,13 @@
 
 import { Component } from "components/Component";
 import { EventCard } from "components/Events/EventCard/EventCard";
-import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 import config from "config";
+import { TEventLight } from "models/Events";
+import { ajax } from "modules/ajax";
+import { ResponseEventLight } from "responses/ResponseEvent";
+
+// @ts-ignore
+import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 
 /**
  * Event list component
@@ -11,60 +16,59 @@ import config from "config";
  * @extends Component
  */
 export class EventList extends Component {
-    #events = undefined;
-    constructor(parent) {
+    #events: EventCard[] | undefined = undefined;
+    constructor(parent: Component) {
         super(parent);
         this.loadEvents();
-    }
-
-    parseTimes(start, end) {
-        if (start && end) {
-            return start + " - " + end;
-        }
-        return start ? start : end;
     }
 
     /**
      * fill itself with events from server
      */
     loadEvents() {
-        window.ajax
-            .get({ url: "/events" })
+        ajax.get<ResponseEventLight>({ url: "/events" })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    this.#events = [];
-                    json.body.events.map((event) => {
+                    let events: EventCard[] = [];
+                    json.body.events.map((event: TEventLight) => {
                         const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
-                        let dates = [];
+                        let dates: string[] = [];
                         if (dateStart) {
                             dates.push("Начало: " + dateStart);
                         }
                         if (dateEnd) {
                             dates.push("Конец: \u00A0\u00A0\u00A0" + dateEnd);
                         }
-                        if (timeStart || timeEnd) {
-                            dates.push(this.parseTimes(timeStart, timeEnd));
+                        if (timeStart && timeEnd) {
+                            dates.push(timeStart + " - " + timeEnd);
                         }
-                        this.#events.push(
+                        if (timeStart || timeEnd) {
+                            dates.push((timeStart ? timeStart : timeEnd) as string);
+                        }
+                        // const places: string[] = event.places.map((place) => place.name);
+                        const places = event.places;
+                        events.push(
                             new EventCard(this, {
                                 id: event.id,
                                 name: event.name,
                                 img: config.HOST + event.img,
                                 desc: event.desc,
                                 dates,
-                                places: event.places,
+                                places,
                             })
                         );
                     });
+                    this.#events = events;
                     this.rerender();
                 }
             })
-            .catch((err) => {
-                console.log(err);
+            .catch((error) => {
+                console.log(error);
                 this.#events = [];
                 for (let i = 0; i < 20; i++) {
                     this.#events.push(
                         new EventCard(this, {
+                            id: i,
                             name: "Мне сказали, что названиеобычно длиннее одного слова",
                             img: "assets/event_test.png",
                             desc: "С таким названием длинное-предлинное описание уже не кажется таким уж длинным ",

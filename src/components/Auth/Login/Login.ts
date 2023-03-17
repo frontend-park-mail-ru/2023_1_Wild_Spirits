@@ -1,7 +1,12 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import FormValidation from "components/Auth/FormValidation";
+import { validateForm } from "components/Auth/FormValidation";
+import { ajax } from "modules/ajax";
+import { ResponseUserLight } from "responses/ResponsesUser";
+import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
+
+// @ts-ignore
 import LoginTemplate from "templates/Auth/Login/Login.handlebars";
 
 /**
@@ -9,11 +14,16 @@ import LoginTemplate from "templates/Auth/Login/Login.handlebars";
  * @class
  * @extends Component
  */
-export class Login extends FormValidation(Component) {
-    #setUserData;
-    #escapeModal;
+export class Login extends Component {
+    #setUserData: SetUserDataFunc;
+    #escapeModal: EscapeModalFunc;
 
-    constructor(parent, setUserData, escapeModal, redirectToRegister) {
+    constructor(
+        parent: Component,
+        setUserData: SetUserDataFunc,
+        escapeModal: EscapeModalFunc,
+        redirectToRegister: RedirectTo
+    ) {
         super(parent);
 
         this.#setUserData = setUserData;
@@ -27,32 +37,31 @@ export class Login extends FormValidation(Component) {
      * Form submit event handler
      * @param {Event} event
      */
-    #formSubmit = (event) => {
+    #formSubmit = (event: SubmitEvent) => {
         event.preventDefault();
+        const formData = new FormData(event.target as HTMLFormElement);
 
-        const formData = new FormData(event.target);
-        console.log(formData.get("password"));
-
-        if (this.validate(event.target)) {
-            window.ajax
-                .post({
+        if (event.target) {
+            if (validateForm(event.target as HTMLFormElement)) {
+                ajax.post<ResponseUserLight>({
                     url: "/login",
                     credentials: true,
                     body: { email: formData.get("email"), pass: formData.get("password") },
                 })
-                .then(({ json, response }) => {
-                    if (response.ok) {
-                        const csrf = response.headers.get("x-csrf-token");
-                        if (response.headers.get("x-csrf-token")) {
-                            window.ajax.addHeaders({ "x-csrf-token": csrf });
+                    .then(({ json, response }) => {
+                        if (response.ok) {
+                            const csrf = response.headers.get("x-csrf-token");
+                            if (csrf) {
+                                ajax.addHeaders({ "x-csrf-token": csrf });
+                            }
+                            this.#setUserData({ userData: json.body.user, needRerender: false });
+                            this.#escapeModal();
                         }
-                        this.#setUserData(json.body.user, false);
-                        this.#escapeModal();
-                    }
-                })
-                .catch((err) => {
-                    console.log("catch:", err);
-                });
+                    })
+                    .catch((error) => {
+                        console.log("catch:", error);
+                    });
+            }
         }
     };
 

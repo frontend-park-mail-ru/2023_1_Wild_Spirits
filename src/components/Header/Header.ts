@@ -1,10 +1,17 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import HeaderTemplate from "templates/Header/Header.handlebars";
-import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
-import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 import config from "config";
+import { ajax } from "modules/ajax";
+import { SetUserDataFunc } from "components/Auth/AuthModalProps";
+import { TUserAvailable } from "models/User";
+
+// @ts-ignore
+import HeaderTemplate from "templates/Header/Header.handlebars";
+// @ts-ignore
+import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
+// @ts-ignore
+import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 
 /**
  * @class
@@ -12,7 +19,7 @@ import config from "config";
  * Component for navbar
  */
 export class Header extends Component {
-    #selectedCategoryId;
+    #selectedCategoryId: number | undefined = undefined;
     #selectedCity;
 
     #onLogin;
@@ -23,7 +30,13 @@ export class Header extends Component {
 
     #getUserData;
 
-    constructor(parent, onLogin, onSignup, getUserData, setUserData) {
+    constructor(
+        parent: Component,
+        onLogin: () => void,
+        onSignup: () => void,
+        getUserData: () => TUserAvailable,
+        setUserData: SetUserDataFunc
+    ) {
         super(parent);
 
         this.#getUserData = getUserData;
@@ -44,20 +57,19 @@ export class Header extends Component {
     }
 
     #onLogout = () => {
-        window.ajax
-            .post({
-                url: "/logout",
-                credentials: true,
-            })
+        ajax.post({
+            url: "/logout",
+            credentials: true,
+        })
             .then(({ json, response }) => {
                 if (response.ok) {
                     console.log(response.status, json);
-                    window.ajax.removeHeaders("x-csrf-token");
-                    this.#setUserData(undefined);
+                    ajax.removeHeaders("x-csrf-token");
+                    this.#setUserData({ userData: undefined });
                 }
             })
-            .catch((err) => {
-                console.log("catch:", err);
+            .catch((error) => {
+                console.log("catch:", error);
             });
     };
 
@@ -65,18 +77,23 @@ export class Header extends Component {
      * handles category selection
      * @param {Event} event
      */
-    #categoryLinkClick = (event) => {
-        const id = event.target.id.split("-").at(-1);
-        this.#selectedCategoryId = id;
-        this.rerender();
+    #categoryLinkClick = (event: PointerEvent) => {
+        console.log("categoryLinkClick: ", typeof event, event);
+        const target = event.target as HTMLElement;
+        const id = target.id.split("-").at(-1);
+        if (id !== undefined) {
+            this.#selectedCategoryId = parseInt(id);
+            this.rerender();
+        }
     };
 
     /**
      * handles city selection
-     * @param {Event} e
+     * @param {Event} event
      */
-    #selectCity = (e) => {
-        this.#selectedCity = e.target.value;
+    #selectCity = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        this.#selectedCity = target.value;
     };
 
     postRender() {
@@ -86,18 +103,20 @@ export class Header extends Component {
 
     render() {
         const categories = ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"];
+        const userData = this.#getUserData();
 
         return HeaderTemplate({
             id: this.id,
             categories: categories,
             selectedCategoryId: this.#selectedCategoryId,
             cities: this.#cities,
-            profileLink: this.#getUserData()
-                ? AuthorizedLinkTemplate({
-                      name: this.#getUserData().name,
-                      img: config.HOST + this.#getUserData().img,
-                  })
-                : UnauthorizedLinkTemplate(),
+            profileLink:
+                userData !== undefined
+                    ? AuthorizedLinkTemplate({
+                          name: userData.name,
+                          img: config.HOST + userData.img,
+                      })
+                    : UnauthorizedLinkTemplate(),
         });
     }
 }

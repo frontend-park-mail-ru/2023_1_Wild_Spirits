@@ -1,14 +1,20 @@
 /** @module Components */
 
-import { Component } from "components/Component";
+import { Component, ComponentParentType } from "components/Component";
 import { Header } from "components/Header/Header";
-import AppTemplate from "templates/App.handlebars";
 import { EventList } from "components/Events/EventList/EventList";
 import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { Login } from "components/Auth/Login/Login";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Calendar } from "components/Calendar/Calendar";
-import { INDEX, LOGIN, REGISTER } from "./Auth/FormModalState";
+import { FormModalState } from "./Auth/FormModalState";
+import { ajax } from "modules/ajax";
+import { ResponseUserLight } from "responses/ResponsesUser";
+import { TUserAvailable } from "models/User";
+
+// @ts-ignore
+import AppTemplate from "templates/App.handlebars";
+import { SetUserDataProps } from "./Auth/AuthModalProps";
 
 /**
  * @classdesc Main app component
@@ -27,22 +33,21 @@ export class App extends Component {
 
     #state;
 
-    #userData = undefined;
+    #userData: TUserAvailable = undefined;
 
-    constructor(parent) {
+    constructor(parent: HTMLElement) {
         super(parent);
-        window.ajax
-            .get({
-                url: "/authorized",
-                credentials: true,
-            })
+        ajax.get<ResponseUserLight>({
+            url: "/authorized",
+            credentials: true,
+        })
             .then(({ json, response }) => {
                 if (response.ok) {
                     const csrf = response.headers.get("x-csrf-token");
-                    if (response.headers.get("x-csrf-token")) {
-                        window.ajax.addHeaders({ "x-csrf-token": csrf });
+                    if (csrf) {
+                        ajax.addHeaders({ "x-csrf-token": csrf });
                     }
-                    this.setUserData(json.body.user);
+                    this.setUserData({ userData: json.body.user });
                 }
             })
             .catch((err) => {
@@ -51,40 +56,40 @@ export class App extends Component {
 
         this.#headerComponent = this.createComponent(
             Header,
-            () => this.changeState(LOGIN),
-            () => this.changeState(REGISTER),
+            () => this.changeState(FormModalState.LOGIN),
+            () => this.changeState(FormModalState.REGISTER),
             () => this.#userData,
             this.setUserData
         );
-        this.#contentComponent = this.createComponent(EventList);
+        this.#contentComponent = this.createComponent<EventList>(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);
 
         this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal, () =>
-            this.changeState(REGISTER)
+            this.changeState(FormModalState.REGISTER)
         );
         this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal, () =>
-            this.changeState(LOGIN)
+            this.changeState(FormModalState.LOGIN)
         );
 
         this.#calendarComponent = this.createComponent(Calendar);
 
-        this.#state = INDEX;
+        this.#state = FormModalState.INDEX;
     }
 
     escapeModal = () => {
-        this.changeState(INDEX);
+        this.changeState(FormModalState.INDEX);
     };
 
     /**
      * callback for changing app state
      * @param {string} state
      */
-    changeState(state) {
+    changeState(state: FormModalState.StateType) {
         this.#state = state;
         this.rerender();
     }
 
-    setUserData = (userData, needRerender = true) => {
+    setUserData = ({ userData, needRerender = true }: SetUserDataProps) => {
         this.#userData = userData;
         if (needRerender) {
             this.rerender();
@@ -93,17 +98,21 @@ export class App extends Component {
 
     rerender() {
         this.removeChildEvents();
-        this.parent.innerHTML = this.render();
+        if (this.parent instanceof HTMLElement) {
+            this.parent.innerHTML = this.render();
+        }
         this.addChildEvents();
     }
 
     render() {
         let modalWindow = "";
 
-        if (this.#state == LOGIN) {
-            modalWindow = this.#modalWindowComponent.render(this.#loginComponent.render());
-        } else if (this.#state == REGISTER) {
-            modalWindow = this.#modalWindowComponent.render(this.#registerComponent.render());
+        if (this.#state == FormModalState.LOGIN) {
+            this.#modalWindowComponent.content = this.#loginComponent.render();
+            modalWindow = this.#modalWindowComponent.render();
+        } else if (this.#state == FormModalState.REGISTER) {
+            this.#modalWindowComponent.content = this.#registerComponent.render();
+            modalWindow = this.#modalWindowComponent.render();
         }
 
         const template = AppTemplate({
