@@ -5,8 +5,6 @@ import { validateForm } from "components/Auth/FormValidation";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
-
-// @ts-ignore
 import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
 /**

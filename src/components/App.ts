@@ -11,10 +11,8 @@ import { FormModalState } from "./Auth/FormModalState";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import { TUserAvailable } from "models/User";
-
-// @ts-ignore
-import AppTemplate from "templates/App.handlebars";
 import { SetUserDataProps } from "./Auth/AuthModalProps";
+import AppTemplate from "templates/App.handlebars";
 
 /**
  * @classdesc Main app component

@@ -6,8 +6,6 @@ import config from "config";
 import { TEventLight } from "models/Events";
 import { ajax } from "modules/ajax";
 import { ResponseEventLight } from "responses/ResponseEvent";
-
-// @ts-ignore
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 
 /**

@@ -1,8 +1,6 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-
-// @ts-ignore
 import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
 
 /**

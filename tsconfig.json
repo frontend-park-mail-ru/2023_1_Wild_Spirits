@@ -8,5 +8,5 @@
         "baseUrl": "./src",
         "allowImportingTsExtensions": true
     },
-    "include": ["./src"]
+    "include": ["./src", "index.d.ts"]
 }

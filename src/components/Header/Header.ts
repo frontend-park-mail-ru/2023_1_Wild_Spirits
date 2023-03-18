@@ -5,12 +5,8 @@ import config from "config";
 import { ajax } from "modules/ajax";
 import { SetUserDataFunc } from "components/Auth/AuthModalProps";
 import { TUserAvailable } from "models/User";
-
-// @ts-ignore
 import HeaderTemplate from "templates/Header/Header.handlebars";
-// @ts-ignore
 import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
-// @ts-ignore
 import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 
 /**

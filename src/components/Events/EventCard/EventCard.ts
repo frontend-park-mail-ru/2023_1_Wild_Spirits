@@ -1,11 +1,8 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import { TEventBase, TEventLight } from "models/Events";
-
-// @ts-ignore
+import { TEventBase } from "models/Events";
 import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
-// @ts-ignore
 import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 
 interface EventCardProps extends TEventBase {

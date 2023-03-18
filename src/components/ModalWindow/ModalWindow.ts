@@ -1,6 +1,4 @@
 import { Component, ComponentParentType } from "components/Component";
-
-// @ts-ignore
 import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 
 /**
