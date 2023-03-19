@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import webpack from "webpack";
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 
 const filename = fileURLToPath(import.meta.url);
 
@@ -58,6 +59,9 @@ const config = {
         new CopyWebpackPlugin({ patterns: [{ from: path.resolve(__dirname, "./src/assets"), to: "assets" }] }),
         new webpack.SourceMapDevToolPlugin({
             filename: "[file].map",
+        }),
+        new ForkTsCheckerWebpackPlugin({
+            logger: console,
         }),
     ],
     resolve: {

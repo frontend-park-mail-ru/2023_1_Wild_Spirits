@@ -5,8 +5,7 @@
         "noEmit": true,
         "strict": true,
         "isolatedModules": true,
-        "baseUrl": "./src",
-        "allowImportingTsExtensions": true
+        "baseUrl": "./src"
     },
-    "include": ["./src", "index.d.ts"]
+    "include": ["./src/**/*"]
 }

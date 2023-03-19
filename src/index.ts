@@ -7,5 +7,5 @@ ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 ajax.host = config.HOST;
 
 const root = document.getElementById("app");
-const app = new App(root);
+const app = new App(root as HTMLElement);
 app.rerender();
