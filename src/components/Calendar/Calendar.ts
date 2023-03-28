@@ -59,7 +59,12 @@ export class Calendar extends Component {
         const currentYear = currentDate.getFullYear();
         const currentMonth = this.#month;
 
-        const firstMonthDay = new Date(currentYear, currentMonth, 1).getDay();
+        let firstMonthDay = new Date(currentYear, currentMonth, 1).getDay();
+
+        if (firstMonthDay === 0) {
+            firstMonthDay = 7;
+        }
+
         const lastMonthDate = new Date(currentYear, currentMonth + 1, 0);
 
         const firstDate = 2 - firstMonthDay;
@@ -82,7 +87,7 @@ export class Calendar extends Component {
         }
 
         return CalendarTemplate({
-            month: Calendar.months[this.#month],
+            month: Calendar.months[(12 + (this.#month % 12)) % 12],
             weeks: weeks,
         });
     }

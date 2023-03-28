@@ -1,9 +1,10 @@
 <h2 class="auth__title">Регистрация</h2>
 
-<form class="auth__form" id="register-form" novalidate>
+<form class="auth__form" id="register-form">
+    <div id="common-warning" class="warning"></div>
     <div class="input-group">
         <label for="nickname">Имя</label>
-        <input name="nickname" class="form-input" value="smth" />
+        <input name="nickname" class="form-input" />
         <div class="warning"></div>
     </div>
 
@@ -32,6 +33,6 @@
 
     <div class="submit-group">
         <a class="link-button" id="redirect-login-link">Вход</a>
-        <input type="submit" value="Регистрация" class="button" />
+        <input disabled="true" type="submit" value="Регистрация" class="button" id="register-submit-button" />
     </div>
 </form>

@@ -71,6 +71,19 @@
     color: var(--input-el-color);
 }
 
+.button:disabled {
+    background: var(--disabled-input-el-color);
+    border-color: var(--disabled-input-el-color);
+
+    color: white;
+
+    cursor: not-allowed;
+}
+
+.button:disabled:hover {
+    background: var(--disabled-input-el-color);
+}
+
 .link-button {
     color: var(--input-el-color);
     border: 1px solid var(--input-el-color);
@@ -135,7 +148,7 @@
 }
 
 .sidebar {
-    flex: 25%;
+    max-width: 380px;
 }
 
 @media screen and (max-width: 800px) {
