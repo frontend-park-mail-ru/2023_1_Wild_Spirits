@@ -9,6 +9,8 @@ import HeaderTemplate from "templates/Header/Header.handlebars";
 import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
 import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 
+import { store } from 'flux/index';
+
 /**
  * @class
  * @extends Component
@@ -18,8 +20,6 @@ export class Header extends Component {
     #selectedCategoryId: number | undefined = undefined;
     #selectedCity;
 
-    #onLogin;
-    #onSignup;
     #setUserData;
 
     #cities;
@@ -28,8 +28,6 @@ export class Header extends Component {
 
     constructor(
         parent: Component,
-        onLogin: () => void,
-        onSignup: () => void,
         getUserData: () => TUserAvailable,
         setUserData: SetUserDataFunc
     ) {
@@ -37,8 +35,6 @@ export class Header extends Component {
 
         this.#getUserData = getUserData;
 
-        this.#onLogin = onLogin;
-        this.#onSignup = onSignup;
         this.#setUserData = setUserData;
 
         this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
@@ -47,8 +43,8 @@ export class Header extends Component {
         this.registerEvent(() => document.getElementsByTagName("select")[0], "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
 
-        this.registerEvent(() => document.getElementById("login-link"), "click", this.#onLogin);
-        this.registerEvent(() => document.getElementById("signup-link"), "click", this.#onSignup);
+        this.registerEvent(() => document.getElementById("login-link"), "click", ()=>store.dispatch.bind(store)({type:"openLogin"}));
+        this.registerEvent(() => document.getElementById("signup-link"), "click", ()=>store.dispatch.bind(store)({type:"openRegister"}));
         this.registerEvent(() => document.getElementById("profile-link-logout"), "click", this.#onLogout);
     }
 
@@ -61,7 +57,8 @@ export class Header extends Component {
                 if (response.ok) {
                     console.log(response.status, json);
                     ajax.removeHeaders("x-csrf-token");
-                    this.#setUserData({ userData: undefined });
+                    // this.#setUserData({ userData: undefined });
+                    store.dispatch({type: 'logout'});
                 }
             })
             .catch((error) => {
@@ -99,7 +96,9 @@ export class Header extends Component {
 
     render() {
         const categories = ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"];
-        const userData = this.#getUserData();
+        // const userData = this.#getUserData();
+
+        const userData = store.getState().user.data;
 
         return HeaderTemplate({
             id: this.id,

@@ -16,6 +16,8 @@ import AppTemplate from "templates/App.handlebars";
 import { router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
 
+import { store, ModalWindowName } from 'flux/index'
+
 /**
  * @classdesc Main app component
  * @class
@@ -48,7 +50,8 @@ export class App extends Component {
                     if (csrf) {
                         ajax.addHeaders({ "x-csrf-token": csrf });
                     }
-                    this.setUserData({ userData: json.body.user });
+                    // this.setUserData({ userData: json.body.user });
+                    store.dispatch({type: 'setData', payload: json.body.user});
                 }
             })
             .catch((error) => {
@@ -111,13 +114,25 @@ export class App extends Component {
         let modalWindow = "";
         router.reset();
 
-        if (this.#state == FormModalState.LOGIN) {
-            this.#modalWindowComponent.content = this.#loginComponent.render();
-            modalWindow = this.#modalWindowComponent.render();
-        } else if (this.#state == FormModalState.REGISTER) {
-            this.#modalWindowComponent.content = this.#registerComponent.render();
+        if (store.getState().modalWindow.visible) {
+            switch(store.getState().modalWindow.name) {
+                case ModalWindowName.LOGIN:
+                    this.#modalWindowComponent.content = this.#loginComponent.render();  
+                    break;
+                case ModalWindowName.REGISTER:
+                    this.#modalWindowComponent.content = this.#registerComponent.render();
+                    break;
+            }
             modalWindow = this.#modalWindowComponent.render();
         }
+
+        // if (this.#state == FormModalState.LOGIN) {
+        //     this.#modalWindowComponent.content = this.#loginComponent.render();
+        //     modalWindow = this.#modalWindowComponent.render();
+        // } else if (this.#state == FormModalState.REGISTER) {
+        //     this.#modalWindowComponent.content = this.#registerComponent.render();
+        //     modalWindow = this.#modalWindowComponent.render();
+        // }
 
         const template = AppTemplate({
             header: this.#headerComponent.render(),

@@ -7,6 +7,8 @@ import { ResponseUserLight } from "responses/ResponsesUser";
 import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
 import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
+import { store } from "flux/index";
+
 /**
  * Registration component
  * @class
@@ -14,21 +16,18 @@ import RegistrationTemplate from "templates/Auth/Registration/Registration.handl
  */
 export class Registration extends Component {
     #setUserData;
-    #escapeModal;
 
     constructor(
         parent: Component,
         setUserData: SetUserDataFunc,
-        escapeModal: EscapeModalFunc,
-        redirectToLogin: RedirectTo
+        escapeModal: EscapeModalFunc
     ) {
         super(parent);
 
         this.#setUserData = setUserData;
-        this.#escapeModal = escapeModal;
 
         this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
-        this.registerEvent(() => document.getElementById("redirect-login-link"), "click", redirectToLogin);
+        this.registerEvent(() => document.getElementById("redirect-login-link"), "click", ()=>store.dispatch.bind(store)({type:"openLogin"}));
     }
 
     /**
@@ -58,7 +57,7 @@ export class Registration extends Component {
                             ajax.addHeaders({ "x-csrf-token": csrf });
                         }
                         this.#setUserData({ userData: json.body.user, needRerender: false });
-                        this.#escapeModal();
+                        store.dispatch({type: "close"});
                     }
                 })
                 .catch((error) => {

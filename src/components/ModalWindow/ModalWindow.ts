@@ -1,6 +1,8 @@
 import { Component, ComponentParentType } from "components/Component";
 import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 
+import { store } from "flux/index";
+
 /**
  * Modal window component
  * @class
@@ -18,7 +20,10 @@ export class ModalWindow extends Component {
         this.registerEvent(
             () => document.getElementsByClassName("modal")[0] as HTMLElement,
             "click",
-            this.#escapeModal
+            // this.#escapeModal
+
+            () => store.dispatch.bind(store)({type: "close"})
+
         );
         this.registerEvent(
             () => document.getElementsByClassName("modal__form__container")[0] as HTMLElement,

@@ -7,6 +7,8 @@ import { ResponseUserLight } from "responses/ResponsesUser";
 import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
 import LoginTemplate from "templates/Auth/Login/Login.handlebars";
 
+import { store } from 'flux/index'
+
 /**
  * Login component
  * @class
@@ -14,21 +16,17 @@ import LoginTemplate from "templates/Auth/Login/Login.handlebars";
  */
 export class Login extends Component {
     #setUserData: SetUserDataFunc;
-    #escapeModal: EscapeModalFunc;
 
     constructor(
         parent: Component,
         setUserData: SetUserDataFunc,
-        escapeModal: EscapeModalFunc,
-        redirectToRegister: RedirectTo
     ) {
         super(parent);
 
         this.#setUserData = setUserData;
-        this.#escapeModal = escapeModal;
 
         this.registerEvent(() => document.getElementById("login-form"), "submit", this.#formSubmit);
-        this.registerEvent(() => document.getElementById("redirect-register-link"), "click", redirectToRegister);
+        this.registerEvent(() => document.getElementById("redirect-register-link"), "click", ()=>store.dispatch.bind(store)({type:"openRegister"}));
     }
 
     /**
@@ -52,8 +50,10 @@ export class Login extends Component {
                             if (csrf) {
                                 ajax.addHeaders({ "x-csrf-token": csrf });
                             }
-                            this.#setUserData({ userData: json.body.user, needRerender: false });
-                            this.#escapeModal();
+                            // this.#setUserData({ userData: json.body.user, needRerender: false });
+
+                            store.dispatch({type: 'setData', payload: json.body.user});
+                            store.dispatch({type: "close"});
                         }
                     })
                     .catch((error) => {
