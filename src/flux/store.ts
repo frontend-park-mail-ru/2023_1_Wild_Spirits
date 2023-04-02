@@ -1,20 +1,20 @@
 import { Dispatcher, DispatchToken } from "./dispatcher";
-import { Action } from "./action"
+import { Action } from "./action";
 
-export type TReducer<TSliceState, TPayload> = (sliceState: TSliceState, action: Action<TPayload>)=>TSliceState;
-export type TReducers = {[key: string]: TReducer<any, any>};
+export type TReducer<TSliceState, TPayload> = (sliceState: TSliceState, action: Action<TPayload>) => TSliceState;
+export type TReducers = { [key: string]: TReducer<any, any> };
 
 export class Store<TState> {
     state: TState;
     reducers: TReducers;
-    callbacks: (()=>void)[];
+    callbacks: (() => void)[];
     constructor(state: TState, reducers: TReducers) {
         this.state = state;
         this.reducers = reducers;
-        this.callbacks = []
+        this.callbacks = [];
     }
 
-    subscribe(callback: ()=>void) {
+    subscribe(callback: () => void) {
         this.callbacks.push(callback);
     }
 
@@ -22,15 +22,11 @@ export class Store<TState> {
         return this.state;
     }
 
-    registerReducer<TSliceState, TPayload>(name: string, reducer: TReducer<TSliceState, TPayload>) {
-        this.reducers[name] = reducer;
-    }
-
     dispatch<TPayload>(action: Action<TPayload>) {
         for (const name in this.state) {
             this.state[name] = this.reducers[name](this.state[name], action);
         }
-        
+
         for (const callback of this.callbacks) {
             callback();
         }

@@ -5,7 +5,8 @@
         "noEmit": true,
         "strict": true,
         "isolatedModules": true,
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "moduleResolution": "node"
     },
     "include": ["./src/**/*"]
 }

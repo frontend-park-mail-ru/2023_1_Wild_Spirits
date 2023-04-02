@@ -40,8 +40,6 @@ class Router {
         const pathname = location.pathname.slice(1);
         this.#locationParts = pathname.split("/").map((value) => "/" + value);
         this.#searchParams = new URLSearchParams(location.search);
-
-        console.log(this.#locationParts);
     }
 }
 

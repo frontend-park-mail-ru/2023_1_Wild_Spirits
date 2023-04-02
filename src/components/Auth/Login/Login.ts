@@ -7,7 +7,9 @@ import { ResponseUserLight } from "responses/ResponsesUser";
 import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
 import LoginTemplate from "templates/Auth/Login/Login.handlebars";
 
-import { store } from 'flux/index'
+import { store } from "flux";
+import { setData } from "flux/slices/userSlice";
+import { close, openRegister } from "flux/slices/modalWindowSlice";
 
 /**
  * Login component
@@ -15,18 +17,15 @@ import { store } from 'flux/index'
  * @extends Component
  */
 export class Login extends Component {
-    #setUserData: SetUserDataFunc;
-
-    constructor(
-        parent: Component,
-        setUserData: SetUserDataFunc,
-    ) {
+    constructor(parent: Component) {
         super(parent);
 
-        this.#setUserData = setUserData;
-
         this.registerEvent(() => document.getElementById("login-form"), "submit", this.#formSubmit);
-        this.registerEvent(() => document.getElementById("redirect-register-link"), "click", ()=>store.dispatch.bind(store)({type:"openRegister"}));
+        this.registerEvent(
+            () => document.getElementById("redirect-register-link"),
+            "click",
+            () => store.dispatch.bind(store)(openRegister())
+        );
     }
 
     /**
@@ -52,8 +51,8 @@ export class Login extends Component {
                             }
                             // this.#setUserData({ userData: json.body.user, needRerender: false });
 
-                            store.dispatch({type: 'setData', payload: json.body.user});
-                            store.dispatch({type: "close"});
+                            store.dispatch(setData(json.body.user));
+                            store.dispatch(close());
                         }
                     })
                     .catch((error) => {

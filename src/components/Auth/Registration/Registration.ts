@@ -7,7 +7,9 @@ import { ResponseUserLight } from "responses/ResponsesUser";
 import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
 import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
-import { store } from "flux/index";
+import { store } from "flux";
+import { close, openLogin } from "flux/slices/modalWindowSlice";
+import { setData } from "flux/slices/userSlice";
 
 /**
  * Registration component
@@ -15,19 +17,15 @@ import { store } from "flux/index";
  * @extends Component
  */
 export class Registration extends Component {
-    #setUserData;
-
-    constructor(
-        parent: Component,
-        setUserData: SetUserDataFunc,
-        escapeModal: EscapeModalFunc
-    ) {
+    constructor(parent: Component) {
         super(parent);
 
-        this.#setUserData = setUserData;
-
         this.registerEvent(() => document.getElementById("register-form"), "submit", this.#formSubmit);
-        this.registerEvent(() => document.getElementById("redirect-login-link"), "click", ()=>store.dispatch.bind(store)({type:"openLogin"}));
+        this.registerEvent(
+            () => document.getElementById("redirect-login-link"),
+            "click",
+            () => store.dispatch.bind(store)(openLogin())
+        );
     }
 
     /**
@@ -56,8 +54,8 @@ export class Registration extends Component {
                         if (csrf) {
                             ajax.addHeaders({ "x-csrf-token": csrf });
                         }
-                        this.#setUserData({ userData: json.body.user, needRerender: false });
-                        store.dispatch({type: "close"});
+                        store.dispatch(setData(json.body.user));
+                        store.dispatch(close());
                     }
                 })
                 .catch((error) => {

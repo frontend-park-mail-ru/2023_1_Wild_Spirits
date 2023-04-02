@@ -7,7 +7,6 @@ import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { Login } from "components/Auth/Login/Login";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Calendar } from "components/Calendar/Calendar";
-import { FormModalState } from "./Auth/FormModalState";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import { TUserAvailable } from "models/User";
@@ -16,7 +15,9 @@ import AppTemplate from "templates/App.handlebars";
 import { router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
 
-import { store, ModalWindowName } from 'flux/index'
+import { store } from "flux";
+import { ModalWindowName } from "flux/slices/modalWindowSlice";
+import { setData } from "flux/slices/userSlice";
 
 /**
  * @classdesc Main app component
@@ -34,10 +35,6 @@ export class App extends Component {
 
     #calendarComponent;
 
-    #state;
-
-    #userData: TUserAvailable = undefined;
-
     constructor(parent: HTMLElement) {
         super(parent);
         ajax.get<ResponseUserLight>({
@@ -51,56 +48,24 @@ export class App extends Component {
                         ajax.addHeaders({ "x-csrf-token": csrf });
                     }
                     // this.setUserData({ userData: json.body.user });
-                    store.dispatch({type: 'setData', payload: json.body.user});
+                    store.dispatch(setData(json.body.user));
                 }
             })
             .catch((error) => {
                 console.log("catch:", error);
             });
 
-        this.#headerComponent = this.createComponent(
-            Header,
-            () => this.changeState(FormModalState.LOGIN),
-            () => this.changeState(FormModalState.REGISTER),
-            () => this.#userData,
-            this.setUserData
-        );
+        this.#headerComponent = this.createComponent(Header);
         this.#contentComponent = this.createComponent<EventList>(EventList);
-        this.#modalWindowComponent = this.createComponent(ModalWindow, this.escapeModal);
+        this.#modalWindowComponent = this.createComponent(ModalWindow);
 
-        this.#loginComponent = this.createComponent(Login, this.setUserData, this.escapeModal, () =>
-            this.changeState(FormModalState.REGISTER)
-        );
-        this.#registerComponent = this.createComponent(Registration, this.setUserData, this.escapeModal, () =>
-            this.changeState(FormModalState.LOGIN)
-        );
+        this.#loginComponent = this.createComponent(Login);
+        this.#registerComponent = this.createComponent(Registration);
 
         this.#profileComponent = this.createComponent(Profile);
 
         this.#calendarComponent = this.createComponent(Calendar);
-
-        this.#state = FormModalState.INDEX;
     }
-
-    escapeModal = () => {
-        this.changeState(FormModalState.INDEX);
-    };
-
-    /**
-     * callback for changing app state
-     * @param {string} state
-     */
-    changeState(state: FormModalState.StateType) {
-        this.#state = state;
-        this.rerender();
-    }
-
-    setUserData = ({ userData, needRerender = true }: SetUserDataProps) => {
-        this.#userData = userData;
-        if (needRerender) {
-            this.rerender();
-        }
-    };
 
     rerender() {
         this.removeChildEvents();
@@ -115,9 +80,9 @@ export class App extends Component {
         router.reset();
 
         if (store.getState().modalWindow.visible) {
-            switch(store.getState().modalWindow.name) {
+            switch (store.getState().modalWindow.name) {
                 case ModalWindowName.LOGIN:
-                    this.#modalWindowComponent.content = this.#loginComponent.render();  
+                    this.#modalWindowComponent.content = this.#loginComponent.render();
                     break;
                 case ModalWindowName.REGISTER:
                     this.#modalWindowComponent.content = this.#registerComponent.render();

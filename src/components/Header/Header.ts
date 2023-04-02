@@ -9,7 +9,9 @@ import HeaderTemplate from "templates/Header/Header.handlebars";
 import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
 import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 
-import { store } from 'flux/index';
+import { store } from "flux";
+import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
+import { logout } from "flux/slices/userSlice";
 
 /**
  * @class
@@ -19,23 +21,10 @@ import { store } from 'flux/index';
 export class Header extends Component {
     #selectedCategoryId: number | undefined = undefined;
     #selectedCity;
-
-    #setUserData;
-
     #cities;
 
-    #getUserData;
-
-    constructor(
-        parent: Component,
-        getUserData: () => TUserAvailable,
-        setUserData: SetUserDataFunc
-    ) {
+    constructor(parent: Component) {
         super(parent);
-
-        this.#getUserData = getUserData;
-
-        this.#setUserData = setUserData;
 
         this.#cities = ["Москва", "Санкт-Петербург", "Нижний Новгород"];
         this.#selectedCity = this.#cities[0];
@@ -43,8 +32,16 @@ export class Header extends Component {
         this.registerEvent(() => document.getElementsByTagName("select")[0], "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
 
-        this.registerEvent(() => document.getElementById("login-link"), "click", ()=>store.dispatch.bind(store)({type:"openLogin"}));
-        this.registerEvent(() => document.getElementById("signup-link"), "click", ()=>store.dispatch.bind(store)({type:"openRegister"}));
+        this.registerEvent(
+            () => document.getElementById("login-link"),
+            "click",
+            () => store.dispatch.bind(store)(openLogin())
+        );
+        this.registerEvent(
+            () => document.getElementById("signup-link"),
+            "click",
+            () => store.dispatch.bind(store)(openRegister())
+        );
         this.registerEvent(() => document.getElementById("profile-link-logout"), "click", this.#onLogout);
     }
 
@@ -58,7 +55,7 @@ export class Header extends Component {
                     console.log(response.status, json);
                     ajax.removeHeaders("x-csrf-token");
                     // this.#setUserData({ userData: undefined });
-                    store.dispatch({type: 'logout'});
+                    store.dispatch(logout());
                 }
             })
             .catch((error) => {
