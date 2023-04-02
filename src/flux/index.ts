@@ -1,4 +1,4 @@
-import { Store, TReducers } from './store'
+import { Store, TReducer, TReducers } from './store'
 import { Action } from './action'
 
 interface UserState {
@@ -33,6 +33,23 @@ let initialState: State = {
         visible: false,
         name: ModalWindowName.LOGIN,
     }
+}
+
+interface SliceProps<TState> {
+    name: string,
+    initialState: TState,
+    reducers: TReducers
+}
+
+interface Slice<TState> {
+    name: string,
+    reducer: TReducer<TState, any>,
+    actions: {[key: string]: ()},
+    state: TState
+}
+
+function createSlice<TState>(props: SliceProps<TState>): Slice<TState> {
+    
 }
 
 const reducers: TReducers = {

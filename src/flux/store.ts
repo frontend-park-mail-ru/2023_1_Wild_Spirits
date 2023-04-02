@@ -1,7 +1,7 @@
 import { Dispatcher, DispatchToken } from "./dispatcher";
 import { Action } from "./action"
 
-type TReducer<TSliceState, TPayload> = (sliceState: TSliceState, action: Action<TPayload>)=>TSliceState;
+export type TReducer<TSliceState, TPayload> = (sliceState: TSliceState, action: Action<TPayload>)=>TSliceState;
 export type TReducers = {[key: string]: TReducer<any, any>};
 
 export class Store<TState> {
