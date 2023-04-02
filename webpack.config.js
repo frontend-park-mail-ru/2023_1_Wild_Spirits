@@ -17,6 +17,7 @@ const config = {
     },
     output: {
         filename: "[name].js",
+        publicPath: "/",
         path: path.resolve(__dirname, "./dist"),
     },
     module: {
@@ -82,6 +83,7 @@ const config = {
             directory: path.resolve(__dirname, "./dist"),
         },
         port: 8080,
+        historyApiFallback: true,
     },
 };
 

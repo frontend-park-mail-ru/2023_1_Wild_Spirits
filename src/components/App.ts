@@ -13,6 +13,8 @@ import { ResponseUserLight } from "responses/ResponsesUser";
 import { TUserAvailable } from "models/User";
 import { SetUserDataProps } from "./Auth/AuthModalProps";
 import AppTemplate from "templates/App.handlebars";
+import { router } from "modules/router";
+import { Profile } from "./Auth/Profile/Profile";
 
 /**
  * @classdesc Main app component
@@ -26,6 +28,7 @@ export class App extends Component {
 
     #loginComponent;
     #registerComponent;
+    #profileComponent;
 
     #calendarComponent;
 
@@ -69,6 +72,8 @@ export class App extends Component {
             this.changeState(FormModalState.LOGIN)
         );
 
+        this.#profileComponent = this.createComponent(Profile);
+
         this.#calendarComponent = this.createComponent(Calendar);
 
         this.#state = FormModalState.INDEX;
@@ -104,6 +109,7 @@ export class App extends Component {
 
     render() {
         let modalWindow = "";
+        router.reset();
 
         if (this.#state == FormModalState.LOGIN) {
             this.#modalWindowComponent.content = this.#loginComponent.render();
@@ -115,7 +121,7 @@ export class App extends Component {
 
         const template = AppTemplate({
             header: this.#headerComponent.render(),
-            content: this.#contentComponent.render(),
+            content: router.switch({ "/": () => this.#contentComponent, "/profile": () => this.#profileComponent }),
             footer: "Footer",
             modalWindow: modalWindow,
             calendar: this.#calendarComponent.render(),
