@@ -4,7 +4,6 @@ import { Component } from "components/Component";
 import { validateForm } from "components/Auth/FormValidation";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
-import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
 import LoginTemplate from "templates/Auth/Login/Login.handlebars";
 
 import { store } from "flux";
@@ -49,8 +48,6 @@ export class Login extends Component {
                             if (csrf) {
                                 ajax.addHeaders({ "x-csrf-token": csrf });
                             }
-                            // this.#setUserData({ userData: json.body.user, needRerender: false });
-
                             store.dispatch(setData(json.body.user));
                             store.dispatch(close());
                         }

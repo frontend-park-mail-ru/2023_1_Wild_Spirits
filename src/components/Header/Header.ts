@@ -3,8 +3,6 @@
 import { Component } from "components/Component";
 import config from "config";
 import { ajax } from "modules/ajax";
-import { SetUserDataFunc } from "components/Auth/AuthModalProps";
-import { TUserAvailable } from "models/User";
 import HeaderTemplate from "templates/Header/Header.handlebars";
 import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
 import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
@@ -54,7 +52,6 @@ export class Header extends Component {
                 if (response.ok) {
                     console.log(response.status, json);
                     ajax.removeHeaders("x-csrf-token");
-                    // this.#setUserData({ userData: undefined });
                     store.dispatch(logout());
                 }
             })
@@ -68,7 +65,6 @@ export class Header extends Component {
      * @param {Event} event
      */
     #categoryLinkClick = (event: PointerEvent) => {
-        console.log("categoryLinkClick: ", typeof event, event);
         const target = event.target as HTMLElement;
         const id = target.id.split("-").at(-1);
         if (id !== undefined) {
@@ -93,8 +89,6 @@ export class Header extends Component {
 
     render() {
         const categories = ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"];
-        // const userData = this.#getUserData();
-
         const userData = store.getState().user.data;
 
         return HeaderTemplate({

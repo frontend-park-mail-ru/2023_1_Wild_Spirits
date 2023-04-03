@@ -17,13 +17,6 @@ export class Component {
     #parent: ComponentParentType;
     #children: Component[] = [];
 
-    /*
-    // type EventMap = {
-    //   el: () => HTMLElement | HtmlCollection;
-    //   event: string;
-    //   callback: (event) => void;
-    // }
-    */
     #eventMaps: { element: EventMapElement; eventName: EventMapType; callback: EventMapEvent }[] = [];
 
     /**

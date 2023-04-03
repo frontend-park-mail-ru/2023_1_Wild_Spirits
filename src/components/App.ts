@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { Component, ComponentParentType } from "components/Component";
+import { Component } from "components/Component";
 import { Header } from "components/Header/Header";
 import { EventList } from "components/Events/EventList/EventList";
 import { ModalWindow } from "components/ModalWindow/ModalWindow";
@@ -9,8 +9,6 @@ import { Registration } from "components/Auth/Registration/Registration";
 import { Calendar } from "components/Calendar/Calendar";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
-import { TUserAvailable } from "models/User";
-import { SetUserDataProps } from "./Auth/AuthModalProps";
 import AppTemplate from "templates/App.handlebars";
 import { router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
@@ -47,7 +45,6 @@ export class App extends Component {
                     if (csrf) {
                         ajax.addHeaders({ "x-csrf-token": csrf });
                     }
-                    // this.setUserData({ userData: json.body.user });
                     store.dispatch(setData(json.body.user));
                 }
             })
@@ -89,14 +86,6 @@ export class App extends Component {
             }
             modalWindow = this.#modalWindowComponent.render();
         }
-
-        // if (this.#state == FormModalState.LOGIN) {
-        //     this.#modalWindowComponent.content = this.#loginComponent.render();
-        //     modalWindow = this.#modalWindowComponent.render();
-        // } else if (this.#state == FormModalState.REGISTER) {
-        //     this.#modalWindowComponent.content = this.#registerComponent.render();
-        //     modalWindow = this.#modalWindowComponent.render();
-        // }
 
         const template = AppTemplate({
             header: this.#headerComponent.render(),

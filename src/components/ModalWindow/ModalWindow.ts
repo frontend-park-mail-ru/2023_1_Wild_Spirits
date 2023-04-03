@@ -18,8 +18,6 @@ export class ModalWindow extends Component {
         this.registerEvent(
             () => document.getElementsByClassName("modal")[0] as HTMLElement,
             "click",
-            // this.#escapeModal
-
             () => store.dispatch.bind(store)(close())
         );
         this.registerEvent(

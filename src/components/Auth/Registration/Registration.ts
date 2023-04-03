@@ -4,7 +4,6 @@ import { Component } from "components/Component";
 import { validateForm } from "components/Auth/FormValidation";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
-import { EscapeModalFunc, RedirectTo, SetUserDataFunc } from "../AuthModalProps";
 import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
 import { store } from "flux";
