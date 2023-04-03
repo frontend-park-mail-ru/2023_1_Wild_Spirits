@@ -2,23 +2,29 @@ import { Store } from "./store";
 import { Slice } from "./slice";
 import userSlice from "./slices/userSlice";
 import modalWindowSlice from "./slices/modalWindowSlice";
+import { Action } from "./action";
 
-const configureStore = (slices: Slice<any>[]) => {
-    const initialState = Object.fromEntries(
-        slices.map((slice) => {
-            return [slice.name, slice.state];
-        })
-    );
-    return new Store<typeof initialState>(
-        initialState,
+export type SlicesMapObject<S = any> = {
+    [K in keyof S]: Slice<S[K]>;
+};
+
+const configureStore = <S>(slices: SlicesMapObject<S>): Store<S> => {
+    return new Store(
         Object.fromEntries(
-            slices.map((slice) => {
-                return [slice.name, slice.reducer];
+            Object.entries(slices).map(([key, value]) => {
+                console.log(key);
+                return [key, (value as Slice<any>).state];
+            })
+        ) as S,
+        Object.fromEntries(
+            Object.entries(slices).map(([key, value]) => {
+                return [key, (value as Slice<any>).reducer];
             })
         )
     );
 };
 
-export let store = configureStore([userSlice, modalWindowSlice]);
+export let store = configureStore({ user: userSlice, modalWindow: modalWindowSlice });
+console.log(store);
 
 // export let store = new Store(initialState, reducers);

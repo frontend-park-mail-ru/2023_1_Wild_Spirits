@@ -78,8 +78,7 @@ export class App extends Component {
     render() {
         let modalWindow = "";
         router.reset();
-
-        if (store.getState().modalWindow.visible) {
+        if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
             switch (store.getState().modalWindow.name) {
                 case ModalWindowName.LOGIN:
                     this.#modalWindowComponent.content = this.#loginComponent.render();
