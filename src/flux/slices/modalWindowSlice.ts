@@ -1,4 +1,3 @@
-import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { createSlice } from "flux/slice";
 
 export namespace ModalWindowName {

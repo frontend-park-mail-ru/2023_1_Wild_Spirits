@@ -5,6 +5,7 @@
 @import "components/Events/EventCard/styles.css";
 @import "components/Events/EventList/styles.css";
 @import "components/Calendar/styles.css";
+@import "components/Tags/styles.css";
 
 
 @font-face {

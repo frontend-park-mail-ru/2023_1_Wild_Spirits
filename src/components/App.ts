@@ -7,6 +7,7 @@ import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { Login } from "components/Auth/Login/Login";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Calendar } from "components/Calendar/Calendar";
+import { Tags } from "./Tags/Tags";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import AppTemplate from "templates/App.handlebars";
@@ -32,6 +33,7 @@ export class App extends Component {
     #profileComponent;
 
     #calendarComponent;
+    #tagsComponent: Tags;
 
     constructor(parent: HTMLElement) {
         super(parent);
@@ -62,6 +64,7 @@ export class App extends Component {
         this.#profileComponent = this.createComponent(Profile);
 
         this.#calendarComponent = this.createComponent(Calendar);
+        this.#tagsComponent = this.createComponent(Tags);
     }
 
     rerender() {
@@ -75,6 +78,7 @@ export class App extends Component {
     render() {
         let modalWindow = "";
         router.reset();
+
         if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
             switch (store.getState().modalWindow.name) {
                 case ModalWindowName.LOGIN:
@@ -93,6 +97,7 @@ export class App extends Component {
             footer: "Footer",
             modalWindow: modalWindow,
             calendar: this.#calendarComponent.render(),
+            tags: this.#tagsComponent.render()
         });
         return template;
     }
