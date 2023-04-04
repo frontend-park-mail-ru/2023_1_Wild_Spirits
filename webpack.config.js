@@ -56,6 +56,7 @@ const config = {
             filename: "index.html",
             scriptLoading: "blocking",
             inject: "body",
+            favicon: "./src/favicon.ico"
         }),
         new CopyWebpackPlugin({ patterns: [{ from: path.resolve(__dirname, "./src/assets"), to: "assets" }] }),
         new webpack.SourceMapDevToolPlugin({

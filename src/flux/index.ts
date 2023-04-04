@@ -28,5 +28,3 @@ export let store = configureStore({ user: userSlice,
                                     modalWindow: modalWindowSlice, 
                                     header: headerSlice,
                                     tags: tagsSlice});
-
-console.log(store)
