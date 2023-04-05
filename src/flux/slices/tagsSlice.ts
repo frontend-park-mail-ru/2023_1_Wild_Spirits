@@ -17,8 +17,11 @@ const tagsSlice = createSlice({
     reducers: {
         toggleTag: (state, action) => {
             const tag = action.payload.tag;
+            if (state[tag] == undefined) {
+                return state;
+            }
+
             state[tag] = !state[tag];
-            console.log(action)
             return state
         }
     }

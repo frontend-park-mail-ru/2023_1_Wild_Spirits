@@ -1,9 +1,11 @@
 import { Store } from "./store";
 import { Slice } from "./slice";
+
 import userSlice from "./slices/userSlice";
 import modalWindowSlice from "./slices/modalWindowSlice";
 import headerSlice from "./slices/headerSlice";
 import tagsSlice from "./slices/tagsSlice";
+import calendarSlice from "./slices/calendarSlice";
 
 export type SlicesMapObject<S = any> = {
     [K in keyof S]: Slice<S[K]>;
@@ -27,6 +29,7 @@ const configureStore = <S>(slices: SlicesMapObject<S>): Store<S> => {
 export let store = configureStore({ user: userSlice, 
                                     modalWindow: modalWindowSlice, 
                                     header: headerSlice,
-                                    tags: tagsSlice});
+                                    tags: tagsSlice,
+                                    calendar: calendarSlice});
 
 console.log(store)

@@ -21,9 +21,11 @@ export class Store<TState> {
         return this.state;
     }
 
-    dispatch<TPayload>(action: Action<TPayload>) {
+    dispatch<TPayload>(...actions: Action<TPayload>[]) {
         for (const name in this.state) {
-            this.state[name] = this.reducers[name](this.state[name], action);
+            actions.forEach(action => {
+                this.state[name] = this.reducers[name](this.state[name], action);
+            });
         }
 
         for (const callback of this.callbacks) {

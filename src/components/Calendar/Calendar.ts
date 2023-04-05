@@ -3,32 +3,21 @@
 import { Component } from "components/Component";
 import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
 
+import { incrementMonth, decrementMonth, 
+         setStartDate, clearStartDate,
+         setFinishDate, clearFinishDate, getMonthName }
+from "flux/slices/calendarSlice";
+
+import { store } from "flux";
+
 /**
  * @class
  * @extends Component
  * Component for calendar
  */
 export class Calendar extends Component {
-    #month;
-
-    static months = [
-        "Январь",
-        "Февраль",
-        "Март",
-        "Апрель",
-        "Май",
-        "Июнь",
-        "Июль",
-        "Август",
-        "Сентябрь",
-        "Октябрь",
-        "Ноябрь",
-        "Декабрь",
-    ];
     constructor(parent: Component) {
         super(parent);
-
-        this.#month = new Date().getMonth();
 
         this.registerEvent(() => document.getElementsByClassName("calendar-date"), "click", this.#toggleDate);
         this.registerEvent(() => document.getElementById("prevMonthBtn"), "click", this.#decrementMonth);
@@ -36,59 +25,98 @@ export class Calendar extends Component {
     }
 
     #toggleDate(event: PointerEvent) {
-        const date = event.target as Element;
+        const dateEl = event.target as Element;
 
-        if (date.classList.contains("active")) {
-            date.classList.remove("active");
-        } else if (!date.classList.contains("disabled")) {
-            date.classList.add("active");
+        if (!dateEl) {
+            return;
+        }
+
+        const currentYear = store.getState().calendar.year;
+        const currentMonth = store.getState().calendar.month;
+
+        const dateString = dateEl.textContent;
+
+        if (!dateString) {
+            return;
+        }
+
+        const date = new Date(currentYear, currentMonth, parseInt(dateString));
+
+        const startDate = store.getState().calendar.startDate;
+
+        if (startDate === undefined) {
+            store.dispatch(setStartDate({date: date}));
+        } else {
+            if (date > startDate) {
+                store.dispatch(setFinishDate({date: date}));
+            } else if (date < startDate) {
+                store.dispatch(setStartDate({date: date}));
+            } else {
+                store.dispatch(clearStartDate());
+            }
         }
     }
 
     #incrementMonth = () => {
-        this.#month++;
-        this.rerender();
+        store.dispatch(incrementMonth())
     };
     #decrementMonth = () => {
-        this.#month--;
-        this.rerender();
+        store.dispatch(decrementMonth())
     };
 
     render() {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
-        const currentMonth = this.#month;
+        const currentMonth = store.getState().calendar.month;
 
-        let firstMonthDay = new Date(currentYear, currentMonth, 1).getDay();
+        const getMonthWeeks = (year: number, month: number) => {
+            let firstMonthDay = new Date(currentYear, currentMonth, 1).getDay();
 
-        if (firstMonthDay === 0) {
-            firstMonthDay = 7;
-        }
+            if (firstMonthDay === 0) {
+                firstMonthDay = 7;
+            }
+    
+            const lastMonthDate = new Date(currentYear, currentMonth + 1, 0);
+    
+            const firstDate = 2 - firstMonthDay;
+            let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
 
-        const lastMonthDate = new Date(currentYear, currentMonth + 1, 0);
+            const isSelected = (date: Date) => {
+                const startDate = store.getState().calendar.startDate;
 
-        const firstDate = 2 - firstMonthDay;
-        let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
+                if (!startDate) {
+                    return false;
+                }
 
-        let days = [];
-        for (let d = firstDate; d <= lastDate; d++) {
-            const date = new Date(currentYear, currentMonth, d);
-            days.push({
-                date: date.getDate(),
-                active: d > 0 && d <= lastMonthDate.getDate(),
-            });
-        }
+                const finishDate = store.getState().calendar.finishDate;
 
-        const rows = Math.ceil(days.length / 7);
+                if (!finishDate) {
+                    return date.getTime() == startDate.getTime();
+                }
 
-        let weeks = [];
-        for (let i = 0; i < rows; i++) {
-            weeks.push(days.slice(i * 7, (i + 1) * 7));
+                return date >= startDate && date <= finishDate;
+            }
+    
+            const range = (begin: number, end: number) => Array.from(Array(end-begin+1).keys(), (x)=>x+begin)
+            const generateDate = (d: number): {date: number, active: boolean, selected: boolean} => {
+                const date = new Date(currentYear, currentMonth, d)
+                return {
+                    date: date.getDate(),
+                    active: d > 0 && d <= lastMonthDate.getDate(),
+                    selected: isSelected(date),
+                }
+            };
+            const days = range(firstDate, lastDate).map(generateDate);
+    
+            const rows = Math.ceil(days.length / 7);
+            const weeks = range(0, rows).map((row)=>days.slice(row*7, (row+1) * 7));
+
+            return weeks;
         }
 
         return CalendarTemplate({
-            month: Calendar.months[(12 + (this.#month % 12)) % 12],
-            weeks: weeks,
+            month: getMonthName(store.getState().calendar),
+            weeks: getMonthWeeks(currentYear, currentMonth),
         });
     }
 }
