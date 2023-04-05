@@ -46,7 +46,7 @@ const config = {
                 options: {
                     helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
                 },
-            },
+            }
         ],
     },
     plugins: [
@@ -58,7 +58,12 @@ const config = {
             inject: "body",
             favicon: "./src/favicon.ico"
         }),
-        new CopyWebpackPlugin({ patterns: [{ from: path.resolve(__dirname, "./src/assets"), to: "assets" }] }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: path.resolve(__dirname, "./src/assets"), to: "assets" },
+                { from: path.resolve(__dirname, "./src/sw.js"), to: "" }
+            ] 
+        }),
         new webpack.SourceMapDevToolPlugin({
             filename: "[file].map",
         }),
