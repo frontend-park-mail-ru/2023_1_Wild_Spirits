@@ -56,6 +56,7 @@ const config = {
             filename: "index.html",
             scriptLoading: "blocking",
             inject: "body",
+            favicon: "./src/favicon.ico"
         }),
         new CopyWebpackPlugin({ patterns: [{ from: path.resolve(__dirname, "./src/assets"), to: "assets" }] }),
         new webpack.SourceMapDevToolPlugin({
@@ -70,15 +71,11 @@ const config = {
         modules: [__dirname + "/src", "node_modules"],
         alias: {
             handlebars: "handlebars/dist/handlebars.js",
-            //"handlebars.runtime": "handlebars/dist/handlebars.runtime.js",
         },
     },
     mode: "development",
     devtool: "eval-cheap-source-map",
     devServer: {
-        // devMiddleware: {
-        //     writeToDisk: true,
-        // },
         static: {
             directory: path.resolve(__dirname, "./dist"),
         },

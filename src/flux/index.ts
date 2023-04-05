@@ -32,4 +32,3 @@ export let store = configureStore({ user: userSlice,
                                     tags: tagsSlice,
                                     calendar: calendarSlice});
 
-console.log(store)
