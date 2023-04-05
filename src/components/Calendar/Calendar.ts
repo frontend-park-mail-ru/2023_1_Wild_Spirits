@@ -43,16 +43,25 @@ export class Calendar extends Component {
         const date = new Date(currentYear, currentMonth, parseInt(dateString));
 
         const startDate = store.getState().calendar.startDate;
+        const finishDate = store.getState().calendar.finishDate;
 
         if (startDate === undefined) {
             store.dispatch(setStartDate({date: date}));
         } else {
             if (date > startDate) {
-                store.dispatch(setFinishDate({date: date}));
+                if (finishDate?.getTime() === date.getTime()) {
+                    store.dispatch(setStartDate({date: finishDate}), clearFinishDate());
+                } else {
+                    store.dispatch(setFinishDate({date: date}));
+                }
             } else if (date < startDate) {
                 store.dispatch(setStartDate({date: date}));
             } else {
-                store.dispatch(clearStartDate());
+                if (finishDate) {
+                    store.dispatch(clearFinishDate());
+                } else {
+                    store.dispatch(clearStartDate());
+                }
             }
         }
     }
@@ -64,59 +73,70 @@ export class Calendar extends Component {
         store.dispatch(decrementMonth())
     };
 
+    getMonthWeeks = (year: number, month: number) => {
+        let firstMonthDay = new Date(year, month, 1).getDay();
+
+        if (firstMonthDay === 0) {
+            firstMonthDay = 7;
+        }
+
+        const lastMonthDate = new Date(year, month + 1, 0);
+
+        const firstDate = 2 - firstMonthDay;
+        let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
+
+        const checkSelection = (date: Date): {isSelected: boolean, isInner: boolean} => {
+            const startDate = store.getState().calendar.startDate;
+
+            if (!startDate) {
+                return {
+                    isSelected: false,
+                    isInner: false
+                };
+            }
+
+            const finishDate = store.getState().calendar.finishDate;
+
+            if (!finishDate) {
+                return {
+                    isSelected: date.getTime() == startDate.getTime(),
+                    isInner: false
+                }
+            }
+
+            return {
+                isSelected: date >= startDate && date <= finishDate,
+                isInner: date > startDate && date < finishDate
+            }
+        }
+
+        const range = (begin: number, end: number) => Array.from(Array(end-begin+1).keys(), (x)=>x+begin)
+        const generateDate = (d: number): {date: number, active: boolean, selected: boolean, inner: boolean} => {
+            const date = new Date(year, month, d);
+            const {isSelected, isInner} = checkSelection(date);
+            return {
+                date: date.getDate(),
+                active: d > 0 && d <= lastMonthDate.getDate(),
+                selected: isSelected,
+                inner: isInner
+            }
+        };
+        const days = range(firstDate, lastDate).map(generateDate);
+
+        const rows = Math.ceil(days.length / 7);
+        const weeks = range(0, rows).map((row)=>days.slice(row*7, (row+1) * 7));
+
+        return weeks;
+    }
+
     render() {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
         const currentMonth = store.getState().calendar.month;
 
-        const getMonthWeeks = (year: number, month: number) => {
-            let firstMonthDay = new Date(currentYear, currentMonth, 1).getDay();
-
-            if (firstMonthDay === 0) {
-                firstMonthDay = 7;
-            }
-    
-            const lastMonthDate = new Date(currentYear, currentMonth + 1, 0);
-    
-            const firstDate = 2 - firstMonthDay;
-            let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
-
-            const isSelected = (date: Date) => {
-                const startDate = store.getState().calendar.startDate;
-
-                if (!startDate) {
-                    return false;
-                }
-
-                const finishDate = store.getState().calendar.finishDate;
-
-                if (!finishDate) {
-                    return date.getTime() == startDate.getTime();
-                }
-
-                return date >= startDate && date <= finishDate;
-            }
-    
-            const range = (begin: number, end: number) => Array.from(Array(end-begin+1).keys(), (x)=>x+begin)
-            const generateDate = (d: number): {date: number, active: boolean, selected: boolean} => {
-                const date = new Date(currentYear, currentMonth, d)
-                return {
-                    date: date.getDate(),
-                    active: d > 0 && d <= lastMonthDate.getDate(),
-                    selected: isSelected(date),
-                }
-            };
-            const days = range(firstDate, lastDate).map(generateDate);
-    
-            const rows = Math.ceil(days.length / 7);
-            const weeks = range(0, rows).map((row)=>days.slice(row*7, (row+1) * 7));
-
-            return weeks;
-        }
-
         return CalendarTemplate({
             month: getMonthName(store.getState().calendar),
-            weeks: getMonthWeeks(currentYear, currentMonth),
+            weeks: this.getMonthWeeks(currentYear, currentMonth),
         });
     }
 }

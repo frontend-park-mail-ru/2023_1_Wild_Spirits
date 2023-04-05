@@ -56,8 +56,7 @@ const calendarSlice = createSlice({
             return state;
         },
         clearStartDate: (state) => {
-            state.startDate = state.finishDate;
-            state.finishDate = undefined;
+            state.startDate = undefined;
             return state;
         },
         setFinishDate: (state, action) => {

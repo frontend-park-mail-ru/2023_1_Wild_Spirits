@@ -1,7 +1,9 @@
 .calendar {
     margin-top: 40px;
-
     max-width: 500px;
+
+    --active-date-color: #17A8FA;
+    --inner-active-date-color: #8dc1df;
 }
 
 .calendar-header {
@@ -63,7 +65,13 @@ table {
 }
 
 .calendar-date.active {
-    background-color: #17A8FA;
+    background-color: var(--active-date-color);
+    clip-path: circle(1em at 50% 50%);
+    color: white;
+}
+
+.calendar-date.inner-active {
+    background-color: var(--inner-active-date-color);
     clip-path: circle(1em at 50% 50%);
     color: white;
 }
