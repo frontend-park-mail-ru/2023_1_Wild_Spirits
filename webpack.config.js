@@ -1,5 +1,3 @@
-//import path from "path";
-
 import path from "path";
 import { fileURLToPath } from "url";
 import HtmlWebpackPlugin from "html-webpack-plugin";
