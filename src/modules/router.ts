@@ -10,9 +10,20 @@ interface SearchByUrlResult<T> {
 class Router {
     #locationParts: string[] = [];
     #searchParams: URLSearchParams | undefined;
+    callbacks: (() => void)[] = [];
 
     constructor() {
         this.#parseLocation();
+
+        window.addEventListener("popstate", this.#onPopState.bind(this));
+    }
+
+    subscribe(callback: () => void) {
+        this.callbacks.push(callback);
+    }
+
+    #emit() {
+        this.callbacks.forEach((callback) => callback());
     }
 
     reset() {
@@ -42,6 +53,7 @@ class Router {
     go(url: string) {
         history.pushState({}, "", url);
         this.#parseLocation();
+        this.#emit();
     }
 
     getUrlParam(name: string): string | null {
@@ -56,21 +68,35 @@ class Router {
         this.#locationParts = pathname.split("/").map((value) => "/" + value);
         this.#searchParams = new URLSearchParams(location.search);
     }
+
+    #onPopState() {
+        console.log("#onPopState");
+        this.#parseLocation();
+        this.#emit();
+    }
 }
 
 export let router = new Router();
 
 const getLinks = () => document.querySelectorAll(".js-router-link");
 
-function linkEvent() {}
+function linkEvent(event: Event) {
+    event.preventDefault();
+    const target = event.target as HTMLLinkElement;
+    console.log("target.href:", target.href);
+    router.go(target.href);
+}
 
 export const addRouterEvents = () => {
     console.log("addRouterEvents");
-    // getLinks().forEach(link => {
-    //     link.addEventListener("click")
-    // })
+    getLinks().forEach((link) => {
+        link.addEventListener("click", linkEvent);
+    });
 };
 
 export const removeRouterEvents = () => {
     console.log("removeRouterEvents");
+    getLinks().forEach((link) => {
+        link.removeEventListener("click", linkEvent);
+    });
 };

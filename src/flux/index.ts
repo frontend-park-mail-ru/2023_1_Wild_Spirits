@@ -26,9 +26,10 @@ const configureStore = <S>(slices: SlicesMapObject<S>): Store<S> => {
     );
 };
 
-export let store = configureStore({ user: userSlice, 
-                                    modalWindow: modalWindowSlice, 
-                                    header: headerSlice,
-                                    tags: tagsSlice,
-                                    calendar: calendarSlice});
-
+export let store = configureStore({
+    user: userSlice,
+    modalWindow: modalWindowSlice,
+    header: headerSlice,
+    tags: tagsSlice,
+    calendar: calendarSlice,
+});
