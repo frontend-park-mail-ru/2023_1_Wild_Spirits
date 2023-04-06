@@ -7,6 +7,8 @@
 @import "components/Calendar/styles.css";
 @import "components/Tags/styles.css";
 @import "components/Auth/Profile/style.css";
+@import "components/Auth/Profile/FriendList/styles.css";
+@import "components/Auth/Profile/SubscriptionList/styles.css";
 
 
 @font-face {

@@ -10,10 +10,16 @@ import { Registration } from "components/Auth/Registration/Registration";
 import { Calendar } from "./Calendar/Calendar";
 import { Tags } from "./Tags/Tags";
 
+import { FriendList } from "./Auth/Profile/FriendList/FriendList";
+import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionList";
+
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
+
 import AppTemplate from "templates/App.handlebars";
-import { router } from "modules/router";
+import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
+
+import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
 import { svgInliner } from "modules/svgLoader";
 
@@ -30,6 +36,8 @@ export class App extends Component {
     #headerComponent: Header;
     #eventListComponent: EventList;
     #modalWindowComponent: ModalWindow;
+    #frienListComponent: FriendList;
+    #subscriptionListComponent: SubscriptionList;
     #calendarComponent: Calendar;
     #tagsComponent: Tags;
     #loginComponent: Login;
@@ -62,6 +70,9 @@ export class App extends Component {
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
 
+        this.#frienListComponent = this.createComponent(FriendList);
+        this.#subscriptionListComponent = this.createComponent(SubscriptionList);
+
         this.#calendarComponent = this.createComponent(Calendar);
         this.#tagsComponent = this.createComponent(Tags);
 
@@ -69,12 +80,14 @@ export class App extends Component {
     }
 
     rerender() {
+        removeRouterEvents();
         this.removeChildEvents();
         if (this.parent instanceof HTMLElement) {
             this.parent.innerHTML = this.render();
         }
         this.addChildEvents();
         svgInliner.applyRules();
+        addRouterEvents();
     }
 
     render() {
@@ -94,12 +107,31 @@ export class App extends Component {
             modalWindow = this.#modalWindowComponent.render();
         }
 
+        const {content, sidebar} = router.switchAny<{content: string, sidebar: string}>({
+            "/": () => ({
+                content: this.#eventListComponent.render(),
+                sidebar: this.#calendarComponent.render() + this.#tagsComponent.render()
+            }),
+            "/profile": () => ({
+                content: this.#profileComponent.render() +
+                         DelimiterTemplate({content: "Предстоящие мероприятия"}) +
+                         this.#eventListComponent.render(),
+                sidebar: this.#frienListComponent.render() +
+                         this.#subscriptionListComponent.render() +
+                         this.#calendarComponent.render() + 
+                         this.#tagsComponent.render()
+            })
+        }, () => ({
+            content: "404",
+            sidebar: this.#calendarComponent.render() + this.#tagsComponent.render()
+        }));
+
         const template = AppTemplate({
             header: this.#headerComponent.render(),
-            content: router.switch({ "/": () => this.#eventListComponent, "/profile": () => this.#profileComponent }),
+            content: content,
             footer: "Footer",
             modalWindow: modalWindow,
-            sidebar: this.#calendarComponent.render() + this.#tagsComponent.render()
+            sidebar: sidebar
         });
         return template;
     }

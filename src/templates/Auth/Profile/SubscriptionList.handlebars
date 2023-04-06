@@ -1,0 +1,16 @@
+<div class="subscription-list">
+    <a class="subscription-list__header">
+        Подписки
+    </a>
+    <hr>
+    <div class="subscription-list__subscription-block">
+        {{#each subscriptions}}
+            <div class="subscription-list__subscription-block__item">
+                <a href="#">
+                    <img src="{{avatar}}" class="subscription-list__subscription-block__item__avatar ios-rounded">
+                </a>
+                <a href="#" class="black-link">{{name}}</a>
+            </div>
+        {{/each}}
+    </div>
+</div>

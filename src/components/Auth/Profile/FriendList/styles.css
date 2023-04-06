@@ -1,0 +1,31 @@
+.friend-list {
+    --avatar-size: 65px;
+}
+
+.friend-list__header {
+    font-size: 40px;
+    color: var(--link-color);
+}
+
+.friend-list__friends-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+.friend-list__friends-block__avatar-link {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.friend-list__friends-block__avatar {
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+
+    border: 3px solid transparent;
+    border-radius: 50%;
+}
+
+.friend-list__friends-block__avatar:hover {
+    border-color: var(--link-color);
+}

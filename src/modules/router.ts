@@ -1,6 +1,11 @@
 import { Component } from "components/Component";
 
-type RouterType = Record<string, () => Component>;
+type RouterType<T> = Record<string, () => T>;
+
+interface SearchByUrlResult<T> {
+    func: () => T;
+    founded: boolean;
+}
 
 class Router {
     #locationParts: string[] = [];
@@ -14,14 +19,24 @@ class Router {
         this.#parseLocation();
     }
 
-    switch(routes: RouterType) {
+    #searchByUrl<T>(routes: RouterType<T>): { result: T; founded: true } | { result: undefined; founded: false } {
         for (const url in routes) {
             if (this.#locationParts.at(0) === url) {
                 this.#locationParts = this.#locationParts.slice(1);
-                return routes[url]().render();
+                return { result: routes[url](), founded: true };
             }
         }
-        return "";
+        return { result: undefined, founded: false };
+    }
+
+    switchAny<T = any>(routes: RouterType<T>, defaultValue: () => T): T {
+        const { result, founded } = this.#searchByUrl(routes);
+        return founded ? result : defaultValue();
+    }
+
+    switchComponent(routes: RouterType<Component>): string {
+        const { result, founded } = this.#searchByUrl(routes);
+        return founded ? result.render() : "";
     }
 
     go(url: string) {
@@ -44,3 +59,18 @@ class Router {
 }
 
 export let router = new Router();
+
+const getLinks = () => document.querySelectorAll(".js-router-link");
+
+function linkEvent() {}
+
+export const addRouterEvents = () => {
+    console.log("addRouterEvents");
+    // getLinks().forEach(link => {
+    //     link.addEventListener("click")
+    // })
+};
+
+export const removeRouterEvents = () => {
+    console.log("removeRouterEvents");
+};
