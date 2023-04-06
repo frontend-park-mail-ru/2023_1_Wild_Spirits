@@ -6,8 +6,10 @@ import { EventList } from "components/Events/EventList/EventList";
 import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { Login } from "components/Auth/Login/Login";
 import { Registration } from "components/Auth/Registration/Registration";
-import { Calendar } from "components/Calendar/Calendar";
+
+import { Calendar } from "./Calendar/Calendar";
 import { Tags } from "./Tags/Tags";
+
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import AppTemplate from "templates/App.handlebars";
@@ -26,15 +28,13 @@ import { setData } from "flux/slices/userSlice";
  */
 export class App extends Component {
     #headerComponent: Header;
-    #contentComponent;
-    #modalWindowComponent;
-
-    #loginComponent;
-    #registerComponent;
-    #profileComponent;
-
-    #calendarComponent;
+    #eventListComponent: EventList;
+    #modalWindowComponent: ModalWindow;
+    #calendarComponent: Calendar;
     #tagsComponent: Tags;
+    #loginComponent: Login;
+    #registerComponent: Registration;
+    #profileComponent: Profile;
 
     constructor(parent: HTMLElement) {
         super(parent);
@@ -56,16 +56,16 @@ export class App extends Component {
             });
 
         this.#headerComponent = this.createComponent(Header);
-        this.#contentComponent = this.createComponent<EventList>(EventList);
+        this.#eventListComponent = this.createComponent<EventList>(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow);
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
 
-        this.#profileComponent = this.createComponent(Profile);
-
         this.#calendarComponent = this.createComponent(Calendar);
         this.#tagsComponent = this.createComponent(Tags);
+
+        this.#profileComponent = this.createComponent(Profile);
     }
 
     rerender() {
@@ -90,16 +90,16 @@ export class App extends Component {
                     this.#modalWindowComponent.content = this.#registerComponent.render();
                     break;
             }
+
             modalWindow = this.#modalWindowComponent.render();
         }
 
         const template = AppTemplate({
             header: this.#headerComponent.render(),
-            content: router.switch({ "/": () => this.#contentComponent, "/profile": () => this.#profileComponent }),
+            content: router.switch({ "/": () => this.#eventListComponent, "/profile": () => this.#profileComponent }),
             footer: "Footer",
             modalWindow: modalWindow,
-            calendar: this.#calendarComponent.render(),
-            tags: this.#tagsComponent.render()
+            sidebar: this.#calendarComponent.render() + this.#tagsComponent.render()
         });
         return template;
     }

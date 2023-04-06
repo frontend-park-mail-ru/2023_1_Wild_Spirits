@@ -3,7 +3,7 @@
 }
 
 .event-card__body {
-    margin-bottom: 40px;
+    margin-bottom: 70px;
 }
 
 .event-card__marked {
@@ -32,16 +32,18 @@
 
 .event-card__footer {
     position: relative;
+    flex-grow: 1;
+    bottom: 10px;
     margin: 0 15px 0 15px;
 }
 
 .event-card__button-block {
     margin-top: 10px;
+    bottom: 10px;
     display: flex;
     justify-content: space-between;
-    position: relative;
+    position: absolute;
     width: 100%;
-    bottom: 20px;
 }
 
 .event-card__button-link {
