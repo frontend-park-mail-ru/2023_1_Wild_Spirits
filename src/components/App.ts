@@ -11,7 +11,7 @@ import { Tags } from "./Tags/Tags";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import AppTemplate from "templates/App.handlebars";
-import { router } from "modules/router";
+import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
 import { svgInliner } from "modules/svgLoader";
 
@@ -69,12 +69,14 @@ export class App extends Component {
     }
 
     rerender() {
+        removeRouterEvents();
         this.removeChildEvents();
         if (this.parent instanceof HTMLElement) {
             this.parent.innerHTML = this.render();
         }
         this.addChildEvents();
         svgInliner.applyRules();
+        addRouterEvents();
     }
 
     render() {
@@ -95,11 +97,14 @@ export class App extends Component {
 
         const template = AppTemplate({
             header: this.#headerComponent.render(),
-            content: router.switch({ "/": () => this.#contentComponent, "/profile": () => this.#profileComponent }),
+            content: router.switchComponent({
+                "/": () => this.#contentComponent,
+                "/profile": () => this.#profileComponent,
+            }),
             footer: "Footer",
             modalWindow: modalWindow,
             calendar: this.#calendarComponent.render(),
-            tags: this.#tagsComponent.render()
+            tags: this.#tagsComponent.render(),
         });
         return template;
     }
