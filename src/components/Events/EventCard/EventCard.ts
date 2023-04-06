@@ -38,7 +38,7 @@ export class EventCard extends Component {
                 img_src: "/assets/position_icon.png",
                 title: "Места",
                 items: this.#props.places,
-            }),
+            })
         });
     }
 }

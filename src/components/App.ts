@@ -13,6 +13,7 @@ import { ResponseUserLight } from "responses/ResponsesUser";
 import AppTemplate from "templates/App.handlebars";
 import { router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
+import { svgInliner } from "modules/svgLoader";
 
 import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
@@ -73,6 +74,7 @@ export class App extends Component {
             this.parent.innerHTML = this.render();
         }
         this.addChildEvents();
+        svgInliner.applyRules();
     }
 
     render() {

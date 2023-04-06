@@ -25,6 +25,13 @@ export class Registration extends Component {
             "click",
             () => store.dispatch.bind(store)(openLogin())
         );
+        this.registerEvent(() => document.querySelector('input[type=checkbox][name=accept]') as HTMLElement, "change", this.#toggleForm);
+    }
+
+    #toggleForm = () => {
+        const submitButton = document.getElementById("register-submit-button") as HTMLButtonElement;
+        if (submitButton)
+            submitButton.disabled = !submitButton.disabled;
     }
 
     /**
@@ -35,7 +42,6 @@ export class Registration extends Component {
         event.preventDefault();
 
         const formData = new FormData(event.target as HTMLFormElement);
-        console.log(formData.get("password"));
 
         if (validateForm(event.target as HTMLFormElement)) {
             ajax.post<ResponseUserLight>({
