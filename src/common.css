@@ -160,3 +160,20 @@
         display: none;
     }
 }
+
+.table {
+    display: grid;
+
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr;
+}
+
+.table__cell {
+    font-size: 24px;
+    padding: 15px 20px 5px 0;
+    border-bottom: 1px solid black;
+}
+
+.grey {
+    color: grey;
+}
