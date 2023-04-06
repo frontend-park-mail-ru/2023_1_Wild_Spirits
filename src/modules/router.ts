@@ -2,11 +2,6 @@ import { Component } from "components/Component";
 
 type RouterType<T> = Record<string, () => T>;
 
-interface SearchByUrlResult<T> {
-    func: () => T;
-    founded: boolean;
-}
-
 class Router {
     #locationParts: string[] = [];
     #searchParams: URLSearchParams | undefined;
@@ -70,7 +65,6 @@ class Router {
     }
 
     #onPopState() {
-        console.log("#onPopState");
         this.#parseLocation();
         this.#emit();
     }
@@ -83,19 +77,16 @@ const getLinks = () => document.querySelectorAll(".js-router-link");
 function linkEvent(event: Event) {
     event.preventDefault();
     const target = event.target as HTMLLinkElement;
-    console.log("target.href:", target.href);
     router.go(target.href);
 }
 
 export const addRouterEvents = () => {
-    console.log("addRouterEvents");
     getLinks().forEach((link) => {
         link.addEventListener("click", linkEvent);
     });
 };
 
 export const removeRouterEvents = () => {
-    console.log("removeRouterEvents");
     getLinks().forEach((link) => {
         link.removeEventListener("click", linkEvent);
     });
