@@ -59,7 +59,7 @@ export class App extends Component {
                     store.dispatch(setData(json.body.user));
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.log("catch:", error);
             });
 

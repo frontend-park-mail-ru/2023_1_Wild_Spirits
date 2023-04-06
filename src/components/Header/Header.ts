@@ -6,10 +6,11 @@ import { ajax } from "modules/ajax";
 import HeaderTemplate from "templates/Header/Header.handlebars";
 import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
 import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
+import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { setCity, setCategory, getCity } from "flux/slices/headerSlice";
+import { setCities, setCategories, selectCity, selectCategory, getSelectedCity } from "flux/slices/headerSlice";
 import { logout } from "flux/slices/userSlice";
 
 /**
@@ -20,6 +21,35 @@ import { logout } from "flux/slices/userSlice";
 export class Header extends Component {
     constructor(parent: Component) {
         super(parent);
+
+        ajax.get<ResponseBody<{cities: {id: number, name: string}[]}>>({
+            url: "/cities",
+            credentials: false
+        })
+            .then(({json, response}) => {
+                if (response.ok) {
+                    store.dispatch(setCities({cities: json.body!.cities}));
+                }
+            })
+            .catch(error => {
+                console.log("catch:", error);
+                store.dispatch(setCities({cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"]}));
+            });
+
+        ajax.get<ResponseBody<{categories: {id: number, name: string}[]}>>({
+            url: "/categories",
+            credentials: false
+        })
+            .then(({json, response}) => {
+                if (response.ok) {
+                    store.dispatch(setCategories({categories: json.body!.categories}));
+                }
+            })
+            .catch(error => {
+                console.log("catch:", error);
+                store.dispatch(setCategories({categories: ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"]}))
+            });
+
         this.registerEvent(() => document.getElementsByTagName("select")[0], "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
 
@@ -61,8 +91,7 @@ export class Header extends Component {
         const target = event.target as HTMLElement;
         const id = target.id.split("-").at(-1);
         if (id !== undefined) {
-            store.dispatch(setCategory({category: parseInt(id)}));
-            this.rerender();
+            store.dispatch(selectCategory({category: parseInt(id)}));
         }
     };
 
@@ -72,12 +101,12 @@ export class Header extends Component {
      */
     #selectCity = (event: Event) => {
         const target = event.target as HTMLInputElement;
-        store.dispatch(setCity({city: target.value}));
+        store.dispatch(selectCity({city: target.value}));
     };
 
     postRender() {
         const select = document.getElementsByTagName("select")[0];
-        select.value = getCity(store.getState().header);
+        select.value = getSelectedCity(store.getState().header);
     }
 
     render() {
