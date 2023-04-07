@@ -92,7 +92,7 @@ export class Header extends Component {
         const id = target.id.split("-").at(-1);
         if (id !== undefined) {
             store.dispatch(selectCategory({category: parseInt(id)}));
-        }
+        }  
     };
 
     /**

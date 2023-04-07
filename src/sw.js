@@ -1,9 +1,11 @@
+const cacheName = "v1";
+
 this.addEventListener("install", function (event) {
     console.log(event);
 
     event.waitUntil(
         caches
-            .open("v1")
+            .open(cacheName)
             .then((cache) => {
                 return cache.addAll(["/index.html", "/app.js", "/assets"]);
             })
@@ -11,23 +13,30 @@ this.addEventListener("install", function (event) {
     );
 });
 
-// this.addEventListener("activate", event=>{
-//     console.log(event)
-// })
-
 this.addEventListener("fetch", function (event) {
     event.respondWith(
         caches
-            .match(event.request)
-            .then(
-                (response) =>
-                    response ||
-                    fetch(event.request).then((response) => {
-                        const responseClone = response.clone();
-                        caches.open("v1").then((cache) => cache.put(event.request, responseClone));
-                        return response;
-                    })
-            )
-            .catch(() => console.log("fetch failed"))
-    );
+            .open(cacheName).then(cache => {
+                return fetch(event.request).then(networkResponse => {
+                    cache.put(event.request, networkResponse.clone());
+
+                    return networkResponse;
+                }).catch(()=>{
+                    return cache.match(event.request);
+                })
+            }));
+
+            // TODO: implement stale-while-revalidate strategy for svgs
+
+            // .open(cacheName).then(cache => {
+            //     return cache.match(event.request).then(cachedResponse => {
+            //         const fetchedResponse = fetch(event.request).then(networkResponse => {
+            //             cache.put(event.request, networkResponse.clone());
+
+            //             return networkResponse;
+            //         });
+
+            //         return cachedResponse || fetchedResponse;
+            //     });
+            // }));
 });
