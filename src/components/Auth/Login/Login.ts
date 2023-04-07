@@ -42,19 +42,18 @@ export class Login extends Component {
                     credentials: true,
                     body: { email: formData.get("email"), pass: formData.get("password") },
                 })
-                    .then(({ json, response }) => {
-                        if (response.ok) {
-                            const csrf = response.headers.get("x-csrf-token");
-                            if (csrf) {
-                                ajax.addHeaders({ "x-csrf-token": csrf });
-                            }
-                            store.dispatch(setData(json.body.user));
-                            store.dispatch(close());
+                .then(({ json, response }) => {
+                    if (response.ok) {
+                        const csrf = response.headers.get("x-csrf-token");
+                        if (csrf) {
+                            ajax.addHeaders({ "x-csrf-token": csrf });
                         }
-                    })
-                    .catch((error) => {
-                        console.log("catch:", error);
-                    });
+                        store.dispatch(setData(json.body.user), close());
+                    }
+                })
+                .catch((error) => {
+                    console.log("catch:", error);
+                });
             }
         }
     };

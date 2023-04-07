@@ -6,11 +6,19 @@ import { EventList } from "components/Events/EventList/EventList";
 import { ModalWindow } from "components/ModalWindow/ModalWindow";
 import { Login } from "components/Auth/Login/Login";
 import { Registration } from "components/Auth/Registration/Registration";
-import { Calendar } from "components/Calendar/Calendar";
+
+import { Calendar } from "./Calendar/Calendar";
 import { Tags } from "./Tags/Tags";
+
+import { FriendList } from "./Auth/Profile/FriendList/FriendList";
+import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionList";
+
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
+
 import AppTemplate from "templates/App.handlebars";
+import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
+
 import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
 import { svgInliner } from "modules/svgLoader";
@@ -27,16 +35,16 @@ import { EventPage } from "./Events/EventPage/EventPage";
  */
 export class App extends Component {
     #headerComponent: Header;
-    #contentComponent;
-    #modalWindowComponent;
-
-    #loginComponent;
-    #registerComponent;
-    #profileComponent;
-    #eventComponent;
-
-    #calendarComponent;
+    #eventListComponent: EventList;
+    #modalWindowComponent: ModalWindow;
+    #frienListComponent: FriendList;
+    #subscriptionListComponent: SubscriptionList;
+    #calendarComponent: Calendar;
     #tagsComponent: Tags;
+    #loginComponent: Login;
+    #registerComponent: Registration;
+    #profileComponent: Profile;
+    #eventComponent: EventPage;
 
     constructor(parent: HTMLElement) {
         super(parent);
@@ -58,17 +66,20 @@ export class App extends Component {
             });
 
         this.#headerComponent = this.createComponent(Header);
-        this.#contentComponent = this.createComponent(EventList);
+        this.#eventListComponent = this.createComponent<EventList>(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow);
         this.#eventComponent = this.createComponent(EventPage);
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
 
-        this.#profileComponent = this.createComponent(Profile);
+        this.#frienListComponent = this.createComponent(FriendList);
+        this.#subscriptionListComponent = this.createComponent(SubscriptionList);
 
         this.#calendarComponent = this.createComponent(Calendar);
         this.#tagsComponent = this.createComponent(Tags);
+
+        this.#profileComponent = this.createComponent(Profile);
     }
 
     rerender() {
@@ -95,23 +106,47 @@ export class App extends Component {
                     this.#modalWindowComponent.content = this.#registerComponent.render();
                     break;
             }
+
             modalWindow = this.#modalWindowComponent.render();
         }
 
-        const template = AppTemplate({
-            header: this.#headerComponent.render(),
-            content: router.switchComponent({
-                "/": () => this.#contentComponent,
-                "/profile": () => this.#profileComponent,
+        const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
+            {
+                "/": () => ({
+                    content: this.#eventListComponent.render(),
+                    sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                }),
+                "/profile": () => ({
+                    content:
+                        this.#profileComponent.render() +
+                        DelimiterTemplate({ content: "Предстоящие мероприятия" }) +
+                        this.#eventListComponent.render(),
+                    sidebar:
+                        this.#frienListComponent.render() +
+                        this.#subscriptionListComponent.render() +
+                        this.#calendarComponent.render() +
+                        this.#tagsComponent.render(),
+                }),
                 "/events": () => {
                     this.#eventComponent.loadEvent();
-                    return this.#eventComponent;
+                    return {
+                        content: this.#eventComponent.render(),
+                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                    };
                 },
-            }),
+            },
+            () => ({
+                content: "404",
+                sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+            })
+        );
+
+        const template = AppTemplate({
+            header: this.#headerComponent.render(),
+            content: content,
             footer: "Footer",
             modalWindow: modalWindow,
-            calendar: this.#calendarComponent.render(),
-            tags: this.#tagsComponent.render(),
+            sidebar: sidebar,
         });
         return template;
     }

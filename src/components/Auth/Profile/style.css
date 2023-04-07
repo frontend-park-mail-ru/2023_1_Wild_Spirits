@@ -16,5 +16,9 @@
 
 .profile-description__table-container {
     height: auto;
+    width: 100%;
+
+    padding-left: 90px;
+    padding-right: 90px;
     margin: auto;
 }

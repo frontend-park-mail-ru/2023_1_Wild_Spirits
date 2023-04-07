@@ -2,6 +2,7 @@ import { createSlice } from "flux/slice";
 
 interface UserState {
     data?: {
+        id: number;
         name: string;
         img: string;
     };

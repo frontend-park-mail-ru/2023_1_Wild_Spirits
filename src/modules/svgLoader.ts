@@ -43,7 +43,6 @@ class SVGInliner {
     }
 
     async applyRules() {
-        console.log('apply rules')
         for (const {collectionGetter, url} of this.rules) {
             this.inlineSVG(collectionGetter(), url);
         }

@@ -8,9 +8,9 @@ interface HeaderState {
 }
 
 const initialState: HeaderState = {
-    categories: ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"],
+    categories: [],
     selectedCategoryId: undefined,
-    cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"],
+    cities: [],
     selectedCityId: 0,
 };
 
@@ -18,7 +18,15 @@ const headerSlice = createSlice({
     name: "header",
     initialState: initialState,
     reducers: {
-        setCity: (state, action) => {
+        setCities: (state, action) => {
+            state.cities = action.payload.cities;
+            return state;
+        },
+        setCategories: (state, action) => {
+            state.categories = action.payload.categories;
+            return state;
+        },
+        selectCity: (state, action) => {
             const city = action.payload.city;
             if (typeof city == "number") {
                 state.selectedCityId = city;
@@ -27,7 +35,7 @@ const headerSlice = createSlice({
             }
             return state;
         },
-        setCategory: (state, action) => {
+        selectCategory: (state, action) => {
             const category = action.payload.category;
             if (typeof category == "number") {
                 state.selectedCategoryId = category;
@@ -39,8 +47,8 @@ const headerSlice = createSlice({
     }
 });
 
-export const getCity = (state: HeaderState): string => state.cities[state.selectedCityId];
-export const getCategory = (state: HeaderState): string | undefined => {
+export const getSelectedCity = (state: HeaderState): string => state.cities[state.selectedCityId];
+export const getSelectedCategory = (state: HeaderState): string | undefined => {
     if (state.selectedCategoryId) {
         return state.categories[state.selectedCategoryId];
     }
@@ -48,5 +56,5 @@ export const getCategory = (state: HeaderState): string | undefined => {
     return undefined;
 }
 
-export const { setCity, setCategory } = headerSlice.actions;
+export const { setCities, setCategories, selectCity, selectCategory } = headerSlice.actions;
 export default headerSlice;
