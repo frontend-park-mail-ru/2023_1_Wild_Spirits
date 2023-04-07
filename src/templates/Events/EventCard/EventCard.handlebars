@@ -1,6 +1,8 @@
 <div class="card event-card">
     <div class="card__img-block">
-        <img class="card__img" src="{{img}}" alt="{{name}}" />
+        <a id="event_{{eventId}}" class="js-router-link" href="/events/{{eventId}}">
+            <img class="card__img" src="{{img}}" alt="{{name}}" />
+        </a>
     </div>
     <div class="card__body event-card__body">
         <div class="card__title">

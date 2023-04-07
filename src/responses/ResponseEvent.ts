@@ -1,8 +1,15 @@
-import { TEventLight } from "models/Events";
+import { TEvent, TEventLight, TEventPlace } from "models/Events";
 import { ResponseBody } from "./ResponseBase";
 
-interface IResponseEvent<T> {
-    events: T[];
+interface IResponseEventsLight {
+    events: TEventLight[];
 }
 
-export interface ResponseEventLight extends ResponseBody<IResponseEvent<TEventLight>> {}
+interface IResponseEvent {
+    event: TEvent;
+    places: TEventPlace[];
+}
+
+export interface ResponseEventsLight extends ResponseBody<IResponseEventsLight> {}
+
+export interface ResponseEvent extends ResponseBody<IResponseEvent> {}

@@ -5,7 +5,7 @@ import { EventCard } from "components/Events/EventCard/EventCard";
 import config from "config";
 import { TEventLight } from "models/Events";
 import { ajax } from "modules/ajax";
-import { ResponseEventLight } from "responses/ResponseEvent";
+import { ResponseEventsLight } from "responses/ResponseEvent";
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 
 /**
@@ -24,11 +24,12 @@ export class EventList extends Component {
      * fill itself with events from server
      */
     loadEvents() {
-        ajax.get<ResponseEventLight>({ url: "/events" })
+        ajax.get<ResponseEventsLight>({ url: "/events" })
             .then(({ json, response }) => {
                 if (response.ok) {
                     let events: EventCard[] = [];
                     json.body.events.map((event: TEventLight) => {
+                        console.log(event);
                         const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
                         let dates: string[] = [];
                         if (dateStart) {

@@ -6,7 +6,7 @@ interface TEventDates {
     weekdays?: number[];
 }
 
-interface TEventPlace {
+export interface TEventPlace {
     name: string;
     city: string;
     coords: {
@@ -19,11 +19,13 @@ export interface TEventBase {
     id: number;
     name: string;
     desc: string;
+    img: string;
 }
 
 export interface TEventLight extends TEventBase {
-    img: string;
     dates: TEventDates;
     places: string[];
     //places: TEventPlace[];
 }
+
+export interface TEvent extends TEventBase {}

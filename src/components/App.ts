@@ -18,6 +18,7 @@ import { svgInliner } from "modules/svgLoader";
 import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
 import { setData } from "flux/slices/userSlice";
+import { EventPage } from "./Events/EventPage/EventPage";
 
 /**
  * @classdesc Main app component
@@ -32,6 +33,7 @@ export class App extends Component {
     #loginComponent;
     #registerComponent;
     #profileComponent;
+    #eventComponent;
 
     #calendarComponent;
     #tagsComponent: Tags;
@@ -56,8 +58,9 @@ export class App extends Component {
             });
 
         this.#headerComponent = this.createComponent(Header);
-        this.#contentComponent = this.createComponent<EventList>(EventList);
+        this.#contentComponent = this.createComponent(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow);
+        this.#eventComponent = this.createComponent(EventPage);
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
@@ -100,6 +103,10 @@ export class App extends Component {
             content: router.switchComponent({
                 "/": () => this.#contentComponent,
                 "/profile": () => this.#profileComponent,
+                "/events": () => {
+                    this.#eventComponent.loadEvent();
+                    return this.#eventComponent;
+                },
             }),
             footer: "Footer",
             modalWindow: modalWindow,

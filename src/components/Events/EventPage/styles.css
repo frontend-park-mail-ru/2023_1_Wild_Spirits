@@ -1,0 +1,31 @@
+.event-page {
+    margin: 48px 32px 80px 10px;
+}
+
+.event-page__name {
+    font-size: 32px;
+    text-align: center;
+}
+
+.event-page__descripiton-title {
+    margin-top: 16px;
+    font-size: 24px;
+    text-align: center;
+    color: var(--main-selected-color);
+}
+
+.event-page__img-block {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.event-page__img {
+    max-width: 95%;
+    border-radius: 16px;
+}
+
+.event-page__description {
+    margin-top: 12px;
+}

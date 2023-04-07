@@ -1,0 +1,28 @@
+<div class="event-page">
+    <div class="event-page__name">
+        {{name}}
+    </div>
+    <div class="event-page__img-block">
+        <img src="{{img}}" alt="{{name}}" class="event-page__img" />
+    </div>
+    <div class="event-page__descripiton-title">
+        Подробнее о мероприятии
+    </div>
+    <div class="event-page__description">
+        {{description}}
+    </div>
+    <div class="event-page__tags">
+        {{{tags}}}
+    </div>
+    <div class="event-page__more-info">
+        {{#each moreInfo}}
+            <div>
+                {{this}}
+            </div>
+        {{/each}}
+    </div>
+    <div class="event-page__buttons">
+
+    </div>
+
+</div>

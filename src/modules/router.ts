@@ -3,6 +3,7 @@ import { Component } from "components/Component";
 type RouterType<T> = Record<string, () => T>;
 
 class Router {
+    #prevUrl: string = "";
     #locationParts: string[] = [];
     #searchParams: URLSearchParams | undefined;
     callbacks: (() => void)[] = [];
@@ -23,6 +24,11 @@ class Router {
 
     reset() {
         this.#parseLocation();
+    }
+
+    getNextUrl() {
+        const result = this.#locationParts.splice(0)[0];
+        return result;
     }
 
     #searchByUrl<T>(routes: RouterType<T>): { result: T; founded: true } | { result: undefined; founded: false } {
@@ -76,8 +82,8 @@ const getLinks = () => document.querySelectorAll(".js-router-link");
 
 function linkEvent(event: Event) {
     event.preventDefault();
-    const target = event.target as HTMLLinkElement;
-    router.go(target.href);
+    const currentTarget = event.currentTarget as HTMLLinkElement;
+    router.go(currentTarget.href);
 }
 
 export const addRouterEvents = () => {
