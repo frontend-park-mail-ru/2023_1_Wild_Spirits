@@ -1,9 +1,10 @@
 <div class="table">
     {{#each rows}}
-        {{#each cols}}
-            <div class="table__cell {{#if @index}}grey{{/if}}">
-                {{this}}
-            </div>
-        {{/each}}
+        <div class="table__cell grey">
+            {{title}}
+        </div>
+        <div class="table__cell">
+            {{value}}
+        </div>
     {{/each}}
 </div>

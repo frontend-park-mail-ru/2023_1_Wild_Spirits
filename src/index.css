@@ -1,4 +1,8 @@
 @import "common.css";
+@import "css/Button.css";
+@import "css/Card.css";
+@import "css/Link.css";
+@import "css/ProfileLink.css";
 @import "components/Header/styles.css";
 @import "components/ModalWindow/styles.css";
 @import "components/Auth/styles.css";
