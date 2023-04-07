@@ -5,21 +5,26 @@
     <div class="event-page__img-block">
         <img src="{{img}}" alt="{{name}}" class="event-page__img" />
     </div>
-    <div class="event-page__descripiton-title">
+    <div class="event-page__title">
         Подробнее о мероприятии
     </div>
     <div class="event-page__description">
         {{description}}
     </div>
+    <div class="event-page__title">
+        Где?
+    </div>
+    <div class="event-page__where">
+        {{#each places}}
+            {{city}},
+            {{name}}
+        {{/each}}
+    </div>
     <div class="event-page__tags">
         {{{tags}}}
     </div>
     <div class="event-page__more-info">
-        {{#each moreInfo}}
-            <div>
-                {{this}}
-            </div>
-        {{/each}}
+        {{{moreInfo}}}
     </div>
     <div class="event-page__buttons">
 
