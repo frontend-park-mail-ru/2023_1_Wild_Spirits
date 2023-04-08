@@ -13,9 +13,6 @@ import { Tags } from "./Tags/Tags";
 import { FriendList } from "./Auth/Profile/FriendList/FriendList";
 import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionList";
 
-import { ajax } from "modules/ajax";
-import { ResponseUserLight } from "responses/ResponsesUser";
-
 import AppTemplate from "templates/App.handlebars";
 import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
 
@@ -25,11 +22,11 @@ import { svgInliner } from "modules/svgLoader";
 
 import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
-import { setData } from "flux/slices/userSlice";
 import { EventPage } from "./Events/EventPage/EventPage";
 import { EventCreate } from "./Events/EventCreate/EventCreate";
 
 import { loadEvents } from "requests/events";
+import { loadAuthorization } from "requests/user";
 
 /**
  * @classdesc Main app component
@@ -52,22 +49,8 @@ export class App extends Component {
 
     constructor(parent: HTMLElement) {
         super(parent);
-        ajax.get<ResponseUserLight>({
-            url: "/authorized",
-            credentials: true,
-        })
-            .then(({ json, response }) => {
-                if (response.ok) {
-                    const csrf = response.headers.get("x-csrf-token");
-                    if (csrf) {
-                        ajax.addHeaders({ "x-csrf-token": csrf });
-                    }
-                    store.dispatch(setData(json.body!.user));
-                }
-            })
-            .catch((error) => {
-                console.log("catch:", error);
-            });
+
+        loadAuthorization();
 
         this.#headerComponent = this.createComponent(Header);
         this.#eventListComponent = this.createComponent<EventList>(EventList);

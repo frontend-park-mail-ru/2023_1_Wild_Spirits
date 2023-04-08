@@ -49,7 +49,6 @@ export const loadEvents = () => {
     })
         .then(({ json, response }) => {
             if (response.ok) {
-                let events: EventCard[] = [];
                 store.dispatch(setEvents({events: json.body!.events}));
             }
         })

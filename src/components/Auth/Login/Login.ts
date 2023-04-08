@@ -2,13 +2,12 @@
 
 import { Component } from "components/Component";
 import { validateForm, warningMsg } from "components/Auth/FormValidation";
-import { ajax } from "modules/ajax";
-import { ResponseUserLight } from "responses/ResponsesUser";
 import LoginTemplate from "templates/Auth/Login/Login.handlebars";
 
 import { store } from "flux";
-import { setData } from "flux/slices/userSlice";
-import { close, openRegister } from "flux/slices/modalWindowSlice";
+import { openRegister } from "flux/slices/modalWindowSlice";
+
+import { loginUser } from "requests/user";
 
 /**
  * Login component
@@ -37,25 +36,7 @@ export class Login extends Component {
 
         if (event.target) {
             if (validateForm(event.target as HTMLFormElement)) {
-                ajax.post<ResponseUserLight>({
-                    url: "/login",
-                    credentials: true,
-                    body: { email: formData.get("email"), pass: formData.get("password") },
-                })
-                .then(({ json, response }) => {
-                    if (response.ok) {
-                        const csrf = response.headers.get("x-csrf-token");
-                        if (csrf) {
-                            ajax.addHeaders({ "x-csrf-token": csrf });
-                        }
-                        store.dispatch(setData(json.body!.user), close());
-                    } else {
-                        warningMsg(json.errorMsg);
-                    }
-                })
-                .catch((error) => {
-                    console.log("catch:", error);
-                });
+                loginUser(formData, warningMsg);
             }
         }
     };

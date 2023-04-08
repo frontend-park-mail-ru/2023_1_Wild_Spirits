@@ -42,6 +42,7 @@ export const validateForm = (form: HTMLFormElement): boolean => {
         if (warningEl) {
             warningEl.textContent = "пароли не совпадают";
         }
+        isValid = false;
     }
 
     return isValid;
