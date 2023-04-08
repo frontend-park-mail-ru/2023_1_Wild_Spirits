@@ -13,6 +13,12 @@ export const validateForm = (form: HTMLFormElement): boolean => {
                 if (!value.includes("@")) {
                     return "почта должна содержать символ '@'";
                 }
+
+                value = value.split('@')[1];
+
+                if (!value.includes(".")) {
+                    return "почта должна содержать символ '.'";
+                }
             }
         }
 
@@ -33,7 +39,11 @@ export const validateForm = (form: HTMLFormElement): boolean => {
             warningEl.textContent = "поле не может быть пустым";
             isValid = false;
         } else {
-            warningEl.textContent = validateField(field, value);
+            const validationError = validateField(field, value);
+            if (validationError !== "") {
+                warningEl.textContent = validationError;
+                isValid = false;
+            }
         }
     }
 
@@ -42,6 +52,7 @@ export const validateForm = (form: HTMLFormElement): boolean => {
         if (warningEl) {
             warningEl.textContent = "пароли не совпадают";
         }
+        isValid = false;
     }
 
     return isValid;

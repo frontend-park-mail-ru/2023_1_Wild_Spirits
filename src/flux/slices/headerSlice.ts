@@ -52,6 +52,10 @@ const headerSlice = createSlice({
                 state.selectedCategoryId = state.cities.findIndex((el)=>el===category);
             }
             return state;
+        },
+        clearCategory: (state) => {
+            state.selectedCategoryId = undefined;
+            return state;
         }
     }
 });
@@ -72,5 +76,5 @@ export const getSelectedCategory = (state: HeaderState): string | undefined => {
     return undefined;
 }
 
-export const { setCities, setCategories, selectCity, selectCategory } = headerSlice.actions;
+export const { setCities, setCategories, selectCity, selectCategory, clearCategory } = headerSlice.actions;
 export default headerSlice;

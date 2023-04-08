@@ -1,7 +1,7 @@
 /** @module ajax */
 
 type HeadersType = Record<string, string>;
-type UrlPropsType = Record<string, string>;
+export type UrlPropsType = Record<string, string>;
 
 interface AjaxProps {
     url: string;
@@ -59,7 +59,7 @@ class Ajax {
      * @returns {string} - query parameters string
      */
     urlPropsToString(urlProps: UrlPropsType | undefined): string {
-        if (!urlProps) {
+        if (!urlProps || Object.keys(urlProps).length === 0) {
             return "";
         }
         return (

@@ -1,15 +1,15 @@
 import { createSlice } from "flux/slice";
 
 import { TEvent } from "models/Events"
-import { EventCard } from "components/Events/EventCard/EventCard";
+import { TEventLight } from "models/Events";
 
 interface EventsState {
-    eventCards: EventCard[] | undefined,
+    events: TEventLight[] | undefined,
     selectedEvent: TEvent | undefined
 }
 
 const initialState: EventsState = {
-    eventCards: undefined,
+    events: undefined,
     selectedEvent: undefined
 }
 
@@ -18,7 +18,7 @@ const eventsSlice = createSlice({
     initialState: initialState,
     reducers: {
         setEvents: (state, action) => {
-            state.eventCards = action.payload.events;
+            state.events = action.payload.events;
             return state;
         },
         selectEvent: (state, action) => {
