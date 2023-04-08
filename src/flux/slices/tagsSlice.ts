@@ -27,5 +27,11 @@ const tagsSlice = createSlice({
     }
 });
 
+export const getSelectedTags = (state: TagsState) => {
+    return Object.entries(state)
+                 .filter(([tagName, isActive])=>isActive)
+                 .map(([tagName, isActive]) => tagName);
+}
+
 export const { toggleTag } = tagsSlice.actions;
 export default tagsSlice;

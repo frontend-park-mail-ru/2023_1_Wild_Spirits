@@ -8,13 +8,16 @@ import { ajax } from "modules/ajax";
 import { ResponseEventsLight } from "responses/ResponseEvent";
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 
+import { store } from "flux";
+import { setEvents, selectEvent } from "flux/slices/eventSlice"
+
 /**
  * Event list component
  * @class
  * @extends Component
  */
 export class EventList extends Component {
-    #events: EventCard[] | undefined = undefined;
+    // #events: EventCard[] | undefined = undefined;
     constructor(parent: Component) {
         super(parent);
         this.loadEvents();
@@ -57,15 +60,14 @@ export class EventList extends Component {
                             })
                         );
                     });
-                    this.#events = events;
-                    this.rerender();
+                    store.dispatch(setEvents({events: events}));
                 }
             })
             .catch((error) => {
                 console.log(error);
-                this.#events = [];
+                let events = [];
                 for (let i = 0; i < 20; i++) {
-                    this.#events.push(
+                    events.push(
                         new EventCard(this, {
                             id: i,
                             name: "Мне сказали, что названиеобычно длиннее одного слова",
@@ -76,12 +78,14 @@ export class EventList extends Component {
                         })
                     );
                 }
-                this.rerender();
+
+                store.dispatch(setEvents({events: events}));
             });
     }
 
     render() {
-        const renderedEvents = this.#events ? this.#events.map((event) => event.render()) : [];
+        const events = store.getState().events.eventCards;
+        const renderedEvents = events ? events.map((event) => event.render()) : [];
         return EventListTemplate({ events: renderedEvents });
     }
 }

@@ -1,17 +1,24 @@
 import { createSlice } from "flux/slice";
 
+import { Action } from "flux/action";
+
+type TCity = {
+    id: number,
+    name: string
+}
+
 interface HeaderState {
     categories: string[];
     selectedCategoryId: number | undefined;
-    cities: string[];
-    selectedCityId: number;
+    cities: TCity[];
+    selectedCityId: number | undefined;
 }
 
 const initialState: HeaderState = {
     categories: [],
     selectedCategoryId: undefined,
     cities: [],
-    selectedCityId: 0,
+    selectedCityId: 1,
 };
 
 const headerSlice = createSlice({
@@ -26,12 +33,14 @@ const headerSlice = createSlice({
             state.categories = action.payload.categories;
             return state;
         },
-        selectCity: (state, action) => {
-            const city = action.payload.city;
+        selectCity: (state, action: Action<{city: number | string | TCity}>) => {
+            const city = action.payload?.city;
             if (typeof city == "number") {
                 state.selectedCityId = city;
+            } else if (typeof city == "string"){
+                state.selectedCityId = state.cities.find(el => el.name === city)?.id || 1;
             } else {
-                state.selectedCityId = state.cities.findIndex((el)=>el===city);
+                state.selectedCityId = city?.id || 1;
             }
             return state;
         },
@@ -47,7 +56,14 @@ const headerSlice = createSlice({
     }
 });
 
-export const getSelectedCity = (state: HeaderState): string => state.cities[state.selectedCityId];
+export const getSelectedCityName = (state: HeaderState): string | undefined => {
+    return state.cities.find(city => city.id === state.selectedCityId)?.name;
+}
+
+export const getCitiesNames = (state: HeaderState): string[] => {
+    return state.cities.map(city => city.name);
+}
+
 export const getSelectedCategory = (state: HeaderState): string | undefined => {
     if (state.selectedCategoryId) {
         return state.categories[state.selectedCategoryId];

@@ -10,7 +10,7 @@ import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { setCities, setCategories, selectCity, selectCategory, getSelectedCity } from "flux/slices/headerSlice";
+import { setCities, setCategories, selectCity, selectCategory, getSelectedCityName, getCitiesNames } from "flux/slices/headerSlice";
 import { logout } from "flux/slices/userSlice";
 
 /**
@@ -106,7 +106,8 @@ export class Header extends Component {
 
     postRender() {
         const select = document.getElementsByTagName("select")[0];
-        select.value = getSelectedCity(store.getState().header);
+        const selectedCityName = getSelectedCityName(store.getState().header)
+        select.value = selectedCityName ? selectedCityName : "";
     }
 
     render() {
@@ -116,7 +117,7 @@ export class Header extends Component {
             id: this.id,
             categories: store.getState().header.categories,
             selectedCategoryId: store.getState().header.selectedCategoryId,
-            cities: store.getState().header.cities,
+            cities: getCitiesNames(store.getState().header),
             profileLink:
                 userData !== undefined
                     ? AuthorizedLinkTemplate({
