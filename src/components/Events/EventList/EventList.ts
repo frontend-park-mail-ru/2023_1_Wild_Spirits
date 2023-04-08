@@ -31,7 +31,7 @@ export class EventList extends Component {
             .then(({ json, response }) => {
                 if (response.ok) {
                     let events: EventCard[] = [];
-                    json.body.events.map((event: TEventLight) => {
+                    json.body!.events.map((event: TEventLight) => {
                         console.log(event);
                         const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
                         let dates: string[] = [];

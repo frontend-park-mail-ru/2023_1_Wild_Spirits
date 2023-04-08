@@ -111,14 +111,26 @@ export class Calendar extends Component {
         }
 
         const range = (begin: number, end: number) => Array.from(Array(end-begin+1).keys(), (x)=>x+begin)
-        const generateDate = (d: number): {date: number, active: boolean, selected: boolean, inner: boolean} => {
+        const generateDate = (d: number): {date: number, style: string} => {
             const date = new Date(year, month, d);
             const {isSelected, isInner} = checkSelection(date);
+            const isActive = d > 0 && d <= lastMonthDate.getDate();
+
+            let style = "";
+
+            if (!isActive) {
+                style = "disabled";
+            } else if (isSelected) {
+                if (isInner) {
+                    style = "inner-active";
+                } else {
+                    style = "active";
+                }
+            }
+
             return {
                 date: date.getDate(),
-                active: d > 0 && d <= lastMonthDate.getDate(),
-                selected: isSelected,
-                inner: isInner
+                style: style,
             }
         };
         const days = range(firstDate, lastDate).map(generateDate);

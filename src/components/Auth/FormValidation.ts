@@ -10,7 +10,9 @@ export const validateForm = (form: HTMLFormElement): boolean => {
     const validateField = (field: string, value: FormDataEntryValue) => {
         if (field === "email") {
             if (!(value instanceof File)) {
-                if (!value.includes("@")) return "почта должна содержать символ '@'";
+                if (!value.includes("@")) {
+                    return "почта должна содержать символ '@'";
+                }
             }
         }
 
@@ -44,3 +46,24 @@ export const validateForm = (form: HTMLFormElement): boolean => {
 
     return isValid;
 };
+
+export const warningMsg = (message: string | undefined): void => {
+    let warning: string;
+    if (message === undefined) {
+        warning = "неизвестная ошибка сервера";
+    } else {
+        const errorMessages: {[key: string]: string} = {
+            "User with such username/email already exists": "Такой пользователь уже зарегистрирован",
+            "User not authorized": "Неверный логин или пароль",
+            "Wrong credentials": "Неверный логин или пароль"
+        };
+    
+        warning = errorMessages[message] || message;
+    }
+
+    const warningEl = document.getElementById("common-warning");
+
+    if (warningEl) {
+        warningEl.innerText = warning;
+    }
+}
