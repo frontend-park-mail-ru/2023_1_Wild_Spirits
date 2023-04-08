@@ -27,6 +27,7 @@ import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
 import { setData } from "flux/slices/userSlice";
 import { EventPage } from "./Events/EventPage/EventPage";
+import { EventCreate } from "./Events/EventCreate/EventCreate";
 
 /**
  * @classdesc Main app component
@@ -45,6 +46,7 @@ export class App extends Component {
     #registerComponent: Registration;
     #profileComponent: Profile;
     #eventComponent: EventPage;
+    #createEventComponent: EventCreate;
 
     constructor(parent: HTMLElement) {
         super(parent);
@@ -69,6 +71,7 @@ export class App extends Component {
         this.#eventListComponent = this.createComponent<EventList>(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow);
         this.#eventComponent = this.createComponent(EventPage);
+        this.#createEventComponent = this.createComponent(EventCreate);
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
@@ -112,10 +115,13 @@ export class App extends Component {
 
         const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
             {
-                "/": () => ({
-                    content: this.#eventListComponent.render(),
-                    sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
-                }),
+                "/": () => {
+                    router.isUrlChanged() && this.#eventListComponent.loadEvents();
+                    return {
+                        content: this.#eventListComponent.render(),
+                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                    };
+                },
                 "/profile": () => ({
                     content:
                         this.#profileComponent.render() +
@@ -128,9 +134,15 @@ export class App extends Component {
                         this.#tagsComponent.render(),
                 }),
                 "/events": () => {
-                    this.#eventComponent.loadEvent();
+                    router.isUrlChanged() && this.#eventComponent.loadEvent();
                     return {
                         content: this.#eventComponent.render(),
+                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                    };
+                },
+                "/createevent": () => {
+                    return {
+                        content: this.#createEventComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
                     };
                 },

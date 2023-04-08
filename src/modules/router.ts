@@ -4,13 +4,14 @@ type RouterType<T> = Record<string, () => T>;
 
 class Router {
     #prevUrl: string = "";
+    #nowUrl: string = "";
     #locationParts: string[] = [];
     #searchParams: URLSearchParams | undefined;
     callbacks: (() => void)[] = [];
 
     constructor() {
         this.#parseLocation();
-
+        this.#nowUrl = "";
         window.addEventListener("popstate", this.#onPopState.bind(this));
     }
 
@@ -24,6 +25,8 @@ class Router {
 
     reset() {
         this.#parseLocation();
+        this.#prevUrl = this.#nowUrl;
+        this.#nowUrl = location.pathname + location.search;
     }
 
     getNextUrl() {
@@ -62,6 +65,11 @@ class Router {
             return this.#searchParams.get(name);
         }
         return null;
+    }
+
+    isUrlChanged(): boolean {
+        console.log(this.#nowUrl !== this.#prevUrl, this.#nowUrl, this.#prevUrl);
+        return this.#nowUrl !== this.#prevUrl;
     }
 
     #parseLocation() {

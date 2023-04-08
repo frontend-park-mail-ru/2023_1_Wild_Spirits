@@ -41,11 +41,6 @@ export class EventPage extends Component {
      */
     loadEvent() {
         const eventId = this.getEventId();
-        if (this.#lastEventId !== undefined && eventId === this.#lastEventId) {
-            return;
-        }
-        this.#lastEventId = eventId;
-
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
             .then(({ json, response }) => {
                 if (response.ok) {

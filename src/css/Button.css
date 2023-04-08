@@ -44,3 +44,25 @@
     background-color: var(--input-el-color);
     color: white;
 }
+
+.button-outline {
+    display: inline-flex;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.button-outline-like {
+    border: #ff0000 solid 1px;
+}
+
+.button-outline-like:hover {
+    border-color: var(--input-el-color);
+}
+
+.button-outline-other {
+    border: var(--input-el-color) solid 1px;
+}
+
+.button-outline-other:hover {
+    border-color: var(--main-selected-color);
+}
