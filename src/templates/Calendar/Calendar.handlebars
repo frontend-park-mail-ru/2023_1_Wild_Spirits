@@ -21,15 +21,7 @@
         {{#each weeks}}
             <tr>
                 {{#each this}}
-                    <td><button class="calendar-date current
-                                       {{#unless this.active}}disabled{{/unless}}
-                                       {{#if this.selected}}
-                                        {{#if this.inner}}
-                                            inner-active
-                                        {{else}}
-                                            active
-                                        {{/if}}
-                                       {{/if}}">{{this.date}}</button></td>
+                    <td><button class="calendar-date current {{style}}">{{this.date}}</button></td>
                 {{/each}}
             </tr>
         {{/each}}
