@@ -3,10 +3,15 @@
 import { Component } from "components/Component";
 import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
 
-import { incrementMonth, decrementMonth, 
-         setStartDate, clearStartDate,
-         setFinishDate, clearFinishDate, getMonthName }
-from "flux/slices/calendarSlice";
+import {
+    incrementMonth,
+    decrementMonth,
+    setStartDate,
+    clearStartDate,
+    setFinishDate,
+    clearFinishDate,
+    getMonthName,
+} from "flux/slices/calendarSlice";
 
 import { store } from "flux";
 
@@ -46,16 +51,16 @@ export class Calendar extends Component {
         const finishDate = store.getState().calendar.finishDate;
 
         if (startDate === undefined) {
-            store.dispatch(setStartDate({date: date}));
+            store.dispatch(setStartDate({ date: date }));
         } else {
             if (date > startDate) {
                 if (finishDate?.getTime() === date.getTime()) {
-                    store.dispatch(setStartDate({date: finishDate}), clearFinishDate());
+                    store.dispatch(setStartDate({ date: finishDate }), clearFinishDate());
                 } else {
-                    store.dispatch(setFinishDate({date: date}));
+                    store.dispatch(setFinishDate({ date: date }));
                 }
             } else if (date < startDate) {
-                store.dispatch(setStartDate({date: date}));
+                store.dispatch(setStartDate({ date: date }));
             } else {
                 if (finishDate) {
                     store.dispatch(clearFinishDate());
@@ -64,13 +69,15 @@ export class Calendar extends Component {
                 }
             }
         }
+
+        // TODO requests.loadEvents();
     }
 
     #incrementMonth = () => {
-        store.dispatch(incrementMonth())
+        store.dispatch(incrementMonth());
     };
     #decrementMonth = () => {
-        store.dispatch(decrementMonth())
+        store.dispatch(decrementMonth());
     };
 
     getMonthWeeks = (year: number, month: number) => {
@@ -85,13 +92,13 @@ export class Calendar extends Component {
         const firstDate = 2 - firstMonthDay;
         let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
 
-        const checkSelection = (date: Date): {isSelected: boolean, isInner: boolean} => {
+        const checkSelection = (date: Date): { isSelected: boolean; isInner: boolean } => {
             const startDate = store.getState().calendar.startDate;
 
             if (!startDate) {
                 return {
                     isSelected: false,
-                    isInner: false
+                    isInner: false,
                 };
             }
 
@@ -100,20 +107,20 @@ export class Calendar extends Component {
             if (!finishDate) {
                 return {
                     isSelected: date.getTime() == startDate.getTime(),
-                    isInner: false
-                }
+                    isInner: false,
+                };
             }
 
             return {
                 isSelected: date >= startDate && date <= finishDate,
-                isInner: date > startDate && date < finishDate
-            }
-        }
+                isInner: date > startDate && date < finishDate,
+            };
+        };
 
-        const range = (begin: number, end: number) => Array.from(Array(end-begin+1).keys(), (x)=>x+begin)
-        const generateDate = (d: number): {date: number, style: string} => {
+        const range = (begin: number, end: number) => Array.from(Array(end - begin + 1).keys(), (x) => x + begin);
+        const generateDate = (d: number): { date: number; style: string } => {
             const date = new Date(year, month, d);
-            const {isSelected, isInner} = checkSelection(date);
+            const { isSelected, isInner } = checkSelection(date);
             const isActive = d > 0 && d <= lastMonthDate.getDate();
 
             let style = "";
@@ -131,15 +138,15 @@ export class Calendar extends Component {
             return {
                 date: date.getDate(),
                 style: style,
-            }
+            };
         };
         const days = range(firstDate, lastDate).map(generateDate);
 
         const rows = Math.ceil(days.length / 7);
-        const weeks = range(0, rows).map((row)=>days.slice(row*7, (row+1) * 7));
+        const weeks = range(0, rows).map((row) => days.slice(row * 7, (row + 1) * 7));
 
         return weeks;
-    }
+    };
 
     render() {
         const currentDate = new Date();
