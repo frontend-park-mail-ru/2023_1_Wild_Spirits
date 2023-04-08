@@ -10,9 +10,9 @@ import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { setCities, setCategories, selectCity, selectCategory, getSelectedCityName, getCitiesNames } from "flux/slices/headerSlice";
+import { setCities, setCategories, selectCity, selectCategory, getSelectedCityName, getCitiesNames, clearCategory, getSelectedCategory } from "flux/slices/headerSlice";
 import { logout } from "flux/slices/userSlice";
-import { router } from "modules/router";
+import { loadEvents } from "requests/events";
 
 /**
  * @class
@@ -92,7 +92,13 @@ export class Header extends Component {
         const target = event.target as HTMLElement;
         const id = target.id.split("-").at(-1);
         if (id !== undefined) {
-            store.dispatch(selectCategory({category: parseInt(id)}));
+            const numId = parseInt(id);
+            if (store.getState().header.selectedCategoryId === numId) {
+                store.dispatch(clearCategory());
+            } else {
+                store.dispatch(selectCategory({category: numId}));
+            }
+            loadEvents();
         }  
     };
 
@@ -103,6 +109,7 @@ export class Header extends Component {
     #selectCity = (event: Event) => {
         const target = event.target as HTMLInputElement;
         store.dispatch(selectCity({city: target.value}));
+        loadEvents();
     };
 
     postRender() {

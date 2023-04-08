@@ -3,6 +3,8 @@
 import { Component } from "components/Component";
 import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
 
+import { loadEvents } from "requests/events";
+
 import {
     incrementMonth,
     decrementMonth,
@@ -70,7 +72,7 @@ export class Calendar extends Component {
             }
         }
 
-        // TODO requests.loadEvents();
+        loadEvents();
     }
 
     #incrementMonth = () => {

@@ -29,6 +29,8 @@ import { setData } from "flux/slices/userSlice";
 import { EventPage } from "./Events/EventPage/EventPage";
 import { EventCreate } from "./Events/EventCreate/EventCreate";
 
+import { loadEvents } from "requests/events";
+
 /**
  * @classdesc Main app component
  * @class
@@ -116,7 +118,7 @@ export class App extends Component {
         const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
             {
                 "/": () => {
-                    router.isUrlChanged() && this.#eventListComponent.loadEvents();
+                    router.isUrlChanged() && loadEvents();
                     return {
                         content: this.#eventListComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),

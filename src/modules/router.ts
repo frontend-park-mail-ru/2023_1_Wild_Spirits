@@ -68,7 +68,6 @@ class Router {
     }
 
     isUrlChanged(): boolean {
-        console.log(this.#nowUrl !== this.#prevUrl, this.#nowUrl, this.#prevUrl);
         return this.#nowUrl !== this.#prevUrl;
     }
 

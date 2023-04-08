@@ -1,7 +1,7 @@
 /** @module ajax */
 
 type HeadersType = Record<string, string>;
-type UrlPropsType = Record<string, string>;
+export type UrlPropsType = Record<string, string>;
 
 interface AjaxProps {
     url: string;

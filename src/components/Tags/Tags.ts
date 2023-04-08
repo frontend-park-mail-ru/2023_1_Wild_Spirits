@@ -5,6 +5,7 @@ import TagsTemplate from "templates/Tags/Tags.handlebars";
 
 import { store } from "flux";
 import { toggleTag } from "flux/slices/tagsSlice";
+import { loadEvents } from "requests/events";
 
 /**
  * @class
@@ -25,6 +26,7 @@ export class Tags extends Component {
         let el = event.target as HTMLElement;
 
         store.dispatch(toggleTag({tag: el.innerText}));
+        loadEvents();
     }
 
     render() {
