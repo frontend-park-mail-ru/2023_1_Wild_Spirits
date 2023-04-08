@@ -119,10 +119,10 @@ export class Calendar extends Component {
             };
         };
 
-        const range = (begin: number, end: number) => Array.from(Array(end-begin+1).keys(), (x)=>x+begin)
-        const generateDate = (d: number): {date: number, style: string} => {
+        const range = (begin: number, end: number) => Array.from(Array(end - begin + 1).keys(), (x) => x + begin);
+        const generateDate = (d: number): { date: number; style: string } => {
             const date = new Date(year, month, d);
-            const {isSelected, isInner} = checkSelection(date);
+            const { isSelected, isInner } = checkSelection(date);
             const isActive = d > 0 && d <= lastMonthDate.getDate();
 
             let style = "";
@@ -140,7 +140,7 @@ export class Calendar extends Component {
             return {
                 date: date.getDate(),
                 style: style,
-            }
+            };
         };
         const days = range(firstDate, lastDate).map(generateDate);
 
