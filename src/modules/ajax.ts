@@ -102,11 +102,13 @@ class Ajax {
         method: AjaxMethod.MethodType,
         { url, urlProps, body = {}, headers = {}, credentials = false }: AjaxProps
     ): Promise<AjaxResult<T>> {
+        const bodyFix =
+            body instanceof FormData ? body : Object.keys(body).length > 0 ? JSON.stringify(body) : undefined;
         const response = await fetch(this.#host + url + this.urlPropsToString(urlProps), {
             method,
             mode: "cors",
             credentials: credentials ? "include" : undefined,
-            body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
+            body: bodyFix,
             headers: { ...this.#headers, ...headers },
         });
 
