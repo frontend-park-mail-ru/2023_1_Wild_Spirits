@@ -1,5 +1,6 @@
 @import "common.css";
 @import "css/Button.css";
+@import "css/Form.css";
 @import "css/Card.css";
 @import "css/Link.css";
 @import "css/ProfileLink.css";
@@ -9,12 +10,12 @@
 @import "components/Events/EventCard/styles.css";
 @import "components/Events/EventList/styles.css";
 @import "components/Events/EventPage/styles.css";
+@import "components/Events/EventCreate/styles.css";
 @import "components/Calendar/styles.css";
 @import "components/Tags/styles.css";
 @import "components/Auth/Profile/style.css";
 @import "components/Auth/Profile/FriendList/styles.css";
 @import "components/Auth/Profile/SubscriptionList/styles.css";
-
 
 @font-face {
     font-family: "Roboto";

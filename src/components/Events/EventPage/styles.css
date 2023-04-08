@@ -29,3 +29,29 @@
 .event-page__description {
     margin-top: 12px;
 }
+
+.event-page__button-block {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+
+.event-page__button {
+    display: flex;
+    min-width: 32px;
+    height: 32px;
+    padding: 8px;
+    justify-content: center;
+}
+
+.event-page__button-icon {
+    display: flex;
+    align-self: center;
+}
+
+.event-page__button-text {
+    margin-left: 8px;
+    display: flex;
+    align-self: center;
+}
