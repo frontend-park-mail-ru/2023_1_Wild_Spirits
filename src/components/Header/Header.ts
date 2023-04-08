@@ -12,6 +12,7 @@ import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
 import { setCities, setCategories, selectCity, selectCategory, getSelectedCity } from "flux/slices/headerSlice";
 import { logout } from "flux/slices/userSlice";
+import { router } from "modules/router";
 
 /**
  * @class

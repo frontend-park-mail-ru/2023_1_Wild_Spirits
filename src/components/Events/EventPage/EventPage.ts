@@ -46,7 +46,7 @@ export class EventPage extends Component {
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    const { event, places } = json.body;
+                    const { event, places } = json.body!;
                     this.#eventData = { event, places };
                     this.rerender();
                 }

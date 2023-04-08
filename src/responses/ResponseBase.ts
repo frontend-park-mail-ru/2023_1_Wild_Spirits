@@ -1,3 +1,4 @@
 export interface ResponseBody<T> {
-    body: T;
+    body?: T;
+    errorMsg?: string;
 }

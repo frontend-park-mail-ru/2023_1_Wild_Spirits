@@ -1,7 +1,7 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import { validateForm } from "components/Auth/FormValidation";
+import { validateForm, warningMsg } from "components/Auth/FormValidation";
 import { ajax } from "modules/ajax";
 import { ResponseUserLight } from "responses/ResponsesUser";
 import LoginTemplate from "templates/Auth/Login/Login.handlebars";
@@ -48,7 +48,9 @@ export class Login extends Component {
                         if (csrf) {
                             ajax.addHeaders({ "x-csrf-token": csrf });
                         }
-                        store.dispatch(setData(json.body.user), close());
+                        store.dispatch(setData(json.body!.user), close());
+                    } else {
+                        warningMsg(json.errorMsg!);
                     }
                 })
                 .catch((error) => {

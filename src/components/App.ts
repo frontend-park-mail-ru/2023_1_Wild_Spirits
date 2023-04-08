@@ -58,7 +58,7 @@ export class App extends Component {
                     if (csrf) {
                         ajax.addHeaders({ "x-csrf-token": csrf });
                     }
-                    store.dispatch(setData(json.body.user));
+                    store.dispatch(setData(json.body!.user));
                 }
             })
             .catch((error) => {
