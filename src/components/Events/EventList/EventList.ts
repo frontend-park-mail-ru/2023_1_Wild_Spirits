@@ -45,7 +45,7 @@ export class EventList extends Component {
                     id: event.id,
                     name: event.name,
                     img: config.HOST + "/" + event.img,
-                    desc: event.desc,
+                    description: event.description,
                     dates,
                     places,
                     org: event.org,

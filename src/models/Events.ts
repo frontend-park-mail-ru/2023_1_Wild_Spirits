@@ -25,7 +25,7 @@ export interface TEventOrganizer {
 export interface TEventBase {
     id: number;
     name: string;
-    desc: string;
+    description: string;
     img: string;
 }
 

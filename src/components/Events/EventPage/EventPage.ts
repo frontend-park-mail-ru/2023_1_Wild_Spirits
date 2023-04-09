@@ -60,7 +60,7 @@ export class EventPage extends Component {
             console.log(places);
             return EventPageTemplate({
                 name: event.name,
-                description: event.desc,
+                description: event.description,
                 img: config.HOST + event.img,
                 tags: TagsTemplate({
                     tags: store.getState().tags,

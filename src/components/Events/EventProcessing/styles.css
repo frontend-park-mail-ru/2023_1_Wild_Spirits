@@ -1,3 +1,11 @@
-.event-create__form-textarea {
+.event-processing__form-textarea {
     resize: vertical;
+}
+
+.event-processing {
+    margin-bottom: 100px;
+}
+
+.event-processing__img-prev {
+    max-width: 95%;
 }

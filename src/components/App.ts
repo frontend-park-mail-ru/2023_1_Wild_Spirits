@@ -126,6 +126,14 @@ export class App extends Component {
                     };
                 },
                 "/createevent": () => {
+                    router.isUrlChanged() && this.#eventProcessingComponent.setCreate();
+                    return {
+                        content: this.#eventProcessingComponent.render(),
+                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                    };
+                },
+                "/editevent": () => {
+                    router.isUrlChanged() && this.#eventProcessingComponent.setEdit();
                     return {
                         content: this.#eventProcessingComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),

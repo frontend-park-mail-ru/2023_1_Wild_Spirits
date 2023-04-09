@@ -10,7 +10,7 @@ interface EventCardProps extends TEventBase {
     img: string;
     dates: string[];
     places: string[];
-    org: TOrgLight
+    org: TOrgLight;
 }
 
 /**
@@ -26,7 +26,6 @@ export class EventCard extends Component {
     }
 
     render() {
-
         const userData = store.getState().user.data;
 
         // const mine: boolean = userData ? userData.id === this.#props.org.id : false;
@@ -37,7 +36,7 @@ export class EventCard extends Component {
             eventId: this.#props.id,
             img: this.#props.img,
             name: this.#props.name,
-            desc: this.#props.desc,
+            desc: this.#props.description,
             dates: EventCardMarkerTemplate({
                 img_src: "/assets/calendar_icon.png",
                 title: "Даты",
@@ -48,7 +47,7 @@ export class EventCard extends Component {
                 title: "Места",
                 items: this.#props.places,
             }),
-            mine: mine
+            mine: mine,
         });
     }
 }
