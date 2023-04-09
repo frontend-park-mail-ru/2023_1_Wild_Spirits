@@ -27,6 +27,7 @@ import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 
 import { loadEvents } from "requests/events";
 import { loadAuthorization } from "requests/user";
+import { loadTags } from "requests/tags";
 
 /**
  * @classdesc Main app component
@@ -51,6 +52,7 @@ export class App extends Component {
         super(parent);
 
         loadAuthorization();
+        loadTags();
 
         this.#headerComponent = this.createComponent(Header);
         this.#eventListComponent = this.createComponent<EventList>(EventList);

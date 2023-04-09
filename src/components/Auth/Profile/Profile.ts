@@ -5,6 +5,7 @@ import { Component } from "components/Component";
 import config from "config";
 
 import { store } from "flux";
+import { setData, setCurrentProfile } from "flux/slices/userSlice";
 
 import ProfileTemplate from "templates/Auth/Profile/Profile.handlebars";
 import TableTemplate from "templates/Common/Table.handlebars";
@@ -15,6 +16,7 @@ import { ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
 import { loadProfile } from "requests/user";
 import { router } from "modules/router";
+import { toWebP } from "modules/imgConverter";
 
 /**
  * Registration component
@@ -23,29 +25,47 @@ import { router } from "modules/router";
  */
 export class Profile extends Component {
     #editing: boolean;
+    #tempAvatarUrl: string | undefined;
     constructor(parent: Component) {
         super(parent);
         this.#editing = false;
 
         this.registerEvent(() => document.getElementById("edit-profile-btn"), "click", (()=>{this.#editing=true; this.rerender()}).bind(this));
-        this.registerEvent(() => document.getElementById("edit-profile-form"), "submit", this.#submitForm)
+        this.registerEvent(() => document.getElementById("edit-profile-form"), "submit", this.#submitForm);
+        this.registerEvent(() => document.getElementById("edit-profile-form"), "change", this.#formChanged);
+    }
+
+    #formChanged = (event: Event) => {
+        let input = event.target as HTMLInputElement;
+
+        if (!input || input.getAttribute("type") !== "file") {
+            return;
+        }
+
+        const inputFiles = (input as HTMLInputElement).files
+
+        if (!inputFiles) {
+            return;
+        }
+
+        const image = inputFiles[0]
+        const imageUrl = URL.createObjectURL(image);
+        this.#tempAvatarUrl = imageUrl;
+
+        this.rerender();
     }
 
     getProfileId(): number | undefined {
         const url = router.getNextUrl();
         if (url === undefined) {
             const user_data = store.getState().user.data;
-            console.log("user_data:", user_data)
             return user_data !== undefined ? user_data.id : undefined
         }
         return parseInt(url.slice(1));
     }
 
     loadProfile() {
-        console.log("load profile")
         const id = this.getProfileId();
-
-        console.log("id:", id)
 
         if (id !== undefined) {
             loadProfile(id);
@@ -68,7 +88,6 @@ export class Profile extends Component {
         }
 
         let formData = new FormData(form as HTMLFormElement);
-
         const city_id = store.getState().header.cities.find(city => city.name === formData.get("city_id"));
 
         if (!city_id) {
@@ -77,20 +96,33 @@ export class Profile extends Component {
 
         formData.set("city_id", city_id.id.toString());
 
-        for (const el of formData) {
-            console.log(el)
-        }
+        if (this.#tempAvatarUrl !== undefined) {
+            toWebP(this.#tempAvatarUrl, (imageBlob: Blob) => {
+                formData.set("avatar", imageBlob);
+    
+                this.#sendForm(userData.id, formData);
+            });
 
+        } else {
+            this.#sendForm(userData.id, formData);
+        }
+    }
+
+    #sendForm(user_id: number, formData: FormData) {
         ajax.removeHeaders("Content-Type");
         ajax.patch<ResponseUserEdit>({
-            url: `/users/${userData.id}`,
+            url: `/users/${user_id}`,
             credentials: true,
             body: formData,
+        }).then(({json, response}) => {
+            if (response.ok && json.body) {
+                store.dispatch(setData({...json.body.user, id: store.getState().user.data?.id}),
+                               setCurrentProfile({profile: json.body.user, id:store.getState().user.data?.id}));
+            }
         })
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
         this.#editing = false;
-        this.rerender();
     }
 
     render() {
@@ -128,10 +160,10 @@ export class Profile extends Component {
             return "Такого пользователя не существует";
         }
 
-        console.log(profile_data)
+        console.log(user_data.id, profile_data.id);
 
         return ProfileTemplate({
-            avatar: config.HOST + store.getState().user.data?.img,
+            avatar: this.#tempAvatarUrl ? this.#tempAvatarUrl : config.HOST + store.getState().user.data?.img,
             table: getTable(profile_data),
             editing: this.#editing,
             mine: user_data.id === profile_data.id

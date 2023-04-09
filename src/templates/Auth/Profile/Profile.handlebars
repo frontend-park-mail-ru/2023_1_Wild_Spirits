@@ -1,9 +1,11 @@
 <form id="edit-profile-form" class="profile-description">
     <div class="profile-description__img-container">
-        <img src="{{avatar}}" class="profile-description__img">
+        <label for="avatar-picker">
+            <img src="{{avatar}}" class="profile-description__img">
+        </label>
 
         {{#if editing}}
-            <input type="file" name="avatar">
+            <input class="invisible" id="avatar-picker" type="file" accept="image/*" name="avatar">
         {{/if}}
     </div>
     <div class="profile-description__description-block">
@@ -15,7 +17,7 @@
                 {{#if editing}}
                     <input class="button" type="submit" value="Сохранить">
                 {{else}}
-                    <button id="edit-profile-btn" class="button">Редактировать</button>
+                    <input type="button" id="edit-profile-btn" class="button" value="Редактировать"></input>
                     <a href="/createevent" class="link-button js-router-link">Создать мероприятие</a>
                 {{/if}}
             {{else}}

@@ -29,11 +29,12 @@ const userSlice = createSlice({
     initialState: userInitialState,
     reducers: {
         setData: (state, action) => {
-            console.log("setting user data:", action.payload)
-            return { data: action.payload };
+            state.data = action.payload;
+            return state;
         },
         logout: (state) => {
-            return { data: undefined };
+            state.data = undefined;
+            return state;
         },
         setCurrentProfile: (state: UserState, action: Action<{profile: TUser, id: number}>) => {
             if (action.payload) {

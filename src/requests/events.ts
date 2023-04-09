@@ -12,8 +12,6 @@ import { UrlPropsType } from "modules/ajax";
  * fill itself with events from server
  */
 export const loadEvents = () => {
-    console.log(getSelectedTags(store.getState().tags));
-
     const zeroPad = (num: number, places: number) => String(num).padStart(places, '0')
 
     const toArrString = (arg: string | string[] | undefined): string | undefined => {

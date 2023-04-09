@@ -9,7 +9,7 @@ import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.ha
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { selectCity, selectCategory, getSelectedCityName, getCitiesNames, clearCategory, getSelectedCategory } from "flux/slices/headerSlice";
+import { selectCity, selectCategory, getSelectedCityName, getCitiesNames, clearCategory } from "flux/slices/headerSlice";
 import { logout } from "flux/slices/userSlice";
 import { loadEvents } from "requests/events";
 import { loadCategories, loadCities } from "requests/header";
@@ -95,6 +95,7 @@ export class Header extends Component {
                     ? AuthorizedLinkTemplate({
                           name: userData.name,
                           img: config.HOST + userData.img,
+                          user_id: userData.id
                       })
                     : UnauthorizedLinkTemplate(),
         });
