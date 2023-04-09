@@ -3,14 +3,14 @@
         Имя
     </div>
     <div class="table__cell">
-        <input name="name" type="text">
+        <input name="name" type="text" value="{{name}}">
     </div>
 
     <div class="table__cell grey">
         Почта
     </div>
     <div class="table__cell">
-        <input type="email">
+        {{email}}
     </div>
 
     <div class="table__cell grey">
@@ -18,7 +18,7 @@
     </div>
     <div class="table__cell">
         <div class="header__city__selector">
-            <select name="city_id" id="profile-city-select" style="background: right url('/assets/down-arrow-icon.svg') no-repeat;">
+            <select name="city_id" value="{{city}}" id="profile-city-select" style="background: right url('/assets/down-arrow-icon.svg') no-repeat;">
                 {{#each cities}}
                     <option>{{this}}</option>
                 {{/each}}

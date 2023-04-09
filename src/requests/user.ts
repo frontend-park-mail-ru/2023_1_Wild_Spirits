@@ -1,8 +1,8 @@
 import { ajax } from "modules/ajax";
-import { ResponseUserLight } from "responses/ResponsesUser";
+import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser";
 
 import { store } from "flux";
-import { setData, logout } from "flux/slices/userSlice";
+import { setData, logout, setCurrentProfile } from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
 
 export const loadAuthorization = () => {
@@ -17,6 +17,20 @@ export const loadAuthorization = () => {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
                 store.dispatch(setData(json.body!.user));
+            }
+        })
+        .catch((error) => {
+            console.log("catch:", error);
+        });
+}
+
+export const loadProfile = (id: number) => {
+    ajax.get<ResponseUserProfile>({
+        url: `/users/${id}`
+    })
+        .then(({json, response}) => {
+            if (response.ok) {
+                store.dispatch(setCurrentProfile({profile: json.body}));
             }
         })
         .catch((error) => {
