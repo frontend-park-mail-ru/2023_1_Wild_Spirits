@@ -117,7 +117,17 @@ export class EventProcessing extends Component {
 
     render() {
         const isEdit: boolean = this.#processingState === ProcessingState.EDIT;
-        const startData = isEdit ? this.#editData : {};
+        const startData = isEdit
+            ? this.#editData
+            : {
+                  name: "TName",
+                  description: "TDesc",
+                  place: "ВДНХ",
+                  dateStart: "2023-01-01",
+                  dateEnd: "2023-03-03",
+                  timeStart: "10:00",
+                  timeEnd: "19:00",
+              };
         return EventCreateTemplate({ ...startData, isEdit });
     }
 }
