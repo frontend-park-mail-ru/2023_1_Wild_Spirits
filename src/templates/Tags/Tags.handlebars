@@ -1,6 +1,6 @@
 <div class="tags-menu">
     {{#each tags}}
-        <a class="tag {{#if this}}active{{/if}}">
+        <a class="tag {{#if this.selected}}active{{/if}}">
             {{@key}}
         </a>
     {{/each}}

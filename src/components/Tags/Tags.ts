@@ -31,7 +31,7 @@ export class Tags extends Component {
 
     render() {
         return TagsTemplate({
-            tags: store.getState().tags
+            tags: store.getState().tags.tags
         });
     }
 }

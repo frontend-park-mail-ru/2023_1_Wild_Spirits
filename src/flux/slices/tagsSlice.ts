@@ -1,37 +1,40 @@
 import { createSlice } from "flux/slice";
 
 interface TagsState {
-    [key: string]: boolean,
+    tags: {[key: string]: {
+        id: number,
+        selected: boolean
+    }}
 }
 
-const tagNames = ["Бесплатно", "С друзьями", "С детьми", "Всей семьёй", "Для пенсионеров",
-"Вечером", "Тематические праздники", "Мастер-классы", "Со второй половинкой"];
-
-const generateInitialTagsState = (tagNames: string[]) => Object.fromEntries(tagNames.map((tagName: string)=>([tagName, false])));
-
-const initialState: TagsState = generateInitialTagsState(tagNames);
+const initialState: TagsState = {tags: {}}
 
 const tagsSlice = createSlice({
     name: "tags",
     initialState: initialState,
     reducers: {
+        setTags: (state, action) => {
+            const tags: {id: string, name: string}[] = action.payload.tags;
+            state.tags = Object.fromEntries(tags.map(({id, name}) => [name, {id: parseInt(id), selected: false}]));
+            return state;
+        },
         toggleTag: (state, action) => {
             const tag = action.payload.tag;
-            if (state[tag] == undefined) {
+            if (state.tags[tag] === undefined) {
                 return state;
             }
 
-            state[tag] = !state[tag];
+            state.tags[tag].selected = !state.tags[tag].selected;
             return state
         }
     }
 });
 
-export const getSelectedTags = (state: TagsState) => {
+export const getSelectedTags = (state: TagsState): string[] => {
     return Object.entries(state)
-                 .filter(([_, isActive])=>isActive)
-                 .map(([tagName, _]) => tagName);
+                 .filter(([_, {id, selected}]) => selected)
+                 .map(([tag, _]) => tag);
 }
 
-export const { toggleTag } = tagsSlice.actions;
+export const { setTags, toggleTag } = tagsSlice.actions;
 export default tagsSlice;
