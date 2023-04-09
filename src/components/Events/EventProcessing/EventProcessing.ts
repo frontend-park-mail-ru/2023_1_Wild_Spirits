@@ -1,6 +1,6 @@
 import { Component } from "components/Component";
 import { ajax } from "modules/ajax";
-import EventCreateTemplate from "templates/Events/EventCreate/EventCreate.handlebars";
+import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
 
 interface EventBody {
     name: string;
@@ -11,11 +11,31 @@ interface EventBody {
     dates: { dateStart?: string; dateEnd?: string; timeStart?: string; timeEnd?: string; weakdays: number[] };
 }
 
-export class EventCreate extends Component {
+namespace ProcessingState {
+    export const CREATE = "CREATE";
+    export const EDIT = "EDIT";
+    export type Type = typeof CREATE | typeof EDIT;
+}
+
+export class EventProcessing extends Component {
+    processingState: ProcessingState.Type = ProcessingState.CREATE;
+
     constructor(parent: Component) {
         super(parent);
 
-        this.registerEvent(() => document.getElementById("event-create-form"), "submit", this.#handleSubmit.bind(this));
+        this.registerEvent(
+            () => document.getElementById("event-processing-form"),
+            "submit",
+            this.#handleSubmit.bind(this)
+        );
+    }
+
+    setCreate() {
+        this.processingState = ProcessingState.CREATE;
+    }
+
+    setEdit() {
+        this.processingState = ProcessingState.EDIT;
     }
 
     formateDate(date: string): string {
@@ -45,7 +65,9 @@ export class EventCreate extends Component {
         // };
         // //formData
 
-        ajax.post({ url: "/events", body: formData, headers: { "Content-Type": "multipart/form-data" } })
+        let ajaxMethod = this.processingState === ProcessingState.CREATE ? ajax.post.bind(ajax) : ajax.post.bind(ajax); // TODO change second post to patch
+
+        ajaxMethod({ url: "/events", body: formData, headers: { "Content-Type": "multipart/form-data" } })
             .then()
             .catch((error) => {
                 console.log(error);

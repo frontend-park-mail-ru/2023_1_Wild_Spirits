@@ -1,0 +1,55 @@
+<div class="event-processing">
+    <form class="form" id="event-processing-form">
+        <label for="event-processing-name" class="form-label"> Название мероприятия: </label>
+        <input name="name" class="form-control" type="text" id="event-processing-name" />
+
+        {{! <label for="event-processing-teaser" class="form-label"> Тизер: </label>
+        <textarea
+            name="teaser"
+            class="form-control event-processing__form-textarea"
+            type="text"
+            id="event-processing-teaser"
+        ></textarea> }}
+
+        <label for="event-processing-desc" class="form-label"> Полное описание: </label>
+        <textarea
+            name="desc"
+            class="form-control event-processing__form-textarea"
+            type="text"
+            id="event-processing-desc"
+        ></textarea>
+
+        <label for="event-processing-date-first" class="form-label"> Дата начала: </label>
+        <input name="date-first" class="form-control" type="date" id="event-processing-date-first" />
+
+        <label for="event-processing-date-first" class="form-label"> Время начала: </label>
+        <input name="time-first" class="form-control" type="time" />
+
+        <label for="event-processing-date-second" class="form-label"> Дата конца: </label>
+        <input name="date-second" class="form-control" type="date" id="event-processing-date-second" />
+
+        <label for="event-processing-date-first" class="form-label"> Время конца: </label>
+        <input name="time-second" class="form-control" type="time" />
+
+        <label for="event-processing-place" class="form-label"> Место проведения: </label>
+        <input
+            name="place"
+            class="form-control"
+            id="event-processing-place"
+            list="test"
+            placeholder="Выберите место проведения..."
+        />
+        <datalist id="test">
+            <option value="ВДНХ"></option>
+            <option value="Битца"></option>
+            <option value="Большой театр"></option>
+            <option value="Третьяковская галерея"></option>
+        </datalist>
+
+        <label for="event-processing-place" class="form-label"> Картинка: </label>
+        <input name="file" class="form-control" type="file" />
+
+        <input class="button form-submit" id="event-processing-submit" type="submit" />
+
+    </form>
+</div>

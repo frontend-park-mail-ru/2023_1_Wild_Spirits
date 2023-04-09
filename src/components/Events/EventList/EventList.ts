@@ -42,13 +42,13 @@ export class EventList extends Component {
                 // const places: string[] = event.places.map((place) => place.name);
                 const places = event.places;
                 return new EventCard(this, {
-                        id: event.id,
-                        name: event.name,
-                        img: config.HOST + event.img,
-                        desc: event.desc,
-                        dates,
-                        places,
-                    });
+                    id: event.id,
+                    name: event.name,
+                    img: config.HOST + "/" + event.img,
+                    desc: event.desc,
+                    dates,
+                    places,
+                });
             });
         }
 

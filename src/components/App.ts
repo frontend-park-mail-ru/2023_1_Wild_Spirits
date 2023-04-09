@@ -23,7 +23,7 @@ import { svgInliner } from "modules/svgLoader";
 import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
 import { EventPage } from "./Events/EventPage/EventPage";
-import { EventCreate } from "./Events/EventCreate/EventCreate";
+import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 
 import { loadEvents } from "requests/events";
 import { loadAuthorization } from "requests/user";
@@ -45,7 +45,7 @@ export class App extends Component {
     #registerComponent: Registration;
     #profileComponent: Profile;
     #eventComponent: EventPage;
-    #createEventComponent: EventCreate;
+    #eventProcessingComponent: EventProcessing;
 
     constructor(parent: HTMLElement) {
         super(parent);
@@ -56,7 +56,7 @@ export class App extends Component {
         this.#eventListComponent = this.createComponent<EventList>(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow);
         this.#eventComponent = this.createComponent(EventPage);
-        this.#createEventComponent = this.createComponent(EventCreate);
+        this.#eventProcessingComponent = this.createComponent(EventProcessing);
 
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
@@ -127,7 +127,7 @@ export class App extends Component {
                 },
                 "/createevent": () => {
                     return {
-                        content: this.#createEventComponent.render(),
+                        content: this.#eventProcessingComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
                     };
                 },
