@@ -1,4 +1,7 @@
 import { createSlice } from "flux/slice";
+import { TUser } from "models/User";
+
+import { Action } from "flux/action";
 
 interface UserState {
     data?: {
@@ -11,8 +14,8 @@ interface UserState {
         id: number;
         name: string;
         img: string;
-        email: string | undefined;
-        city_name: string;
+        email?: string;
+        city_name?: string;
     }
 }
 
@@ -26,14 +29,16 @@ const userSlice = createSlice({
     initialState: userInitialState,
     reducers: {
         setData: (state, action) => {
-            console.log("setting data:", action.payload)
+            console.log("setting user data:", action.payload)
             return { data: action.payload };
         },
         logout: (state) => {
             return { data: undefined };
         },
-        setCurrentProfile: (state, action) => {
-            state.current_profile = action.payload.profile;
+        setCurrentProfile: (state: UserState, action: Action<{profile: TUser, id: number}>) => {
+            if (action.payload) {
+                state.current_profile = {...(action.payload.profile), id: action.payload.id}
+            }
             return state;
         }
     },

@@ -30,7 +30,9 @@ export const loadProfile = (id: number) => {
     })
         .then(({json, response}) => {
             if (response.ok) {
-                store.dispatch(setCurrentProfile({profile: json.body}));
+                if (json.body) {
+                    store.dispatch(setCurrentProfile({profile: json.body.user, id: id}));
+                }
             }
         })
         .catch((error) => {

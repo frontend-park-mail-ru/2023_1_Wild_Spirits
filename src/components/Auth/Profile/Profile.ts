@@ -42,6 +42,7 @@ export class Profile extends Component {
     }
 
     loadProfile() {
+        console.log("load profile")
         const id = this.getProfileId();
 
         console.log("id:", id)
@@ -66,34 +67,40 @@ export class Profile extends Component {
             return;
         }
 
-        const formData = new FormData(form as HTMLFormElement);
+        let formData = new FormData(form as HTMLFormElement);
 
+        const city_id = store.getState().header.cities.find(city => city.name === formData.get("city_id"));
+
+        if (!city_id) {
+            return;
+        }
+
+        formData.set("city_id", city_id.id.toString());
+
+        for (const el of formData) {
+            console.log(el)
+        }
+
+        ajax.removeHeaders("Content-Type");
         ajax.patch<ResponseUserEdit>({
             url: `/users/${userData.id}`,
             credentials: true,
-            body: {
-                name: formData.get("name"),
-
-            }
+            body: formData,
         })
+        ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
         this.#editing = false;
         this.rerender();
     }
 
     render() {
-        const getTable = () => {
-            // const user_data = store.getState().user.data;
-            // if (!user_data) {
-            //     return "Вы не авторизованы";
-            // }
-
-            const profile_data = store.getState().user.current_profile;
-
-            if (!profile_data) {
-                return "Такого пользователя не существует";
-            }
-
+        const getTable = (profile_data: {
+            id: number,
+            name: string,
+            img: string,
+            email?: string | undefined,
+            city_name?: string
+        }) => {
             if (this.#editing) {
                 return EditTableTemplate({
                     name: profile_data.name,
@@ -105,15 +112,29 @@ export class Profile extends Component {
                 rows: createTable({
                     Имя: profile_data.name,
                     Почта: profile_data.email ? profile_data.email : "не указана",
-                    Город: profile_data.city_name,
+                    Город: profile_data.city_name ? profile_data.city_name : "Москва",
                 }),
             });
         }
 
+        const user_data = store.getState().user.data;
+        if (!user_data) {
+            return "Вы не авторизованы";
+        }
+
+        const profile_data = store.getState().user.current_profile;
+
+        if (!profile_data) {
+            return "Такого пользователя не существует";
+        }
+
+        console.log(profile_data)
+
         return ProfileTemplate({
             avatar: config.HOST + store.getState().user.data?.img,
-            table: getTable(),
-            editing: this.#editing
+            table: getTable(profile_data),
+            editing: this.#editing,
+            mine: user_data.id === profile_data.id
         });
     }
 }

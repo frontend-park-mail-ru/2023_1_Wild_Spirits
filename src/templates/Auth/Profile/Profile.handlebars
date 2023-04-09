@@ -1,28 +1,26 @@
-<div class="profile-description">
+<form id="edit-profile-form" class="profile-description">
     <div class="profile-description__img-container">
         <img src="{{avatar}}" class="profile-description__img">
-    </div>
+
         {{#if editing}}
-            <form id="edit-profile-form" class="no-form">
-        {{else}}
-            <div>
+            <input type="file" name="avatar">
         {{/if}}
+    </div>
     <div class="profile-description__description-block">
         <div class="profile-description__table-container">
             {{{table}}}
         </div>
         <div class="profile-description__button-block">
-            {{#if editing}}
-                <input class="button" type="submit" value="Сохранить">
+            {{#if mine }}
+                {{#if editing}}
+                    <input class="button" type="submit" value="Сохранить">
+                {{else}}
+                    <button id="edit-profile-btn" class="button">Редактировать</button>
+                    <a href="/createevent" class="link-button js-router-link">Создать мероприятие</a>
+                {{/if}}
             {{else}}
-                <button id="edit-profile-btn" class="button">Редактировать</button>
-                <a href="/createevent" class="link-button js-router-link">Создать мероприятие</a>
+                <input class="button" value="Добавить в друзья">
             {{/if}}
         </div>
     </div>
-        {{#if editing}}
-            </form>
-        {{else}}
-            </div>
-        {{/if}}
-</div>
+</form>
