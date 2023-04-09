@@ -47,7 +47,10 @@ export const validateForm = (form: HTMLFormElement): boolean => {
         }
     }
 
-    if (formData.get("password") !== formData.get("passwordConfirmation")) {
+    const password = formData.get("password");
+    const passwordConfirmation = formData.get("passwordConfirmation");
+
+    if ((passwordConfirmation !== null) && (password !== passwordConfirmation)) {
         const warningEl = form.querySelector("input[name=passwordConfirmation] + .warning");
         if (warningEl) {
             warningEl.textContent = "пароли не совпадают";

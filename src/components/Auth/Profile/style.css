@@ -14,11 +14,24 @@
     object-fit: cover;
 }
 
+.profile-description__description-block {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+
+    padding-left: 90px;
+    padding-right: 90px;
+}
+
 .profile-description__table-container {
     height: auto;
     width: 100%;
 
-    padding-left: 90px;
-    padding-right: 90px;
     margin: auto;
+}
+
+.profile-description__button-block {
+    display: flex;
+    justify-content: space-between;
 }

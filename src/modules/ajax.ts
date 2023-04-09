@@ -98,6 +98,20 @@ class Ajax {
         return this.#ajax<T>(AjaxMethod.POST, props);
     }
 
+    /**
+     * sends a 'PATCH' request
+     * @param {Object} options - request options
+     * @param {string} options.url - relative url of request
+     * @param {Object} options.urlProps - query parameters
+     * @param {string} options.body - body of the request
+     * @param {Object} options.headers - request headers
+     * @param {boolean} options.credentials - if to include crendentials
+     * @returns {Promise} - promise of request result
+     */
+    patch<T>(props: AjaxProps): Promise<AjaxResult<T>> {
+        return this.#ajax<T>(AjaxMethod.PATCH, props);
+    }
+
     async #ajax<T>(
         method: AjaxMethod.MethodType,
         { url, urlProps, body = {}, headers = {}, credentials = false }: AjaxProps
