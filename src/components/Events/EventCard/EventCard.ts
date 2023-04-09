@@ -1,7 +1,8 @@
 /** @module Components */
 
 import { Component } from "components/Component";
-import { TEventBase } from "models/Events";
+import { store } from "flux";
+import { TEventBase, TOrgLight } from "models/Events";
 import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
 import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 
@@ -9,6 +10,7 @@ interface EventCardProps extends TEventBase {
     img: string;
     dates: string[];
     places: string[];
+    org: TOrgLight
 }
 
 /**
@@ -24,6 +26,13 @@ export class EventCard extends Component {
     }
 
     render() {
+
+        const userData = store.getState().user.data;
+
+        // const mine: boolean = userData ? userData.id === this.#props.org.id : false;
+
+        const mine = true;
+
         return EventCardTemplate({
             eventId: this.#props.id,
             img: this.#props.img,
@@ -38,7 +47,8 @@ export class EventCard extends Component {
                 img_src: "/assets/position_icon.png",
                 title: "Места",
                 items: this.#props.places,
-            })
+            }),
+            mine: mine
         });
     }
 }

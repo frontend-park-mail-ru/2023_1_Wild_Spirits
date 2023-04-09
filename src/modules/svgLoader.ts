@@ -64,7 +64,8 @@ const inlinerRules = [
     basicIconRule("comment"),
     basicIconRule("heart"),
     basicIconRule("invite"),
-    basicIconRule("bookmark")
+    basicIconRule("bookmark"),
+    basicIconRule("edit")
 ]
 
 let svgInliner = new SVGInliner(loader, inlinerRules)

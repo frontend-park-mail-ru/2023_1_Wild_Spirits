@@ -48,6 +48,7 @@ export class EventList extends Component {
                     desc: event.desc,
                     dates,
                     places,
+                    org: event.org,
                 });
             });
         }

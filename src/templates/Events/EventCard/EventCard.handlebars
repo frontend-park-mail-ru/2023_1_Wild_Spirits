@@ -21,7 +21,12 @@
             <div class="heart-icon-container"></div>
             <div class="comment-icon-container"></div>
             <div class="invite-icon-container"></div>
-            <div class="bookmark-icon-container"></div>
+            {{orgId}}
+            {{#if mine}}
+                <a><div class="edit-icon-container"></div></a>
+            {{else}}
+                <div class="bookmark-icon-container"></div>
+            {{/if}}
         </div>
     </div>
 </div>

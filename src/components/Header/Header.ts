@@ -28,7 +28,7 @@ export class Header extends Component {
         loadCities();
         loadCategories();
 
-        this.registerEvent(() => document.getElementsByTagName("select")[0], "change", this.#selectCity);
+        this.registerEvent(() => document.getElementById("header-city-select"), "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
 
         this.registerEvent(

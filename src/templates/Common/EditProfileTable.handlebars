@@ -1,0 +1,28 @@
+<div class="table">
+    <div class="table__cell grey">
+        Имя
+    </div>
+    <div class="table__cell">
+        <input name="name" type="text">
+    </div>
+
+    <div class="table__cell grey">
+        Почта
+    </div>
+    <div class="table__cell">
+        <input type="email">
+    </div>
+
+    <div class="table__cell grey">
+        Город
+    </div>
+    <div class="table__cell">
+        <div class="header__city__selector">
+            <select name="city_id" id="profile-city-select" style="background: right url('/assets/down-arrow-icon.svg') no-repeat;">
+                {{#each cities}}
+                    <option>{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+</div>

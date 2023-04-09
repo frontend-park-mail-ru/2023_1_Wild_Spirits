@@ -29,9 +29,15 @@ export interface TEventBase {
     img: string;
 }
 
+export interface TOrgLight {
+    id: number;
+    name: string;
+}
+
 export interface TEventLight extends TEventBase {
     dates: TEventDates;
     places: string[];
+    org: TOrgLight;
     //places: TEventPlace[];
 }
 
