@@ -69,7 +69,7 @@ export const getCitiesNames = (state: HeaderState): string[] => {
 }
 
 export const getSelectedCategory = (state: HeaderState): string | undefined => {
-    if (state.selectedCategoryId) {
+    if (state.selectedCategoryId !== undefined) {
         return state.categories[state.selectedCategoryId];
     }
 

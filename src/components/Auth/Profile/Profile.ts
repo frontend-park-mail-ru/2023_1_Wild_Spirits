@@ -170,18 +170,12 @@ export class Profile extends Component {
             return "Такого пользователя не существует";
         }
 
-        const my_friends = store.getState().user.data?.friends;
-
-        const my_friend_ids = my_friends?.map(friend => friend.id);
-
-        const isFriend = my_friend_ids?.includes(profile_data.id);
-
         return ProfileTemplate({
             avatar: this.#tempAvatarUrl ? this.#tempAvatarUrl : config.HOST + store.getState().user.current_profile?.img,
             table: getTable(profile_data),
             editing: this.#editing,
             mine: user_data.id === profile_data.id,
-            isFriend: isFriend
+            isFriend: store.getState().user.current_profile?.is_friend
         });
     }
 }

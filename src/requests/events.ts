@@ -37,7 +37,7 @@ export const loadEvents = () => {
 
     const props = filterProps({
         "tags": toArrString(getSelectedTags(store.getState().tags)),
-        // "cities": toArrString(getSelectedCityName(store.getState().header)), 
+        "cities": toArrString(getSelectedCityName(store.getState().header)), 
         "categories": toArrString(getSelectedCategory(store.getState().header)),
         "dateStart": dateToString(store.getState().calendar.startDate),
         "finishDate": dateToString(store.getState().calendar.finishDate),

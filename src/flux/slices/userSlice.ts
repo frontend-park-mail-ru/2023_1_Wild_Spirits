@@ -22,6 +22,7 @@ interface UserState {
         img: string;
         email?: string;
         city_name?: string;
+        is_friend?: boolean;
 
         friends?: {
             id: number,

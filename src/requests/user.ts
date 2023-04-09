@@ -31,6 +31,7 @@ export const loadProfile = (id: number) => {
     })
         .then(({json, response}) => {
             if (response.ok && json.body) {
+                console.log(json.body.user)
                 store.dispatch(setCurrentProfile({profile: json.body.user, id: id}));
             }
         })
