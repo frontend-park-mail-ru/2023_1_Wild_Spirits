@@ -27,7 +27,8 @@ export const loadAuthorization = () => {
 
 export const loadProfile = (id: number) => {
     ajax.get<ResponseUserProfile>({
-        url: `/users/${id}`
+        url: `/users/${id}`,
+        credentials: true
     })
         .then(({json, response}) => {
             if (response.ok && json.body) {
