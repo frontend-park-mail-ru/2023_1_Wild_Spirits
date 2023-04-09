@@ -35,15 +35,17 @@ export const loadEvents = () => {
         ) as UrlPropsType;
     }
 
+    const props = filterProps({
+        "tags": toArrString(getSelectedTags(store.getState().tags)),
+        // "cities": toArrString(getSelectedCityName(store.getState().header)), 
+        "categories": toArrString(getSelectedCategory(store.getState().header)),
+        "dateStart": dateToString(store.getState().calendar.startDate),
+        "finishDate": dateToString(store.getState().calendar.finishDate),
+    })
+
     ajax.get<ResponseEventsLight>({
         url: "/events",
-        urlProps: filterProps({
-            "tags": toArrString(getSelectedTags(store.getState().tags)),
-            "cities": toArrString(getSelectedCityName(store.getState().header)),
-            "categories": toArrString(getSelectedCategory(store.getState().header)),
-            "dateStart": dateToString(store.getState().calendar.startDate),
-            "finishDate": dateToString(store.getState().calendar.finishDate),
-        })
+        urlProps: props
     })
         .then(({ json, response }) => {
             if (response.ok) {

@@ -26,7 +26,7 @@ import { EventPage } from "./Events/EventPage/EventPage";
 import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 
 import { loadEvents } from "requests/events";
-import { loadAuthorization } from "requests/user";
+import { loadAuthorization, loadFriends } from "requests/user";
 import { loadTags } from "requests/tags";
 
 /**
@@ -110,7 +110,10 @@ export class App extends Component {
                     };
                 },
                 "/profile": () => {
-                    router.isUrlChanged() && this.#profileComponent.loadProfile();
+                    if (router.isUrlChanged()) {
+                        this.#profileComponent.loadProfile();
+                        loadEvents();
+                    }
                     return {
                         content:
                             this.#profileComponent.render() +
@@ -118,7 +121,7 @@ export class App extends Component {
                             this.#eventListComponent.render(),
                         sidebar:
                             this.#frienListComponent.render() +
-                            this.#subscriptionListComponent.render() +
+                            // this.#subscriptionListComponent.render() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),
                     }

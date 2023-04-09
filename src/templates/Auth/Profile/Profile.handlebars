@@ -21,7 +21,11 @@
                     <a href="/createevent" class="link-button js-router-link">Создать мероприятие</a>
                 {{/if}}
             {{else}}
-                <input class="button" value="Добавить в друзья">
+                {{#if isFriend}}
+                    Вы дружите
+                {{else}}
+                    <input id="add-friend-btn" class="button" value="Добавить в друзья">
+                {{/if}}
             {{/if}}
         </div>
     </div>

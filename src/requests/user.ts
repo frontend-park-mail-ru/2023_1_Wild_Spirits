@@ -1,8 +1,9 @@
 import { ajax } from "modules/ajax";
 import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser";
+import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setData, logout, setCurrentProfile } from "flux/slices/userSlice";
+import { setData, logout, setCurrentProfile, setCurrentProfileFriends } from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
 
 export const loadAuthorization = () => {
@@ -29,15 +30,36 @@ export const loadProfile = (id: number) => {
         url: `/users/${id}`
     })
         .then(({json, response}) => {
-            if (response.ok) {
-                if (json.body) {
-                    store.dispatch(setCurrentProfile({profile: json.body.user, id: id}));
-                }
+            if (response.ok && json.body) {
+                store.dispatch(setCurrentProfile({profile: json.body.user, id: id}));
             }
         })
         .catch((error) => {
             console.log("catch:", error);
         });
+}
+
+export const loadFriends = (user_id: number) => {
+    ajax.get<ResponseBody<{users: {id: number, name: string, img: string}[]}>>({
+        url: `/users/${user_id}/friends`,
+    })
+        .then(({json, response}) => {
+            if (response.ok && json.body) {
+                store.dispatch(setCurrentProfileFriends({friends: json.body.users}));
+            }
+        })
+}
+
+export const addFriend = (user_id: number) => {
+    ajax.post({
+        url: `/friends/${user_id}`,
+        credentials: true
+    })
+        .then(({response}) => {
+            if (response.ok) {
+                console.log('added friend');
+            }
+        })
 }
 
 type TWarningMsgCallack = (warning: string | undefined) => void;

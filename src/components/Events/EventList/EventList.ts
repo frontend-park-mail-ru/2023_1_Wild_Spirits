@@ -14,7 +14,6 @@ import { store } from "flux";
  * @extends Component
  */
 export class EventList extends Component {
-    // #events: EventCard[] | undefined = undefined;
     constructor(parent: Component) {
         super(parent);
     }

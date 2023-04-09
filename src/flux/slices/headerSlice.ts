@@ -30,7 +30,7 @@ const headerSlice = createSlice({
             return state;
         },
         setCategories: (state, action) => {
-            state.categories = action.payload.categories;
+            state.categories = action.payload.categories.map((category: {id: number, name: string}) => category.name);
             return state;
         },
         selectCity: (state, action: Action<{city: number | string | TCity}>) => {

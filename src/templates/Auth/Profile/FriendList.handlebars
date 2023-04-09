@@ -6,11 +6,15 @@
     <div class="friend-list__friends-block">
         {{#each friends}}
             <div class="friend-list__friends-block__block-item">
-                <a href="#">
+                <a href="/profile/{{user_id}}" class="js-router-link">
                     <img src="{{avatar}}" class="friend-list__friends-block__avatar">
                 </a>
-                <a href="#" class="black-link">{{nickname}}</a>
+                <a href="/profile/{{user_id}}" class="black-link js-router-link">{{name}}</a>
             </div>
         {{/each}}
+
+        {{#unless friends}}
+            <span>:[</span>
+        {{/unless}}
     </div>
 </div>

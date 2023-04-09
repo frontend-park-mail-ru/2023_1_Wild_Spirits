@@ -31,7 +31,7 @@ const tagsSlice = createSlice({
 });
 
 export const getSelectedTags = (state: TagsState): string[] => {
-    return Object.entries(state)
+    return Object.entries(state.tags)
                  .filter(([_, {id, selected}]) => selected)
                  .map(([tag, _]) => tag);
 }

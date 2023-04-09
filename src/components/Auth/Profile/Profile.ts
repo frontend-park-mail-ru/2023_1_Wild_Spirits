@@ -14,7 +14,7 @@ import { getCitiesNames } from "flux/slices/headerSlice";
 
 import { ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
-import { loadProfile } from "requests/user";
+import { addFriend, loadFriends, loadProfile } from "requests/user";
 import { router } from "modules/router";
 import { toWebP } from "modules/imgConverter";
 
@@ -33,6 +33,7 @@ export class Profile extends Component {
         this.registerEvent(() => document.getElementById("edit-profile-btn"), "click", (()=>{this.#editing=true; this.rerender()}).bind(this));
         this.registerEvent(() => document.getElementById("edit-profile-form"), "submit", this.#submitForm);
         this.registerEvent(() => document.getElementById("edit-profile-form"), "change", this.#formChanged);
+        this.registerEvent(() => document.getElementById("add-friend-btn"), "click", this.#addFriend);
     }
 
     #formChanged = (event: Event) => {
@@ -69,6 +70,15 @@ export class Profile extends Component {
 
         if (id !== undefined) {
             loadProfile(id);
+            loadFriends(id);
+        }
+    }
+
+    #addFriend = (event: Event) => {
+        const id = this.getProfileId();
+
+        if (id !== undefined) {
+            addFriend(id);
         }
     }
 
@@ -160,13 +170,18 @@ export class Profile extends Component {
             return "Такого пользователя не существует";
         }
 
-        console.log(user_data.id, profile_data.id);
+        const my_friends = store.getState().user.data?.friends;
+
+        const my_friend_ids = my_friends?.map(friend => friend.id);
+
+        const isFriend = my_friend_ids?.includes(profile_data.id);
 
         return ProfileTemplate({
-            avatar: this.#tempAvatarUrl ? this.#tempAvatarUrl : config.HOST + store.getState().user.data?.img,
+            avatar: this.#tempAvatarUrl ? this.#tempAvatarUrl : config.HOST + store.getState().user.current_profile?.img,
             table: getTable(profile_data),
             editing: this.#editing,
-            mine: user_data.id === profile_data.id
+            mine: user_data.id === profile_data.id,
+            isFriend: isFriend
         });
     }
 }
