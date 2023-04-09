@@ -52,8 +52,6 @@ export class EventProcessing extends Component {
 
     setEdit() {
         const eventId = parseInt(router.getNextUrl().slice(1));
-        console.log("setEdit");
-        // TODO fetch data to edit
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
             .then(({ json, response }) => {
                 if (response.ok) {
@@ -68,17 +66,6 @@ export class EventProcessing extends Component {
                 console.log(error);
             });
 
-        // this.#editData = {
-        //     id: ,
-        //     name: "name",
-        //     desc: "desc",
-        //     dateStart: "06.03.2023",
-        //     dateEnd: "09.03.2023",
-        //     timeStart: "17:00",
-        //     timeEnd: "19:00",
-        //     place: "place",
-        //     img: "http://localhost:8000/uploads/img/events/musical.jpg",
-        // };
         this.#processingState = ProcessingState.EDIT;
     }
 
@@ -116,15 +103,16 @@ export class EventProcessing extends Component {
         // };
         // //formData
 
-        let ajaxMethod = this.#processingState === ProcessingState.CREATE ? ajax.post.bind(ajax) : ajax.post.bind(ajax); // TODO change second post to patch
+        let ajaxMethod =
+            this.#processingState === ProcessingState.CREATE ? ajax.post.bind(ajax) : ajax.patch.bind(ajax); // TODO change second post to patch
 
-        ajaxMethod({ url: "/events", body: formData, headers: { "Content-Type": "multipart/form-data" } })
+        ajax.removeHeaders("Content-Type");
+        ajaxMethod({ url: "/events", credentials: true, body: formData })
             .then()
             .catch((error) => {
                 console.log(error);
             });
-
-        console.log("submit");
+        ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
     }
 
     render() {

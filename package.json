@@ -5,9 +5,17 @@
     "debug": "^4.3.4",
     "handlebars": "^4.7.7"
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "last 1 versions",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
+    "deploy": "serve -s ./dist -p 8080",
     "build:templates": "node server/componentInit.js"
   },
   "devDependencies": {

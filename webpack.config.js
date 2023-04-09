@@ -8,83 +8,89 @@ import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 const filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(filename);
-
-const config = {
-    entry: {
-        app: "./src/index.ts",
-    },
-    output: {
-        filename: "[name].js",
-        publicPath: "/",
-        path: path.resolve(__dirname, "./dist"),
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(ts|js)$/,
-                exclude: /node_modules/,
-                loader: "babel-loader",
-            },
-            {
-                test: /\.css$/,
-                exclude: /node_modules/,
-                use: ["style-loader", "css-loader"],
-            },
-            {
-                test: /\.(png|jpe?g|gif|svg)$/,
-                loader: "file-loader",
-                options: {
-                    outputPath: "assets",
-                    name: "[name].[ext]",
+export const createConf = (env, argv) => {
+    let config = {
+        entry: {
+            app: "./src/index.ts",
+        },
+        output: {
+            filename: "[name].js",
+            publicPath: "/",
+            path: path.resolve(__dirname, "./dist"),
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.(ts|js)$/,
+                    exclude: /node_modules/,
+                    loader: "babel-loader",
                 },
-            },
-            {
-                test: /\.handlebars$/,
-                loader: "handlebars-loader",
-                options: {
-                    helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
+                {
+                    test: /\.css$/,
+                    exclude: /node_modules/,
+                    use: ["style-loader", "css-loader"],
                 },
-            }
+                {
+                    test: /\.(png|jpe?g|gif|svg)$/,
+                    loader: "file-loader",
+                    options: {
+                        outputPath: "assets",
+                        name: "[name].[ext]",
+                    },
+                },
+                {
+                    test: /\.handlebars$/,
+                    loader: "handlebars-loader",
+                    options: {
+                        helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
+                    },
+                },
+            ],
+        },
+        plugins: [
+            new HtmlWebpackPlugin({
+                hash: false,
+                template: "./src/index.html",
+                filename: "index.html",
+                scriptLoading: "blocking",
+                inject: "body",
+                favicon: "./src/favicon.ico",
+            }),
+            new CopyWebpackPlugin({
+                patterns: [
+                    { from: path.resolve(__dirname, "./src/assets"), to: "assets" },
+                    { from: path.resolve(__dirname, "./src/sw.js"), to: "" },
+                ],
+            }),
+            new webpack.SourceMapDevToolPlugin({
+                filename: "[file].map",
+            }),
+            new ForkTsCheckerWebpackPlugin({
+                logger: console,
+            }),
         ],
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            hash: false,
-            template: "./src/index.html",
-            filename: "index.html",
-            scriptLoading: "blocking",
-            inject: "body",
-            favicon: "./src/favicon.ico"
-        }),
-        new CopyWebpackPlugin({
-            patterns: [
-                { from: path.resolve(__dirname, "./src/assets"), to: "assets" },
-                { from: path.resolve(__dirname, "./src/sw.js"), to: "" }
-            ] 
-        }),
-        new webpack.SourceMapDevToolPlugin({
-            filename: "[file].map",
-        }),
-        new ForkTsCheckerWebpackPlugin({
-            logger: console,
-        }),
-    ],
-    resolve: {
-        extensions: [".js", ".ts", "css", "img"],
-        modules: [__dirname + "/src", "node_modules"],
-        alias: {
-            handlebars: "handlebars/dist/handlebars.js",
+        resolve: {
+            extensions: [".js", ".ts", "css", "img"],
+            modules: [__dirname + "/src", "node_modules"],
+            alias: {
+                handlebars: "handlebars/dist/handlebars.js",
+            },
         },
-    },
-    mode: "development",
-    devtool: "eval-cheap-source-map",
-    devServer: {
-        static: {
-            directory: path.resolve(__dirname, "./dist"),
+        mode: argv.mode,
+        devServer: {
+            static: {
+                directory: path.resolve(__dirname, "./dist"),
+            },
+            port: 8080,
+            historyApiFallback: true,
         },
-        port: 8080,
-        historyApiFallback: true,
-    },
+    };
+
+    if (argv.mode === "development") {
+        config.devtool = "eval-cheap-source-map";
+    }
+
+    return config;
 };
 
-export default config;
+export default createConf;
