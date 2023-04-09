@@ -25,7 +25,6 @@ interface EventData {
  */
 export class EventPage extends Component {
     #eventData: EventData | undefined = undefined;
-    #lastEventId: number | undefined = undefined;
 
     constructor(parent: Component) {
         super(parent);
@@ -57,7 +56,6 @@ export class EventPage extends Component {
     render() {
         if (this.#eventData !== undefined) {
             const { event, organizer, places } = this.#eventData;
-            console.log(places);
             return EventPageTemplate({
                 name: event.name,
                 description: event.desc,

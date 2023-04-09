@@ -49,7 +49,8 @@ export const loadEvents = () => {
     })
         .then(({ json, response }) => {
             if (response.ok) {
-                store.dispatch(setEvents({events: json.body!.events}));
+                const js: any = json
+                store.dispatch(setEvents({events: js.events}));
             }
         })
         .catch((error) => {

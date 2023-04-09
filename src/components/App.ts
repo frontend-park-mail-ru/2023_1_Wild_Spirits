@@ -107,17 +107,20 @@ export class App extends Component {
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
                     };
                 },
-                "/profile": () => ({
-                    content:
-                        this.#profileComponent.render() +
-                        DelimiterTemplate({ content: "Предстоящие мероприятия" }) +
-                        this.#eventListComponent.render(),
-                    sidebar:
-                        this.#frienListComponent.render() +
-                        this.#subscriptionListComponent.render() +
-                        this.#calendarComponent.render() +
-                        this.#tagsComponent.render(),
-                }),
+                "/profile": () => {
+                    router.isUrlChanged() && this.#profileComponent.loadProfile();
+                    return {
+                        content:
+                            this.#profileComponent.render() +
+                            DelimiterTemplate({ content: "Предстоящие мероприятия" }) +
+                            this.#eventListComponent.render(),
+                        sidebar:
+                            this.#frienListComponent.render() +
+                            this.#subscriptionListComponent.render() +
+                            this.#calendarComponent.render() +
+                            this.#tagsComponent.render(),
+                    }
+                },
                 "/events": () => {
                     router.isUrlChanged() && this.#eventComponent.loadEvent();
                     return {
