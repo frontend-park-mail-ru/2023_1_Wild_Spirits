@@ -6,14 +6,16 @@ import config from "config";
 import { store } from "flux";
 import { router } from "modules/router";
 
-navigator.serviceWorker
-    .register("sw.js", { scope: "/" })
-    .then(() => {
-        console.log("registered");
-    })
-    .catch(() => {
-        console.log("register error");
-    });
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+        .register("sw.js", { scope: "/" })
+        .then(() => {
+            console.log("registered");
+        })
+        .catch(() => {
+            console.log("register error");
+        });
+}
 
 ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 ajax.host = config.HOST;
