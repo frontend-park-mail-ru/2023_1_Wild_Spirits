@@ -71,18 +71,29 @@ export class EventProcessing extends Component {
 
     decodeDate(date: string): string {
         let splt = date.split("-");
-        [splt[0], splt[2]] = [splt[2], splt[1]];
+        [splt[0], splt[2]] = [splt[2], splt[0]];
         return splt.join(".");
     }
     encodeDate(date: string): string {
         let splt = date.split(".");
-        [splt[0], splt[2]] = [splt[2], splt[1]];
+        [splt[0], splt[2]] = [splt[2], splt[0]];
         return splt.join("-");
     }
 
     #handleSubmit(event: SubmitEvent) {
         event.preventDefault();
         let formData = new FormData(event.target as HTMLFormElement);
+
+        const dateStart = formData.get("dateStart") as string;
+        const dateEnd = formData.get("dateEnd") as string;
+
+        if (dateStart) {
+            formData.set("dateStart", this.decodeDate(dateStart));
+        }
+        if (dateEnd) {
+            formData.set("dateEnd", this.decodeDate(dateEnd));
+        }
+
         for (const entr of formData.entries()) {
             console.log(entr);
         }
