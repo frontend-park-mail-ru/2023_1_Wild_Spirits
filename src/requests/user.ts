@@ -3,10 +3,18 @@ import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser"
 import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setData, logout, setCurrentProfile, setCurrentProfileFriends } from "flux/slices/userSlice";
+import {
+    setData,
+    logout,
+    setCurrentProfile,
+    setCurrentProfileFriends,
+    authorizedLoadStart,
+    authorizedLoadError,
+} from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
 
 export const loadAuthorization = () => {
+    store.dispatch(authorizedLoadStart());
     ajax.get<ResponseUserLight>({
         url: "/authorized",
         credentials: true,
@@ -21,7 +29,7 @@ export const loadAuthorization = () => {
             }
         })
         .catch((error) => {
-            console.log("catch:", error);
+            store.dispatch(authorizedLoadError());
         });
 };
 

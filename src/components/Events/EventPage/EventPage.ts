@@ -56,14 +56,19 @@ export class EventPage extends Component {
     render() {
         if (this.#eventData !== undefined) {
             const { event, organizer, places } = this.#eventData;
+            console.log("places", this.#eventData);
+            const fixedPlaces = Object.values(places).map((place) => ({
+                city: place.city.name,
+                name: place.name,
+                address: place.address,
+            }));
+
             return EventPageTemplate({
                 name: event.name,
                 description: event.description,
                 img: config.HOST + "/" + event.img,
-                tags: TagsTemplate({
-                    tags: store.getState().tags,
-                }),
-                places,
+                tags: event.tags,
+                places: fixedPlaces,
                 moreInfo: TableTemplate({
                     rows: createTable({
                         Организатор: organizer.name,

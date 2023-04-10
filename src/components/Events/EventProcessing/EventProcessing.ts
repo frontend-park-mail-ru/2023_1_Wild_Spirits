@@ -5,6 +5,8 @@ import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
 import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
 import { toWebP } from "modules/imgConverter";
+import { store } from "flux";
+import { LoadStatus } from "requests/LoadStatus";
 
 interface EventBody {
     name: string;
@@ -37,6 +39,8 @@ export class EventProcessing extends Component {
     #processingState: ProcessingState.Type = ProcessingState.CREATE;
     #editData: EventProcessingForm | undefined = undefined;
 
+    #testFile: File | undefined = undefined;
+
     constructor(parent: Component) {
         super(parent);
 
@@ -46,11 +50,19 @@ export class EventProcessing extends Component {
             this.#handleSubmit.bind(this)
         );
         this.registerEvent(
+            () => document.getElementById("event-processing-form"),
+            "change",
+            this.#handleChange.bind(this)
+        );
+
+        this.registerEvent(
             () => document.getElementById("event-processing-remove"),
             "click",
             this.#handleRemove.bind(this)
         );
     }
+
+    postRender() {}
 
     setCreate() {
         this.#processingState = ProcessingState.CREATE;
@@ -137,7 +149,8 @@ export class EventProcessing extends Component {
             ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
         };
 
-        const fileInputElement = form.querySelector("#img-picker") as HTMLInputElement;
+        const fileInputElement = form.querySelector("#event-processing-img") as HTMLInputElement;
+        console.log("fileInputElement", fileInputElement);
         const inputFiles = fileInputElement.files;
 
         if (inputFiles && inputFiles.length > 0) {
@@ -151,6 +164,16 @@ export class EventProcessing extends Component {
             });
         } else {
             sendForm(formData);
+        }
+    }
+
+    #handleChange(event: Event) {
+        console.log(event);
+        console.log(event.target);
+        const target = event.target as HTMLInputElement;
+        if (target.files && target.files.length > 0) {
+            console.log("file set");
+            this.#testFile = target.files[0];
         }
     }
 
@@ -169,6 +192,15 @@ export class EventProcessing extends Component {
     }
 
     render() {
+        const userState = store.getState().user;
+        if (
+            (userState.authorizedLoadStatus === LoadStatus.DONE ||
+                userState.authorizedLoadStatus === LoadStatus.ERROR) &&
+            userState.data === undefined
+        ) {
+            router.go("/");
+            return "";
+        }
         const isEdit: boolean = this.#processingState === ProcessingState.EDIT;
         const startData = isEdit
             ? this.#editData

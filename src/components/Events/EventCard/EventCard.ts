@@ -3,6 +3,7 @@
 import { Component } from "components/Component";
 import { store } from "flux";
 import { TEventBase, TOrgLight } from "models/Events";
+import { LoadStatus } from "requests/LoadStatus";
 import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
 import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 
@@ -50,7 +51,7 @@ export class EventCard extends Component {
                 title: "Места",
                 items: this.#props.places,
             }),
-            mine: mine,
+            mine: store.getState().user.authorizedLoadStatus === LoadStatus.DONE,
         });
     }
 }

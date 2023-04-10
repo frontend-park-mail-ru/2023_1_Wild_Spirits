@@ -6,9 +6,12 @@ interface TEventDates {
     weekdays?: number[];
 }
 
+type TCity = { id: number; name: string };
+
 export interface TEventPlace {
     name: string;
-    city: string;
+    city: TCity;
+    address: string;
     coords: {
         lat: number;
         long: number;
@@ -41,4 +44,6 @@ export interface TEventLight extends TEventBase {
     //places: TEventPlace[];
 }
 
-export interface TEvent extends TEventBase {}
+export interface TEvent extends TEventBase {
+    tags: string[];
+}

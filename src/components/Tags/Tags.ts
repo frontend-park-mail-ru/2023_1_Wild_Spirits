@@ -15,9 +15,9 @@ import { loadEvents } from "requests/events";
 
 export class Tags extends Component {
     constructor(parent: Component) {
-        super(parent)
+        super(parent);
 
-        this.registerEvent(()=>document.getElementsByClassName("tag"), "click", this.#toggleTag);
+        this.registerEvent(() => document.getElementsByClassName("tag-clickable"), "click", this.#toggleTag);
     }
 
     #toggleTag = (event: PointerEvent) => {
@@ -25,13 +25,13 @@ export class Tags extends Component {
 
         let el = event.target as HTMLElement;
 
-        store.dispatch(toggleTag({tag: el.innerText}));
+        store.dispatch(toggleTag({ tag: el.innerText }));
         loadEvents();
-    }
+    };
 
     render() {
         return TagsTemplate({
-            tags: store.getState().tags.tags
+            tags: store.getState().tags.tags,
         });
     }
 }

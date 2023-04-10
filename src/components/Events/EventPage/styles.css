@@ -30,6 +30,11 @@
     margin-top: 12px;
 }
 
+.event-page__where {
+    margin-top: 12px;
+    margin-bottom: -20px;
+}
+
 .event-page__button-block {
     margin-top: 20px;
     display: flex;

@@ -17,11 +17,14 @@
     <div class="event-page__where">
         {{#each places}}
             {{city}},
-            {{name}}
+            {{name}},
+            {{address}}
         {{/each}}
     </div>
-    <div class="event-page__tags">
-        {{{tags}}}
+    <div class="event-page__tags tags-menu">
+        {{#each tags}}
+            <div class="tag">{{this}}</div>
+        {{/each}}
     </div>
     <div class="event-page__more-info">
         {{{moreInfo}}}
