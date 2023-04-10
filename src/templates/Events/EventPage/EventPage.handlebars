@@ -1,0 +1,46 @@
+<div class="event-page">
+    <div class="event-page__name">
+        {{name}}
+    </div>
+    <div class="event-page__img-block">
+        <img src="{{img}}" alt="{{name}}" class="event-page__img" />
+    </div>
+    <div class="event-page__title">
+        Подробнее о мероприятии
+    </div>
+    <div class="event-page__description">
+        {{description}}
+    </div>
+    <div class="event-page__title">
+        Где?
+    </div>
+    <div class="event-page__where">
+        {{#each places}}
+            {{city}},
+            {{name}},
+            {{address}}
+        {{/each}}
+    </div>
+    <div class="event-page__tags tags-menu">
+        {{#each tags}}
+            <div class="tag">{{this}}</div>
+        {{/each}}
+    </div>
+    <div class="event-page__more-info">
+        {{{moreInfo}}}
+    </div>
+    <div class="event-page__button-block">
+        <div class="button-outline button-outline-like event-page__button">
+            <div class="heart-icon-container event-page__button-icon"></div>
+        </div>
+        <div class="button-outline button-outline-other event-page__button">
+            <div class="bookmark-icon-container event-page__button-icon"></div>
+        </div>
+
+        <div class="button-outline button-outline-other event-page__button">
+            <div class="invite-icon-container event-page__button-icon"></div>
+            <div class="event-page__button-text"> Пригласить друга </div>
+        </div>
+    </div>
+
+</div>

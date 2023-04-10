@@ -1,0 +1,19 @@
+.link {
+    color: $link-color;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+    }
+}
+
+.black-link {
+    appearance: none;
+    text-decoration: none;
+    color: black;
+    &:hover {
+        color: $link-color;
+    }
+}

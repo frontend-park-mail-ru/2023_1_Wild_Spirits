@@ -1,0 +1,104 @@
+.header__logo {
+    position: absolute;
+}
+
+.header__logo img {
+    width: 90px;
+    height: 90px;
+    padding-top: 0;
+}
+
+.header__head {
+    font-size: 48px;
+    font-weight: lighter;
+}
+
+.header__menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+}
+
+.header__top__line {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 100px;
+    padding: 0 20px;
+
+    align-items: center;
+}
+
+.header__category {
+    margin: 0 10px;
+    padding: 0 10px;
+    font-size: 32px;
+
+    cursor: pointer;
+}
+
+.header__category:hover {
+    background-color: rgb(231, 231, 231);
+}
+
+.category-selected {
+    background-color: var(--main-selected-color);
+    color: white;
+}
+
+.header__category.category-selected:hover {
+    background-color: var(--main-selected-color);
+}
+
+.header__bottom__line {
+    display: flex;
+    justify-content: center;
+}
+
+.header__category__delimiter {
+    width: 0;
+    height: auto;
+
+    border: 1px solid black;
+}
+
+.rotated {
+    transform: rotate(270deg);
+}
+
+select {
+    position: relative;
+    overflow: hidden;
+    appearance: none;
+
+    background-color: transparent;
+    border: none;
+    margin: 0;
+
+    padding-right: 50px;
+    font-size: 24px;
+
+    cursor: pointer;
+
+    background: right url("/src/assets/img/down-arrow-icon.svg") no-repeat;
+
+    outline: none;
+}
+
+select > option {
+    background-color: white;
+}
+
+.search {
+    font-size: 17px;
+    padding: 5px;
+    border: solid black 1px;
+    appearance: none;
+    background-color: transparent;
+    box-shadow: none;
+    width: 250px;
+}

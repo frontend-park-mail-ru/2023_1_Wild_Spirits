@@ -1,0 +1,20 @@
+<div class="friend-list">
+    <a class="friend-list__header">
+        Друзья
+    </a>
+    <hr>
+    <div class="friend-list__friends-block">
+        {{#each friends}}
+            <div class="friend-list__friends-block__block-item">
+                <a href="/profile/{{user_id}}" class="js-router-link">
+                    <img src="{{avatar}}" class="friend-list__friends-block__avatar">
+                </a>
+                <a href="/profile/{{user_id}}" class="black-link js-router-link">{{name}}</a>
+            </div>
+        {{/each}}
+
+        {{#unless friends}}
+            <span>У вас пока нет друзей :(</span>
+        {{/unless}}
+    </div>
+</div>
