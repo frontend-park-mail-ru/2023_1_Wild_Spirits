@@ -112,7 +112,6 @@ export class EventProcessing extends Component {
         //         weakdays: [1, 2, 3, 4, 5, 6, 7],
         //     },
         // };
-        // //formData
 
         const sendForm = (data: FormData) => {
             let ajaxMethod =

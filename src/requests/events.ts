@@ -41,6 +41,7 @@ export const loadEvents = () => {
         "categories": getSelectedCategory(store.getState().header),
         "dateStart": dateToString(store.getState().calendar.startDate),
         "dateEnd": dateToString(store.getState().calendar.finishDate),
+        "search": store.getState().header.searchQuery
     });
 
     ajax.get<ResponseEventsLight>({
