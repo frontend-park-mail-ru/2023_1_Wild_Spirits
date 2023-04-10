@@ -16,6 +16,7 @@
             {{#if mine }}
                 {{#if editing}}
                     <input class="button" type="submit" value="Сохранить">
+                    <span class="warning" id="profile-description-error-message"> {{errorMsg}} </span>
                 {{else}}
                     <input type="button" id="edit-profile-btn" class="button" value="Редактировать"></input>
                     <a href="/createevent" class="link-button js-router-link">Создать мероприятие</a>

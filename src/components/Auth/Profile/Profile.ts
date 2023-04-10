@@ -9,7 +9,7 @@ import { setData, setCurrentProfile } from "flux/slices/userSlice";
 
 import ProfileTemplate from "templates/Auth/Profile/Profile.handlebars";
 import TableTemplate from "templates/Common/Table.handlebars";
-import EditTableTemplate from "templates/Common/EditProfileTable.handlebars"
+import EditTableTemplate from "templates/Common/EditProfileTable.handlebars";
 import { getCitiesNames } from "flux/slices/headerSlice";
 
 import { ajax } from "modules/ajax";
@@ -26,11 +26,20 @@ import { toWebP } from "modules/imgConverter";
 export class Profile extends Component {
     #editing: boolean;
     #tempAvatarUrl: string | undefined;
+    #errorMsg: string = "";
+
     constructor(parent: Component) {
         super(parent);
         this.#editing = false;
 
-        this.registerEvent(() => document.getElementById("edit-profile-btn"), "click", (()=>{this.#editing=true; this.rerender()}).bind(this));
+        this.registerEvent(
+            () => document.getElementById("edit-profile-btn"),
+            "click",
+            (() => {
+                this.#editing = true;
+                this.rerender();
+            }).bind(this)
+        );
         this.registerEvent(() => document.getElementById("edit-profile-form"), "submit", this.#submitForm);
         this.registerEvent(() => document.getElementById("edit-profile-form"), "change", this.#formChanged);
         this.registerEvent(() => document.getElementById("add-friend-btn"), "click", this.#addFriend);
@@ -43,23 +52,23 @@ export class Profile extends Component {
             return;
         }
 
-        const inputFiles = (input as HTMLInputElement).files
+        const inputFiles = (input as HTMLInputElement).files;
 
         if (!inputFiles) {
             return;
         }
 
-        const image = inputFiles[0]
+        const image = inputFiles[0];
         this.#tempAvatarUrl = URL.createObjectURL(image);
 
         this.rerender();
-    }
+    };
 
     getProfileId(): number | undefined {
         const url = router.getNextUrl();
         if (url === undefined) {
             const user_data = store.getState().user.data;
-            return user_data !== undefined ? user_data.id : undefined
+            return user_data !== undefined ? user_data.id : undefined;
         }
         return parseInt(url.slice(1));
     }
@@ -79,11 +88,11 @@ export class Profile extends Component {
         if (id !== undefined) {
             addFriend(id);
         }
-    }
+    };
 
     #submitForm = (event: SubmitEvent) => {
         event.preventDefault();
-        
+
         const form = event.target;
 
         if (!form) {
@@ -97,7 +106,7 @@ export class Profile extends Component {
         }
 
         let formData = new FormData(form as HTMLFormElement);
-        const city_id = store.getState().header.cities.find(city => city.name === formData.get("city_id"));
+        const city_id = store.getState().header.cities.find((city) => city.name === formData.get("city_id"));
 
         if (!city_id) {
             return;
@@ -108,14 +117,13 @@ export class Profile extends Component {
         if (this.#tempAvatarUrl !== undefined) {
             toWebP(this.#tempAvatarUrl, (imageBlob: Blob) => {
                 formData.set("avatar", imageBlob);
-    
+
                 this.#sendForm(userData.id, formData);
             });
-
         } else {
             this.#sendForm(userData.id, formData);
         }
-    }
+    };
 
     #sendForm(user_id: number, formData: FormData) {
         ajax.removeHeaders("Content-Type");
@@ -123,12 +131,19 @@ export class Profile extends Component {
             url: `/users/${user_id}`,
             credentials: true,
             body: formData,
-        }).then(({json, response}) => {
+        }).then(({ json, response }) => {
             if (response.ok && json.body) {
-                store.dispatch(setData({...json.body.user, id: store.getState().user.data?.id}),
-                               setCurrentProfile({profile: json.body.user, id:store.getState().user.data?.id}));
+                store.dispatch(
+                    setData({ ...json.body.user, id: store.getState().user.data?.id }),
+                    setCurrentProfile({ profile: json.body.user, id: store.getState().user.data?.id })
+                );
+            } else if (response.status === 409) {
+                let errorMsgElement = document.getElementById("profile-description-error-message");
+                if (errorMsgElement) {
+                    errorMsgElement.textContent = json.errorMsg as string;
+                }
             }
-        })
+        });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
         this.#editing = false;
@@ -136,17 +151,17 @@ export class Profile extends Component {
 
     render() {
         const getTable = (profile_data: {
-            id: number,
-            name: string,
-            img: string,
-            email?: string | undefined,
-            city_name?: string
+            id: number;
+            name: string;
+            img: string;
+            email?: string | undefined;
+            city_name?: string;
         }) => {
             if (this.#editing) {
                 return EditTableTemplate({
                     name: profile_data.name,
                     cities: getCitiesNames(store.getState().header),
-                    city: store.getState().user.current_profile
+                    city: store.getState().user.current_profile,
                 });
             }
             return TableTemplate({
@@ -156,7 +171,7 @@ export class Profile extends Component {
                     Город: profile_data.city_name ? profile_data.city_name : "Москва",
                 }),
             });
-        }
+        };
 
         const user_data = store.getState().user.data;
         if (!user_data) {
@@ -170,11 +185,14 @@ export class Profile extends Component {
         }
 
         return ProfileTemplate({
-            avatar: this.#tempAvatarUrl ? this.#tempAvatarUrl : config.HOST + store.getState().user.current_profile?.img,
+            avatar: this.#tempAvatarUrl
+                ? this.#tempAvatarUrl
+                : config.HOST + store.getState().user.current_profile?.img,
             table: getTable(profile_data),
             editing: this.#editing,
             mine: user_data.id === profile_data.id,
-            isFriend: store.getState().user.current_profile?.is_friend
+            isFriend: store.getState().user.current_profile?.is_friend,
+            errorMsg: this.#errorMsg,
         });
     }
 }
