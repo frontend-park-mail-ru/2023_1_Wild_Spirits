@@ -27,6 +27,7 @@ export interface TEventBase {
     name: string;
     description: string;
     img: string;
+    dates: TEventDates;
 }
 
 export interface TOrgLight {
@@ -35,7 +36,6 @@ export interface TOrgLight {
 }
 
 export interface TEventLight extends TEventBase {
-    dates: TEventDates;
     places: string[];
     org: TOrgLight;
     //places: TEventPlace[];

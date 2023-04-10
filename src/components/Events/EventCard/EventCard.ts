@@ -6,7 +6,10 @@ import { TEventBase, TOrgLight } from "models/Events";
 import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
 import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 
-interface EventCardProps extends TEventBase {
+interface EventCardProps {
+    id: number;
+    name: string;
+    description: string;
     img: string;
     dates: string[];
     places: string[];

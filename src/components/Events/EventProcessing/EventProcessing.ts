@@ -18,10 +18,10 @@ interface EventProcessingForm {
     id: number;
     name: string;
     description: string;
-    dateStart: string;
-    dateEnd: string;
-    timeStart: string;
-    timeEnd: string;
+    dateStart?: string;
+    dateEnd?: string;
+    timeStart?: string;
+    timeEnd?: string;
     place: string;
     img: string;
 }
@@ -55,10 +55,19 @@ export class EventProcessing extends Component {
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
             .then(({ json, response }) => {
                 if (response.ok) {
-                    this.#editData = json.body!.event as EventProcessingForm;
-                    this.#editData.dateStart = this.encodeDate(this.#editData.dateStart);
-                    this.#editData.dateEnd = this.encodeDate(this.#editData.dateEnd);
-                    this.#editData.img = config.HOST + "/" + this.#editData.img;
+                    const event = json.body!.event;
+                    this.#editData = {
+                        id: event.id,
+                        name: event.name,
+                        description: event.description,
+                        dateStart: this.encodeDate(event.dates.dateStart),
+                        dateEnd: this.encodeDate(event.dates.dateEnd),
+                        timeStart: event.dates.timeStart,
+                        timeEnd: event.dates.timeEnd,
+                        place: "ВДНХ",
+                        img: config.HOST + "/" + event.img,
+                    };
+                    console.log(this.#editData);
                     this.rerender();
                 }
             })
@@ -74,10 +83,17 @@ export class EventProcessing extends Component {
         [splt[0], splt[2]] = [splt[2], splt[0]];
         return splt.join(".");
     }
-    encodeDate(date: string): string {
-        let splt = date.split(".");
-        [splt[0], splt[2]] = [splt[2], splt[0]];
-        return splt.join("-");
+    encodeDate(date: string | undefined): string | undefined {
+        if (date === undefined) {
+            return undefined;
+        }
+        try {
+            let splt = date.split(".");
+            [splt[0], splt[2]] = [splt[2], splt[0]];
+            return splt.join("-");
+        } catch {
+            return undefined;
+        }
     }
 
     #handleSubmit(event: SubmitEvent) {
