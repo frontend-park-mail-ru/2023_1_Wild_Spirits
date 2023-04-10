@@ -43,12 +43,12 @@ export class EventCard extends Component {
             name: this.#props.name,
             desc: this.#props.description,
             dates: EventCardMarkerTemplate({
-                img_src: "/assets/calendar_icon.png",
+                img_src: "/assets/img/calendar_icon.png",
                 title: "Даты",
                 items: this.#props.dates,
             }),
             places: EventCardMarkerTemplate({
-                img_src: "/assets/position_icon.png",
+                img_src: "/assets/img/position_icon.png",
                 title: "Места",
                 items: this.#props.places,
             }),
