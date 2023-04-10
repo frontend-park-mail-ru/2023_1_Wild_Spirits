@@ -61,7 +61,13 @@
             <img class="event-processing__img-prev" src="{{img}}" alt="Картинка :3" />
         {{/if}}
 
-        <input class="button form-submit" id="event-processing-submit" type="submit" />
+        <div class="event-processing__button-block">
+            <input class="button form-submit" id="event-processing-submit" type="submit" 
+            value="{{#if isEdit}}Сохранить изменения{{else}}Создать{{/if}}" />
+            {{#if isEdit}}
+                <input class="button-danger form-submit" id="event-processing-remove" type="button" value="Удалить"/>
+            {{/if}}
+        </div>
 
     </form>
 </div>

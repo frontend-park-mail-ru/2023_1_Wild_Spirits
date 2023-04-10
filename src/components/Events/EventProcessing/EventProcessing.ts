@@ -45,6 +45,11 @@ export class EventProcessing extends Component {
             "submit",
             this.#handleSubmit.bind(this)
         );
+        this.registerEvent(
+            () => document.getElementById("event-processing-remove"),
+            "click",
+            this.#handleRemove.bind(this)
+        );
     }
 
     setCreate() {
@@ -114,36 +119,27 @@ export class EventProcessing extends Component {
             formData.set("dateEnd", this.decodeDate(dateEnd));
         }
 
-        // const eventBody: EventBody = {
-        //     name: formData.get("name") as string,
-        //     desc: formData.get("desc") as string,
-        //     places: [],
-        //     categories: [],
-        //     tags: [],
-        //     dates: {
-        //         dateStart: this.formateDate(formData.get("date-first") as string),
-        //         dateEnd: this.formateDate(formData.get("date-second") as string),
-        //         timeStart: formData.get("time-first") as string,
-        //         timeEnd: formData.get("time-second") as string,
-        //         weakdays: [1, 2, 3, 4, 5, 6, 7],
-        //     },
-        // };
-
         const sendForm = (data: FormData) => {
-            let ajaxMethod =
-            this.#processingState === ProcessingState.CREATE ? ajax.post.bind(ajax) : ajax.patch.bind(ajax); // TODO change second post to patch
+            const isCreate = this.#processingState === ProcessingState.CREATE;
+            let ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax); // TODO change second post to patch
 
             ajax.removeHeaders("Content-Type");
-            ajaxMethod({ url: "/events", credentials: true, body: data })
-                .then()
+            const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");
+
+            ajaxMethod({ url: url, credentials: true, body: data })
+                .then(({ response }) => {
+                    if (response.ok) {
+                        router.go("/");
+                    }
+                })
                 .catch((error) => {
                     console.log(error);
                 });
             ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
-        }
+        };
 
         const fileInputElement = form.querySelector("#img-picker") as HTMLInputElement;
-        const inputFiles = fileInputElement.files
+        const inputFiles = fileInputElement.files;
 
         if (inputFiles && inputFiles.length > 0) {
             const image = inputFiles[0];
@@ -157,7 +153,20 @@ export class EventProcessing extends Component {
         } else {
             sendForm(formData);
         }
-    
+    }
+
+    #handleRemove(event: Event) {
+        if (this.#editData) {
+            ajax.delete({ url: `/events/${this.#editData.id}` })
+                .then(({ response }) => {
+                    if (response.ok) {
+                        router.go("/");
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     }
 
     render() {
