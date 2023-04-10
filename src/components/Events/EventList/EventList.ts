@@ -34,8 +34,7 @@ export class EventList extends Component {
                 }
                 if (timeStart && timeEnd) {
                     dates.push(timeStart + " - " + timeEnd);
-                }
-                if (timeStart || timeEnd) {
+                } else if (timeStart || timeEnd) {
                     dates.push((timeStart ? timeStart : timeEnd) as string);
                 }
                 // const places: string[] = event.places.map((place) => place.name);
