@@ -23,25 +23,26 @@ export const loadEvents = () => {
 
     const dateToString = (date: Date | undefined) => {
         return date ? [zeroPad(date.getDate(),2), 
-                zeroPad(date.getMonth(), 2), 
+                zeroPad(date.getMonth() + 1, 2), 
                 zeroPad(date.getFullYear(), 4)].join(".") : undefined;
     }
 
-    const filterProps = (props: {[key: string]: string | undefined}): UrlPropsType => {
+    const filterProps = (props: {[key: string]: string | string[] | undefined}): UrlPropsType => {
         return Object.fromEntries(
             Object.entries(props).filter(([_, value]) => {
-                return value !== undefined && value !== "[]";
+                return value !== undefined && value.length > 0;
             })
         ) as UrlPropsType;
     }
 
     const props = filterProps({
-        "tags": toArrString(getSelectedTags(store.getState().tags)),
-        "cities": toArrString(getSelectedCityName(store.getState().header)), 
-        "categories": toArrString(getSelectedCategory(store.getState().header)),
+        "tags": getSelectedTags(store.getState().tags),
+        "cities": getSelectedCityName(store.getState().header), 
+        "categories": getSelectedCategory(store.getState().header),
         "dateStart": dateToString(store.getState().calendar.startDate),
-        "finishDate": dateToString(store.getState().calendar.finishDate),
-    })
+        "dateEnd": dateToString(store.getState().calendar.finishDate),
+        "search": store.getState().header.searchQuery
+    });
 
     ajax.get<ResponseEventsLight>({
         url: "/events",

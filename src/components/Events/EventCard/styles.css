@@ -50,3 +50,7 @@
 .event-card__button-link {
     margin: 0 auto;
 }
+
+.edit-link:hover svg *{
+    fill: var(--link-color)
+}

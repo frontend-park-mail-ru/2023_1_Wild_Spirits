@@ -12,6 +12,7 @@ interface HeaderState {
     selectedCategoryId: number | undefined;
     cities: TCity[];
     selectedCityId: number | undefined;
+    searchQuery: string | undefined;
 }
 
 const initialState: HeaderState = {
@@ -19,6 +20,7 @@ const initialState: HeaderState = {
     selectedCategoryId: undefined,
     cities: [],
     selectedCityId: 1,
+    searchQuery: undefined
 };
 
 const headerSlice = createSlice({
@@ -56,6 +58,14 @@ const headerSlice = createSlice({
         clearCategory: (state) => {
             state.selectedCategoryId = undefined;
             return state;
+        },
+        setSearchQuery: (state, action: Action<string>) => {
+            state.searchQuery = action.payload;
+            return state;
+        },
+        clearSearchQuery: (state) => {
+            state.searchQuery = undefined;
+            return state;
         }
     }
 });
@@ -76,5 +86,13 @@ export const getSelectedCategory = (state: HeaderState): string | undefined => {
     return undefined;
 }
 
-export const { setCities, setCategories, selectCity, selectCategory, clearCategory } = headerSlice.actions;
+export const { setCities,
+               setCategories, 
+               selectCity, 
+               selectCategory, 
+               clearCategory, 
+               setSearchQuery, 
+               clearSearchQuery 
+            } = headerSlice.actions;
+            
 export default headerSlice;

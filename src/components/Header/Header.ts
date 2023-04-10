@@ -9,7 +9,7 @@ import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.ha
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { selectCity, selectCategory, getSelectedCityName, getCitiesNames, clearCategory } from "flux/slices/headerSlice";
+import { selectCity, selectCategory, getSelectedCityName, getCitiesNames, clearCategory, setSearchQuery } from "flux/slices/headerSlice";
 import { logout } from "flux/slices/userSlice";
 import { loadEvents } from "requests/events";
 import { loadCategories, loadCities } from "requests/header";
@@ -30,6 +30,8 @@ export class Header extends Component {
 
         this.registerEvent(() => document.getElementById("header-city-select"), "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
+
+        this.registerEvent(() => document.getElementById("header-search"), "change", this.#search);
 
         this.registerEvent(
             () => document.getElementById("login-link"),
@@ -76,6 +78,17 @@ export class Header extends Component {
         loadEvents();
     };
 
+    #search = (event: Event) => {
+        const searchInput = event.target as HTMLInputElement;
+
+        if (!searchInput) {
+            return;
+        }
+
+        store.dispatch(setSearchQuery(searchInput.value));
+        loadEvents();
+    }
+
     postRender() {
         const select = document.getElementsByTagName("select")[0];
         const selectedCityName = getSelectedCityName(store.getState().header)
@@ -90,6 +103,7 @@ export class Header extends Component {
             categories: store.getState().header.categories,
             selectedCategoryId: store.getState().header.selectedCategoryId,
             cities: getCitiesNames(store.getState().header),
+            searchQuery: store.getState().header.searchQuery,
             profileLink:
                 userData !== undefined
                     ? AuthorizedLinkTemplate({

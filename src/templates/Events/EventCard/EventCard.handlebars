@@ -23,7 +23,7 @@
             <div class="invite-icon-container"></div>
             {{orgId}}
             {{#if mine}}
-                <a><div class="edit-icon-container"></div></a>
+                <a href="/editevent/{{eventId}}" class="js-router-link edit-link"><div class="edit-icon-container"></div></a>
             {{else}}
                 <div class="bookmark-icon-container"></div>
             {{/if}}

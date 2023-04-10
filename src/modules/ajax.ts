@@ -1,7 +1,7 @@
 /** @module ajax */
 
 type HeadersType = Record<string, string>;
-export type UrlPropsType = Record<string, string>;
+export type UrlPropsType = Record<string, string | string[]>;
 
 interface AjaxProps {
     url: string;
@@ -65,7 +65,12 @@ class Ajax {
         return (
             "?" +
             Object.entries(urlProps)
-                .map(([key, value]) => `${key}=${value}`)
+                .map(([key, value]) => {
+                    if (Array.isArray(value)) {
+                        return value.map(innerValue => `${key}=${innerValue}`).join("&");
+                    }
+                    return `${key}=${value}`;
+                })
                 .join("&")
         );
     }
