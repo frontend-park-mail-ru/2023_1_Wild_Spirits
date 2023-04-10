@@ -50,8 +50,7 @@ export class Profile extends Component {
         }
 
         const image = inputFiles[0]
-        const imageUrl = URL.createObjectURL(image);
-        this.#tempAvatarUrl = imageUrl;
+        this.#tempAvatarUrl = URL.createObjectURL(image);
 
         this.rerender();
     }

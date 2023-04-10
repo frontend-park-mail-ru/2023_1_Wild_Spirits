@@ -23,7 +23,7 @@ export const loadEvents = () => {
 
     const dateToString = (date: Date | undefined) => {
         return date ? [zeroPad(date.getDate(),2), 
-                zeroPad(date.getMonth(), 2), 
+                zeroPad(date.getMonth() + 1, 2), 
                 zeroPad(date.getFullYear(), 4)].join(".") : undefined;
     }
 
@@ -40,8 +40,8 @@ export const loadEvents = () => {
         "cities": getSelectedCityName(store.getState().header), 
         "categories": getSelectedCategory(store.getState().header),
         "dateStart": dateToString(store.getState().calendar.startDate),
-        "finishDate": dateToString(store.getState().calendar.finishDate),
-    })
+        "dateEnd": dateToString(store.getState().calendar.finishDate),
+    });
 
     ajax.get<ResponseEventsLight>({
         url: "/events",

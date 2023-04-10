@@ -4,6 +4,7 @@ import { ajax } from "modules/ajax";
 import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
 import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
+import { toWebP } from "modules/imgConverter";
 
 interface EventBody {
     name: string;
@@ -82,7 +83,10 @@ export class EventProcessing extends Component {
 
     #handleSubmit(event: SubmitEvent) {
         event.preventDefault();
-        let formData = new FormData(event.target as HTMLFormElement);
+
+        const form = event.target as HTMLFormElement;
+
+        let formData = new FormData(form);
 
         const dateStart = formData.get("dateStart") as string;
         const dateEnd = formData.get("dateEnd") as string;
@@ -92,10 +96,6 @@ export class EventProcessing extends Component {
         }
         if (dateEnd) {
             formData.set("dateEnd", this.decodeDate(dateEnd));
-        }
-
-        for (const entr of formData.entries()) {
-            console.log(entr);
         }
 
         // const eventBody: EventBody = {
@@ -114,16 +114,35 @@ export class EventProcessing extends Component {
         // };
         // //formData
 
-        let ajaxMethod =
+        const sendForm = (data: FormData) => {
+            let ajaxMethod =
             this.#processingState === ProcessingState.CREATE ? ajax.post.bind(ajax) : ajax.patch.bind(ajax); // TODO change second post to patch
 
-        ajax.removeHeaders("Content-Type");
-        ajaxMethod({ url: "/events", credentials: true, body: formData })
-            .then()
-            .catch((error) => {
-                console.log(error);
+            ajax.removeHeaders("Content-Type");
+            ajaxMethod({ url: "/events", credentials: true, body: data })
+                .then()
+                .catch((error) => {
+                    console.log(error);
+                });
+            ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
+        }
+
+        const fileInputElement = form.querySelector("#img-picker") as HTMLInputElement;
+        const inputFiles = fileInputElement.files
+
+        if (inputFiles && inputFiles.length > 0) {
+            const image = inputFiles[0];
+            const imageUrl = URL.createObjectURL(image);
+
+            toWebP(imageUrl, (imageBlob: Blob) => {
+                formData.set("file", imageBlob);
+
+                sendForm(formData);
             });
-        ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
+        } else {
+            sendForm(formData);
+        }
+    
     }
 
     render() {
