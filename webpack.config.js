@@ -31,6 +31,35 @@ export const createConf = (env, argv) => {
                     use: ["style-loader", "css-loader"],
                 },
                 {
+                    test: /\.s[ac]ss$/i,
+                    use: [
+                        {
+                            loader: "style-loader",
+                        },
+                        {
+                            loader: "css-loader",
+                            options: {
+                                modules: {
+                                    mode: "local",
+                                    auto: true,
+                                    exportGlobals: true,
+                                    localIdentName: "[local]--[hash:base64:5]",
+                                    localIdentHashSalt: "my-custom-hash",
+                                },
+                            },
+                        },
+                        {
+                            loader: "resolve-url-loader",
+                        },
+                        {
+                            loader: "sass-loader",
+                            options: {
+                                sourceMap: true,
+                            },
+                        },
+                    ],
+                },
+                {
                     test: /\.(png|jpe?g|gif|svg)$/,
                     loader: "file-loader",
                     options: {
@@ -74,6 +103,7 @@ export const createConf = (env, argv) => {
             modules: [__dirname + "/src", "node_modules"],
             alias: {
                 handlebars: "handlebars/dist/handlebars.js",
+                "@style": path.resolve(__dirname, "./src/assets/scss/style.scss"),
             },
         },
         mode: argv.mode,

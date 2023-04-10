@@ -2,6 +2,7 @@ import "./index.css";
 import { App } from "components/App";
 import { ajax } from "modules/ajax";
 import config from "config";
+import "@style";
 
 import { store } from "flux";
 import { router } from "modules/router";
