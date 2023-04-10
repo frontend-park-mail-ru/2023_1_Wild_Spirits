@@ -6,6 +6,7 @@ import { TEventBase, TOrgLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
 import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
 import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
+import "./styles.scss";
 
 interface EventCardProps {
     id: number;

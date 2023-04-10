@@ -6,6 +6,7 @@ import TagsTemplate from "templates/Tags/Tags.handlebars";
 import { store } from "flux";
 import { toggleTag } from "flux/slices/tagsSlice";
 import { loadEvents } from "requests/events";
+import "./styles.scss";
 
 /**
  * @class

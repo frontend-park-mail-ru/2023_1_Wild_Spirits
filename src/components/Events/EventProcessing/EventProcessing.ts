@@ -7,6 +7,7 @@ import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessin
 import { toWebP } from "modules/imgConverter";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
+import "./styles.scss";
 
 interface EventBody {
     name: string;

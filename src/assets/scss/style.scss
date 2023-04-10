@@ -1,7 +1,36 @@
-$my-color: #ff00ff;
+@import "./Common/Colors.scss";
+@import "./Common/Button.scss";
+@import "./Common/Form.scss";
+@import "./Common/Card.scss";
+@import "./Common/Link.scss";
+@import "./Common/ProfileLink.scss";
 
-.my-button {
-    background-color: $my-color;
-    color: #00ff00;
-    padding: 10px;
+@font-face {
+    font-family: "Roboto";
+    src: url("/src/assets/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url("/src/assets/fonts/Roboto/Roboto-Thin.ttf") format("truetype");
+
+    font-weight: 300;
+    font-style: normal;
+}
+
+:root {
+    --main-selected-color: #26a69a;
+    --link-color: #008666;
+    --input-el-color: #42c3ca;
+    --disabled-input-el-color: #9ed8db;
+}
+
+body {
+    font-family: "Roboto";
+    font-weight: normal;
+
+    cursor: default;
 }

@@ -87,7 +87,8 @@ export const createConf = (env, argv) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: path.resolve(__dirname, "./src/assets"), to: "assets" },
+                    { from: path.resolve(__dirname, "./src/assets/img"), to: "assets/img" },
+                    { from: path.resolve(__dirname, "./src/assets/fonts"), to: "assets/fonts" },
                     { from: path.resolve(__dirname, "./src/sw.js"), to: "" },
                 ],
             }),

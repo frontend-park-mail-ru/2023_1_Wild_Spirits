@@ -1,0 +1,72 @@
+.button-base {
+    border-radius: 10px;
+    font-size: 20px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+.button {
+    @extend .button-base;
+    background: $input-el-color;
+    color: #ffffff;
+    border: $input-el-color solid 1px;
+    padding: 10px;
+    &:hover {
+        background: #ffffff;
+        color: $input-el-color;
+    }
+    &:disabled {
+        background: $disabled-input-el-color;
+        border-color: $disabled-input-el-color;
+        color: white;
+        cursor: not-allowed;
+    }
+    &:disabled:hover {
+        background: $disabled-input-el-color;
+    }
+}
+
+.link-button {
+    @extend .button-base;
+    color: $input-el-color;
+    border: $input-el-color solid 1px;
+    padding: 10px;
+
+    text-decoration: none;
+
+    &:hover {
+        background-color: $input-el-color;
+        color: white;
+    }
+}
+
+.button-outline {
+    @extend .button-base;
+    display: inline-flex;
+
+    &-like {
+        border: #ff0000 solid 1px;
+        &:hover {
+            border-color: $input-el-color;
+        }
+    }
+
+    &-other {
+        border: $input-el-color solid 1px;
+        &:hover {
+            border-color: $main-selected-color;
+        }
+    }
+}
+
+.button-danger {
+    @extend .button-base;
+    background: #e92424;
+    color: #ffffff;
+    border: 1px solid $input-el-color;
+    padding: 10px;
+
+    &:hover {
+        background: #ff7a7a;
+    }
+}

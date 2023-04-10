@@ -84,12 +84,12 @@ select {
 
     cursor: pointer;
 
-    background: right url('assets/img/down-arrow-icon.svg') no-repeat;
+    background: right url("/src/assets/img/down-arrow-icon.svg") no-repeat;
 
     outline: none;
 }
 
-select>option {
+select > option {
     background-color: white;
 }
 

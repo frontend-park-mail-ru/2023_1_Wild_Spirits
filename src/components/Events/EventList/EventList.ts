@@ -7,6 +7,7 @@ import { TEventLight } from "models/Events";
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 
 import { store } from "flux";
+import "./styles.scss";
 
 /**
  * Event list component

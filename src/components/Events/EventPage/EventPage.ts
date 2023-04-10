@@ -2,15 +2,14 @@
 
 import { Component } from "components/Component";
 import config from "config";
-import { store } from "flux";
 import { TEvent, TEventOrganizer, TEventPlace } from "models/Events";
 import { ajax } from "modules/ajax";
 import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
 import EventPageTemplate from "templates/Events/EventPage/EventPage.handlebars";
-import TagsTemplate from "templates/Tags/Tags.handlebars";
 import TableTemplate from "templates/Common/Table.handlebars";
 import { createTable } from "components/Common/CreateTable";
+import "./styles.scss";
 
 interface EventData {
     event: TEvent;

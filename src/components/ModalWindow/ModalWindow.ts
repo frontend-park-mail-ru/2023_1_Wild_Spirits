@@ -3,6 +3,7 @@ import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 
 import { store } from "flux";
 import { close } from "flux/slices/modalWindowSlice";
+import "./styles.scss";
 
 /**
  * Modal window component

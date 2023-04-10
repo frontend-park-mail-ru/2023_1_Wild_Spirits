@@ -2,19 +2,25 @@
 
 import { Component } from "components/Component";
 import config from "config";
-import { ajax } from "modules/ajax";
 import HeaderTemplate from "templates/Header/Header.handlebars";
 import UnauthorizedLinkTemplate from "templates/Auth/ProfileLink/UnauthorizedLink.handlebars";
 import AuthorizedLinkTemplate from "templates/Auth/ProfileLink/AuthorizedLink.handlebars";
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { selectCity, selectCategory, getSelectedCityName, getCitiesNames, clearCategory, setSearchQuery } from "flux/slices/headerSlice";
-import { logout } from "flux/slices/userSlice";
+import {
+    selectCity,
+    selectCategory,
+    getSelectedCityName,
+    getCitiesNames,
+    clearCategory,
+    setSearchQuery,
+} from "flux/slices/headerSlice";
 import { loadEvents } from "requests/events";
 import { loadCategories, loadCities } from "requests/header";
 
 import { logoutUser } from "requests/user";
+import "./styles.scss";
 
 /**
  * @class
@@ -62,10 +68,10 @@ export class Header extends Component {
             if (store.getState().header.selectedCategoryId === numId) {
                 store.dispatch(clearCategory());
             } else {
-                store.dispatch(selectCategory({category: numId}));
+                store.dispatch(selectCategory({ category: numId }));
             }
             loadEvents();
-        }  
+        }
     };
 
     /**
@@ -74,7 +80,7 @@ export class Header extends Component {
      */
     #selectCity = (event: Event) => {
         const target = event.target as HTMLInputElement;
-        store.dispatch(selectCity({city: target.value}));
+        store.dispatch(selectCity({ city: target.value }));
         loadEvents();
     };
 
@@ -87,11 +93,11 @@ export class Header extends Component {
 
         store.dispatch(setSearchQuery(searchInput.value));
         loadEvents();
-    }
+    };
 
     postRender() {
         const select = document.getElementsByTagName("select")[0];
-        const selectedCityName = getSelectedCityName(store.getState().header)
+        const selectedCityName = getSelectedCityName(store.getState().header);
         select.value = selectedCityName ? selectedCityName : "";
     }
 
@@ -109,7 +115,7 @@ export class Header extends Component {
                     ? AuthorizedLinkTemplate({
                           name: userData.name,
                           img: config.HOST + userData.img,
-                          user_id: userData.id
+                          user_id: userData.id,
                       })
                     : UnauthorizedLinkTemplate(),
         });

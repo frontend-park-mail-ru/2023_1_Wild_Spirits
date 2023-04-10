@@ -17,6 +17,7 @@ import { ResponseUserEdit } from "responses/ResponsesUser";
 import { addFriend, loadFriends, loadProfile } from "requests/user";
 import { router } from "modules/router";
 import { toWebP } from "modules/imgConverter";
+import "./styles.scss";
 
 /**
  * Registration component

@@ -16,6 +16,7 @@ import {
 } from "flux/slices/calendarSlice";
 
 import { store } from "flux";
+import "./styles.scss";
 
 /**
  * @class
