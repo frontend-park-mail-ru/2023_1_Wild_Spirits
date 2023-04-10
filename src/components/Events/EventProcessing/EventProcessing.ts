@@ -73,7 +73,6 @@ export class EventProcessing extends Component {
                         place: "ВДНХ",
                         img: config.HOST + "/" + event.img,
                     };
-                    console.log(this.#editData);
                     this.rerender();
                 }
             })
@@ -121,7 +120,7 @@ export class EventProcessing extends Component {
 
         const sendForm = (data: FormData) => {
             const isCreate = this.#processingState === ProcessingState.CREATE;
-            let ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax); // TODO change second post to patch
+            let ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
 
             ajax.removeHeaders("Content-Type");
             const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");
@@ -157,7 +156,7 @@ export class EventProcessing extends Component {
 
     #handleRemove(event: Event) {
         if (this.#editData) {
-            ajax.delete({ url: `/events/${this.#editData.id}` })
+            ajax.delete({ url: `/events/${this.#editData.id}`, credentials: true })
                 .then(({ response }) => {
                     if (response.ok) {
                         router.go("/");

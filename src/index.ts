@@ -7,14 +7,9 @@ import { store } from "flux";
 import { router } from "modules/router";
 
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-        .register("sw.js", { scope: "/" })
-        .then(() => {
-            console.log("registered");
-        })
-        .catch(() => {
-            console.log("register error");
-        });
+    navigator.serviceWorker.register("sw.js", { scope: "/" }).catch(() => {
+        console.log("register error");
+    });
 }
 
 ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
