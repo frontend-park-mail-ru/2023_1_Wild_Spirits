@@ -84,7 +84,7 @@ select {
 
     cursor: pointer;
 
-    background: right url('assets/down-arrow-icon.svg') no-repeat;
+    background: right url('assets/img/down-arrow-icon.svg') no-repeat;
 
     outline: none;
 }

@@ -55,7 +55,7 @@ const classCollectionGetter = (className: string) => {
 
 const basicIconRule = (iconName: string) => ({
     collectionGetter: classCollectionGetter(`${iconName}-icon-container`),
-    url: `/assets/${iconName}-icon.svg`
+    url: `/assets/img/${iconName}-icon.svg`
 });
 
 let loader = new SVGLoader();
