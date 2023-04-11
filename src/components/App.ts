@@ -124,7 +124,7 @@ export class App extends Component {
                             // this.#subscriptionListComponent.render() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),
-                    }
+                    };
                 },
                 "/events": () => {
                     router.isUrlChanged() && this.#eventComponent.loadEvent();

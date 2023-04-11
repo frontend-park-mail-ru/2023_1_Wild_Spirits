@@ -18,6 +18,7 @@ import { addFriend, loadFriends, loadProfile } from "requests/user";
 import { router } from "modules/router";
 import { toWebP } from "modules/imgConverter";
 import "./styles.scss";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 /**
  * Registration component
@@ -186,9 +187,7 @@ export class Profile extends Component {
         }
 
         return ProfileTemplate({
-            avatar: this.#tempAvatarUrl
-                ? this.#tempAvatarUrl
-                : config.HOST + store.getState().user.current_profile?.img,
+            avatar: this.#tempAvatarUrl || getUploadsImg(store.getState().user.current_profile!.img),
             table: getTable(profile_data),
             editing: this.#editing,
             mine: user_data.id === profile_data.id,

@@ -21,6 +21,7 @@ import { loadCategories, loadCities } from "requests/header";
 
 import { logoutUser } from "requests/user";
 import "./styles.scss";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 /**
  * @class
@@ -114,7 +115,7 @@ export class Header extends Component {
                 userData !== undefined
                     ? AuthorizedLinkTemplate({
                           name: userData.name,
-                          img: config.HOST + userData.img,
+                          img: getUploadsImg(userData.img),
                           user_id: userData.id,
                       })
                     : UnauthorizedLinkTemplate(),

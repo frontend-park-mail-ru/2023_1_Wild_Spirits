@@ -8,6 +8,7 @@ import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 
 import { store } from "flux";
 import "./styles.scss";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 /**
  * Event list component
@@ -43,7 +44,7 @@ export class EventList extends Component {
                 return new EventCard(this, {
                     id: event.id,
                     name: event.name,
-                    img: config.HOST + "/" + event.img,
+                    img: getUploadsImg(event.img),
                     description: event.description,
                     dates,
                     places,

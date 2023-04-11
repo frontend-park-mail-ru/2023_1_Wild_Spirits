@@ -10,6 +10,7 @@ import EventPageTemplate from "templates/Events/EventPage/EventPage.handlebars";
 import TableTemplate from "templates/Common/Table.handlebars";
 import { createTable } from "components/Common/CreateTable";
 import "./styles.scss";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 interface EventData {
     event: TEvent;
@@ -65,7 +66,7 @@ export class EventPage extends Component {
             return EventPageTemplate({
                 name: event.name,
                 description: event.description,
-                img: config.HOST + "/" + event.img,
+                img: getUploadsImg(event.img),
                 tags: event.tags,
                 places: fixedPlaces,
                 moreInfo: TableTemplate({

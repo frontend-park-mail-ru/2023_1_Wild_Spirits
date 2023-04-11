@@ -7,6 +7,7 @@ import { store } from "flux";
 import FriendListTemplate from "templates/Auth/Profile/FriendList.handlebars";
 import config from "config";
 import "./styles.scss";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 export class FriendList extends Component {
     constructor(parent: Component) {
@@ -17,7 +18,7 @@ export class FriendList extends Component {
         const friends = store.getState().user.current_profile?.friends?.map(({ id, name, img }) => ({
             user_id: id,
             name: name,
-            avatar: config.HOST + img,
+            avatar: getUploadsImg(img),
         }));
 
         return FriendListTemplate({

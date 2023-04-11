@@ -8,6 +8,7 @@ import { toWebP } from "modules/imgConverter";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 interface EventBody {
     name: string;
@@ -84,7 +85,7 @@ export class EventProcessing extends Component {
                         timeStart: event.dates.timeStart,
                         timeEnd: event.dates.timeEnd,
                         place: "ВДНХ",
-                        img: config.HOST + "/" + event.img,
+                        img: getUploadsImg(event.img),
                     };
                     this.rerender();
                 }
