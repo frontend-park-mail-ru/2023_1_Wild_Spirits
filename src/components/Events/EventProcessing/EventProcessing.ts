@@ -152,7 +152,6 @@ export class EventProcessing extends Component {
         };
 
         const fileInputElement = form.querySelector("#event-processing-img") as HTMLInputElement;
-        console.log("fileInputElement", fileInputElement);
         const inputFiles = fileInputElement.files;
 
         if (inputFiles && inputFiles.length > 0) {
@@ -170,11 +169,8 @@ export class EventProcessing extends Component {
     }
 
     #handleChange(event: Event) {
-        console.log(event);
-        console.log(event.target);
         const target = event.target as HTMLInputElement;
         if (target.files && target.files.length > 0) {
-            console.log("file set");
             this.#testFile = target.files[0];
         }
     }

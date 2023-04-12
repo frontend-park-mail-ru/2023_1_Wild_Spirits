@@ -15,6 +15,7 @@ import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionLi
 
 import AppTemplate from "templates/App.handlebars";
 import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
+import CreateEventBtn from "templates/Common/CreateEventBtn.handlebars";
 
 import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
@@ -106,7 +107,10 @@ export class App extends Component {
                     router.isUrlChanged() && loadEvents();
                     return {
                         content: this.#eventListComponent.render(),
-                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                        sidebar: 
+                            CreateEventBtn() + 
+                            this.#calendarComponent.render() + 
+                            this.#tagsComponent.render(),
                     };
                 },
                 "/profile": () => {
@@ -121,7 +125,6 @@ export class App extends Component {
                             this.#eventListComponent.render(),
                         sidebar:
                             this.#frienListComponent.render() +
-                            // this.#subscriptionListComponent.render() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),
                     };
