@@ -1,9 +1,11 @@
+@import "/src/assets/scss/Common/Card.scss";
+
 .event-card {
     position: relative;
 }
 
 .event-card__body {
-    margin-bottom: 70px;
+    padding-bottom: 40px;
 }
 
 .event-card__marked {
@@ -31,19 +33,16 @@
 }
 
 .event-card__footer {
-    position: relative;
-    flex-grow: 1;
-    bottom: 10px;
-    margin: 0 15px 0 15px;
+    position: absolute;
+    bottom: 8px;
+    width: calc($card-widht - $card-body-margin-x - $card-body-margin-x);
+    margin: 0 $card-body-margin-x;
 }
 
 .event-card__button-block {
-    margin-top: 10px;
-    bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: absolute;
     width: 100%;
 }
 

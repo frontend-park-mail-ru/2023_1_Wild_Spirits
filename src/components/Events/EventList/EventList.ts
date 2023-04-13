@@ -9,6 +9,8 @@ import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 import { store } from "flux";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { router } from "modules/router";
+import { loadEvents } from "requests/events";
 
 /**
  * Event list component
@@ -18,6 +20,10 @@ import { getUploadsImg } from "modules/getUploadsImg";
 export class EventList extends Component {
     constructor(parent: Component) {
         super(parent);
+    }
+
+    loadEvents() {
+        router.isUrlChanged() && loadEvents();
     }
 
     render() {

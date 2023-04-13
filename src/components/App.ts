@@ -103,7 +103,7 @@ export class App extends Component {
         const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
             {
                 "/": () => {
-                    router.isUrlChanged() && loadEvents();
+                    this.#eventListComponent.loadEvents();
                     return {
                         content: this.#eventListComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),

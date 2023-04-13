@@ -2,7 +2,7 @@ import { store } from "flux";
 import { getSelectedTags } from "flux/slices/tagsSlice";
 import { getSelectedCityName } from "flux/slices/headerSlice";
 import { getSelectedCategory } from "flux/slices/headerSlice";
-import { ajax } from "modules/ajax";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseEventsLight } from "responses/ResponseEvent";
 import { setEvents } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
@@ -47,9 +47,9 @@ export const loadEvents = () => {
         url: "/events",
         urlProps: props,
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
-                store.dispatch(setEvents({ events: json.body!.events }));
+        .then(({ json, response, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setEvents({ events: json.body.events }));
             }
         })
         .catch((error) => {

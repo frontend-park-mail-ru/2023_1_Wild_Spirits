@@ -1,4 +1,3 @@
-import "./index.css";
 import { App } from "components/App";
 import { ajax } from "modules/ajax";
 import config from "config";

@@ -1,5 +1,5 @@
 import { TEvent, TEventLight, TEventOrganizer, TEventPlace } from "models/Events";
-import { ResponseBody } from "./ResponseBase";
+import { ResponseBody, ResponseBodyOrError } from "./ResponseBase";
 
 interface IResponseEventsLight {
     events: TEventLight[];

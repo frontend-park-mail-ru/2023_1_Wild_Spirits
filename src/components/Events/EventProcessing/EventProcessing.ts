@@ -1,6 +1,6 @@
 import { Component } from "components/Component";
 import config from "config";
-import { ajax } from "modules/ajax";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
 import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
@@ -39,12 +39,14 @@ namespace ProcessingState {
 
 export class EventProcessing extends Component {
     #processingState: ProcessingState.Type = ProcessingState.CREATE;
-    #editData: EventProcessingForm | undefined = undefined;
+    #editData: EventProcessingForm;
 
-    #testFile: File | undefined = undefined;
+    #tempFileUrl: string | undefined = undefined;
 
     constructor(parent: Component) {
         super(parent);
+
+        this.#editData = this.createDefaultData();
 
         this.registerEvent(
             () => document.getElementById("event-processing-form"),
@@ -66,16 +68,31 @@ export class EventProcessing extends Component {
 
     postRender() {}
 
+    createDefaultData(): EventProcessingForm {
+        return {
+            id: -1,
+            name: "TName",
+            description: "TDesc",
+            place: "ВДНХ",
+            dateStart: "2023-01-01",
+            dateEnd: "2023-03-03",
+            timeStart: "10:00",
+            timeEnd: "19:00",
+            img: "",
+        };
+    }
+
     setCreate() {
+        this.#editData = this.createDefaultData();
         this.#processingState = ProcessingState.CREATE;
     }
 
     setEdit() {
         const eventId = parseInt(router.getNextUrl().slice(1));
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
-            .then(({ json, response }) => {
-                if (response.ok) {
-                    const event = json.body!.event;
+            .then(({ json, response, status }) => {
+                if (status === AjaxResultStatus.SUCCESS) {
+                    const event = json.body.event;
                     this.#editData = {
                         id: event.id,
                         name: event.name,
@@ -133,6 +150,7 @@ export class EventProcessing extends Component {
         }
 
         const sendForm = (data: FormData) => {
+            for (const i of formData) console.log(i);
             const isCreate = this.#processingState === ProcessingState.CREATE;
             let ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
 
@@ -140,8 +158,8 @@ export class EventProcessing extends Component {
             const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");
 
             ajaxMethod({ url: url, credentials: true, body: data })
-                .then(({ response }) => {
-                    if (response.ok) {
+                .then(({ status }) => {
+                    if (status === AjaxResultStatus.SUCCESS) {
                         router.go("/");
                     }
                 })
@@ -151,17 +169,11 @@ export class EventProcessing extends Component {
             ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
         };
 
-        const fileInputElement = form.querySelector("#event-processing-img") as HTMLInputElement;
-        console.log("fileInputElement", fileInputElement);
-        const inputFiles = fileInputElement.files;
-
-        if (inputFiles && inputFiles.length > 0) {
-            const image = inputFiles[0];
-            const imageUrl = URL.createObjectURL(image);
-
-            toWebP(imageUrl, (imageBlob: Blob) => {
+        if (this.#tempFileUrl !== undefined) {
+            console.log("this.#tempFileUrl !== undefined");
+            toWebP(this.#tempFileUrl, (imageBlob: Blob) => {
                 formData.set("file", imageBlob);
-
+                console.log("webp");
                 sendForm(formData);
             });
         } else {
@@ -170,20 +182,24 @@ export class EventProcessing extends Component {
     }
 
     #handleChange(event: Event) {
-        console.log(event);
-        console.log(event.target);
         const target = event.target as HTMLInputElement;
-        if (target.files && target.files.length > 0) {
-            console.log("file set");
-            this.#testFile = target.files[0];
+        if (target.name === "file") {
+            const files = target.files;
+            if (files && files.length > 0) {
+                this.#tempFileUrl = URL.createObjectURL(files[0]);
+                this.rerender();
+            }
+        } else {
+            const name: keyof EventProcessingForm = target.name as keyof EventProcessingForm;
+            (this.#editData[name] as string) = target.value;
         }
     }
 
     #handleRemove(event: Event) {
         if (this.#editData) {
             ajax.delete({ url: `/events/${this.#editData.id}`, credentials: true })
-                .then(({ response }) => {
-                    if (response.ok) {
+                .then(({ status }) => {
+                    if (status === AjaxResultStatus.SUCCESS) {
                         router.go("/");
                     }
                 })
@@ -204,17 +220,11 @@ export class EventProcessing extends Component {
             return "";
         }
         const isEdit: boolean = this.#processingState === ProcessingState.EDIT;
-        const startData = isEdit
-            ? this.#editData
-            : {
-                  name: "TName",
-                  description: "TDesc",
-                  place: "ВДНХ",
-                  dateStart: "2023-01-01",
-                  dateEnd: "2023-03-03",
-                  timeStart: "10:00",
-                  timeEnd: "19:00",
-              };
-        return EventCreateTemplate({ ...startData, isEdit });
+        return EventCreateTemplate({
+            ...this.#editData,
+            isEdit,
+            img: this.#tempFileUrl || this.#editData.img,
+            hasImg: this.#tempFileUrl !== undefined || this.#editData.img,
+        });
     }
 }
