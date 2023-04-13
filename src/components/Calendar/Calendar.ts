@@ -152,8 +152,6 @@ export class Calendar extends Component {
     };
 
     render() {
-        const currentDate = new Date();
-        // const currentYear = currentDate.getFullYear();
         const currentYear = store.getState().calendar.year;
         const currentMonth = store.getState().calendar.month;
 

@@ -1,21 +1,21 @@
 <div class="card event-card">
-    <div class="card__img-block">
-        <a id="event_{{eventId}}" class="js-router-link" href="/events/{{eventId}}">
+    <a id="event_{{eventId}}" class="js-router-link event-card__content" href="/events/{{eventId}}">
+        <div class="card__img-block">
             <img class="card__img" src="{{img}}" alt="{{name}}" />
-        </a>
-    </div>
-    <div class="card__body event-card__body">
-        <div class="card__title">
-            {{name}}
         </div>
-        <div class="card__description">
-            {{desc}}
+        <div class="card__body event-card__body">
+            <div class="card__title">
+                {{name}}
+            </div>
+            <div class="card__description">
+                {{desc}}
+            </div>
+            <hr class="card__hr" />
+            {{{dates}}}
+            <hr class="card__hr" />
+            {{{places}}}
         </div>
-        <hr class="card__hr" />
-        {{{dates}}}
-        <hr class="card__hr" />
-        {{{places}}}
-    </div>
+    </a>
     <div class="event-card__footer">
         <div class="event-card__button-block">
             <div class="heart-icon-container"></div>

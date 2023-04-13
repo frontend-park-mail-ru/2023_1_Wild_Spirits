@@ -1,9 +1,21 @@
 .event-card {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    text-decoration: none;
+    color: black;
 }
 
 .event-card__body {
-    margin-bottom: 70px;
+    // margin-bottom: 70px;
+    // height: 100%;
+    flex-grow: 1;
 }
 
 .event-card__marked {
@@ -32,18 +44,20 @@
 
 .event-card__footer {
     position: relative;
-    flex-grow: 1;
-    bottom: 10px;
-    margin: 0 15px 0 15px;
+    // flex-grow: 1;
+
+    display: flex;
+    justify-content: flex-end;
+
+    margin: 0 15px 10px 15px;
 }
 
 .event-card__button-block {
     margin-top: 10px;
     bottom: 10px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    position: absolute;
     width: 100%;
 }
 
