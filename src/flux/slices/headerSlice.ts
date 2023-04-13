@@ -41,7 +41,6 @@ const headerSlice = createSlice({
         },
         selectCity: (state, action: Action<{ city: number | string | TCity }>) => {
             const city = action.payload?.city;
-            console.log("city", city, action.payload);
             if (typeof city == "number") {
                 state.selectedCityId = city;
             } else if (typeof city == "string") {

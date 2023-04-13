@@ -2,16 +2,15 @@
 
 import { Component } from "components/Component";
 import { EventCard } from "components/Events/EventCard/EventCard";
-import config from "config";
 import { TEventLight } from "models/Events";
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
-
+import EventListEmptyTemplate from "templates/Events/EventList/EventListEmpty.handlebars";
 import { store } from "flux";
-import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { router } from "modules/router";
 import { loadEvents } from "requests/events";
 import { LoadStatus } from "requests/LoadStatus";
+import "./styles.scss";
 
 /**
  * Event list component
@@ -73,9 +72,9 @@ export class EventList extends Component {
             });
         }
 
-        const renderedEvents = cards ? cards.map((card) => card.render()) : [];
-        if (!renderedEvents) {
-            return;
+        const renderedEvents: string[] = cards ? cards.map((card) => card.render()) : [];
+        if (renderedEvents.length === 0) {
+            return EventListEmptyTemplate();
         }
         return EventListTemplate({ events: renderedEvents });
     }

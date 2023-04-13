@@ -35,7 +35,6 @@ export const loadEvents = () => {
     };
 
     const city = getSelectedCityName(store.getState().header);
-    console.log("LE", city);
 
     const props = filterProps({
         tags: getSelectedTags(store.getState().tags),

@@ -90,6 +90,7 @@ export const loginUser = (formData: FormData, warningMsg: TWarningMsgCallack) =>
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
+                    store.dispatch(setData(json.body.user), close());
                 }
             } else {
                 warningMsg(json.errorMsg);
@@ -116,8 +117,7 @@ export const registerUser = (formData: FormData, warningMsg: TWarningMsgCallack)
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setData(json.body.user));
-                store.dispatch(close());
+                store.dispatch(setData(json.body.user), close());
             } else {
                 warningMsg(json.errorMsg);
             }

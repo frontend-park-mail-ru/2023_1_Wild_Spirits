@@ -12,7 +12,6 @@ export const loadCities = () =>
             url: "/cities",
         })
         .then(({ json, response }) => {
-            console.log("LC");
             if (response.ok) {
                 let dispatchPipeline = [setCities({ cities: json.body.cities })];
                 const { authorizedLoadStatus, data: userData } = store.getState().user;
