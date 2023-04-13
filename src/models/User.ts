@@ -1,6 +1,7 @@
 export interface TUserLight {
     name: string;
     img: string;
+    city_name: string;
 }
 
 export interface TUser {

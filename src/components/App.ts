@@ -28,6 +28,7 @@ import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 import { loadEvents } from "requests/events";
 import { loadAuthorization, loadFriends } from "requests/user";
 import { loadTags } from "requests/tags";
+import { getSelectedCityName } from "flux/slices/headerSlice";
 
 /**
  * @classdesc Main app component

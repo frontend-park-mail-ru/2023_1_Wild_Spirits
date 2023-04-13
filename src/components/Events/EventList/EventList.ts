@@ -11,6 +11,7 @@ import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { router } from "modules/router";
 import { loadEvents } from "requests/events";
+import { LoadStatus } from "requests/LoadStatus";
 
 /**
  * Event list component
@@ -23,7 +24,20 @@ export class EventList extends Component {
     }
 
     loadEvents() {
-        router.isUrlChanged() && loadEvents();
+        const { events: eventsState, user: userState, header: headerState } = store.getState();
+        let loadStatus = eventsState.eventsLoadStatus;
+
+        if (router.isUrlChanged()) {
+            loadStatus = LoadStatus.NONE;
+        }
+
+        if (
+            (loadStatus === LoadStatus.NONE || loadStatus === LoadStatus.ERROR) &&
+            userState.authorizedLoadStatus === LoadStatus.DONE &&
+            headerState.citiesLoadStatus === LoadStatus.DONE
+        ) {
+            loadEvents();
+        }
     }
 
     render() {
@@ -60,6 +74,9 @@ export class EventList extends Component {
         }
 
         const renderedEvents = cards ? cards.map((card) => card.render()) : [];
+        if (!renderedEvents) {
+            return;
+        }
         return EventListTemplate({ events: renderedEvents });
     }
 }

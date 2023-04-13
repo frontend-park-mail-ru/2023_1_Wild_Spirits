@@ -12,6 +12,7 @@ import {
     authorizedLoadError,
 } from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
+import { selectCity } from "flux/slices/headerSlice";
 
 export const loadAuthorization = () => {
     store.dispatch(authorizedLoadStart());
@@ -25,9 +26,14 @@ export const loadAuthorization = () => {
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setData(json.body.user));
+
+                let dispatchPipeline = [setData(json.body.user), close()];
+                if (store.getState().header.cities) {
+                    dispatchPipeline.push(selectCity({ city: json.body.user.city_name }));
+                }
+                store.dispatch(...dispatchPipeline);
             } else {
-                json.errorMsg;
+                store.dispatch(setData(undefined));
             }
         })
         .catch((error) => {
@@ -85,7 +91,6 @@ export const loginUser = (formData: FormData, warningMsg: TWarningMsgCallack) =>
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setData(json.body.user), close());
             } else {
                 warningMsg(json.errorMsg);
             }

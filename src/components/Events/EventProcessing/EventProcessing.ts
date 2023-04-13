@@ -150,7 +150,6 @@ export class EventProcessing extends Component {
         }
 
         const sendForm = (data: FormData) => {
-            for (const i of formData) console.log(i);
             const isCreate = this.#processingState === ProcessingState.CREATE;
             let ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
 
@@ -170,10 +169,8 @@ export class EventProcessing extends Component {
         };
 
         if (this.#tempFileUrl !== undefined) {
-            console.log("this.#tempFileUrl !== undefined");
             toWebP(this.#tempFileUrl, (imageBlob: Blob) => {
                 formData.set("file", imageBlob);
-                console.log("webp");
                 sendForm(formData);
             });
         } else {

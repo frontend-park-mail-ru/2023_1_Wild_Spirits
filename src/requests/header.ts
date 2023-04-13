@@ -1,19 +1,25 @@
 import { ajax } from "modules/ajax";
-import { ResponseBodyOrError } from "responses/ResponseBase";
+import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setCities } from "flux/slices/headerSlice";
+import { selectCity, setCities } from "flux/slices/headerSlice";
 import { setCategories } from "flux/slices/headerSlice";
+import { LoadStatus } from "./LoadStatus";
 
 export const loadCities = () =>
     ajax
-        .get<ResponseBodyOrError<{ cities: { id: number; name: string }[] }>>({
+        .get<ResponseBody<{ cities: { id: number; name: string }[] }>>({
             url: "/cities",
-            credentials: false,
         })
         .then(({ json, response }) => {
+            console.log("LC");
             if (response.ok) {
-                store.dispatch(setCities({ cities: json.body!.cities }));
+                let dispatchPipeline = [setCities({ cities: json.body.cities })];
+                const { authorizedLoadStatus, data: userData } = store.getState().user;
+                if (authorizedLoadStatus === LoadStatus.DONE && userData !== undefined) {
+                    dispatchPipeline.push(selectCity({ city: userData.city_name }));
+                }
+                store.dispatch(...dispatchPipeline);
             }
         })
         .catch((error) => {
@@ -23,13 +29,12 @@ export const loadCities = () =>
 
 export const loadCategories = () =>
     ajax
-        .get<ResponseBodyOrError<{ categories: { id: number; name: string }[] }>>({
+        .get<ResponseBody<{ categories: { id: number; name: string }[] }>>({
             url: "/categories",
-            credentials: false,
         })
         .then(({ json, response }) => {
             if (response.ok) {
-                store.dispatch(setCategories({ categories: json.body!.categories }));
+                store.dispatch(setCategories({ categories: json.body.categories }));
             }
         })
         .catch((error) => {
