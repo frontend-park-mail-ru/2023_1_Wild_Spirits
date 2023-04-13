@@ -63,9 +63,15 @@ const userSlice = createSlice({
             state.data = undefined;
             return state;
         },
-        setCurrentProfile: (state: UserState, action: Action<{ profile: TUser; id: number }>) => {
+        setCurrentProfile: (state: UserState, action) => {
             if (action.payload) {
-                state.current_profile = { ...state.current_profile, ...action.payload.profile, id: action.payload.id };
+                const profile = action.payload.profile.user;
+                const friends = action.payload.profile.friends || state.current_profile?.friends;
+
+                state.current_profile = { ...state.current_profile, 
+                                          ...profile, 
+                                          friends: friends,
+                                          id: action.payload.id };
             }
             return state;
         },

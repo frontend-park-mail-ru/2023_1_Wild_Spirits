@@ -80,7 +80,6 @@ export class Profile extends Component {
 
         if (id !== undefined) {
             loadProfile(id);
-            loadFriends(id);
         }
     }
 

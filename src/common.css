@@ -13,7 +13,6 @@
 
 .sidebar {
     margin: 40px;
-    /* margin-top: 40px; */
     max-width: 380px;
 }
 
@@ -70,4 +69,8 @@
 
 .invisible {
     display: none;
+}
+
+.pointy {
+    cursor: pointer;
 }

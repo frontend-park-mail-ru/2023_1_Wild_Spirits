@@ -5,7 +5,7 @@
     max-width: 500px;
 
     --active-date-color: #17a8fa;
-    --inner-active-date-color: #8dc1df;
+    --inner-active-date-color: #88cef6;
 }
 
 .calendar-header {
@@ -13,8 +13,6 @@
     flex-direction: row;
 
     justify-content: space-between;
-
-    // font-size: 40px;
 
     padding: 10px 0 10px 0;
 }

@@ -3,8 +3,10 @@
     align-items: center;
 }
 
-.profile-link__img-block {
-    margin-right: 5px;
+.profile-link__profile-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .profile-link__img {
