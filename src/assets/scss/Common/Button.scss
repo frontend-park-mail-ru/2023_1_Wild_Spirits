@@ -5,25 +5,30 @@
     cursor: pointer;
 }
 
-.button {
-    @extend .button-base;
-    background: $input-el-color;
-    color: #ffffff;
-    border: $input-el-color solid 1px;
-    padding: 10px;
+@mixin button-hover ($color, $disabled-color) {
+    background: $color;
+    color: white;
+    border: $color solid 1px;
+
     &:hover {
         background: #ffffff;
-        color: $input-el-color;
+        color: $color;
     }
     &:disabled {
-        background: $disabled-input-el-color;
-        border-color: $disabled-input-el-color;
+        background: $disabled-color;
+        border-color: $disabled-color;
         color: white;
         cursor: not-allowed;
     }
     &:disabled:hover {
-        background: $disabled-input-el-color;
+        background: $disabled-color;
     }
+}
+
+.button {
+    @extend .button-base;
+    @include button-hover($input-el-color, $disabled-input-el-color);
+    padding: 10px;
 }
 
 .link-button {
@@ -41,15 +46,22 @@
 }
 
 .full-button-link {
-    @extend .button;
+    @extend .button-base;
+    @include button-hover($main-selected-color, white);
+
     text-decoration: none;
-    display: flex;
-    justify-content: center;
+    text-align: center;
     width: 100%;
-    font-size: 30px;
+    font-size: 28px;
     border-radius: 20px;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 10px;
+}
+
+.full-button-link-container {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
 }
 
 .button-outline {
