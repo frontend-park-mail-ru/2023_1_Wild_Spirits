@@ -92,13 +92,13 @@ export class EventProcessing extends Component {
     createDefaultData(): EventProcessingForm {
         return {
             id: -1,
-            name: "10 тысяч шагов к жизни",
-            description: "Всероссийская акция «10 тысяч шагов к жизни», приуроченная ко Всемирному дню здоровья, пройдет 3 апреля во всех субъектах РФ. По традиции центральной площадкой акции станет ВДНХ. В мероприятии могут принять участие все желающие. Сбор участников на Северной петле кольцевой дороги.",
-            place: "ВДНХ",
-            dateStart: "2023-04-17",
-            dateEnd: "2023-04-21",
-            timeStart: "10:00",
-            timeEnd: "12:00",
+            name: "",
+            description: "",
+            place: "",
+            dateStart: "",
+            dateEnd: "",
+            timeStart: "",
+            timeEnd: "",
             img: "",
             tags: [],
         };
