@@ -198,10 +198,6 @@ export class EventProcessing extends Component {
         );
 
         const sendForm = (data: FormData) => {
-            for (const i of formData) {
-                console.log(i);
-            }
-
             const isCreate = !this.#isEdit();
             const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
             const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");
