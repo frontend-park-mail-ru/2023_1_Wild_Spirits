@@ -2,8 +2,8 @@
 
 import { Component } from "components/Component";
 import { store } from "flux";
-import { TEventBase, TOrgLight } from "models/Events";
-import { LoadStatus } from "requests/LoadStatus";
+import { TOrgLight } from "models/Events";
+import { isAuthorized } from "flux/slices/userSlice";
 import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
 import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 import "./styles.scss";
@@ -31,12 +31,6 @@ export class EventCard extends Component {
     }
 
     render() {
-        const userData = store.getState().user.data;
-
-        // const mine: boolean = userData ? userData.id === this.#props.org.id : false;
-
-        const mine = true;
-
         return EventCardTemplate({
             eventId: this.#props.id,
             img: this.#props.img,
@@ -52,7 +46,7 @@ export class EventCard extends Component {
                 title: "Места",
                 items: this.#props.places,
             }),
-            mine: store.getState().user.authorizedLoadStatus === LoadStatus.DONE,
+            mine: isAuthorized(store.getState().user),
         });
     }
 }

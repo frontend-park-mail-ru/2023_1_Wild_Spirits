@@ -72,6 +72,7 @@ export const createConf = (env, argv) => {
                     loader: "handlebars-loader",
                     options: {
                         helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
+                        partialDirs: [path.resolve(__dirname, "./src/templates")],
                     },
                 },
             ],

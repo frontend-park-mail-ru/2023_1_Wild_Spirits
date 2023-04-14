@@ -5,7 +5,7 @@ this.addEventListener("install", function (event) {
         caches
             .open(cacheName)
             .then((cache) => {
-                return cache.addAll(["/index.html", "/app.js", "/assets"]);
+                return cache.addAll(["/", "/assets"]);
             })
             .catch(console.log("failed to open cache"))
     );

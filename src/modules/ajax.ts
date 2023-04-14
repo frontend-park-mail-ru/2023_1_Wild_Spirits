@@ -16,6 +16,23 @@ interface AjaxResult<T> {
     response: Response;
 }
 
+export namespace AjaxResultStatus {
+    export const SUCCESS = "SUCCESS";
+    export const ERROR = "ERROR";
+
+    export type Type = typeof SUCCESS | typeof ERROR;
+}
+
+interface AjaxResultTest<T, R extends AjaxResultStatus.Type> {
+    json: T;
+    response: Response;
+    status: R;
+}
+
+type AjaxPromise<T, E> = Promise<
+    AjaxResultTest<T, typeof AjaxResultStatus.SUCCESS> | AjaxResultTest<E, typeof AjaxResultStatus.ERROR>
+>;
+
 export namespace AjaxMethod {
     export const GET = "GET";
     export const POST = "POST";
@@ -85,8 +102,8 @@ class Ajax {
      * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    get<T>(props: AjaxProps): Promise<AjaxResult<T>> {
-        return this.#ajax<T>(AjaxMethod.GET, props);
+    get<T, E = any>(props: AjaxProps): AjaxPromise<T, E> {
+        return this.#ajax<T, E>(AjaxMethod.GET, props);
     }
 
     /**
@@ -99,8 +116,8 @@ class Ajax {
      * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    post<T>(props: AjaxProps): Promise<AjaxResult<T>> {
-        return this.#ajax<T>(AjaxMethod.POST, props);
+    post<T, E = any>(props: AjaxProps): AjaxPromise<T, E> {
+        return this.#ajax<T, E>(AjaxMethod.POST, props);
     }
 
     /**
@@ -113,8 +130,8 @@ class Ajax {
      * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    patch<T>(props: AjaxProps): Promise<AjaxResult<T>> {
-        return this.#ajax<T>(AjaxMethod.PATCH, props);
+    patch<T, E = any>(props: AjaxProps): AjaxPromise<T, E> {
+        return this.#ajax<T, E>(AjaxMethod.PATCH, props);
     }
 
     /**
@@ -127,14 +144,14 @@ class Ajax {
      * @param {boolean} options.credentials - if to include crendentials
      * @returns {Promise} - promise of request result
      */
-    delete<T>(props: AjaxProps): Promise<AjaxResult<T>> {
-        return this.#ajax<T>(AjaxMethod.DELETE, props);
+    delete<T, E = any>(props: AjaxProps): AjaxPromise<T, E> {
+        return this.#ajax<T, E>(AjaxMethod.DELETE, props);
     }
 
-    async #ajax<T>(
+    async #ajax<T, E = any>(
         method: AjaxMethod.MethodType,
         { url, urlProps, body = {}, headers = {}, credentials = false }: AjaxProps
-    ): Promise<AjaxResult<T>> {
+    ): AjaxPromise<T, E> {
         const bodyFix =
             body instanceof FormData ? body : Object.keys(body).length > 0 ? JSON.stringify(body) : undefined;
         const response = await fetch(this.#host + url + this.urlPropsToString(urlProps), {
@@ -147,7 +164,10 @@ class Ajax {
 
         const json = await response.json();
 
-        return { json, response };
+        if (response.ok) {
+            return { json: json as T, response, status: AjaxResultStatus.SUCCESS };
+        }
+        return { json: json as E, response, status: AjaxResultStatus.ERROR };
     }
 }
 

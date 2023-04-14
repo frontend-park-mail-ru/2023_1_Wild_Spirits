@@ -2,23 +2,23 @@
 
 import { createTable } from "components/Common/CreateTable";
 import { Component } from "components/Component";
-import config from "config";
 
 import { store } from "flux";
-import { setData, setCurrentProfile } from "flux/slices/userSlice";
+import { setData, setCurrentProfile, kickUnauthorized } from "flux/slices/userSlice";
 
 import ProfileTemplate from "templates/Auth/Profile/Profile.handlebars";
 import TableTemplate from "templates/Common/Table.handlebars";
 import EditTableTemplate from "templates/Common/EditProfileTable.handlebars";
 import { getCitiesNames } from "flux/slices/headerSlice";
 
-import { ajax } from "modules/ajax";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
 import { addFriend, loadFriends, loadProfile } from "requests/user";
 import { router } from "modules/router";
 import { toWebP } from "modules/imgConverter";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { ResponseErrorDefault } from "responses/ResponseBase";
 
 /**
  * Registration component
@@ -128,12 +128,12 @@ export class Profile extends Component {
 
     #sendForm(user_id: number, formData: FormData) {
         ajax.removeHeaders("Content-Type");
-        ajax.patch<ResponseUserEdit>({
+        ajax.patch<ResponseUserEdit, ResponseErrorDefault>({
             url: `/users/${user_id}`,
             credentials: true,
             body: formData,
-        }).then(({ json, response }) => {
-            if (response.ok && json.body) {
+        }).then(({ json, response, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(
                     setData({ ...json.body.user, id: store.getState().user.data?.id }),
                     setCurrentProfile({ profile: json.body.user, id: store.getState().user.data?.id })
@@ -141,7 +141,7 @@ export class Profile extends Component {
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
-                    errorMsgElement.textContent = json.errorMsg as string;
+                    errorMsgElement.textContent = json.errorMsg;
                 }
             }
         });
@@ -151,6 +151,10 @@ export class Profile extends Component {
     }
 
     render() {
+        if (kickUnauthorized(store.getState().user)) {
+            return "";
+        }
+        
         const getTable = (profile_data: {
             id: number;
             name: string;

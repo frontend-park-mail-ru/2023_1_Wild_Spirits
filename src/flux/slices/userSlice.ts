@@ -1,8 +1,8 @@
 import { createSlice } from "flux/slice";
 import { TUser, TUserLight } from "models/User";
-
-import { Action } from "flux/action";
 import { LoadStatus } from "requests/LoadStatus";
+
+import { router } from "modules/router";
 
 interface UserState {
     authorizedLoadStatus: LoadStatus.Type;
@@ -87,6 +87,21 @@ const userSlice = createSlice({
         },
     },
 });
+
+export const isAuthorized =  (state: UserState) => state.authorizedLoadStatus === LoadStatus.DONE && 
+                                                   state.data !== undefined
+
+export const kickUnauthorized = (userState: UserState) => {
+    if (
+        (userState.authorizedLoadStatus === LoadStatus.DONE ||
+            userState.authorizedLoadStatus === LoadStatus.ERROR) &&
+        userState.data === undefined
+    ) {
+        router.go("/");
+        return true;
+    }
+    return false;
+}
 
 export const {
     authorizedLoadStart,

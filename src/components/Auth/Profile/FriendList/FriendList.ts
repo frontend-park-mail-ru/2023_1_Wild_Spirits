@@ -5,7 +5,6 @@ import { Component } from "components/Component";
 import { store } from "flux";
 
 import FriendListTemplate from "templates/Auth/Profile/FriendList.handlebars";
-import config from "config";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 

@@ -1,3 +1,5 @@
+@import "/src/assets/scss/Common/Card.scss";
+
 .event-card {
     display: flex;
     flex-direction: column;
@@ -13,8 +15,6 @@
 }
 
 .event-card__body {
-    // margin-bottom: 70px;
-    // height: 100%;
     flex-grow: 1;
 }
 
@@ -44,8 +44,6 @@
 
 .event-card__footer {
     position: relative;
-    // flex-grow: 1;
-
     display: flex;
     justify-content: flex-end;
 
@@ -53,8 +51,6 @@
 }
 
 .event-card__button-block {
-    margin-top: 10px;
-    bottom: 10px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;

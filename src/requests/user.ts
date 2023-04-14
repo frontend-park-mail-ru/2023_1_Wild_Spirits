@@ -1,6 +1,6 @@
-import { ajax } from "modules/ajax";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser";
-import { ResponseBody } from "responses/ResponseBase";
+import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
 import {
@@ -12,20 +12,28 @@ import {
     authorizedLoadError,
 } from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
+import { selectCity } from "flux/slices/headerSlice";
 
 export const loadAuthorization = () => {
     store.dispatch(authorizedLoadStart());
-    ajax.get<ResponseUserLight>({
+    ajax.get<ResponseUserLight, ResponseErrorDefault>({
         url: "/authorized",
         credentials: true,
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
+        .then(({ json, response, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setData(json.body!.user));
+
+                let dispatchPipeline = [setData(json.body.user), close()];
+                if (store.getState().header.cities) {
+                    dispatchPipeline.push(selectCity({ city: json.body.user.city_name }));
+                }
+                store.dispatch(...dispatchPipeline);
+            } else {
+                store.dispatch(setData(undefined));
             }
         })
         .catch((error) => {
@@ -51,8 +59,8 @@ export const loadProfile = (id: number) => {
 export const loadFriends = (user_id: number) => {
     ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
         url: `/users/${user_id}/friends`,
-    }).then(({ json, response }) => {
-        if (response.ok && json.body) {
+    }).then(({ json, response, status }) => {
+        if (status === AjaxResultStatus.SUCCESS) {
             store.dispatch(setCurrentProfileFriends({ friends: json.body.users }));
         }
     });
@@ -62,8 +70,8 @@ export const addFriend = (user_id: number) => {
     ajax.post({
         url: `/friends/${user_id}`,
         credentials: true,
-    }).then(({ response }) => {
-        if (response.ok) {
+    }).then(({ status }) => {
+        if (status === AjaxResultStatus.SUCCESS) {
             // TODO do something?
         }
     });
@@ -72,18 +80,18 @@ export const addFriend = (user_id: number) => {
 type TWarningMsgCallack = (warning: string | undefined) => void;
 
 export const loginUser = (formData: FormData, warningMsg: TWarningMsgCallack) => {
-    ajax.post<ResponseUserLight>({
+    ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/login",
         credentials: true,
         body: { email: formData.get("email"), pass: formData.get("password") },
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
+        .then(({ json, response, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
+                    store.dispatch(setData(json.body.user), close());
                 }
-                store.dispatch(setData(json.body!.user), close());
             } else {
                 warningMsg(json.errorMsg);
             }
@@ -94,7 +102,7 @@ export const loginUser = (formData: FormData, warningMsg: TWarningMsgCallack) =>
 };
 
 export const registerUser = (formData: FormData, warningMsg: TWarningMsgCallack) => {
-    ajax.post<ResponseUserLight>({
+    ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/register",
         credentials: true,
         body: {
@@ -103,14 +111,13 @@ export const registerUser = (formData: FormData, warningMsg: TWarningMsgCallack)
             username: formData.get("nickname"),
         },
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
+        .then(({ json, response, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setData(json.body!.user));
-                store.dispatch(close());
+                store.dispatch(setData(json.body.user), close());
             } else {
                 warningMsg(json.errorMsg);
             }
@@ -125,8 +132,8 @@ export const logoutUser = () => {
         url: "/logout",
         credentials: true,
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
+        .then(({ status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
                 ajax.removeHeaders("x-csrf-token");
                 store.dispatch(logout());
             }

@@ -2,8 +2,8 @@
 
 import { Component } from "components/Component";
 import config from "config";
-import { TEvent, TEventOrganizer, TEventPlace } from "models/Events";
-import { ajax } from "modules/ajax";
+import { TEvent, TEventPlace } from "models/Events";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
 import EventPageTemplate from "templates/Events/EventPage/EventPage.handlebars";
@@ -11,11 +11,12 @@ import TableTemplate from "templates/Common/Table.handlebars";
 import { createTable } from "components/Common/CreateTable";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { TOrganizer } from "models/Organizer";
 
 interface EventData {
     event: TEvent;
     places: TEventPlace[];
-    organizer: TEventOrganizer;
+    organizer: TOrganizer;
 }
 
 /**
@@ -41,9 +42,9 @@ export class EventPage extends Component {
     loadEvent() {
         const eventId = this.getEventId();
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
-            .then(({ json, response }) => {
-                if (response.ok) {
-                    const { event, places, organizer } = json.body!;
+            .then(({ json, response, status }) => {
+                if (status === AjaxResultStatus.SUCCESS) {
+                    const { event, places, organizer } = json.body;
                     this.#eventData = { event, places, organizer };
                     this.rerender();
                 }
@@ -56,7 +57,6 @@ export class EventPage extends Component {
     render() {
         if (this.#eventData !== undefined) {
             const { event, organizer, places } = this.#eventData;
-            console.log("places", this.#eventData);
             const fixedPlaces = Object.values(places).map((place) => ({
                 city: place.city.name,
                 name: place.name,

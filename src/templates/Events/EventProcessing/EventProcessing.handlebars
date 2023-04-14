@@ -1,7 +1,7 @@
 <div class="event-processing">
     <form class="form" id="event-processing-form">
         <label for="event-processing-name" class="form-label"> Название мероприятия: </label>
-        <input name="name" class="form-control" type="text" id="event-processing-name" value="{{name}}" />
+        <input name="name" class="form-control" type="text" id="event-processing-name" value="{{name}}" required />
 
         <label for="event-processing-teaser" class="form-label"> Тизер: </label>
         <textarea
@@ -17,6 +17,7 @@
             class="form-control event-processing__form-textarea"
             type="text"
             id="event-processing-description"
+            required
         >{{description}}</textarea>
 
         <label for="event-processing-date-first" class="form-label"> Дата начала: </label>
@@ -37,6 +38,10 @@
         <label for="event-processing-date-first" class="form-label"> Время конца: </label>
         <input name="timeEnd" class="form-control" type="time" value="{{timeEnd}}" />
 
+        <div class="event-processing__tags">
+            {{{tags}}}
+        </div>
+
         <label for="event-processing-place" class="form-label"> Место проведения: </label>
         <input
             name="place"
@@ -45,6 +50,7 @@
             list="test"
             placeholder="Выберите место проведения..."
             value="{{place}}"
+            required
         />
         <datalist id="test">
             <option value="ВДНХ"></option>
@@ -53,12 +59,15 @@
             <option value="Третьяковская галерея"></option>
         </datalist>
 
+        {{#unless hasImg}}
         <label for="event-processing-img" class="form-label"> Картинка: </label>
-        <input id="event-processing-img" name="file" class="form-control" type="file" value="{{file}}"/>
+        {{/unless}}
+        <input id="event-processing-img" name="file" class="form-control {{#if hasImg}}invisible{{/if}}" type="file" value="{{file}}"/>
 
-        {{#if isEdit}}
-            <label for="event-processing-img-prev" class="form-label"> Старая картинка: </label>
-            <img class="event-processing__img-prev" src="{{img}}" alt="Картинка :3" />
+        {{#if hasImg}}
+            <label for="event-processing-img" class="form-label">
+                <img class="event-processing__img-prev" src="{{img}}" alt="Картинка :3" />
+            </label>
         {{/if}}
 
         <div class="event-processing__button-block">

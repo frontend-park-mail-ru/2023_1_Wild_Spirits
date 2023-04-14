@@ -2,13 +2,15 @@
 
 import { Component } from "components/Component";
 import { EventCard } from "components/Events/EventCard/EventCard";
-import config from "config";
 import { TEventLight } from "models/Events";
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
-
+import EventListEmptyTemplate from "templates/Events/EventList/EventListEmpty.handlebars";
 import { store } from "flux";
-import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { router } from "modules/router";
+import { loadEvents } from "requests/events";
+import { LoadStatus } from "requests/LoadStatus";
+import "./styles.scss";
 
 /**
  * Event list component
@@ -18,6 +20,23 @@ import { getUploadsImg } from "modules/getUploadsImg";
 export class EventList extends Component {
     constructor(parent: Component) {
         super(parent);
+    }
+
+    loadEvents() {
+        const { events: eventsState, user: userState, header: headerState } = store.getState();
+        let loadStatus = eventsState.eventsLoadStatus;
+
+        if (router.isUrlChanged()) {
+            loadStatus = LoadStatus.NONE;
+        }
+
+        if (
+            (loadStatus === LoadStatus.NONE || loadStatus === LoadStatus.ERROR) &&
+            userState.authorizedLoadStatus === LoadStatus.DONE &&
+            headerState.citiesLoadStatus === LoadStatus.DONE
+        ) {
+            loadEvents();
+        }
     }
 
     render() {
@@ -53,7 +72,14 @@ export class EventList extends Component {
             });
         }
 
-        const renderedEvents = cards ? cards.map((card) => card.render()) : [];
+        const renderedEvents: string[] = cards ? cards.map((card) => card.render()) : [];
+        const { eventsLoadStatus } = store.getState().events;
+        if (eventsLoadStatus === LoadStatus.NONE || eventsLoadStatus === LoadStatus.LOADING) {
+            return "<div>Loading . . . </div>";
+        }
+        if (renderedEvents.length === 0) {
+            return EventListEmptyTemplate();
+        }
         return EventListTemplate({ events: renderedEvents });
     }
 }

@@ -2,9 +2,9 @@ import { store } from "flux";
 import { getSelectedTags } from "flux/slices/tagsSlice";
 import { getSelectedCityName } from "flux/slices/headerSlice";
 import { getSelectedCategory } from "flux/slices/headerSlice";
-import { ajax } from "modules/ajax";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseEventsLight } from "responses/ResponseEvent";
-import { setEvents } from "flux/slices/eventSlice";
+import { setEvents, setEventsLoadStart } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 
 /**
@@ -12,13 +12,6 @@ import { UrlPropsType } from "modules/ajax";
  */
 export const loadEvents = () => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
-
-    const toArrString = (arg: string | string[] | undefined): string | undefined => {
-        if (typeof arg === "string") {
-            return `[${arg}]`;
-        }
-        return arg ? `[${arg.join(",")}]` : undefined;
-    };
 
     const dateToString = (date: Date | undefined) => {
         return date
@@ -34,22 +27,28 @@ export const loadEvents = () => {
         ) as UrlPropsType;
     };
 
+    const city = getSelectedCityName(store.getState().header);
+
+    const startDate = store.getState().calendar.startDate;
+    const finishDate = store.getState().calendar.finishDate || startDate;
+
     const props = filterProps({
         tags: getSelectedTags(store.getState().tags),
-        cities: getSelectedCityName(store.getState().header),
+        cities: city,
         categories: getSelectedCategory(store.getState().header),
-        dateStart: dateToString(store.getState().calendar.startDate),
-        dateEnd: dateToString(store.getState().calendar.finishDate),
+        dateStart: dateToString(startDate),
+        dateEnd: dateToString(finishDate),
         search: store.getState().header.searchQuery,
     });
 
+    store.dispatch(setEventsLoadStart());
     ajax.get<ResponseEventsLight>({
         url: "/events",
         urlProps: props,
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
-                store.dispatch(setEvents({ events: json.body!.events }));
+        .then(({ json, response, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setEvents({ events: json.body.events }));
             }
         })
         .catch((error) => {

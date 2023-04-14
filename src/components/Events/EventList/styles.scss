@@ -2,7 +2,17 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    gap: 20px;
     margin-top: 40px;
 
     gap: 40px;
+}
+
+.event-list-empty {
+    margin-top: 80px;
+    text-align: center;
+}
+
+.event-list-empty__text {
+    font-size: 24px;
 }
