@@ -31,7 +31,7 @@ interface EventProcessingForm {
     timeEnd?: string;
     place: string;
     img: string;
-    tags: string[];
+    tags: string[] | null;
 }
 
 namespace ProcessingState {
@@ -149,7 +149,14 @@ export class EventProcessing extends Component {
     #setTags() {
         this.#tags.tags = Object.fromEntries(
             Object.entries(store.getState().tags.tags).map(([key, value]) => {
-                return [key, { id: value.id, selected: this.#isEdit() ? this.#editData.tags.includes(key) : false }];
+                return [
+                    key,
+                    {
+                        id: value.id,
+                        selected:
+                            this.#isEdit() && this.#editData.tags !== null ? this.#editData.tags.includes(key) : false,
+                    },
+                ];
             })
         );
     }
@@ -198,10 +205,6 @@ export class EventProcessing extends Component {
         );
 
         const sendForm = (data: FormData) => {
-            for (const i of formData) {
-                console.log(i);
-            }
-
             const isCreate = !this.#isEdit();
             const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
             const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");

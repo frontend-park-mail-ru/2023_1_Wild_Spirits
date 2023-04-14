@@ -27,13 +27,14 @@
             type="date"
             id="event-processing-date-first"
             value="{{dateStart}}"
+            min="2023-01-01"
         />
 
         <label for="event-processing-date-first" class="form-label"> Время начала: </label>
         <input name="timeStart" class="form-control" type="time" value="{{timeStart}}" />
 
         <label for="event-processing-date-second" class="form-label"> Дата конца: </label>
-        <input name="dateEnd" class="form-control" type="date" id="event-processing-date-second" value="{{dateEnd}}" />
+        <input name="dateEnd" class="form-control" type="date" id="event-processing-date-second" value="{{dateEnd}}" min="2023-01-01"/>
 
         <label for="event-processing-date-first" class="form-label"> Время конца: </label>
         <input name="timeEnd" class="form-control" type="time" value="{{timeEnd}}" />
