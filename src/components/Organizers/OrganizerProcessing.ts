@@ -9,8 +9,6 @@ import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
-import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
-import { TagsState } from "flux/slices/tagsSlice";
 
 interface EventBody {
     name: string;
@@ -31,7 +29,6 @@ interface EventProcessingForm {
     timeEnd?: string;
     place: string;
     img: string;
-    tags: string[];
 }
 
 namespace ProcessingState {
@@ -43,29 +40,13 @@ namespace ProcessingState {
 export class EventProcessing extends Component {
     #processingState: ProcessingState.Type = ProcessingState.CREATE;
     #editData: EventProcessingForm;
-    #tagsComponent: Tags;
-    #loadStatus: LoadStatus.Type = LoadStatus.NONE;
 
     #tempFileUrl: string | undefined = undefined;
-
-    #tags: TagsState = { tags: {} };
 
     constructor(parent: Component) {
         super(parent);
 
         this.#editData = this.createDefaultData();
-
-        this.#tagsComponent = this.createComponent(
-            Tags,
-            "js-event-processing-tag",
-            () => this.#tags.tags,
-            ({ tag }: ToggleTagFuncProps) => {
-                if (this.#tags.tags[tag] === undefined) {
-                    return;
-                }
-                this.#tags.tags[tag].selected = !this.#tags.tags[tag].selected;
-            }
-        );
 
         this.registerEvent(
             () => document.getElementById("event-processing-form"),
@@ -77,6 +58,7 @@ export class EventProcessing extends Component {
             "change",
             this.#handleChange.bind(this)
         );
+
         this.registerEvent(
             () => document.getElementById("event-processing-remove"),
             "click",
@@ -84,9 +66,6 @@ export class EventProcessing extends Component {
         );
     }
 
-    #isEdit(): boolean {
-        return this.#processingState === ProcessingState.EDIT;
-    }
     postRender() {}
 
     createDefaultData(): EventProcessingForm {
@@ -95,29 +74,23 @@ export class EventProcessing extends Component {
             name: "TName",
             description: "TDesc",
             place: "ВДНХ",
-            dateStart: "2023-05-01",
-            dateEnd: "2023-11-03",
+            dateStart: "2023-01-01",
+            dateEnd: "2023-03-03",
             timeStart: "10:00",
             timeEnd: "19:00",
             img: "",
-            tags: [],
         };
     }
 
     setCreate() {
         this.#editData = this.createDefaultData();
-        this.#tags.tags = {};
         this.#processingState = ProcessingState.CREATE;
-        this.#loadStatus = LoadStatus.DONE;
     }
 
     setEdit() {
-        this.#tags.tags = {};
-
         const eventId = parseInt(router.getNextUrl().slice(1));
-        this.#loadStatus = LoadStatus.LOADING;
         ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
-            .then(({ json, status }) => {
+            .then(({ json, response, status }) => {
                 if (status === AjaxResultStatus.SUCCESS) {
                     const event = json.body.event;
                     this.#editData = {
@@ -129,29 +102,16 @@ export class EventProcessing extends Component {
                         timeStart: event.dates.timeStart,
                         timeEnd: event.dates.timeEnd,
                         place: "ВДНХ",
-                        tags: event.tags,
                         img: getUploadsImg(event.img),
                     };
-                    this.#loadStatus = LoadStatus.DONE;
                     this.rerender();
-                } else {
-                    this.#loadStatus = LoadStatus.ERROR;
                 }
             })
             .catch((error) => {
-                this.#loadStatus = LoadStatus.ERROR;
                 console.log(error);
             });
 
         this.#processingState = ProcessingState.EDIT;
-    }
-
-    #setTags() {
-        this.#tags.tags = Object.fromEntries(
-            Object.entries(store.getState().tags.tags).map(([key, value]) => {
-                return [key, { id: value.id, selected: this.#isEdit() ? this.#editData.tags.includes(key) : false }];
-            })
-        );
     }
 
     decodeDate(date: string): string {
@@ -159,7 +119,6 @@ export class EventProcessing extends Component {
         [splt[0], splt[2]] = [splt[2], splt[0]];
         return splt.join(".");
     }
-
     encodeDate(date: string | undefined): string | undefined {
         if (date === undefined) {
             return undefined;
@@ -189,24 +148,14 @@ export class EventProcessing extends Component {
         if (dateEnd) {
             formData.set("dateEnd", this.decodeDate(dateEnd));
         }
-        formData.set(
-            "tags",
-            Object.entries(this.#tags.tags)
-                .filter(([_, value]) => value.selected)
-                .map(([key, _]) => key)
-                .join(",")
-        );
 
         const sendForm = (data: FormData) => {
-            for (const i of formData) {
-                console.log(i);
-            }
-
-            const isCreate = !this.#isEdit();
-            const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
-            const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");
+            const isCreate = this.#processingState === ProcessingState.CREATE;
+            let ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
 
             ajax.removeHeaders("Content-Type");
+            const url: string = "/events" + (!isCreate && this.#editData !== undefined ? `/${this.#editData.id}` : "");
+
             ajaxMethod({ url: url, credentials: true, body: data })
                 .then(({ status }) => {
                     if (status === AjaxResultStatus.SUCCESS) {
@@ -267,19 +216,12 @@ export class EventProcessing extends Component {
             router.go("/");
             return "";
         }
-
-        if (Object.keys(store.getState().tags).length === 0 || this.#loadStatus === LoadStatus.LOADING) {
-            return "Loadig . . .";
-        } else if (Object.keys(this.#tags.tags).length === 0) {
-            this.#setTags();
-        }
-
+        const isEdit: boolean = this.#processingState === ProcessingState.EDIT;
         return EventCreateTemplate({
             ...this.#editData,
-            isEdit: this.#isEdit(),
+            isEdit,
             img: this.#tempFileUrl || this.#editData.img,
             hasImg: this.#tempFileUrl !== undefined || this.#editData.img,
-            tags: this.#tagsComponent.render(),
         });
     }
 }

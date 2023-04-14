@@ -73,6 +73,10 @@ export class EventList extends Component {
         }
 
         const renderedEvents: string[] = cards ? cards.map((card) => card.render()) : [];
+        const { eventsLoadStatus } = store.getState().events;
+        if (eventsLoadStatus === LoadStatus.NONE || eventsLoadStatus === LoadStatus.LOADING) {
+            return "<div>Loading . . . </div>";
+        }
         if (renderedEvents.length === 0) {
             return EventListEmptyTemplate();
         }

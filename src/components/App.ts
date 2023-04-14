@@ -8,13 +8,13 @@ import { Login } from "components/Auth/Login/Login";
 import { Registration } from "components/Auth/Registration/Registration";
 
 import { Calendar } from "./Calendar/Calendar";
-import { Tags } from "./Tags/Tags";
 
 import { FriendList } from "./Auth/Profile/FriendList/FriendList";
 import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionList";
 
 import AppTemplate from "templates/App.handlebars";
 import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
+import EventCreateButtonTemplate from "templates/Events/EventCreateButton.handlebars";
 
 import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
@@ -28,7 +28,7 @@ import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 import { loadEvents } from "requests/events";
 import { loadAuthorization, loadFriends } from "requests/user";
 import { loadTags } from "requests/tags";
-import { getSelectedCityName } from "flux/slices/headerSlice";
+import { SidebarTags } from "./Tags/SidebarTags";
 
 /**
  * @classdesc Main app component
@@ -42,7 +42,7 @@ export class App extends Component {
     #frienListComponent: FriendList;
     #subscriptionListComponent: SubscriptionList;
     #calendarComponent: Calendar;
-    #tagsComponent: Tags;
+    #tagsComponent: SidebarTags;
     #loginComponent: Login;
     #registerComponent: Registration;
     #profileComponent: Profile;
@@ -68,7 +68,7 @@ export class App extends Component {
         this.#subscriptionListComponent = this.createComponent(SubscriptionList);
 
         this.#calendarComponent = this.createComponent(Calendar);
-        this.#tagsComponent = this.createComponent(Tags);
+        this.#tagsComponent = this.createComponent(SidebarTags);
 
         this.#profileComponent = this.createComponent(Profile);
     }
@@ -107,7 +107,10 @@ export class App extends Component {
                     this.#eventListComponent.loadEvents();
                     return {
                         content: this.#eventListComponent.render(),
-                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                        sidebar:
+                            EventCreateButtonTemplate() +
+                            this.#calendarComponent.render() +
+                            this.#tagsComponent.render(),
                     };
                 },
                 "/profile": () => {
@@ -123,6 +126,7 @@ export class App extends Component {
                         sidebar:
                             this.#frienListComponent.render() +
                             // this.#subscriptionListComponent.render() +
+                            EventCreateButtonTemplate() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),
                     };
@@ -131,7 +135,10 @@ export class App extends Component {
                     router.isUrlChanged() && this.#eventComponent.loadEvent();
                     return {
                         content: this.#eventComponent.render(),
-                        sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
+                        sidebar:
+                            EventCreateButtonTemplate() +
+                            this.#calendarComponent.render() +
+                            this.#tagsComponent.render(),
                     };
                 },
                 "/createevent": () => {

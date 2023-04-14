@@ -2,7 +2,7 @@
 
 import { Component } from "components/Component";
 import config from "config";
-import { TEvent, TEventOrganizer, TEventPlace } from "models/Events";
+import { TEvent, TEventPlace } from "models/Events";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
@@ -11,11 +11,12 @@ import TableTemplate from "templates/Common/Table.handlebars";
 import { createTable } from "components/Common/CreateTable";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { TOrganizer } from "models/Organizer";
 
 interface EventData {
     event: TEvent;
     places: TEventPlace[];
-    organizer: TEventOrganizer;
+    organizer: TOrganizer;
 }
 
 /**

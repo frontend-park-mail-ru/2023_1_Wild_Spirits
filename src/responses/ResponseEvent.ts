@@ -1,5 +1,6 @@
-import { TEvent, TEventLight, TEventOrganizer, TEventPlace } from "models/Events";
+import { TEvent, TEventLight, TEventPlace } from "models/Events";
 import { ResponseBody, ResponseBodyOrError } from "./ResponseBase";
+import { TOrganizer } from "models/Organizer";
 
 interface IResponseEventsLight {
     events: TEventLight[];
@@ -8,7 +9,7 @@ interface IResponseEventsLight {
 interface IResponseEvent {
     event: TEvent;
     places: TEventPlace[];
-    organizer: TEventOrganizer;
+    organizer: TOrganizer;
 }
 
 export interface ResponseEventsLight extends ResponseBody<IResponseEventsLight> {}

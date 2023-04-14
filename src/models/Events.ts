@@ -18,13 +18,6 @@ export interface TEventPlace {
     };
 }
 
-export interface TEventOrganizer {
-    id: number;
-    name: string;
-    email: string;
-    phone: string;
-}
-
 export interface TEventBase {
     id: number;
     name: string;
