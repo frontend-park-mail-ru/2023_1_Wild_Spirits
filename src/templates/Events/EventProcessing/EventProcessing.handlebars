@@ -3,13 +3,13 @@
         <label for="event-processing-name" class="form-label"> Название мероприятия: </label>
         <input name="name" class="form-control" type="text" id="event-processing-name" value="{{name}}" required />
 
-        <label for="event-processing-teaser" class="form-label"> Тизер: </label>
+        {{!-- <label for="event-processing-teaser" class="form-label"> Тизер: </label>
         <textarea
             name="teaser"
             class="form-control event-processing__form-textarea"
             type="text"
             id="event-processing-teaser"
-        >{{teaser}}</textarea>
+        >{{teaser}}</textarea> --}}
 
         <label for="event-processing-description" class="form-label"> Полное описание: </label>
         <textarea
@@ -62,7 +62,7 @@
         {{#unless hasImg}}
         <label for="event-processing-img" class="form-label"> Картинка: </label>
         {{/unless}}
-        <input id="event-processing-img" name="file" class="form-control {{#if hasImg}}invisible{{/if}}" type="file" value="{{file}}"/>
+        <input id="event-processing-img" name="file" class="form-control {{#if hasImg}}invisible{{/if}}" type="file" accept="image/*" value="{{file}}"/>
 
         {{#if hasImg}}
             <label for="event-processing-img" class="form-label">
