@@ -10,3 +10,5 @@ class RequestManager {
 
     add({ name, after, callback }: RequestManagerAddProps) {}
 }
+
+export let requestManager = new RequestManager();
