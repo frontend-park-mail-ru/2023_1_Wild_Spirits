@@ -1,14 +1,10 @@
-$card-widht: 290px;
-$card-body-margin-x: 15px;
-
 .card {
     --lm-card-border-radius: 20px;
     --lm-card-border-width: 1px;
     --lm-card-inner-border-radius: calc(var(--lm-card-border-radius) - (var(--lm-card-border-width)));
-    display: block;
+    display: flex;
     flex-direction: column;
-    min-width: $card-widht;
-    max-width: $card-widht;
+    width: 290px;
     border: var(--lm-card-border-width) solid #000000;
     border-radius: var(--lm-card-border-radius);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -29,7 +25,7 @@ $card-body-margin-x: 15px;
 }
 
 .card__body {
-    margin: 5px $card-body-margin-x 20px;
+    margin: 5px 15px 20px 15px;
 }
 
 .card__title {
@@ -38,9 +34,6 @@ $card-body-margin-x: 15px;
     line-height: 23px;
     text-align: center;
     text-decoration-line: underline;
-    overflow: hidden;
-    word-wrap: break-word;
-
     text-underline-offset: 0.15em;
 }
 

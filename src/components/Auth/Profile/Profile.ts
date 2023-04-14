@@ -2,10 +2,9 @@
 
 import { createTable } from "components/Common/CreateTable";
 import { Component } from "components/Component";
-import config from "config";
 
 import { store } from "flux";
-import { setData, setCurrentProfile } from "flux/slices/userSlice";
+import { setData, setCurrentProfile, kickUnauthorized } from "flux/slices/userSlice";
 
 import ProfileTemplate from "templates/Auth/Profile/Profile.handlebars";
 import TableTemplate from "templates/Common/Table.handlebars";
@@ -81,7 +80,6 @@ export class Profile extends Component {
 
         if (id !== undefined) {
             loadProfile(id);
-            loadFriends(id);
         }
     }
 
@@ -153,6 +151,10 @@ export class Profile extends Component {
     }
 
     render() {
+        if (kickUnauthorized(store.getState().user)) {
+            return "";
+        }
+        
         const getTable = (profile_data: {
             id: number;
             name: string;

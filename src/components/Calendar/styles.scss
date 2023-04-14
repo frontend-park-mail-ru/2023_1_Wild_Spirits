@@ -1,9 +1,10 @@
 .calendar {
-    margin-top: 40px;
+    border: 1px solid black;
+    border-radius: 15px;
     max-width: 500px;
 
     --active-date-color: #17a8fa;
-    --inner-active-date-color: #8dc1df;
+    --inner-active-date-color: #88cef6;
 }
 
 .calendar-header {
@@ -12,9 +13,21 @@
 
     justify-content: space-between;
 
-    font-size: 40px;
-
     padding: 10px 0 10px 0;
+}
+
+.calendar-header__month-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.calendar-header__month {
+    font-size: 40px;
+}
+
+.calender-header__year {
+    font-size: 24px;
 }
 
 .arrow-button {

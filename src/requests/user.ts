@@ -46,9 +46,9 @@ export const loadProfile = (id: number) => {
         url: `/users/${id}`,
         credentials: true,
     })
-        .then(({ json, response, status }) => {
-            if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(setCurrentProfile({ profile: json.body.user, id: id }));
+        .then(({ json, response }) => {
+            if (response.ok && json.body) {
+                store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
         })
         .catch((error) => {

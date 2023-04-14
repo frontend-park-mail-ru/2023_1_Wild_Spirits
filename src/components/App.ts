@@ -14,7 +14,7 @@ import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionLi
 
 import AppTemplate from "templates/App.handlebars";
 import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
-import EventCreateButtonTemplate from "templates/Events/EventCreateButton.handlebars";
+import CreateEventBtn from "templates/Common/CreateEventBtn.handlebars";
 
 import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 import { Profile } from "./Auth/Profile/Profile";
@@ -22,6 +22,7 @@ import { svgInliner } from "modules/svgLoader";
 
 import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
+import { isAuthorized } from "flux/slices/userSlice";
 import { EventPage } from "./Events/EventPage/EventPage";
 import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 
@@ -101,15 +102,19 @@ export class App extends Component {
             modalWindow = this.#modalWindowComponent.render();
         }
 
+        const createEventBtn = () => {
+            return isAuthorized(store.getState().user) ? CreateEventBtn() : "";
+        }
+
         const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
             {
                 "/": () => {
                     this.#eventListComponent.loadEvents();
                     return {
                         content: this.#eventListComponent.render(),
-                        sidebar:
-                            EventCreateButtonTemplate() +
-                            this.#calendarComponent.render() +
+                        sidebar: 
+                            createEventBtn() + 
+                            this.#calendarComponent.render() + 
                             this.#tagsComponent.render(),
                     };
                 },
@@ -125,8 +130,7 @@ export class App extends Component {
                             this.#eventListComponent.render(),
                         sidebar:
                             this.#frienListComponent.render() +
-                            // this.#subscriptionListComponent.render() +
-                            EventCreateButtonTemplate() +
+                            createEventBtn() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),
                     };
@@ -136,7 +140,7 @@ export class App extends Component {
                     return {
                         content: this.#eventComponent.render(),
                         sidebar:
-                            EventCreateButtonTemplate() +
+                            createEventBtn() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),
                     };

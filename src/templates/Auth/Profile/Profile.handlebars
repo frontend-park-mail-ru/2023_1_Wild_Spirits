@@ -1,7 +1,7 @@
 <form id="edit-profile-form" class="profile-description">
     <div class="profile-description__img-container">
         <label for="avatar-picker">
-            <img src="{{avatar}}" class="profile-description__img">
+            <img src="{{avatar}}" class="profile-description__img {{#if editing}}pointy{{/if}}">
         </label>
 
         {{#if editing}}

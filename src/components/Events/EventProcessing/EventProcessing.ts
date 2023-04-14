@@ -1,11 +1,11 @@
 import { Component } from "components/Component";
-import config from "config";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
 import { ResponseEvent } from "responses/ResponseEvent";
 import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
 import { toWebP } from "modules/imgConverter";
 import { store } from "flux";
+import { kickUnauthorized } from "flux/slices/userSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -254,13 +254,7 @@ export class EventProcessing extends Component {
     }
 
     render() {
-        const userState = store.getState().user;
-        if (
-            (userState.authorizedLoadStatus === LoadStatus.DONE ||
-                userState.authorizedLoadStatus === LoadStatus.ERROR) &&
-            userState.data === undefined
-        ) {
-            router.go("/");
+        if (kickUnauthorized(store.getState().user)) {
             return "";
         }
 

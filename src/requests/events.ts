@@ -13,13 +13,6 @@ import { UrlPropsType } from "modules/ajax";
 export const loadEvents = () => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
 
-    const toArrString = (arg: string | string[] | undefined): string | undefined => {
-        if (typeof arg === "string") {
-            return `[${arg}]`;
-        }
-        return arg ? `[${arg.join(",")}]` : undefined;
-    };
-
     const dateToString = (date: Date | undefined) => {
         return date
             ? [zeroPad(date.getDate(), 2), zeroPad(date.getMonth() + 1, 2), zeroPad(date.getFullYear(), 4)].join(".")
@@ -36,12 +29,15 @@ export const loadEvents = () => {
 
     const city = getSelectedCityName(store.getState().header);
 
+    const startDate = store.getState().calendar.startDate;
+    const finishDate = store.getState().calendar.finishDate || startDate;
+
     const props = filterProps({
         tags: getSelectedTags(store.getState().tags),
         cities: city,
         categories: getSelectedCategory(store.getState().header),
-        dateStart: dateToString(store.getState().calendar.startDate),
-        dateEnd: dateToString(store.getState().calendar.finishDate),
+        dateStart: dateToString(startDate),
+        dateEnd: dateToString(finishDate),
         search: store.getState().header.searchQuery,
     });
 
