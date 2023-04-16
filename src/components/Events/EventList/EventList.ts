@@ -35,7 +35,7 @@ export class EventList extends Component {
             userState.authorizedLoadStatus === LoadStatus.DONE &&
             headerState.citiesLoadStatus === LoadStatus.DONE
         ) {
-            loadEvents();
+            // loadEvents();
         }
     }
 

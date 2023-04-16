@@ -6,11 +6,12 @@ import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseEventsLight } from "responses/ResponseEvent";
 import { setEvents, setEventsLoadStart } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
+import { TRequest } from "./requestTypes";
 
 /**
  * fill itself with events from server
  */
-export const loadEvents = () => {
+export const loadEvents: TRequest = (resolveRequest) => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
 
     const dateToString = (date: Date | undefined) => {
@@ -42,7 +43,7 @@ export const loadEvents = () => {
     });
 
     store.dispatch(setEventsLoadStart());
-    ajax.get<ResponseEventsLight>({
+    return ajax.get<ResponseEventsLight>({
         url: "/events",
         urlProps: props,
     })
@@ -50,6 +51,7 @@ export const loadEvents = () => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(setEvents({ events: json.body.events }));
             }
+            resolveRequest();
         })
         .catch((error) => {
             console.log(error);

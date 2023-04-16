@@ -79,7 +79,7 @@ export class Profile extends Component {
         const id = this.getProfileId();
 
         if (id !== undefined) {
-            loadProfile(id);
+            // loadProfile(id);
         }
     }
 
@@ -87,7 +87,7 @@ export class Profile extends Component {
         const id = this.getProfileId();
 
         if (id !== undefined) {
-            addFriend(id);
+            // addFriend(id);
         }
     };
 

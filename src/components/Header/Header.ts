@@ -22,7 +22,7 @@ import { loadCategories, loadCities } from "requests/header";
 import { logoutUser } from "requests/user";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
-import { requestManager } from "requests/requestManager";
+import { requestManager } from "requests/index";
 
 /**
  * @class
@@ -37,7 +37,7 @@ export class Header extends Component {
 
         requestManager.request('loadCities')
 
-        loadCategories();
+        // loadCategories();
 
         this.registerEvent(() => document.getElementById("header-city-select"), "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
@@ -58,7 +58,7 @@ export class Header extends Component {
     }
 
     #onLogout = () => {
-        logoutUser();
+        // logoutUser();
     };
 
     /**
@@ -75,7 +75,7 @@ export class Header extends Component {
             } else {
                 store.dispatch(selectCategory({ category: numId }));
             }
-            loadEvents();
+            // loadEvents();
         }
     };
 
@@ -86,7 +86,7 @@ export class Header extends Component {
     #selectCity = (event: Event) => {
         const target = event.target as HTMLInputElement;
         store.dispatch(selectCity({ city: target.value }));
-        loadEvents();
+        // loadEvents();
     };
 
     #search = (event: Event) => {
@@ -97,7 +97,7 @@ export class Header extends Component {
         }
 
         store.dispatch(setSearchQuery(searchInput.value));
-        loadEvents();
+        // loadEvents();
     };
 
     postRender() {

@@ -30,7 +30,7 @@ import { loadEvents } from "requests/events";
 import { loadAuthorization, loadFriends } from "requests/user";
 import { loadTags } from "requests/tags";
 import { SidebarTags } from "./Tags/SidebarTags";
-import { requestManager } from "requests/requestManager";
+import { requestManager } from "requests/index";
 
 /**
  * @classdesc Main app component
@@ -55,8 +55,7 @@ export class App extends Component {
         super(parent);
 
         requestManager.request("loadAuthorization")
-        // loadAuthorization();
-        loadTags();
+        // requestManager.request("loadTags")
 
         this.#headerComponent = this.createComponent(Header);
         this.#eventListComponent = this.createComponent<EventList>(EventList);
@@ -123,7 +122,7 @@ export class App extends Component {
                 "/profile": () => {
                     if (router.isUrlChanged()) {
                         this.#profileComponent.loadProfile();
-                        loadEvents();
+                        // loadEvents();
                     }
                     return {
                         content:

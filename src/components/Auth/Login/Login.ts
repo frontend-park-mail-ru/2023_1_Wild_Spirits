@@ -36,7 +36,7 @@ export class Login extends Component {
 
         if (event.target) {
             if (validateForm(event.target as HTMLFormElement)) {
-                loginUser(formData, warningMsg);
+                // loginUser(formData, warningMsg);
             }
         }
     };

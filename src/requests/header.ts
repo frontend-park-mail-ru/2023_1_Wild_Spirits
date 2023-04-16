@@ -4,10 +4,9 @@ import { ResponseBody } from "responses/ResponseBase";
 import { store } from "flux";
 import { selectCity, setCities } from "flux/slices/headerSlice";
 import { setCategories } from "flux/slices/headerSlice";
-import { LoadStatus } from "./LoadStatus";
-import { requestManager } from "./requestManager";
+import { TRequest } from "./requestTypes";
 
-export const loadCities = () =>
+export const loadCities: TRequest = (resolveRequest) =>
     ajax
         .get<ResponseBody<{ cities: { id: number; name: string }[] }>>({
             url: "/cities",
@@ -16,15 +15,16 @@ export const loadCities = () =>
             if (response.ok) {
                 store.dispatch(setCities({ cities: json.body.cities }));
 
-                requestManager.resolveRequest('loadCities')
+                // requestManager.resolveRequest('loadCities')
             }
+            resolveRequest();
         })
         .catch((error) => {
             console.log("catch:", error);
             store.dispatch(setCities({ cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"] }));
         });
 
-export const loadCategories = () =>
+export const loadCategories: TRequest = (resolveRequest) =>
     ajax
         .get<ResponseBody<{ categories: { id: number; name: string }[] }>>({
             url: "/categories",
@@ -33,6 +33,8 @@ export const loadCategories = () =>
             if (response.ok) {
                 store.dispatch(setCategories({ categories: json.body.categories }));
             }
+            resolveRequest();
+            
         })
         .catch((error) => {
             console.log("catch:", error);

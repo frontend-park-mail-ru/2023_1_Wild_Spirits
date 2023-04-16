@@ -73,7 +73,7 @@ export class Calendar extends Component {
             }
         }
 
-        loadEvents();
+        // loadEvents();
     }
 
     #incrementMonth = () => {

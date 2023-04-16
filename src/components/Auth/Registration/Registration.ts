@@ -43,7 +43,7 @@ export class Registration extends Component {
         const formData = new FormData(event.target as HTMLFormElement);
 
         if (validateForm(event.target as HTMLFormElement)) {
-            registerUser(formData, warningMsg);
+            // registerUser(formData, warningMsg);
         }
     };
 

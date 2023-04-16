@@ -1,5 +1,5 @@
-import { loadCities } from "./header"
-import { loadAuthorization } from "./user"
+import { Exception } from "handlebars"
+import { TRequest } from "./requestTypes"
 
 interface RequestProps {
     name: string
@@ -8,7 +8,7 @@ interface RequestProps {
 }
 
 class RequestManager {
-    #requests: {[key: string]: {callback: () => void, dependencies: string[]}}
+    #requests: {[key: string]: {callback: (...args: any[]) => void, dependencies: string[]}}
     #doneRequests: Set<string>
     #awaitingRequests: Set<string>
 
@@ -16,6 +16,30 @@ class RequestManager {
         this.#requests = {}
         this.#doneRequests = new Set()
         this.#awaitingRequests = new Set
+    }
+
+    checkForCircularDependencies () {
+        let nodes = Object.entries(this.#requests)
+                           .map(([name, {callback, dependencies}]) => ({name, dependencies: new Set(dependencies)}));
+
+
+
+        const startNodes = nodes.filter(({name, dependencies}) => dependencies.size === 0);
+
+        let S = new Set<string>(startNodes.map(node => node.name));
+
+        for (const n of S) {
+            for (let node of nodes) {
+                node.dependencies.delete(n);
+                if  (node.dependencies.size === 0) {
+                    S.add(node.name);
+                }
+            }
+        }
+
+        if (nodes.filter(node => node.dependencies.size > 0).length > 0) {
+            throw new Exception("Circular dependencies in requestManager detected");
+        }
     }
 
     add({name, callback, dependencies}: RequestProps) {
@@ -39,7 +63,7 @@ class RequestManager {
             });
     }
 
-    request(name: string) {
+    request(name: string, ...args: any[]) {
         this.#awaitingRequests.add(name);
         let dependencyCnt = 0
 
@@ -53,24 +77,26 @@ class RequestManager {
         });
 
         if (dependencyCnt === 0) {
-            this.#requests[name].callback();
+            this.#requests[name].callback(args);
         }
     }
 }
 
-export let requestManager = new RequestManager();
+export const configureRequestManager = (requests: {request: TRequest, dependencies: TRequest[]}[]) => {
+    let requestManager = new RequestManager();
+    requests.forEach(({request, dependencies}) => {
+        const name = request.name;
+        const resolver = () => requestManager.resolveRequest(name);
+        const callback = (...args: any[]) => request(resolver, args);
 
-const requests = [
-    {
-        name: "loadAuthorization",
-        callback: loadAuthorization,
-        dependencies: []
-    },
-    {
-        name: "loadCities",
-        callback: () => loadCities(),
-        dependencies: ['loadAuthorization']
-    },
-]
+        requestManager.add({
+            name: name,
+            callback: callback,
+            dependencies: dependencies.map(dep => dep.name)
+        });
+        
+    });
+    requestManager.checkForCircularDependencies();
+    return requestManager;
+}
 
-requests.forEach(request => requestManager.add(request));

@@ -12,11 +12,11 @@ import {
     authorizedLoadError,
 } from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
-import { requestManager } from "./requestManager";
+import { TRequest, TRequestResolver } from "./requestTypes";
 
-export const loadAuthorization = () => {
+export const loadAuthorization: TRequest = (resolveRequest) => {
     store.dispatch(authorizedLoadStart());
-    ajax.get<ResponseUserLight, ResponseErrorDefault>({
+    return ajax.get<ResponseUserLight, ResponseErrorDefault>({
         url: "/authorized",
         credentials: true,
     })
@@ -31,15 +31,15 @@ export const loadAuthorization = () => {
             } else {
                 store.dispatch(setData(undefined));
             }
-            requestManager.resolveRequest('loadAuthorization');
+            resolveRequest();
         })
         .catch((error) => {
             store.dispatch(authorizedLoadError());
         });
 };
 
-export const loadProfile = (id: number) => {
-    ajax.get<ResponseUserProfile>({
+export const loadProfile: TRequest = (resolveRequest, id: number) => {
+    return ajax.get<ResponseUserProfile>({
         url: `/users/${id}`,
         credentials: true,
     })
@@ -47,23 +47,24 @@ export const loadProfile = (id: number) => {
             if (response.ok && json.body) {
                 store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
+            resolveRequest();
         })
         .catch((error) => {
             console.log("catch:", error);
         });
 };
 
-export const loadFriends = (user_id: number) => {
+export const loadFriends: TRequest = (resolveRequest, user_id: number) => 
     ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
         url: `/users/${user_id}/friends`,
     }).then(({ json, response, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
             store.dispatch(setCurrentProfileFriends({ friends: json.body.users }));
         }
+        resolveRequest();
     });
-};
 
-export const addFriend = (user_id: number) => {
+export const addFriend: TRequest = (resolveRequest, user_id: number) =>
     ajax.post({
         url: `/friends/${user_id}`,
         credentials: true,
@@ -71,13 +72,15 @@ export const addFriend = (user_id: number) => {
         if (status === AjaxResultStatus.SUCCESS) {
             // TODO do something?
         }
+        resolveRequest();
     });
-};
 
 type TWarningMsgCallack = (warning: string | undefined) => void;
 
-export const loginUser = (formData: FormData, warningMsg: TWarningMsgCallack) => {
-    ajax.post<ResponseUserLight, ResponseErrorDefault>({
+export const loginUser: TRequest = (resolveRequest, 
+                                    formData: FormData,
+                                    warningMsg: TWarningMsgCallack) => {
+    return ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/login",
         credentials: true,
         body: { email: formData.get("email"), pass: formData.get("password") },
@@ -92,13 +95,16 @@ export const loginUser = (formData: FormData, warningMsg: TWarningMsgCallack) =>
             } else {
                 warningMsg(json.errorMsg);
             }
+            resolveRequest();
         })
         .catch((error) => {
             console.log("catch:", error);
         });
-};
+}
 
-export const registerUser = (formData: FormData, warningMsg: TWarningMsgCallack) => {
+export const registerUser: TRequest = (resolveRequest, 
+                                       formData: FormData, 
+                                       warningMsg: TWarningMsgCallack) =>
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/register",
         credentials: true,
@@ -118,13 +124,13 @@ export const registerUser = (formData: FormData, warningMsg: TWarningMsgCallack)
             } else {
                 warningMsg(json.errorMsg);
             }
+            resolveRequest();
         })
         .catch((error) => {
             console.log("catch:", error);
         });
-};
 
-export const logoutUser = () => {
+export const logoutUser: TRequest = (resolveRequest) =>
     ajax.post({
         url: "/logout",
         credentials: true,
@@ -134,8 +140,8 @@ export const logoutUser = () => {
                 ajax.removeHeaders("x-csrf-token");
                 store.dispatch(logout());
             }
+            resolveRequest();
         })
         .catch((error) => {
             console.log("catch:", error);
         });
-};

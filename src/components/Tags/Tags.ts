@@ -39,7 +39,7 @@ export class Tags extends Component {
 
         this.#toggleTag({ tag: el.innerText });
 
-        loadEvents();
+        // loadEvents();
     };
 
     render() {
