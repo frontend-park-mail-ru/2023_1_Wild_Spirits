@@ -30,6 +30,7 @@ import { loadEvents } from "requests/events";
 import { loadAuthorization, loadFriends } from "requests/user";
 import { loadTags } from "requests/tags";
 import { SidebarTags } from "./Tags/SidebarTags";
+import { requestManager } from "requests/requestManager";
 
 /**
  * @classdesc Main app component
@@ -53,7 +54,8 @@ export class App extends Component {
     constructor(parent: HTMLElement) {
         super(parent);
 
-        loadAuthorization();
+        requestManager.request("loadAuthorization")
+        // loadAuthorization();
         loadTags();
 
         this.#headerComponent = this.createComponent(Header);

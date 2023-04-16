@@ -12,7 +12,7 @@ import {
     authorizedLoadError,
 } from "flux/slices/userSlice";
 import { close } from "flux/slices/modalWindowSlice";
-import { selectCity } from "flux/slices/headerSlice";
+import { requestManager } from "./requestManager";
 
 export const loadAuthorization = () => {
     store.dispatch(authorizedLoadStart());
@@ -27,14 +27,11 @@ export const loadAuthorization = () => {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
 
-                let dispatchPipeline = [setData(json.body.user), close()];
-                if (store.getState().header.cities) {
-                    dispatchPipeline.push(selectCity({ city: json.body.user.city_name }));
-                }
-                store.dispatch(...dispatchPipeline);
+                store.dispatch(setData(json.body.user), close());
             } else {
                 store.dispatch(setData(undefined));
             }
+            requestManager.resolveRequest('loadAuthorization');
         })
         .catch((error) => {
             store.dispatch(authorizedLoadError());

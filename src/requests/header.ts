@@ -5,6 +5,7 @@ import { store } from "flux";
 import { selectCity, setCities } from "flux/slices/headerSlice";
 import { setCategories } from "flux/slices/headerSlice";
 import { LoadStatus } from "./LoadStatus";
+import { requestManager } from "./requestManager";
 
 export const loadCities = () =>
     ajax
@@ -13,12 +14,9 @@ export const loadCities = () =>
         })
         .then(({ json, response }) => {
             if (response.ok) {
-                let dispatchPipeline = [setCities({ cities: json.body.cities })];
-                const { authorizedLoadStatus, data: userData } = store.getState().user;
-                if (authorizedLoadStatus === LoadStatus.DONE && userData !== undefined) {
-                    dispatchPipeline.push(selectCity({ city: userData.city_name }));
-                }
-                store.dispatch(...dispatchPipeline);
+                store.dispatch(setCities({ cities: json.body.cities }));
+
+                requestManager.resolveRequest('loadCities')
             }
         })
         .catch((error) => {

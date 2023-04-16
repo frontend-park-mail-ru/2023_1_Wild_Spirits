@@ -6,6 +6,8 @@ import "@style";
 import { store } from "flux";
 import { router } from "modules/router";
 
+import { requestManager } from "requests/requestManager";
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js", { scope: "/" }).catch(() => {
         console.log("register error");

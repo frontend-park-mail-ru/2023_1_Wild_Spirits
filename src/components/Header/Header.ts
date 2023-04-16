@@ -22,6 +22,7 @@ import { loadCategories, loadCities } from "requests/header";
 import { logoutUser } from "requests/user";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { requestManager } from "requests/requestManager";
 
 /**
  * @class
@@ -32,7 +33,10 @@ export class Header extends Component {
     constructor(parent: Component) {
         super(parent);
 
-        loadCities();
+        // loadCities();
+
+        requestManager.request('loadCities')
+
         loadCategories();
 
         this.registerEvent(() => document.getElementById("header-city-select"), "change", this.#selectCity);
