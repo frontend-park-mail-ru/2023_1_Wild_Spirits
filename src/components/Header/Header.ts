@@ -35,7 +35,8 @@ export class Header extends Component {
 
         // loadCities();
 
-        requestManager.request('loadCities')
+        requestManager.request(loadCities);
+        requestManager.request(loadCategories);
 
         // loadCategories();
 
@@ -58,7 +59,7 @@ export class Header extends Component {
     }
 
     #onLogout = () => {
-        // logoutUser();
+        requestManager.request(logoutUser);
     };
 
     /**
@@ -75,7 +76,7 @@ export class Header extends Component {
             } else {
                 store.dispatch(selectCategory({ category: numId }));
             }
-            // loadEvents();
+            requestManager.request(loadEvents);
         }
     };
 
@@ -86,7 +87,7 @@ export class Header extends Component {
     #selectCity = (event: Event) => {
         const target = event.target as HTMLInputElement;
         store.dispatch(selectCity({ city: target.value }));
-        // loadEvents();
+        requestManager.request(loadEvents);
     };
 
     #search = (event: Event) => {
@@ -97,7 +98,7 @@ export class Header extends Component {
         }
 
         store.dispatch(setSearchQuery(searchInput.value));
-        // loadEvents();
+        requestManager.request(loadEvents);
     };
 
     postRender() {

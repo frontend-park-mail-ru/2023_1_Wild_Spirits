@@ -54,8 +54,8 @@ export class App extends Component {
     constructor(parent: HTMLElement) {
         super(parent);
 
-        requestManager.request("loadAuthorization")
-        // requestManager.request("loadTags")
+        requestManager.request(loadAuthorization)
+        requestManager.request(loadTags)
 
         this.#headerComponent = this.createComponent(Header);
         this.#eventListComponent = this.createComponent<EventList>(EventList);
@@ -122,7 +122,7 @@ export class App extends Component {
                 "/profile": () => {
                     if (router.isUrlChanged()) {
                         this.#profileComponent.loadProfile();
-                        // loadEvents();
+                        requestManager.request(loadEvents);
                     }
                     return {
                         content:

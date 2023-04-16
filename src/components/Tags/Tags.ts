@@ -7,6 +7,7 @@ import { store } from "flux";
 import { TagsState } from "flux/slices/tagsSlice";
 import { loadEvents } from "requests/events";
 import "./styles.scss";
+import { requestManager } from "requests";
 
 /**
  * @class
@@ -39,7 +40,7 @@ export class Tags extends Component {
 
         this.#toggleTag({ tag: el.innerText });
 
-        // loadEvents();
+        requestManager.request(loadEvents);
     };
 
     render() {

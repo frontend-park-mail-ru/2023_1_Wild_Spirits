@@ -8,6 +8,7 @@ import { store } from "flux";
 import { openRegister } from "flux/slices/modalWindowSlice";
 
 import { loginUser } from "requests/user";
+import { requestManager } from "requests";
 
 /**
  * Login component
@@ -36,7 +37,7 @@ export class Login extends Component {
 
         if (event.target) {
             if (validateForm(event.target as HTMLFormElement)) {
-                // loginUser(formData, warningMsg);
+                requestManager.request(loginUser, formData, warningMsg);
             }
         }
     };

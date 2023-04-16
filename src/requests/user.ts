@@ -47,7 +47,7 @@ export const loadProfile: TRequest = (resolveRequest, id: number) => {
             if (response.ok && json.body) {
                 store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
-            resolveRequest();
+            resolveRequest(id);
         })
         .catch((error) => {
             console.log("catch:", error);
@@ -72,7 +72,7 @@ export const addFriend: TRequest = (resolveRequest, user_id: number) =>
         if (status === AjaxResultStatus.SUCCESS) {
             // TODO do something?
         }
-        resolveRequest();
+        resolveRequest(user_id);
     });
 
 type TWarningMsgCallack = (warning: string | undefined) => void;
@@ -104,7 +104,7 @@ export const loginUser: TRequest = (resolveRequest,
 
 export const registerUser: TRequest = (resolveRequest, 
                                        formData: FormData, 
-                                       warningMsg: TWarningMsgCallack) =>
+                                       warningMsg: TWarningMsgCallack) => {                   
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/register",
         credentials: true,
@@ -124,11 +124,12 @@ export const registerUser: TRequest = (resolveRequest,
             } else {
                 warningMsg(json.errorMsg);
             }
-            resolveRequest();
+            resolveRequest(formData, warningMsg);
         })
         .catch((error) => {
             console.log("catch:", error);
         });
+    }
 
 export const logoutUser: TRequest = (resolveRequest) =>
     ajax.post({

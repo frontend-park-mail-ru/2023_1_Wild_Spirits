@@ -11,6 +11,7 @@ import { router } from "modules/router";
 import { loadEvents } from "requests/events";
 import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
+import { requestManager } from "requests";
 
 /**
  * Event list component
@@ -35,6 +36,7 @@ export class EventList extends Component {
             userState.authorizedLoadStatus === LoadStatus.DONE &&
             headerState.citiesLoadStatus === LoadStatus.DONE
         ) {
+            requestManager.request(loadEvents);
             // loadEvents();
         }
     }

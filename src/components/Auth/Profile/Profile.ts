@@ -19,6 +19,7 @@ import { toWebP } from "modules/imgConverter";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { ResponseErrorDefault } from "responses/ResponseBase";
+import { requestManager } from "requests";
 
 /**
  * Registration component
@@ -77,9 +78,9 @@ export class Profile extends Component {
 
     loadProfile() {
         const id = this.getProfileId();
-
+        
         if (id !== undefined) {
-            // loadProfile(id);
+            requestManager.request(loadProfile, id);
         }
     }
 
@@ -87,7 +88,7 @@ export class Profile extends Component {
         const id = this.getProfileId();
 
         if (id !== undefined) {
-            // addFriend(id);
+            requestManager.request(addFriend, id);
         }
     };
 

@@ -10,7 +10,7 @@ interface RequestProps {
 class RequestManager {
     #requests: {[key: string]: {callback: (...args: any[]) => void, dependencies: string[]}}
     #doneRequests: Set<string>
-    #awaitingRequests: Set<string>
+    #awaitingRequests: Set<{name: string, args: any[]}>
 
     constructor() {
         this.#requests = {}
@@ -49,27 +49,31 @@ class RequestManager {
         }
     }
 
-    resolveRequest(name: string) {
+    resolveRequest(name: string, args: any[]) {
         this.#doneRequests.add(name);
-        this.#awaitingRequests.delete(name);
+        this.#awaitingRequests.delete({name: name, args: args});
         this.#onRequestResolution(name);
     }
 
     #onRequestResolution(name: string) {
-        [...this.#awaitingRequests]
-            .filter(requestName => this.#requests[requestName].dependencies.includes(name))
-            .forEach(requestName => {
-                this.request(requestName);
-            });
+        Array.from(this.#awaitingRequests)
+              .filter(request => this.#requests[request.name].dependencies.includes(name))
+              .forEach(({name, args}) => {
+                  this.request(name, ...args);
+              });
     }
 
-    request(name: string, ...args: any[]) {
-        this.#awaitingRequests.add(name);
+    request(request: string | TRequest, ...args: any[]) {
+        const name = typeof request === 'function' ? request.name : request;
+
+        this.#awaitingRequests.add({name: name, args: args});
         let dependencyCnt = 0
 
         this.#requests[name].dependencies.forEach(dependencyName => {
             if (!this.#doneRequests.has(dependencyName)) {
-                if (!this.#awaitingRequests.has(dependencyName)) {
+                const awaitingRequestsNames = Array.from(this.#awaitingRequests)
+                                                   .map(request => request.name);
+                if (!awaitingRequestsNames.includes(dependencyName)) {
                     this.request(dependencyName);
                 }
                 dependencyCnt++;
@@ -77,7 +81,7 @@ class RequestManager {
         });
 
         if (dependencyCnt === 0) {
-            this.#requests[name].callback(args);
+            this.#requests[name].callback(...args);
         }
     }
 }
@@ -86,8 +90,12 @@ export const configureRequestManager = (requests: {request: TRequest, dependenci
     let requestManager = new RequestManager();
     requests.forEach(({request, dependencies}) => {
         const name = request.name;
-        const resolver = () => requestManager.resolveRequest(name);
-        const callback = (...args: any[]) => request(resolver, args);
+        const resolver = (args: any[]) => {
+            requestManager.resolveRequest(name, args);
+        }
+        const callback = (...args: any[]) =>  {
+            request(resolver, ...args)
+        }
 
         requestManager.add({
             name: name,

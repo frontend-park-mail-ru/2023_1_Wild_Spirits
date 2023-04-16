@@ -1,9 +1,9 @@
 import { configureRequestManager } from "./requestManager";
 
-import { loadCities } from "./header"
-import { TRequest, TRequestResolver } from "./requestTypes"
-import { loadAuthorization } from "./user"
-
+import { loadCategories, loadCities } from "./header"
+import { loadEvents } from "./events";
+import { addFriend, loadAuthorization, loadFriends, loadProfile, loginUser, logoutUser, registerUser } from "./user"
+import { loadTags } from "./tags";
 
 const requests = [
     {
@@ -13,6 +13,42 @@ const requests = [
     {
         request: loadCities, 
         dependencies: [loadAuthorization]
+    },
+    {
+        request: loadCategories, 
+        dependencies: []
+    },
+    {
+        request: loadTags, 
+        dependencies: []
+    },
+    {
+        request: loadEvents, 
+        dependencies: [loadAuthorization, loadCities]
+    },
+    {
+        request: loadProfile, 
+        dependencies: [loadAuthorization]
+    },
+    {
+        request: loadFriends, 
+        dependencies: []
+    },
+    {
+        request: addFriend, 
+        dependencies: []
+    },
+    {
+        request: loginUser, 
+        dependencies: []
+    },
+    {
+        request: logoutUser, 
+        dependencies: []
+    },
+    {
+        request: registerUser, 
+        dependencies: []
     },
 ]
 

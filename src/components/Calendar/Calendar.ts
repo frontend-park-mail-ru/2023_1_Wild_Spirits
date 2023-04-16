@@ -17,6 +17,7 @@ import {
 
 import { store } from "flux";
 import "./styles.scss";
+import { requestManager } from "requests";
 
 /**
  * @class
@@ -73,6 +74,7 @@ export class Calendar extends Component {
             }
         }
 
+        requestManager.request(loadEvents);
         // loadEvents();
     }
 
