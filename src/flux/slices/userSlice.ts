@@ -44,11 +44,11 @@ const userSlice = createSlice({
     name: "user",
     initialState: userInitialState,
     reducers: {
-        authorizedLoadStart: (state, action) => {
+        authorizedLoadStart: (state) => {
             state.authorizedLoadStatus = LoadStatus.LOADING;
             return state;
         },
-        authorizedLoadError: (state, action) => {
+        authorizedLoadError: (state) => {
             state.authorizedLoadStatus = LoadStatus.ERROR;
             return state;
         },
@@ -68,10 +68,12 @@ const userSlice = createSlice({
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends || state.current_profile?.friends;
 
-                state.current_profile = { ...state.current_profile, 
-                                          ...profile, 
-                                          friends: friends,
-                                          id: action.payload.id };
+                state.current_profile = {
+                    ...state.current_profile,
+                    ...profile,
+                    friends: friends,
+                    id: action.payload.id,
+                };
             }
             return state;
         },
@@ -88,20 +90,19 @@ const userSlice = createSlice({
     },
 });
 
-export const isAuthorized =  (state: UserState) => state.authorizedLoadStatus === LoadStatus.DONE && 
-                                                   state.data !== undefined
+export const isAuthorized = (state: UserState) =>
+    state.authorizedLoadStatus === LoadStatus.DONE && state.data !== undefined;
 
 export const kickUnauthorized = (userState: UserState) => {
     if (
-        (userState.authorizedLoadStatus === LoadStatus.DONE ||
-            userState.authorizedLoadStatus === LoadStatus.ERROR) &&
+        (userState.authorizedLoadStatus === LoadStatus.DONE || userState.authorizedLoadStatus === LoadStatus.ERROR) &&
         userState.data === undefined
     ) {
         router.go("/");
         return true;
     }
     return false;
-}
+};
 
 export const {
     authorizedLoadStart,

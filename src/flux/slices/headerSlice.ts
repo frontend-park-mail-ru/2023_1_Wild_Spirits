@@ -1,6 +1,6 @@
 import { createSlice } from "flux/slice";
 
-import { Action } from "flux/action";
+import { Action, PayloadAction } from "flux/action";
 import { LoadStatus } from "requests/LoadStatus";
 
 type TCity = {
@@ -26,20 +26,22 @@ const initialState: HeaderState = {
     searchQuery: undefined,
 };
 
+type TCategory = { id: number; name: string };
+
 const headerSlice = createSlice({
     name: "header",
     initialState: initialState,
     reducers: {
-        setCities: (state, action) => {
+        setCities: (state, action: PayloadAction<{ cities: TCity[] }>) => {
             state.cities = action.payload.cities;
             state.citiesLoadStatus = LoadStatus.DONE;
             return state;
         },
-        setCategories: (state, action) => {
-            state.categories = action.payload.categories.map((category: { id: number; name: string }) => category.name);
+        setCategories: (state, action: PayloadAction<{ categories: TCategory[] }>) => {
+            state.categories = action.payload.categories.map((category: TCategory) => category.name);
             return state;
         },
-        selectCity: (state, action: Action<{ city: number | string | TCity }>) => {
+        selectCity: (state, action: PayloadAction<{ city: number | string | TCity | undefined }>) => {
             const city = action.payload?.city;
             if (typeof city == "number") {
                 state.selectedCityId = city;
@@ -63,7 +65,7 @@ const headerSlice = createSlice({
             state.selectedCategoryId = undefined;
             return state;
         },
-        setSearchQuery: (state, action: Action<string>) => {
+        setSearchQuery: (state, action: PayloadAction<string>) => {
             state.searchQuery = action.payload;
             return state;
         },

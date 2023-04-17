@@ -1,4 +1,7 @@
-export interface Action<TPayload> {
-    type: string,
-    payload?: TPayload
+export interface Action {
+    type: string;
+}
+
+export interface PayloadAction<TPayload> extends Action {
+    payload: TPayload;
 }

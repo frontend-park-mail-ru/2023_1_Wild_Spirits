@@ -13,7 +13,10 @@ export const loadCities: TRequest = (resolveRequest) =>
         })
         .then(({ json, response }) => {
             if (response.ok) {
-                store.dispatch(setCities({ cities: json.body.cities }));
+                store.dispatch(
+                    setCities({ cities: json.body.cities }),
+                    selectCity({ city: store.getState().user.data?.city_name })
+                );
 
                 // requestManager.resolveRequest('loadCities')
             }
@@ -21,7 +24,7 @@ export const loadCities: TRequest = (resolveRequest) =>
         })
         .catch((error) => {
             console.log("catch:", error);
-            store.dispatch(setCities({ cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"] }));
+            // store.dispatch(setCities({ cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"] }));
         });
 
 export const loadCategories: TRequest = (resolveRequest) =>
@@ -34,9 +37,8 @@ export const loadCategories: TRequest = (resolveRequest) =>
                 store.dispatch(setCategories({ categories: json.body.categories }));
             }
             resolveRequest();
-            
         })
         .catch((error) => {
             console.log("catch:", error);
-            store.dispatch(setCategories({ categories: ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"] }));
+            // store.dispatch(setCategories({ categories: ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"] }));
         });

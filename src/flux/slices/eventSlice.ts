@@ -20,7 +20,7 @@ const eventsSlice = createSlice({
     name: "events",
     initialState: initialState,
     reducers: {
-        setEventsLoadStart: (state, action) => {
+        setEventsLoadStart: (state) => {
             state.eventsLoadStatus = LoadStatus.LOADING;
             return state;
         },
