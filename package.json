@@ -3,7 +3,8 @@
   "target": "ES6",
   "dependencies": {
     "debug": "^4.3.4",
-    "handlebars": "^4.7.7"
+    "handlebars": "^4.7.7",
+    "url-loader": "^4.1.1"
   },
   "browserslist": [
     ">0.2%",

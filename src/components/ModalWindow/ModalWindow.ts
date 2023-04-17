@@ -4,6 +4,7 @@ import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 import { store } from "flux";
 import { close } from "flux/slices/modalWindowSlice";
 import "./styles.scss";
+import { router } from "modules/router";
 
 /**
  * Modal window component
@@ -26,6 +27,16 @@ export class ModalWindow extends Component {
             "click",
             this.#stopEventPropagation
         );
+        this.registerEvent(
+            ()=>document.getElementsByClassName("modalClosing"),
+            "click",
+            (event) => {
+                event.preventDefault();
+                const currentTarget = event.currentTarget as HTMLLinkElement;
+                store.dispatch.bind(store)(close());
+                router.go(currentTarget.href);
+            }
+        )
     }
 
     set content(content: any) {

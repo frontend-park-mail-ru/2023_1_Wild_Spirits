@@ -1,0 +1,24 @@
+<div class="friend-list-card">
+    <a id="friends-list-link" class="friend-list-card__header link js-router-link">
+        Друзья
+    </a>
+    <hr>
+    <div class="friend-list-card__friends-block">
+        {{#each friends}}
+            <div class="friend-list-card__friends-block__block-item">
+                <a href="/profile/{{user_id}}" class="js-router-link">
+                    <img src="{{avatar}}" class="friend-list-card__friends-block__avatar">
+                </a>
+                <a href="/profile/{{user_id}}" class="black-link js-router-link">{{name}}</a>
+            </div>
+        {{/each}}
+
+        {{#unless friends}}
+            {{#if mine}}
+                <span>У вас пока нет друзей <a href="#" class="link" id="findFriends">найти</a></span>
+            {{else}}
+                <span>У этого пользователя нет друзей</span>
+            {{/if}}
+        {{/unless}}
+    </div>
+</div>

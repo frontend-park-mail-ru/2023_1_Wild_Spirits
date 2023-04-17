@@ -167,7 +167,7 @@ export class Profile extends Component {
                 return EditTableTemplate({
                     name: profile_data.name,
                     cities: getCitiesNames(store.getState().header),
-                    city: store.getState().user.current_profile,
+                    city: store.getState().user.currentProfile,
                 });
             }
             return TableTemplate({
@@ -184,18 +184,18 @@ export class Profile extends Component {
             return "Вы не авторизованы";
         }
 
-        const profile_data = store.getState().user.current_profile;
+        const profile_data = store.getState().user.currentProfile;
 
         if (!profile_data) {
             return "Такого пользователя не существует";
         }
 
         return ProfileTemplate({
-            avatar: this.#tempAvatarUrl || getUploadsImg(store.getState().user.current_profile!.img),
+            avatar: this.#tempAvatarUrl || getUploadsImg(store.getState().user.currentProfile!.img),
             table: getTable(profile_data),
             editing: this.#editing,
             mine: user_data.id === profile_data.id,
-            isFriend: store.getState().user.current_profile?.is_friend,
+            isFriend: store.getState().user.currentProfile?.is_friend,
             errorMsg: this.#errorMsg,
         });
     }

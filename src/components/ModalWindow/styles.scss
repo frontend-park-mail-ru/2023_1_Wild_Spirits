@@ -20,7 +20,9 @@
 
     border-radius: 35px;
 
-    width: 250px;
-    margin-top: -150px;
+    min-width: 250px;
+
+    transform: translateY(max(-25%, -5vh));
+
     background-color: white;
 }

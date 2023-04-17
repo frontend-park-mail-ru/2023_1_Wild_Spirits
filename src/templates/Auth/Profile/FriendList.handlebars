@@ -1,20 +1,22 @@
-<div class="friend-list">
-    <a class="friend-list__header">
-        Друзья
-    </a>
-    <hr>
-    <div class="friend-list__friends-block">
-        {{#each friends}}
-            <div class="friend-list__friends-block__block-item">
-                <a href="/profile/{{user_id}}" class="js-router-link">
-                    <img src="{{avatar}}" class="friend-list__friends-block__avatar">
-                </a>
-                <a href="/profile/{{user_id}}" class="black-link js-router-link">{{name}}</a>
-            </div>
-        {{/each}}
+<h2 class="friend-list__title">Друзья</h2>
 
-        {{#unless friends}}
-            <span>У вас пока нет друзей :(</span>
-        {{/unless}}
-    </div>
+<input type="text" id="friend-search" class="search friend-search" placeholder="Поиск" value="{{friendSearchQuery}}">
+
+<div class="friend-list">
+    {{#each friends}}
+        <div class="friend-list__item">
+            <a href="/profile/{{user_id}}" class="black-link js-router-link modalClosing">
+                <div class="friend-list__item__avatar-block">
+                    <img class="friend-list__item__avatar" src="{{this.avatar}}">
+                    <div class="friend-list__item__description">
+                        <span class="friend-list__item__friend-name">
+                            {{this.name}}
+                        </span>
+                        
+                    </div>
+                </div>            
+            </a>
+            <div class="tick-friend-icon-container"></div>
+        </div>
+    {{/each}}
 </div>

@@ -7,16 +7,16 @@ import {
     setData,
     logout,
     setCurrentProfile,
-    setCurrentProfileFriends,
     authorizedLoadStart,
     authorizedLoadError,
 } from "flux/slices/userSlice";
+import { setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
-import { TRequest, TRequestResolver } from "./requestTypes";
+import { TRequest } from "./requestTypes";
 
 export const loadAuthorization: TRequest = (resolveRequest) => {
     store.dispatch(authorizedLoadStart());
-    return ajax.get<ResponseUserLight, ResponseErrorDefault>({
+    ajax.get<ResponseUserLight, ResponseErrorDefault>({
         url: "/authorized",
         credentials: true,
     })
@@ -39,7 +39,7 @@ export const loadAuthorization: TRequest = (resolveRequest) => {
 };
 
 export const loadProfile: TRequest = (resolveRequest, id: number) => {
-    return ajax.get<ResponseUserProfile>({
+    ajax.get<ResponseUserProfile>({
         url: `/users/${id}`,
         credentials: true,
     })
@@ -54,15 +54,25 @@ export const loadProfile: TRequest = (resolveRequest, id: number) => {
         });
 };
 
-export const loadFriends: TRequest = (resolveRequest, user_id: number) => 
+export const loadFriends: TRequest = (resolveRequest, user_id: number, search?: string) => {
+    let urlProps = {}
+    if (search !== undefined && search.length > 0) {
+        urlProps = {
+            name: search
+        }
+    }
     ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
         url: `/users/${user_id}/friends`,
+        urlProps: urlProps
     }).then(({ json, response, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
-            store.dispatch(setCurrentProfileFriends({ friends: json.body.users }));
+            // store.dispatch(setCurrentProfileFriends({ friends: json.body.users }));
+            store.dispatch(setFriends({friends: json.body.users}));
         }
         resolveRequest();
     });
+}
+
 
 export const addFriend: TRequest = (resolveRequest, user_id: number) =>
     ajax.post({
@@ -80,7 +90,7 @@ type TWarningMsgCallack = (warning: string | undefined) => void;
 export const loginUser: TRequest = (resolveRequest, 
                                     formData: FormData,
                                     warningMsg: TWarningMsgCallack) => {
-    return ajax.post<ResponseUserLight, ResponseErrorDefault>({
+    ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/login",
         credentials: true,
         body: { email: formData.get("email"), pass: formData.get("password") },

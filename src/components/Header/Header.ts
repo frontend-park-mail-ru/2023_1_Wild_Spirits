@@ -33,12 +33,8 @@ export class Header extends Component {
     constructor(parent: Component) {
         super(parent);
 
-        // loadCities();
-
         requestManager.request(loadCities);
         requestManager.request(loadCategories);
-
-        // loadCategories();
 
         this.registerEvent(() => document.getElementById("header-city-select"), "change", this.#selectCity);
         this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);

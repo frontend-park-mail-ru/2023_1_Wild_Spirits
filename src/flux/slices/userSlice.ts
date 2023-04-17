@@ -1,8 +1,13 @@
 import { createSlice } from "flux/slice";
-import { TUser, TUserLight } from "models/User";
 import { LoadStatus } from "requests/LoadStatus";
 
 import { router } from "modules/router";
+
+type FriendState = {
+    id: number;
+    name: string;
+    img: string;
+}
 
 interface UserState {
     authorizedLoadStatus: LoadStatus.Type;
@@ -12,13 +17,9 @@ interface UserState {
         img: string;
         city_name: string;
 
-        friends?: {
-            id: number;
-            name: string;
-            img: string;
-        }[];
+        friends?: FriendState[];
     };
-    current_profile?: {
+    currentProfile?: {
         id: number;
         name: string;
         img: string;
@@ -26,18 +27,16 @@ interface UserState {
         city_name?: string;
         is_friend?: boolean;
 
-        friends?: {
-            id: number;
-            name: string;
-            img: string;
-        }[];
+        friendsPreview?: FriendState[];
+
+        friends?: FriendState[];
     };
 }
 
 const userInitialState: UserState = {
     authorizedLoadStatus: LoadStatus.NONE,
     data: undefined,
-    current_profile: undefined,
+    currentProfile: undefined,
 };
 
 const userSlice = createSlice({
@@ -66,25 +65,29 @@ const userSlice = createSlice({
         setCurrentProfile: (state: UserState, action) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
-                const friends = action.payload.profile.friends || state.current_profile?.friends;
+                const friends = action.payload.profile.friends || state.currentProfile?.friends;
 
-                state.current_profile = { ...state.current_profile, 
+                state.currentProfile = { ...state.currentProfile, 
                                           ...profile, 
-                                          friends: friends,
+                                          friendsPreview: friends,
                                           id: action.payload.id };
             }
             return state;
         },
         setCurrentProfileFriends: (state: UserState, action) => {
             if (action.payload) {
-                if (state.current_profile) {
-                    state.current_profile.friends = action.payload.friends;
+                if (state.currentProfile) {
+                    state.currentProfile.friends = action.payload.friends;
                 } else {
-                    state.current_profile = { id: 0, name: "", img: "", friends: action.payload.frineds };
+                    state.currentProfile = { id: 0, name: "", img: "", friends: action.payload.frineds };
                 }
             }
             return state;
         },
+        setFriendsPreview: (state: UserState, action) => {
+            state.currentProfile = {  id: 0, name: "", img: "", ...state.currentProfile, friendsPreview: action.payload }
+            return state;
+        }
     },
 });
 
@@ -110,6 +113,7 @@ export const {
     logout,
     setCurrentProfile,
     setCurrentProfileFriends,
+    setFriendsPreview,
 } = userSlice.actions;
 
 export default userSlice;

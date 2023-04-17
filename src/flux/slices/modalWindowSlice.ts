@@ -4,8 +4,9 @@ export namespace ModalWindowName {
     export const NONE = "NONE";
     export const LOGIN = "login";
     export const REGISTER = "register";
+    export const FRIENDLIST = "friend-list";
 
-    export type NameType = typeof NONE | typeof LOGIN | typeof REGISTER;
+    export type NameType = typeof NONE | typeof LOGIN | typeof REGISTER | typeof FRIENDLIST
 }
 
 interface ModalWindowState {
@@ -32,9 +33,13 @@ const modalWindowSlice = createSlice({
             state.name = ModalWindowName.REGISTER;
             return state;
         },
+        openFriendsList: (state) => {
+            state.name = ModalWindowName.FRIENDLIST;
+            return state;
+        }
     },
 });
 
-export const { close, openLogin, openRegister } = modalWindowSlice.actions;
+export const { close, openLogin, openRegister, openFriendsList } = modalWindowSlice.actions;
 
 export default modalWindowSlice;

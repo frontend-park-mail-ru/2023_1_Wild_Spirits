@@ -9,8 +9,8 @@ import { Registration } from "components/Auth/Registration/Registration";
 
 import { Calendar } from "./Calendar/Calendar";
 
-import { FriendList } from "./Auth/Profile/FriendList/FriendList";
-import { SubscriptionList } from "./Auth/Profile/SubscriptionList/SubscriptionList";
+import { FriendListCard } from "components/Auth/Profile/FriendList/FriendListCard";
+import { FriendList} from "components/Auth/Profile/FriendList/FriendList"
 
 import AppTemplate from "templates/App.handlebars";
 import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
@@ -41,8 +41,9 @@ export class App extends Component {
     #headerComponent: Header;
     #eventListComponent: EventList;
     #modalWindowComponent: ModalWindow;
-    #frienListComponent: FriendList;
-    #subscriptionListComponent: SubscriptionList;
+    #friendListComponent: FriendList;
+    #friendListCardComponent: FriendListCard;
+    // #subscriptionListComponent: SubscriptionList;
     #calendarComponent: Calendar;
     #tagsComponent: SidebarTags;
     #loginComponent: Login;
@@ -66,8 +67,9 @@ export class App extends Component {
         this.#loginComponent = this.createComponent(Login);
         this.#registerComponent = this.createComponent(Registration);
 
-        this.#frienListComponent = this.createComponent(FriendList);
-        this.#subscriptionListComponent = this.createComponent(SubscriptionList);
+        this.#friendListComponent = this.createComponent(FriendList);
+        this.#friendListCardComponent = this.createComponent(FriendListCard);
+        // this.#subscriptionListComponent = this.createComponent(SubscriptionList);
 
         this.#calendarComponent = this.createComponent(Calendar);
         this.#tagsComponent = this.createComponent(SidebarTags);
@@ -97,6 +99,9 @@ export class App extends Component {
                     break;
                 case ModalWindowName.REGISTER:
                     this.#modalWindowComponent.content = this.#registerComponent.render();
+                    break;
+                case ModalWindowName.FRIENDLIST:
+                    this.#modalWindowComponent.content = this.#friendListComponent.render();
                     break;
             }
 
@@ -130,7 +135,7 @@ export class App extends Component {
                             DelimiterTemplate({ content: "Предстоящие мероприятия" }) +
                             this.#eventListComponent.render(),
                         sidebar:
-                            this.#frienListComponent.render() +
+                            this.#friendListCardComponent.render() +
                             createEventBtn() +
                             this.#calendarComponent.render() +
                             this.#tagsComponent.render(),

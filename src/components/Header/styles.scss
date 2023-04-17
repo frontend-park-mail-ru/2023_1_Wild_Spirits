@@ -84,7 +84,7 @@ select {
 
     cursor: pointer;
 
-    background: right url("/src/assets/img/down-arrow-icon.svg") no-repeat;
+    background: right url("/assets/img/down-arrow-icon.svg") no-repeat;
 
     outline: none;
 }
@@ -97,8 +97,11 @@ select > option {
     font-size: 17px;
     padding: 5px;
     border: solid black 1px;
+    border-radius: 15px;
     appearance: none;
     background-color: transparent;
     box-shadow: none;
     width: 250px;
+
+    background: calc(100% - 9px) url('/assets/img/search-icon.svg') no-repeat;
 }

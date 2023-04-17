@@ -39,6 +39,7 @@ export const createConf = (env, argv) => {
                         {
                             loader: "css-loader",
                             options: {
+                                url: false,
                                 modules: {
                                     mode: "local",
                                     auto: true,
@@ -65,6 +66,7 @@ export const createConf = (env, argv) => {
                     options: {
                         outputPath: "assets",
                         name: "[name].[ext]",
+                        publicPath: "/"
                     },
                 },
                 {
