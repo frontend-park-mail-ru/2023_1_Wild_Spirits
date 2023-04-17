@@ -1,3 +1,4 @@
+import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
 import { TEvent } from "models/Events";
@@ -20,16 +21,16 @@ const eventsSlice = createSlice({
     name: "events",
     initialState: initialState,
     reducers: {
-        setEventsLoadStart: (state) => {
+        setEventsLoadStart: (state: EventsState) => {
             state.eventsLoadStatus = LoadStatus.LOADING;
             return state;
         },
-        setEvents: (state, action) => {
+        setEvents: (state: EventsState, action: PayloadAction<{ events: TEventLight[] | undefined }>) => {
             state.eventsLoadStatus = LoadStatus.DONE;
             state.events = action.payload.events;
             return state;
         },
-        selectEvent: (state, action) => {
+        selectEvent: (state: EventsState, action: PayloadAction<{ event: TEvent | undefined }>) => {
             state.selectedEvent = action.payload.event;
             return state;
         },

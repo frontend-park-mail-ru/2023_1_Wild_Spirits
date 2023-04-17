@@ -1,7 +1,8 @@
 import { createSlice } from "flux/slice";
 
-import { Action, PayloadAction } from "flux/action";
+import { PayloadAction } from "flux/action";
 import { LoadStatus } from "requests/LoadStatus";
+import { TCategory } from "models/Category";
 
 type TCity = {
     id: number;
@@ -26,22 +27,20 @@ const initialState: HeaderState = {
     searchQuery: undefined,
 };
 
-type TCategory = { id: number; name: string };
-
 const headerSlice = createSlice({
     name: "header",
     initialState: initialState,
     reducers: {
-        setCities: (state, action: PayloadAction<{ cities: TCity[] }>) => {
+        setCities: (state: HeaderState, action: PayloadAction<{ cities: TCity[] }>) => {
             state.cities = action.payload.cities;
             state.citiesLoadStatus = LoadStatus.DONE;
             return state;
         },
-        setCategories: (state, action: PayloadAction<{ categories: TCategory[] }>) => {
+        setCategories: (state: HeaderState, action: PayloadAction<{ categories: TCategory[] }>) => {
             state.categories = action.payload.categories.map((category: TCategory) => category.name);
             return state;
         },
-        selectCity: (state, action: PayloadAction<{ city: number | string | TCity | undefined }>) => {
+        selectCity: (state: HeaderState, action: PayloadAction<{ city: number | string | TCity | undefined }>) => {
             const city = action.payload?.city;
             if (typeof city == "number") {
                 state.selectedCityId = city;
@@ -52,24 +51,24 @@ const headerSlice = createSlice({
             }
             return state;
         },
-        selectCategory: (state, action) => {
+        selectCategory: (state: HeaderState, action: PayloadAction<{ category: number | string }>) => {
             const category = action.payload.category;
             if (typeof category == "number") {
                 state.selectedCategoryId = category;
             } else {
-                state.selectedCategoryId = state.cities.findIndex((el) => el === category);
+                state.selectedCategoryId = state.categories.findIndex((el) => el === category);
             }
             return state;
         },
-        clearCategory: (state) => {
+        clearCategory: (state: HeaderState) => {
             state.selectedCategoryId = undefined;
             return state;
         },
-        setSearchQuery: (state, action: PayloadAction<string>) => {
+        setSearchQuery: (state: HeaderState, action: PayloadAction<string>) => {
             state.searchQuery = action.payload;
             return state;
         },
-        clearSearchQuery: (state) => {
+        clearSearchQuery: (state: HeaderState) => {
             state.searchQuery = undefined;
             return state;
         },

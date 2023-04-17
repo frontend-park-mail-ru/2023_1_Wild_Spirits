@@ -1,23 +1,17 @@
 import { createSlice } from "flux/slice";
-import { TUser, TUserLight } from "models/User";
+import { TFriend, TUser, TUserLight } from "models/User";
 import { LoadStatus } from "requests/LoadStatus";
 
 import { router } from "modules/router";
+import { PayloadAction } from "flux/action";
+
+interface TUserLightDataType extends TUserLight {
+    friends?: TFriend[];
+}
 
 interface UserState {
     authorizedLoadStatus: LoadStatus.Type;
-    data?: {
-        id: number;
-        name: string;
-        img: string;
-        city_name: string;
-
-        friends?: {
-            id: number;
-            name: string;
-            img: string;
-        }[];
-    };
+    data?: TUserLightDataType;
     current_profile?: {
         id: number;
         name: string;
@@ -44,26 +38,27 @@ const userSlice = createSlice({
     name: "user",
     initialState: userInitialState,
     reducers: {
-        authorizedLoadStart: (state) => {
+        authorizedLoadStart: (state: UserState) => {
             state.authorizedLoadStatus = LoadStatus.LOADING;
             return state;
         },
-        authorizedLoadError: (state) => {
+        authorizedLoadError: (state: UserState) => {
             state.authorizedLoadStatus = LoadStatus.ERROR;
             return state;
         },
-        setData: (state, action) => {
+        setData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
             state.authorizedLoadStatus = LoadStatus.DONE;
-            if (action.payload) {
-                state.data = { ...state.data, ...action.payload };
-            }
+            state.data = action.payload;
             return state;
         },
-        logout: (state) => {
+        logout: (state: UserState) => {
             state.data = undefined;
             return state;
         },
-        setCurrentProfile: (state: UserState, action) => {
+        setCurrentProfile: (
+            state: UserState,
+            action: PayloadAction<{ id: number; profile: { user: TUser; friends?: TFriend[] | undefined } }>
+        ) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends || state.current_profile?.friends;
@@ -77,12 +72,12 @@ const userSlice = createSlice({
             }
             return state;
         },
-        setCurrentProfileFriends: (state: UserState, action) => {
+        setCurrentProfileFriends: (state: UserState, action: PayloadAction<{ friends: TFriend[] }>) => {
             if (action.payload) {
                 if (state.current_profile) {
                     state.current_profile.friends = action.payload.friends;
                 } else {
-                    state.current_profile = { id: 0, name: "", img: "", friends: action.payload.frineds };
+                    state.current_profile = { id: 0, name: "", img: "", friends: action.payload.friends };
                 }
             }
             return state;
