@@ -78,7 +78,7 @@ export class Profile extends Component {
 
     loadProfile() {
         const id = this.getProfileId();
-        
+
         if (id !== undefined) {
             requestManager.request(loadProfile, id);
         }
@@ -136,8 +136,8 @@ export class Profile extends Component {
         }).then(({ json, response, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(
-                    setData({ ...json.body.user, id: store.getState().user.data?.id }),
-                    setCurrentProfile({ profile: json.body.user, id: store.getState().user.data?.id })
+                    setData({ ...json.body.user }),
+                    setCurrentProfile({ profile: json.body, id: store.getState().user.data!.id })
                 );
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
@@ -155,7 +155,7 @@ export class Profile extends Component {
         if (kickUnauthorized(store.getState().user)) {
             return "";
         }
-        
+
         const getTable = (profile_data: {
             id: number;
             name: string;

@@ -21,15 +21,15 @@ const modalWindowSlice = createSlice({
     name: "modalWindow",
     initialState: initialState,
     reducers: {
-        close: (state) => {
+        close: (state: ModalWindowState) => {
             state.name = ModalWindowName.NONE;
             return state;
         },
-        openLogin: (state) => {
+        openLogin: (state: ModalWindowState) => {
             state.name = ModalWindowName.LOGIN;
             return state;
         },
-        openRegister: (state) => {
+        openRegister: (state: ModalWindowState) => {
             state.name = ModalWindowName.REGISTER;
             return state;
         },

@@ -55,8 +55,8 @@ export class App extends Component {
     constructor(parent: HTMLElement) {
         super(parent);
 
-        requestManager.request(loadAuthorization)
-        requestManager.request(loadTags)
+        requestManager.request(loadAuthorization);
+        requestManager.request(loadTags);
 
         this.#headerComponent = this.createComponent(Header);
         this.#eventListComponent = this.createComponent<EventList>(EventList);
@@ -110,7 +110,7 @@ export class App extends Component {
 
         const createEventBtn = () => {
             return isAuthorized(store.getState().user) ? CreateEventBtn() : "";
-        }
+        };
 
         const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
             {
@@ -118,10 +118,7 @@ export class App extends Component {
                     this.#eventListComponent.loadEvents();
                     return {
                         content: this.#eventListComponent.render(),
-                        sidebar: 
-                            createEventBtn() + 
-                            this.#calendarComponent.render() + 
-                            this.#tagsComponent.render(),
+                        sidebar: createEventBtn() + this.#calendarComponent.render() + this.#tagsComponent.render(),
                     };
                 },
                 "/profile": () => {
@@ -142,24 +139,21 @@ export class App extends Component {
                     };
                 },
                 "/events": () => {
-                    router.isUrlChanged() && this.#eventComponent.loadEvent();
+                    this.#eventComponent.loadEvent();
                     return {
                         content: this.#eventComponent.render(),
-                        sidebar:
-                            createEventBtn() +
-                            this.#calendarComponent.render() +
-                            this.#tagsComponent.render(),
+                        sidebar: createEventBtn() + this.#calendarComponent.render() + this.#tagsComponent.render(),
                     };
                 },
                 "/createevent": () => {
-                    router.isUrlChanged() && this.#eventProcessingComponent.setCreate();
+                    this.#eventProcessingComponent.setCreate();
                     return {
                         content: this.#eventProcessingComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
                     };
                 },
                 "/editevent": () => {
-                    router.isUrlChanged() && this.#eventProcessingComponent.setEdit();
+                    this.#eventProcessingComponent.setEdit();
                     return {
                         content: this.#eventProcessingComponent.render(),
                         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),

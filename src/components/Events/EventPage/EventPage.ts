@@ -11,13 +11,11 @@ import TableTemplate from "templates/Common/Table.handlebars";
 import { createTable } from "components/Common/CreateTable";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
-import { TOrganizer } from "models/Organizer";
-
-interface EventData {
-    event: TEvent;
-    places: TEventPlace[];
-    organizer: TOrganizer;
-}
+import { requestManager } from "requests";
+import { loadEventPage } from "requests/events";
+import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
+import { store } from "flux";
+import { LoadStatus } from "requests/LoadStatus";
 
 /**
  * Event list component
@@ -25,8 +23,6 @@ interface EventData {
  * @extends Component
  */
 export class EventPage extends Component {
-    #eventData: EventData | undefined = undefined;
-
     constructor(parent: Component) {
         super(parent);
     }
@@ -40,23 +36,20 @@ export class EventPage extends Component {
      * fill itself with event from server
      */
     loadEvent() {
+        if (!router.isUrlChanged()) {
+            return;
+        }
+
+        store.dispatch(setSelectedEventLoadStart());
+
         const eventId = this.getEventId();
-        ajax.get<ResponseEvent>({ url: `/events/${eventId}` })
-            .then(({ json, response, status }) => {
-                if (status === AjaxResultStatus.SUCCESS) {
-                    const { event, places, organizer } = json.body;
-                    this.#eventData = { event, places, organizer };
-                    this.rerender();
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        requestManager.request(loadEventPage, eventId);
     }
 
     render() {
-        if (this.#eventData !== undefined) {
-            const { event, organizer, places } = this.#eventData;
+        const { selectedEvent } = store.getState().events;
+        if (selectedEvent.loadStatus === LoadStatus.DONE) {
+            const { event, organizer, places } = selectedEvent;
             const fixedPlaces = Object.values(places).map((place) => ({
                 city: place.city.name,
                 name: place.name,
@@ -77,6 +70,10 @@ export class EventPage extends Component {
                     }),
                 }),
             });
+        } else if (selectedEvent.loadStatus === LoadStatus.ERROR) {
+            return "Error";
         }
+
+        return "Loading . . .";
     }
 }

@@ -1,3 +1,6 @@
+import { TagsState } from "flux/slices/tagsSlice";
+import { TOrganizer } from "./Organizer";
+
 interface TEventDates {
     dateStart?: string;
     dateEnd?: string;
@@ -39,4 +42,28 @@ export interface TEventLight extends TEventBase {
 
 export interface TEvent extends TEventBase {
     tags: string[];
+}
+
+export interface SelectedEventData {
+    event: TEvent;
+    places: TEventPlace[];
+    organizer: TOrganizer;
+}
+
+export namespace EventProcessingState {
+    export const CREATE = "CREATE";
+    export const EDIT = "EDIT";
+    export type Type = typeof CREATE | typeof EDIT;
+}
+
+export interface EventProcessingForm {
+    id: number;
+    name: string;
+    description: string;
+    dateStart?: string;
+    dateEnd?: string;
+    timeStart?: string;
+    timeEnd?: string;
+    place: string;
+    img: string;
 }

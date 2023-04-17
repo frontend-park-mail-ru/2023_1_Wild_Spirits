@@ -1,7 +1,13 @@
 import { createSlice } from "flux/slice";
+import { TFriend, TUser, TUserLight } from "models/User";
 import { LoadStatus } from "requests/LoadStatus";
 
 import { router } from "modules/router";
+import { PayloadAction } from "flux/action";
+
+interface TUserLightDataType extends TUserLight {
+    friends?: TFriend[];
+}
 
 type FriendState = {
     id: number;
@@ -11,14 +17,7 @@ type FriendState = {
 
 interface UserState {
     authorizedLoadStatus: LoadStatus.Type;
-    data?: {
-        id: number;
-        name: string;
-        img: string;
-        city_name: string;
-
-        friends?: FriendState[];
-    };
+    data?: TUserLightDataType;
     currentProfile?: {
         id: number;
         name: string;
@@ -43,43 +42,46 @@ const userSlice = createSlice({
     name: "user",
     initialState: userInitialState,
     reducers: {
-        authorizedLoadStart: (state, action) => {
+        authorizedLoadStart: (state: UserState) => {
             state.authorizedLoadStatus = LoadStatus.LOADING;
             return state;
         },
-        authorizedLoadError: (state, action) => {
+        authorizedLoadError: (state: UserState) => {
             state.authorizedLoadStatus = LoadStatus.ERROR;
             return state;
         },
-        setData: (state, action) => {
+        setData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
             state.authorizedLoadStatus = LoadStatus.DONE;
-            if (action.payload) {
-                state.data = { ...state.data, ...action.payload };
-            }
+            state.data = action.payload;
             return state;
         },
-        logout: (state) => {
+        logout: (state: UserState) => {
             state.data = undefined;
             return state;
         },
-        setCurrentProfile: (state: UserState, action) => {
+        setCurrentProfile: (
+            state: UserState,
+            action: PayloadAction<{ id: number; profile: { user: TUser; friends?: TFriend[] | undefined } }>
+        ) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends || state.currentProfile?.friends;
 
-                state.currentProfile = { ...state.currentProfile, 
-                                          ...profile, 
-                                          friendsPreview: friends,
-                                          id: action.payload.id };
+                state.currentProfile = {
+                    ...state.currentProfile,
+                    ...profile,
+                    friendsPreview: friends,
+                    id: action.payload.id,
+                };
             }
             return state;
         },
-        setCurrentProfileFriends: (state: UserState, action) => {
+        setCurrentProfileFriends: (state: UserState, action: PayloadAction<{ friends: TFriend[] }>) => {
             if (action.payload) {
                 if (state.currentProfile) {
                     state.currentProfile.friends = action.payload.friends;
                 } else {
-                    state.currentProfile = { id: 0, name: "", img: "", friends: action.payload.frineds };
+                    state.currentProfile = { id: 0, name: "", img: "", friends: action.payload.friends };
                 }
             }
             return state;
@@ -91,20 +93,19 @@ const userSlice = createSlice({
     },
 });
 
-export const isAuthorized =  (state: UserState) => state.authorizedLoadStatus === LoadStatus.DONE && 
-                                                   state.data !== undefined
+export const isAuthorized = (state: UserState) =>
+    state.authorizedLoadStatus === LoadStatus.DONE && state.data !== undefined;
 
 export const kickUnauthorized = (userState: UserState) => {
     if (
-        (userState.authorizedLoadStatus === LoadStatus.DONE ||
-            userState.authorizedLoadStatus === LoadStatus.ERROR) &&
+        (userState.authorizedLoadStatus === LoadStatus.DONE || userState.authorizedLoadStatus === LoadStatus.ERROR) &&
         userState.data === undefined
     ) {
         router.go("/");
         return true;
     }
     return false;
-}
+};
 
 export const {
     authorizedLoadStart,

@@ -12,6 +12,7 @@ import { loadEvents } from "requests/events";
 import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
 import { requestManager } from "requests";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
 /**
  * Event list component
@@ -24,29 +25,20 @@ export class EventList extends Component {
     }
 
     loadEvents() {
-        const { events: eventsState, user: userState, header: headerState } = store.getState();
-        let loadStatus = eventsState.eventsLoadStatus;
-
-        if (router.isUrlChanged()) {
-            loadStatus = LoadStatus.NONE;
+        if (!router.isUrlChanged()) {
+            return;
         }
 
-        if (
-            (loadStatus === LoadStatus.NONE || loadStatus === LoadStatus.ERROR) &&
-            userState.authorizedLoadStatus === LoadStatus.DONE &&
-            headerState.citiesLoadStatus === LoadStatus.DONE
-        ) {
-            requestManager.request(loadEvents);
-            // loadEvents();
-        }
+        store.dispatch(setEventsCardsLoadStart());
+
+        requestManager.request(loadEvents);
     }
 
     render() {
-        const events = store.getState().events.events;
+        const { cards } = store.getState().events;
 
-        let cards: EventCard[] = [];
-        if (events) {
-            cards = events.map((event: TEventLight) => {
+        if (cards.loadStatus === LoadStatus.DONE) {
+            let cardsComponents: EventCard[] = cards.data.map((event: TEventLight) => {
                 const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
                 let dates: string[] = [];
                 if (dateStart) {
@@ -72,16 +64,16 @@ export class EventList extends Component {
                     org: event.org,
                 });
             });
+            const renderedEvents: string[] = cardsComponents.map((component) => component.render());
+
+            if (renderedEvents.length === 0) {
+                return EventListEmptyTemplate();
+            }
+            return EventListTemplate({ events: renderedEvents });
+        } else if (cards.loadStatus === LoadStatus.ERROR) {
+            return "Error";
         }
 
-        const renderedEvents: string[] = cards ? cards.map((card) => card.render()) : [];
-        const { eventsLoadStatus } = store.getState().events;
-        if (eventsLoadStatus === LoadStatus.NONE || eventsLoadStatus === LoadStatus.LOADING) {
-            return "<div>Loading . . . </div>";
-        }
-        if (renderedEvents.length === 0) {
-            return EventListEmptyTemplate();
-        }
-        return EventListTemplate({ events: renderedEvents });
+        return "Loading . . .";
     }
 }

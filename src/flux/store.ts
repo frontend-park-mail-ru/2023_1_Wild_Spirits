@@ -1,6 +1,9 @@
 import { Action } from "./action";
 
-export type TReducer<TSliceState, TPayload> = (sliceState: TSliceState, action: Action<TPayload>) => TSliceState;
+export type TReducer<TSliceState, TAction extends Action = Action> = (
+    sliceState: TSliceState,
+    action: TAction
+) => TSliceState;
 export type TReducers = { [key: string]: TReducer<any, any> };
 
 export class Store<TState> {
@@ -21,7 +24,7 @@ export class Store<TState> {
         return this.state;
     }
 
-    dispatch<TPayload>(...actions: Action<TPayload>[]) {
+    dispatch(...actions: Action[]) {
         for (const name in this.state) {
             actions.forEach((action) => {
                 this.state[name] = this.reducers[name](this.state[name], action);

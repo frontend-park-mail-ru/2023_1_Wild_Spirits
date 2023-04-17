@@ -1,3 +1,4 @@
+import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
 export const monthNames = [
@@ -15,12 +16,14 @@ export const monthNames = [
     "Декабрь",
 ];
 
-interface CalendarState {
-    year: number,
-    month: number,
+type DateType = Date | undefined;
 
-    startDate: Date | undefined,
-    finishDate: Date | undefined
+interface CalendarState {
+    year: number;
+    month: number;
+
+    startDate: DateType;
+    finishDate: DateType;
 }
 
 const initialState: CalendarState = {
@@ -28,14 +31,14 @@ const initialState: CalendarState = {
     month: new Date().getMonth(),
 
     startDate: undefined,
-    finishDate: undefined
-}
+    finishDate: undefined,
+};
 
 const calendarSlice = createSlice({
     name: "calendar",
     initialState: initialState,
     reducers: {
-        incrementMonth: (state) => {
+        incrementMonth: (state: CalendarState) => {
             state.month++;
             if (state.month == 12) {
                 state.month = 0;
@@ -43,42 +46,36 @@ const calendarSlice = createSlice({
             }
             return state;
         },
-        decrementMonth: (state) => {
+        decrementMonth: (state: CalendarState) => {
             state.month--;
-            if (state.month < 0 ) {
+            if (state.month < 0) {
                 state.month = 11;
                 state.year--;
             }
             return state;
         },
-        setStartDate: (state, action) => {
+        setStartDate: (state: CalendarState, action: PayloadAction<{ date: DateType }>) => {
             state.startDate = action.payload.date;
             return state;
         },
-        clearStartDate: (state) => {
+        clearStartDate: (state: CalendarState) => {
             state.startDate = undefined;
             return state;
         },
-        setFinishDate: (state, action) => {
+        setFinishDate: (state: CalendarState, action: PayloadAction<{ date: DateType }>) => {
             state.finishDate = action.payload.date;
             return state;
         },
-        clearFinishDate: (state) => {
+        clearFinishDate: (state: CalendarState) => {
             state.finishDate = undefined;
             return state;
-        }
-    }
+        },
+    },
 });
 
 export const getMonthName = (state: CalendarState) => monthNames[state.month];
 
-export const {
-    incrementMonth,
-    decrementMonth, 
-    setStartDate,
-    clearStartDate,
-    setFinishDate,
-    clearFinishDate
-        } = calendarSlice.actions;
+export const { incrementMonth, decrementMonth, setStartDate, clearStartDate, setFinishDate, clearFinishDate } =
+    calendarSlice.actions;
 
 export default calendarSlice;
