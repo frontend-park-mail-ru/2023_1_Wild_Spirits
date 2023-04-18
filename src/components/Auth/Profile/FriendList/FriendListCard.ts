@@ -16,16 +16,16 @@ export class FriendListCard extends Component {
     constructor(parent: Component) {
         super(parent);
 
-        this.registerEvent(()=>document.getElementById("friends-list-link"), "click", this.#onLinkClick);
-        this.registerEvent(
-            ()=>document.getElementById("findFriends"), 
-            "click",
-            this.#openFriendsList
-        )
+        this.registerEvent(() => document.getElementById("friends-list-link"), "click", this.#onLinkClick);
+        this.registerEvent(() => document.getElementById("findFriends"), "click", this.#openFriendsList);
     }
 
     #onLinkClick() {
         const id = store.getState().user.currentProfile?.id;
+        if (id === undefined) {
+            return;
+        }
+
         const searchName = store.getState().friendList.friendSearchQuery;
         requestManager.request(loadFriends, id, searchName);
         store.dispatch(openFriendsList());
@@ -46,7 +46,7 @@ export class FriendListCard extends Component {
 
         return FriendListCardTemplate({
             friends: friends,
-            mine: mine
+            mine: mine,
         });
     }
 }

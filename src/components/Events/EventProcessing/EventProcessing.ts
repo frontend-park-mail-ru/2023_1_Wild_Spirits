@@ -13,6 +13,7 @@ import { setEventProcessingLoadStart, toggleEventProcessingTag } from "flux/slic
 import { requestManager } from "requests";
 import { loadEventProcessingCreate, loadEventProcessingEdit } from "requests/events";
 import { dateToServer } from "modules/dateParser";
+import { TagsState } from "flux/slices/tagsSlice";
 
 export class EventProcessing extends Component {
     #tagsComponent: Tags;
@@ -25,7 +26,7 @@ export class EventProcessing extends Component {
             "js-event-processing-tag",
             () => {
                 const { processing } = store.getState().events;
-                return processing.loadStatus === LoadStatus.DONE ? processing.tags.tags : {};
+                return processing.loadStatus === LoadStatus.DONE ? processing.tags : ({} as TagsState);
             },
             ({ tag }: ToggleTagFuncProps) => {
                 store.dispatch(toggleEventProcessingTag(tag));
@@ -55,20 +56,6 @@ export class EventProcessing extends Component {
             return processing.processingState === EventProcessingState.EDIT;
         }
         return false;
-    }
-
-    createDefaultData(): EventProcessingForm {
-        return {
-            id: -1,
-            name: "",
-            description: "",
-            place: "",
-            dateStart: "",
-            dateEnd: "",
-            timeStart: "",
-            timeEnd: "",
-            img: "",
-        };
     }
 
     setCreate() {

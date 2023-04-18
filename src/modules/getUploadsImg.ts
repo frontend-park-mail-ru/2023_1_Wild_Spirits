@@ -9,5 +9,6 @@ const fixImgUrl = (url: string): string => {
 };
 
 export const getUploadsImg = (url: string) => {
-    return config.UPLOADS + "/" + fixImgUrl(url);
+    const fixedUrl = fixImgUrl(url);
+    return fixedUrl === "" ? "" : config.UPLOADS + "/" + fixedUrl;
 };

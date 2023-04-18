@@ -16,7 +16,7 @@ export class FriendList extends Component {
     constructor(parent: Component) {
         super(parent);
 
-        this.registerEvent(()=>document.getElementById("friend-search"), "change", this.#reload);
+        this.registerEvent(() => document.getElementById("friend-search"), "change", this.#reload);
     }
 
     #reload = (event: Event) => {
@@ -26,11 +26,15 @@ export class FriendList extends Component {
             return;
         }
 
-        const id = store.getState().user.currentProfile?.id;
         const searchName = input.value;
+        const id = store.getState().user.currentProfile?.id;
+        if (id === undefined) {
+            return;
+        }
+
         store.dispatch(setFriendSearchQuery(searchName));
         requestManager.request(loadFriends, id, searchName);
-    }
+    };
 
     render() {
         const friends = store.getState().friendList.friends.map(({ id, name, img }) => ({
@@ -41,7 +45,7 @@ export class FriendList extends Component {
 
         return FriendListTemplate({
             friends: friends?.concat(friends),
-            friendSearchQuery: store.getState().friendList.friendSearchQuery
+            friendSearchQuery: store.getState().friendList.friendSearchQuery,
         });
     }
 }

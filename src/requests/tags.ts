@@ -3,10 +3,10 @@ import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux/index";
 import { setTags } from "flux/slices/tagsSlice";
-import { TRequest } from "./requestTypes";
+import { TRequestResolver } from "./requestTypes";
 import { TTag } from "models/Tag";
 
-export const loadTags: TRequest = (resolveRequest) =>
+export const loadTags = (resolveRequest: TRequestResolver) =>
     ajax
         .get<ResponseBody<{ tags: TTag[] }>>({
             url: "/tags",

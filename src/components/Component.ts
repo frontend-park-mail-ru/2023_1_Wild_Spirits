@@ -58,7 +58,10 @@ export class Component {
      * @param  {...any} args - arguments passed to new component
      * @returns {Component} - a newly created component
      */
-    createComponent<T extends Component>(c: { new (parent: Component, ...args: any): T }, ...args: any): T {
+    createComponent<T extends Component, Params extends any[]>(
+        c: { new (parent: Component, ...args: Params): T },
+        ...args: Params
+    ): T {
         const newComponent = new c(this, ...args);
         this.#children.push(newComponent);
         return newComponent;

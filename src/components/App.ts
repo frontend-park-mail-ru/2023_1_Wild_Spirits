@@ -10,7 +10,7 @@ import { Registration } from "components/Auth/Registration/Registration";
 import { Calendar } from "./Calendar/Calendar";
 
 import { FriendListCard } from "components/Auth/Profile/FriendList/FriendListCard";
-import { FriendList} from "components/Auth/Profile/FriendList/FriendList"
+import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
 
 import AppTemplate from "templates/App.handlebars";
 import DelimiterTemplate from "templates/Common/Delimiter.handlebars";
@@ -59,7 +59,7 @@ export class App extends Component {
         requestManager.request(loadTags);
 
         this.#headerComponent = this.createComponent(Header);
-        this.#eventListComponent = this.createComponent<EventList>(EventList);
+        this.#eventListComponent = this.createComponent(EventList);
         this.#modalWindowComponent = this.createComponent(ModalWindow);
         this.#eventComponent = this.createComponent(EventPage);
         this.#eventProcessingComponent = this.createComponent(EventProcessing);

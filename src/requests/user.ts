@@ -3,18 +3,12 @@ import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser"
 import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
-import {
-    setData,
-    logout,
-    setCurrentProfile,
-    authorizedLoadStart,
-    authorizedLoadError,
-} from "flux/slices/userSlice";
+import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError } from "flux/slices/userSlice";
 import { setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
-import { TRequest } from "./requestTypes";
+import { TRequestResolver } from "./requestTypes";
 
-export const loadAuthorization: TRequest = (resolveRequest) => {
+export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
     ajax.get<ResponseUserLight, ResponseErrorDefault>({
         url: "/authorized",
@@ -38,7 +32,7 @@ export const loadAuthorization: TRequest = (resolveRequest) => {
         });
 };
 
-export const loadProfile: TRequest = (resolveRequest, id: number) => {
+export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
     ajax.get<ResponseUserProfile>({
         url: `/users/${id}`,
         credentials: true,
@@ -54,42 +48,41 @@ export const loadProfile: TRequest = (resolveRequest, id: number) => {
         });
 };
 
-export const loadFriends: TRequest = (resolveRequest, user_id: number, search?: string) => {
-    let urlProps = {}
+export const loadFriends = (resolveRequest: TRequestResolver, user_id: number, search?: string) => {
+    let urlProps = {};
     if (search !== undefined && search.length > 0) {
         urlProps = {
-            name: search
-        }
+            name: search,
+        };
     }
     ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
         url: `/users/${user_id}/friends`,
-        urlProps: urlProps
+        urlProps: urlProps,
     }).then(({ json, response, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
             // store.dispatch(setCurrentProfileFriends({ friends: json.body.users }));
-            store.dispatch(setFriends({friends: json.body.users}));
+            store.dispatch(setFriends({ friends: json.body.users }));
         }
-        resolveRequest();
+        resolveRequest(user_id, search);
     });
-}
+};
 
-
-export const addFriend: TRequest = (resolveRequest, user_id: number) =>
-    ajax.post({
-        url: `/friends/${user_id}`,
-        credentials: true,
-    }).then(({ status }) => {
-        if (status === AjaxResultStatus.SUCCESS) {
-            // TODO do something?
-        }
-        resolveRequest(user_id);
-    });
+export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
+    ajax
+        .post({
+            url: `/friends/${user_id}`,
+            credentials: true,
+        })
+        .then(({ status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                // TODO do something?
+            }
+            resolveRequest(user_id);
+        });
 
 type TWarningMsgCallack = (warning: string | undefined) => void;
 
-export const loginUser: TRequest = (resolveRequest, 
-                                    formData: FormData,
-                                    warningMsg: TWarningMsgCallack) => {
+export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, warningMsg: TWarningMsgCallack) => {
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/login",
         credentials: true,
@@ -105,16 +98,14 @@ export const loginUser: TRequest = (resolveRequest,
             } else {
                 warningMsg(json.errorMsg);
             }
-            resolveRequest();
+            resolveRequest(formData, warningMsg);
         })
         .catch((error) => {
             console.log("catch:", error);
         });
-}
+};
 
-export const registerUser: TRequest = (resolveRequest, 
-                                       formData: FormData, 
-                                       warningMsg: TWarningMsgCallack) => {                   
+export const registerUser = (resolveRequest: TRequestResolver, formData: FormData, warningMsg: TWarningMsgCallack) => {
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/register",
         credentials: true,
@@ -139,13 +130,14 @@ export const registerUser: TRequest = (resolveRequest,
         .catch((error) => {
             console.log("catch:", error);
         });
-    }
+};
 
-export const logoutUser: TRequest = (resolveRequest) =>
-    ajax.post({
-        url: "/logout",
-        credentials: true,
-    })
+export const logoutUser = (resolveRequest: TRequestResolver) =>
+    ajax
+        .post({
+            url: "/logout",
+            credentials: true,
+        })
         .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 ajax.removeHeaders("x-csrf-token");

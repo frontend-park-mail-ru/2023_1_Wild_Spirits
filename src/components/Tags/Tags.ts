@@ -3,7 +3,6 @@
 import { Component } from "components/Component";
 import TagsTemplate from "templates/Tags/Tags.handlebars";
 
-import { store } from "flux";
 import { TagsState } from "flux/slices/tagsSlice";
 import { loadEvents } from "requests/events";
 import "./styles.scss";
@@ -39,13 +38,11 @@ export class Tags extends Component {
         let el = event.target as HTMLElement;
 
         this.#toggleTag({ tag: el.innerText });
-
-        requestManager.request(loadEvents);
     };
 
     render() {
         return TagsTemplate({
-            tags: this.#getTagsState(),
+            tags: this.#getTagsState().tags,
             className: this.#className,
         });
     }

@@ -12,13 +12,13 @@ import {
     setSelectedEventLoadError,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
-import { TRequest, TRequestResolver } from "./requestTypes";
+import { TRequestResolver } from "./requestTypes";
 import { EventProcessingState } from "models/Events";
 
 /**
  * fill itself with events from server
  */
-export const loadEvents: TRequest = (resolveRequest) => {
+export const loadEvents = (resolveRequest: TRequestResolver) => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
 
     const dateToString = (date: Date | undefined) => {
@@ -82,15 +82,15 @@ const loadEvent = ({ eventId, onSuccess, onError, resolveRequest }: LoadEventPro
             } else {
                 onError();
             }
-            resolveRequest();
+            resolveRequest(eventId);
         })
         .catch((error) => {
             onError();
-            resolveRequest();
+            resolveRequest(eventId);
         });
 };
 
-export const loadEventPage: TRequest = (resolveRequest, eventId: number) => {
+export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number) => {
     loadEvent({
         eventId,
         onSuccess: (json) => {
@@ -119,7 +119,7 @@ const getTags = (tags: string[] | null): TagsState => {
     };
 };
 
-export const loadEventProcessingEdit: TRequest = (resolveRequest, eventId: number) => {
+export const loadEventProcessingEdit = (resolveRequest: TRequestResolver, eventId: number) => {
     loadEvent({
         eventId,
         onSuccess: (json) => {
@@ -140,7 +140,7 @@ export const loadEventProcessingEdit: TRequest = (resolveRequest, eventId: numbe
     });
 };
 
-export const loadEventProcessingCreate: TRequest = (resolveRequest) => {
+export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
     store.dispatch(
         setEventProcessingFormData({
             event: {
