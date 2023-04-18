@@ -1,13 +1,16 @@
 .card {
     --lm-card-border-radius: 20px;
+    --lm-card-width: 290px;
     --lm-card-border-width: 1px;
     --lm-card-inner-border-radius: calc(var(--lm-card-border-radius) - (var(--lm-card-border-width)));
     display: flex;
     flex-direction: column;
-    width: 290px;
+    min-width: var(--lm-card-width);
+    max-width: var(--lm-card-width);
     border: var(--lm-card-border-width) solid #000000;
     border-radius: var(--lm-card-border-radius);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    word-wrap: break-word;
 }
 
 .card__img-block {

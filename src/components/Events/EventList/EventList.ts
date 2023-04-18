@@ -14,6 +14,8 @@ import "./styles.scss";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
+const SLICE_SIZE = 160;
+
 /**
  * Event list component
  * @class
@@ -55,14 +57,17 @@ export class EventList extends Component {
                 // const places: string[] = event.places.map((place) => place.name);
                 const places = event.places;
                 return new EventCard(this, {
-                    id: event.id,
-                    name: event.name,
-                    img: getUploadsImg(event.img),
-                    description: event.description,
-                    dates,
-                    places,
-                    org: event.org,
-                });
+					id: event.id,
+					name: event.name,
+					img: getUploadsImg(event.img),
+					description:
+						event.description.length > SLICE_SIZE
+							? event.description.slice(0, SLICE_SIZE)
+							: event.description,
+					dates,
+					places,
+					org: event.org,
+				});
             });
             const renderedEvents: string[] = cardsComponents.map((component) => component.render());
 
