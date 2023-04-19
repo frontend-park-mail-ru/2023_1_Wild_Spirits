@@ -121,6 +121,7 @@ export class Profile extends Component {
                 formData.set("avatar", imageBlob);
 
                 this.#sendForm(userData.id, formData);
+                this.#tempAvatarUrl = undefined;
             });
         } else {
             this.#sendForm(userData.id, formData);
@@ -142,7 +143,7 @@ export class Profile extends Component {
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
-                    errorMsgElement.textContent = json.errorMsg;
+                    errorMsgElement.textContent = json.errorMsg || null;
                 }
             }
         });

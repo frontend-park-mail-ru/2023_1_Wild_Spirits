@@ -3,10 +3,11 @@ import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser"
 import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError } from "flux/slices/userSlice";
+import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError, addToFriends } from "flux/slices/userSlice";
 import { setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
+import { App } from "components/App";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
@@ -75,12 +76,12 @@ export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
         })
         .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                // TODO do something?
+                store.dispatch(addToFriends());
             }
             resolveRequest(user_id);
         });
 
-type TWarningMsgCallack = (warning: string | undefined) => void;
+type TWarningMsgCallack = (warning: string | undefined, errors: {[key: string]: string} | undefined) => void;
 
 export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, warningMsg: TWarningMsgCallack) => {
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
@@ -96,7 +97,7 @@ export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, 
                     store.dispatch(setData(json.body.user), close());
                 }
             } else {
-                warningMsg(json.errorMsg);
+                warningMsg(json.errorMsg, json.errors);
             }
             resolveRequest(formData, warningMsg);
         })
@@ -123,7 +124,7 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
                 }
                 store.dispatch(setData(json.body.user), close());
             } else {
-                warningMsg(json.errorMsg);
+                warningMsg(json.errorMsg, json.errors);
             }
             resolveRequest(formData, warningMsg);
         })

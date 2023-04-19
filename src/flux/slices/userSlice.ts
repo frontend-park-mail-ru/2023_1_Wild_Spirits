@@ -4,6 +4,7 @@ import { LoadStatus } from "requests/LoadStatus";
 
 import { router } from "modules/router";
 import { PayloadAction } from "flux/action";
+import { create } from "handlebars";
 
 interface TUserLightDataType extends TUserLight {
     friends?: TFriend[];
@@ -53,6 +54,20 @@ const userSlice = createSlice({
         setData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
             state.authorizedLoadStatus = LoadStatus.DONE;
             state.data = action.payload;
+            return state;
+        },
+        addToFriends: (state: UserState) => {
+            const currentProfile = state.currentProfile;
+            if (currentProfile && state.data) {
+                state.data?.friends?.push({
+                    id: currentProfile.id,
+                    name: currentProfile.name,
+                    img: currentProfile.img
+                });
+                if (state.currentProfile) {
+                    state.currentProfile.is_friend = true;
+                }
+            }
             return state;
         },
         logout: (state: UserState) => {
@@ -111,6 +126,7 @@ export const {
     authorizedLoadStart,
     authorizedLoadError,
     setData,
+    addToFriends,
     logout,
     setCurrentProfile,
     setCurrentProfileFriends,

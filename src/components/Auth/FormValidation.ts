@@ -61,7 +61,7 @@ export const validateForm = (form: HTMLFormElement): boolean => {
     return isValid;
 };
 
-export const warningMsg = (message: string | undefined): void => {
+export const warningMsg = (message: string | undefined, errors: {[key: string]: string} | undefined): void => {
     let warning: string;
     if (message === undefined) {
         warning = "неизвестная ошибка сервера";
@@ -72,7 +72,30 @@ export const warningMsg = (message: string | undefined): void => {
             "Wrong credentials": "Неверный логин или пароль"
         };
     
-        warning = errorMessages[message] || message;
+        if (message !== 'Request data validation failure') {
+            warning = errorMessages[message] || message;
+        } else {
+            warning = "";
+        }
+    }
+
+    if (errors !== undefined) {
+        const errorSynonyms: {[key: string]: string} = {
+            "username": "nickname",
+            "pass": "password"
+        }
+
+        for (const [field, msg] of Object.entries(errors)) {
+            const fieldName = errorSynonyms[field];
+            if (!fieldName) {
+                continue;
+            }
+            const warningEl = document.querySelector(`input[name=${fieldName}] + .warning`);
+            console.log(field, msg)
+            if (warningEl) {
+                warningEl.textContent = msg;
+            }
+        }
     }
 
     const warningEl = document.getElementById("common-warning");

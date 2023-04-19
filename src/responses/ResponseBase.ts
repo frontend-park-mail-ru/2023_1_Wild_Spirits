@@ -8,5 +8,6 @@ export interface ResponseBody<T> {
 }
 
 export interface ResponseErrorDefault {
-    errorMsg: string;
+    errorMsg?: string;
+    errors?: {[key: string]: string}
 }
