@@ -11,7 +11,7 @@ const __dirname = path.dirname(filename);
 export const createConf = (env, argv) => {
     let config = {
         entry: {
-            app: "./src/index.ts",
+            app: "./src/index.tsx",
         },
         output: {
             filename: "[name].js",
@@ -21,7 +21,7 @@ export const createConf = (env, argv) => {
         module: {
             rules: [
                 {
-                    test: /\.(ts|js)$/,
+                    test: /\.(ts|js|tsx|jsx)$/,
                     exclude: /node_modules/,
                     loader: "babel-loader",
                 },
@@ -66,7 +66,7 @@ export const createConf = (env, argv) => {
                     options: {
                         outputPath: "assets",
                         name: "[name].[ext]",
-                        publicPath: "/"
+                        publicPath: "/",
                     },
                 },
                 {
