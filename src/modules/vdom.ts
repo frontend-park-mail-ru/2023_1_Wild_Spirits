@@ -10,17 +10,13 @@ export abstract class Component<TProps> {
         this.props = props;
     }
 
-    didCreate() {
-        console.log("Component didCreate");
-    }
+    didCreate() {}
 
     willUpdate() {}
 
     didUpdate() {}
 
-    willDestroy() {
-        console.log("Component willDestroy");
-    }
+    willDestroy() {}
 
     abstract render(): JSX.Element;
 }
@@ -98,6 +94,8 @@ export const createDOMNode = (vNode: VNodeType) => {
         node.appendChild(createDOMNode(child));
     });
 
+    (vNode as NamedVNodeType)?._instance?.didCreate();
+
     return node;
 };
 
@@ -106,51 +104,64 @@ export const createDOMNode = (vNode: VNodeType) => {
 //     return node;
 // };
 
+const deepEqual = (x: any, y: any) => {
+    if (x === y) {
+        return true;
+    } else if (typeof x == "object" && x != null && typeof y == "object" && y != null) {
+        if (Object.keys(x).length != Object.keys(y).length) return false;
+
+        for (const prop in x) {
+            if (y.hasOwnProperty(prop)) {
+                if (!deepEqual(x[prop], y[prop])) return false;
+            } else return false;
+        }
+
+        return true;
+    } else return false;
+};
+
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
-    console.group("patchNode", vNode);
     if (nextVNode === undefined) {
         node.remove();
-        console.log("nextNode === undefind");
-        console.groupEnd();
         return;
     }
 
     if (isTypeStrBoolNone(vNode) || isTypeStrBoolNone(nextVNode)) {
-        console.log("isTypeStrBoolNone(vNode) || isTypeStrBoolNone(nextVNode)");
-
         if (vNode !== nextVNode) {
-            console.log("vNode !== nextVNode");
             if (!isTypeStrBoolNone(vNode)) {
                 (vNode as NamedVNodeType)?._instance?.willDestroy();
             }
             const nextNode = createDOMNode(nextVNode);
             node.replaceWith(nextNode);
-            console.groupEnd();
             return nextNode;
         }
 
-        console.groupEnd();
         return node;
     }
 
     vNode = vNode as NamedVNodeType;
     nextVNode = nextVNode as NamedVNodeType;
     if (vNode.tagName !== nextVNode.tagName) {
-        console.log("vNode.tagName !== nextVNode.tagName");
-
         if (!isTypeStrBoolNone(vNode)) {
             (vNode as NamedVNodeType)?._instance?.willDestroy();
         }
         const nextNode = createDOMNode(nextVNode);
         node.replaceWith(nextNode);
-        console.groupEnd();
         return nextNode;
     }
 
-    patchProps(node, vNode.props, nextVNode.props);
+    const instancePropsChanged = !deepEqual(vNode._instance?.props, nextVNode._instance?.props);
+    if (instancePropsChanged) {
+        vNode?._instance?.willUpdate();
+    }
+
+    patchProps(node, vNode.props, nextVNode.props, vNode);
     patchChildren(node, vNode.children, nextVNode.children);
 
-    console.groupEnd();
+    if (instancePropsChanged) {
+        vNode?._instance?.didUpdate();
+    }
+
     return node;
 };
 
@@ -177,7 +188,7 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
     (node as HTMLElement).setAttribute(key, nextValue as string);
 };
 
-const patchProps = (node: DOMNodeType, props: PropsType, nextProps: PropsType) => {
+const patchProps = (node: DOMNodeType, props: PropsType, nextProps: PropsType, vNode: NamedVNodeType | null = null) => {
     const mergedProps = { ...props, ...nextProps };
 
     Object.keys(mergedProps).forEach((key) => {

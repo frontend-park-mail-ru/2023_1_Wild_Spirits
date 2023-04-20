@@ -62,6 +62,10 @@ class TestComponent extends Component<TestFooProps> {
         super(props);
     }
 
+    didCreate() {
+        console.error("TestComponent didCreate");
+    }
+
     render() {
         return <div>{this.props.test}</div>;
     }
@@ -71,13 +75,29 @@ const TestFoo = ({ test }: TestFooProps) => {
     return <div>TestFoo! {test}</div>;
 };
 
-class ButtonComponent extends Component<any> {
+class ButtonComponent extends Component<TestFooProps> {
+    constructor(props: TestFooProps) {
+        super(props);
+    }
+
+    didCreate() {
+        console.error("ButtonComponent didCreate");
+    }
+
     willDestroy() {
         console.error("ButtonComponent willDestroy");
     }
 
+    didUpdate() {
+        console.error("ButtonComponent didUpdate");
+    }
+
+    willUpdate() {
+        console.error("ButtonComponent willUpdate");
+    }
+
     render(): JSX.Element {
-        return <div>Test Button Text</div>;
+        return <div>Test Button Text {this.props.test}</div>;
     }
 }
 
@@ -96,7 +116,7 @@ const createVApp = (store: any) => {
             <img src="https://i.ibb.co/M6LdN5m/2.png" width="200" />
             {count > -5 ? <button onClick={decrement}>-1</button> : ""}
             {count < 5 && <button onClick={increment}>+1</button>}
-            {count < -2 && <ButtonComponent />}
+            {count < -1 && <ButtonComponent test={`test${count > -4 ? -4 : count}`} />}
         </div>
     );
 };
