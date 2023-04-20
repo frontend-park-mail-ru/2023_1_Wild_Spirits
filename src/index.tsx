@@ -1,10 +1,12 @@
-// import { App } from "components/App";
-// import { ajax } from "modules/ajax";
-// import config from "config";
-// import "@style";
+import { ajax } from "modules/ajax";
+import config from "config";
+import "@style";
 
-// import { store } from "flux";
-// import { router } from "modules/router";
+import { patch, createVNode as cvn, VNodeType, DOMNodeType, Component } from "./modules/vdom";
+import { App } from "components/App";
+
+import { store } from "flux";
+import { router } from "modules/router";
 
 // if ("serviceWorker" in navigator) {
 //     navigator.serviceWorker.register("sw.js", { scope: "/" }).catch(() => {
@@ -12,8 +14,8 @@
 //     });
 // }
 
-// ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
-// ajax.host = config.HOST;
+ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
+ajax.host = config.HOST;
 
 // const root = document.getElementById("app");
 // const app = new App(root as HTMLElement);
@@ -23,115 +25,97 @@
 
 // app.rerender();
 
-//
-
-import { patch, createVNode as cvn, VNodeType, DOMNodeType, Component } from "./modules/vdom";
 
 const createVNode = cvn;
 
-/*
-const createVButton = props => {
-  const { text, onclick } = props;
-  return createVNode("button", { onclick }, [text]);
-};
-const createVApp = store => {
-  const { count } = store.state;
-  return createVNode("div", { class: "container", "data-count": count }, [
-    createVNode("h1", {}, ["Hello, Virtual DOM"]),
-    createVNode("div", {}, [`Count: ${count}`]),
-    "Text node without tags",
-    createVNode("img", { src: "https://i.ibb.co/M6LdN5m/2.png", width: 200 }),
-    createVNode("div", {}, [
-      createVButton({
-        text: "-1",
-        onclick: () => store.setState({ count: store.state.count - 1 })
-      }),
-      " ",
-      createVButton({
-        text: "+1",
-        onclick: () => store.setState({ count: store.state.count + 1 })
-      })
-    ])
-  ]);
-};
-*/
-type TestFooProps = { test: string };
+let app = new App();
 
-class TestComponent extends Component<TestFooProps> {
-    constructor(props: TestFooProps) {
-        super(props);
-    }
+let root = patch(app.render() as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
 
-    didCreate() {
-        console.error("TestComponent didCreate");
-    }
+store.subscribe(() => {
+  root = patch(app.render() as unknown as VNodeType, root);
+});
 
-    render() {
-        return <div>{this.props.test}</div>;
-    }
-}
+// type TestFooProps = { test: string };
 
-const TestFoo = ({ test }: TestFooProps) => {
-    return <div>TestFoo! {test}</div>;
-};
+// class TestComponent extends Component<undefined> {
+//     constructor() {
+//         super(undefined);
+//     }
 
-class ButtonComponent extends Component<TestFooProps> {
-    constructor(props: TestFooProps) {
-        super(props);
-    }
+//     didCreate() {
+//         console.error("TestComponent didCreate");
+//     }
 
-    didCreate() {
-        console.error("ButtonComponent didCreate");
-    }
+//     render() {
+//         return <div>test</div>;
+//     }
+// }
 
-    willDestroy() {
-        console.error("ButtonComponent willDestroy");
-    }
+// const TestFoo = ({ test }: TestFooProps) => {
+//     return <div>TestFoo! {test}</div>;
+// };
 
-    didUpdate() {
-        console.error("ButtonComponent didUpdate");
-    }
+// let test = new TestComponent();
+// let root = patch(test.render() as unknown as VNodeType, document.getElementById("app") as DOMNodeType)
 
-    willUpdate() {
-        console.error("ButtonComponent willUpdate");
-    }
+// class ButtonComponent extends Component<TestFooProps> {
+//     constructor(props: TestFooProps) {
+//         super(props);
+//     }
 
-    render(): JSX.Element {
-        return <div>Test Button Text {this.props.test}</div>;
-    }
-}
+//     didCreate() {
+//         console.error("ButtonComponent didCreate");
+//     }
 
-const createVApp = (store: any) => {
-    const { count } = store.state;
-    const decrement = () => store.setState({ count: store.state.count - 1 });
-    const increment = () => store.setState({ count: store.state.count + 1 });
+//     willDestroy() {
+//         console.error("ButtonComponent willDestroy");
+//     }
 
-    return (
-        <div {...{ class: "container", "data-count": String(count) }}>
-            <h1>Hello, Virtual DOM</h1>
-            <div>Count: {String(count)}</div>
-            <TestFoo test="test" />
-            <TestComponent test="dasdad" />
-            Text node without tags
-            <img src="https://i.ibb.co/M6LdN5m/2.png" width="200" />
-            {count > -5 ? <button onClick={decrement}>-1</button> : ""}
-            {count < 5 && <button onClick={increment}>+1</button>}
-            {count < -1 && <ButtonComponent test={`test${count > -4 ? -4 : count}`} />}
-        </div>
-    );
-};
+//     didUpdate() {
+//         console.error("ButtonComponent didUpdate");
+//     }
 
-const store = {
-    state: { count: 0 },
-    onStateChanged: () => {},
-    setState(nextState: any) {
-        this.state = nextState;
-        this.onStateChanged();
-    },
-};
+//     willUpdate() {
+//         console.error("ButtonComponent willUpdate");
+//     }
 
-let app = patch(createVApp(store) as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
+//     render(): JSX.Element {
+//         return <div>Test Button Text {this.props.test}</div>;
+//     }
+// }
 
-store.onStateChanged = () => {
-    app = patch(createVApp(store) as unknown as VNodeType, app);
-};
+// const createVApp = (store: any) => {
+//     const { count } = store.state;
+//     const decrement = () => store.setState({ count: store.state.count - 1 });
+//     const increment = () => store.setState({ count: store.state.count + 1 });
+
+//     return (
+//         <div {...{ class: "container", "data-count": String(count) }}>
+//             <h1>Hello, Virtual DOM</h1>
+//             <div>Count: {String(count)}</div>
+//             <TestFoo test="test" />
+//             <TestComponent test="dasdad" />
+//             Text node without tags
+//             <img src="https://i.ibb.co/M6LdN5m/2.png" width="200" />
+//             {count > -5 ? <button onClick={decrement}>-1</button> : ""}
+//             {count < 5 && <button onClick={increment}>+1</button>}
+//             {count < -1 && <ButtonComponent test={`test${count > -4 ? -4 : count}`} />}
+//         </div>
+//     );
+// };
+
+// const store = {
+//     state: { count: 0 },
+//     onStateChanged: () => {},
+//     setState(nextState: any) {
+//         this.state = nextState;
+//         this.onStateChanged();
+//     },
+// };
+
+// let app = patch(createVApp(store) as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
+
+// store.onStateChanged = () => {
+//     app = patch(createVApp(store) as unknown as VNodeType, app);
+// };

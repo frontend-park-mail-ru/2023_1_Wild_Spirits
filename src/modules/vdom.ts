@@ -96,6 +96,8 @@ export const createDOMNode = (vNode: VNodeType) => {
         node.appendChild(createDOMNode(child));
     });
 
+    console.log('node:', vNode);
+
     (vNode as NamedVNodeType)?._instance?.didCreate();
 
     return node;
@@ -205,9 +207,11 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
+    console.log(nextVNode)
     const vNode = (node as any).v || recycleNode(node);
 
     const newNode = patchNode(node, vNode, nextVNode);
+    console.log(newNode)
     if (newNode) {
         node = newNode;
         (node as any).v = nextVNode;

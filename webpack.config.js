@@ -103,7 +103,7 @@ export const createConf = (env, argv) => {
             }),
         ],
         resolve: {
-            extensions: [".js", ".ts", "css", "img"],
+            extensions: [".js", ".ts", ".jsx", ".tsx", "css", "img"],
             modules: [__dirname + "/src", "node_modules"],
             alias: {
                 handlebars: "handlebars/dist/handlebars.js",
