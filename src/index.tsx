@@ -55,6 +55,7 @@ const createVApp = store => {
   ]);
 };
 */
+type TestFooProps = { test: string };
 
 class TestComponent extends Component<TestFooProps> {
     constructor(props: TestFooProps) {
@@ -62,14 +63,23 @@ class TestComponent extends Component<TestFooProps> {
     }
 
     render() {
-        return <div>TestComponent! {this.props.test}</div>;
+        return <div>{this.props.test}</div>;
     }
 }
 
-type TestFooProps = { test: string };
 const TestFoo = ({ test }: TestFooProps) => {
     return <div>TestFoo! {test}</div>;
 };
+
+class ButtonComponent extends Component<any> {
+    willDestroy() {
+        console.error("ButtonComponent willDestroy");
+    }
+
+    render(): JSX.Element {
+        return <div>Test Button Text</div>;
+    }
+}
 
 const createVApp = (store: any) => {
     const { count } = store.state;
@@ -86,6 +96,7 @@ const createVApp = (store: any) => {
             <img src="https://i.ibb.co/M6LdN5m/2.png" width="200" />
             {count > -5 ? <button onClick={decrement}>-1</button> : ""}
             {count < 5 && <button onClick={increment}>+1</button>}
+            {count < -2 && <ButtonComponent />}
         </div>
     );
 };
@@ -98,8 +109,6 @@ const store = {
         this.onStateChanged();
     },
 };
-
-console.log(createVApp(store));
 
 let app = patch(createVApp(store) as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
 

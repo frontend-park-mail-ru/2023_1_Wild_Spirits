@@ -8,16 +8,19 @@ export abstract class Component<TProps> {
 
     constructor(props: TProps) {
         this.props = props;
-        console.log("Component created!");
     }
 
-    didCreate() {}
+    didCreate() {
+        console.log("Component didCreate");
+    }
 
     willUpdate() {}
 
     didUpdate() {}
 
-    willDestroy() {}
+    willDestroy() {
+        console.log("Component willDestroy");
+    }
 
     abstract render(): JSX.Element;
 }
@@ -39,7 +42,7 @@ type TagNameType<T extends Component<TProps>, TProps> =
     | string
     | ComponentConstructor<T, TProps>;
 
-type NamedVNodeType = { tagName: string; props: PropsType; children: ChildType[] };
+type NamedVNodeType = { tagName: string; props: PropsType; children: ChildType[] } & { _instance?: Component<any> };
 
 export type VNodeType = NamedVNodeType | string | undefined | null | boolean;
 
@@ -50,16 +53,15 @@ export const createVNode = <T extends Component<TProps>, TProps>(
     props: PropsType | TProps = {},
     ...children: ChildType[]
 ): VNodeType => {
-    console.log("tagName", tagName, "props", props, "children", children, typeof tagName, tagName instanceof Component);
-    console.log(tagName);
-
     if (typeof tagName === "function") {
         try {
             const result = (tagName as TagNameTypeFunc<TProps>)(props as TProps, children);
             return result;
         } catch {
-            const result = new (tagName as ComponentConstructor<T, TProps>)(props as TProps, ...children);
-            return result.render() as unknown as VNodeType;
+            const instance = new (tagName as ComponentConstructor<T, TProps>)(props as TProps, ...children);
+            let vnode = instance.render() as unknown as NamedVNodeType;
+            vnode._instance = instance;
+            return vnode;
         }
     }
 
@@ -72,8 +74,10 @@ export const createVNode = <T extends Component<TProps>, TProps>(
     };
 };
 
-const isTypeStrBoolNone = (vNode: VNodeType) => {
-    return typeof vNode === "string" || typeof vNode === "boolean" || vNode == null;
+const isTypeStrBoolNone = (vNode: VNodeType): boolean => {
+    return (
+        typeof vNode === "string" || typeof vNode === "boolean" || typeof vNode === "undefined" || typeof vNode === null
+    );
 };
 
 export const createDOMNode = (vNode: VNodeType) => {
@@ -85,8 +89,6 @@ export const createDOMNode = (vNode: VNodeType) => {
     }
 
     const { tagName, props, children } = vNode;
-
-    console.log(vNode);
 
     const node = document.createElement(tagName);
 
@@ -105,32 +107,50 @@ export const createDOMNode = (vNode: VNodeType) => {
 // };
 
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
+    console.group("patchNode", vNode);
     if (nextVNode === undefined) {
         node.remove();
+        console.log("nextNode === undefind");
+        console.groupEnd();
         return;
     }
 
     if (isTypeStrBoolNone(vNode) || isTypeStrBoolNone(nextVNode)) {
+        console.log("isTypeStrBoolNone(vNode) || isTypeStrBoolNone(nextVNode)");
+
         if (vNode !== nextVNode) {
+            console.log("vNode !== nextVNode");
+            if (!isTypeStrBoolNone(vNode)) {
+                (vNode as NamedVNodeType)?._instance?.willDestroy();
+            }
             const nextNode = createDOMNode(nextVNode);
             node.replaceWith(nextNode);
+            console.groupEnd();
             return nextNode;
         }
 
+        console.groupEnd();
         return node;
     }
 
     vNode = vNode as NamedVNodeType;
     nextVNode = nextVNode as NamedVNodeType;
     if (vNode.tagName !== nextVNode.tagName) {
+        console.log("vNode.tagName !== nextVNode.tagName");
+
+        if (!isTypeStrBoolNone(vNode)) {
+            (vNode as NamedVNodeType)?._instance?.willDestroy();
+        }
         const nextNode = createDOMNode(nextVNode);
         node.replaceWith(nextNode);
+        console.groupEnd();
         return nextNode;
     }
 
     patchProps(node, vNode.props, nextVNode.props);
     patchChildren(node, vNode.children, nextVNode.children);
 
+    console.groupEnd();
     return node;
 };
 
