@@ -56,15 +56,19 @@ const createVApp = store => {
 };
 */
 
-class TestComponent extends Component {
+class TestComponent extends Component<TestFooProps> {
+    constructor(props: TestFooProps) {
+        super(props);
+    }
+
     render() {
-        return <div>TestComponent!</div>;
+        return <div>TestComponent! {this.props.test}</div>;
     }
 }
 
 type TestFooProps = { test: string };
 const TestFoo = ({ test }: TestFooProps) => {
-    return <div>TestFoo!</div>;
+    return <div>TestFoo! {test}</div>;
 };
 
 const createVApp = (store: any) => {
@@ -77,7 +81,7 @@ const createVApp = (store: any) => {
             <h1>Hello, Virtual DOM</h1>
             <div>Count: {String(count)}</div>
             <TestFoo test="test" />
-            <TestComponent />
+            <TestComponent test="dasdad" />
             Text node without tags
             <img src="https://i.ibb.co/M6LdN5m/2.png" width="200" />
             {count > -5 ? <button onClick={decrement}>-1</button> : ""}

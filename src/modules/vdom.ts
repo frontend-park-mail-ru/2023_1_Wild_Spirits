@@ -1,12 +1,13 @@
-export abstract class Component {
+export abstract class Component<TProps> {
     context: unknown;
     setState: any;
     forceUpdate: any;
-    props: any;
+    props: TProps;
     state: any;
     refs: any;
 
-    constructor() {
+    constructor(props: TProps) {
+        this.props = props;
         console.log("Component created!");
     }
 
@@ -27,42 +28,43 @@ type PropsType = { [key: string]: PropType };
 
 type ChildType = VNodeType | string | undefined | null | boolean;
 
-type FunctionComponent = (props: PropsType, childeren: ChildType[]) => VNodeType;
+// type FunctionComponent = (props: PropsType, children: ChildType[]) => VNodeType;
 
-type TagNameTypeFunc = (props: PropsType, childeren: ChildType[]) => VNodeType;
+type TagNameTypeFunc<TProps> = (props: TProps, children: ChildType[]) => VNodeType;
 
-type ComponentConstructor<T extends Component> = new (props: PropsType, ...childeren: ChildType[]) => T;
+type ComponentConstructor<T extends Component<TProps>, TProps> = new (props: TProps, ...children: ChildType[]) => T;
 
-type TagNameType<T extends Component> = TagNameTypeFunc | string | ComponentConstructor<T>;
+type TagNameType<T extends Component<TProps>, TProps> =
+    | TagNameTypeFunc<TProps>
+    | string
+    | ComponentConstructor<T, TProps>;
 
 type NamedVNodeType = { tagName: string; props: PropsType; children: ChildType[] };
 
 export type VNodeType = NamedVNodeType | string | undefined | null | boolean;
 
-export type DOMNodeType = Element | ChildNode;
+export type DOMNodeType = HTMLElement | ChildNode;
 
-export const createVNode = <T extends Component>(
-    tagName: TagNameType<T>,
-    props: PropsType = {},
+export const createVNode = <T extends Component<TProps>, TProps>(
+    tagName: TagNameType<T, TProps>,
+    props: PropsType | TProps = {},
     ...children: ChildType[]
 ): VNodeType => {
     console.log("tagName", tagName, "props", props, "children", children, typeof tagName, tagName instanceof Component);
     console.log(tagName);
 
     if (typeof tagName === "function") {
-        console.log("FUNCTION NAME", tagName.name);
-
         try {
-            const result = (tagName as TagNameTypeFunc)(props, children);
+            const result = (tagName as TagNameTypeFunc<TProps>)(props as TProps, children);
             return result;
         } catch {
-            const result = new (tagName as ComponentConstructor<T>)(props, ...children);
+            const result = new (tagName as ComponentConstructor<T, TProps>)(props as TProps, ...children);
             return result.render() as unknown as VNodeType;
         }
     }
 
     tagName = tagName as string;
-
+    props = props as PropsType;
     return {
         tagName,
         props,
