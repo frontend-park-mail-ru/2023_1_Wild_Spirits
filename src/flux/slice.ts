@@ -60,7 +60,7 @@ export function createSlice<TState, TCaseReducers extends SliceCaseReducers<TSta
         reducer: (state: TState, action: Action): TState => {
             for (const [key, value] of Object.entries(reducers)) {
                 if (action.type === GetReducerType(name, key)) {
-                    return value(state, action as PayloadAction<any>);
+                    return value(structuredClone(state), action as PayloadAction<any>);
                 }
             }
             return state;

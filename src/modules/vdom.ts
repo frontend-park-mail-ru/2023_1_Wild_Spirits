@@ -1,3 +1,5 @@
+import { deepEqual } from "./objectsManipulation";
+
 export abstract class Component<TProps> {
     context: unknown;
     setState: any;
@@ -104,22 +106,6 @@ export const createDOMNode = (vNode: VNodeType) => {
 //     return node;
 // };
 
-const deepEqual = (x: any, y: any) => {
-    if (x === y) {
-        return true;
-    } else if (typeof x == "object" && x != null && typeof y == "object" && y != null) {
-        if (Object.keys(x).length != Object.keys(y).length) return false;
-
-        for (const prop in x) {
-            if (y.hasOwnProperty(prop)) {
-                if (!deepEqual(x[prop], y[prop])) return false;
-            } else return false;
-        }
-
-        return true;
-    } else return false;
-};
-
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
     if (nextVNode === undefined) {
         node.remove();
@@ -165,8 +151,18 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     return node;
 };
 
+const convertKey = (key: string) => {
+    switch (key) {
+        case "className":
+            return "class";
+        case "htmlFor":
+            return "for";
+    }
+    return key.toLowerCase();
+};
+
 const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: PropType) => {
-    key = key.toLowerCase();
+    key = convertKey(key);
     if (key.startsWith("on")) {
         const eventName = key.slice(2) as keyof HTMLElementEventMap;
 
