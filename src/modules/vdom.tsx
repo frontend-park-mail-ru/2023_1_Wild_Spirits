@@ -40,7 +40,9 @@ type TagNameType<T extends Component<TProps>, TProps> =
     | string
     | ComponentConstructor<T, TProps>;
 
-type NamedVNodeType = { tagName: string; props: PropsType; children: ChildType[] } & { _instance?: Component<any> };
+type NamedVNodeType = { tagName: string; props: PropsType; children: ChildType[] } & {
+    _instance?: Component<any>;
+};
 
 export type VNodeType = NamedVNodeType | string | undefined | null | boolean;
 
@@ -96,8 +98,6 @@ export const createDOMNode = (vNode: VNodeType) => {
         node.appendChild(createDOMNode(child));
     });
 
-    console.log('node:', vNode);
-
     (vNode as NamedVNodeType)?._instance?.didCreate();
 
     return node;
@@ -143,7 +143,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         vNode?._instance?.willUpdate();
     }
 
-    patchProps(node, vNode.props, nextVNode.props, vNode);
+    patchProps(node, vNode.props, nextVNode.props);
     patchChildren(node, vNode.children, nextVNode.children);
 
     if (instancePropsChanged) {
@@ -186,12 +186,17 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
     (node as HTMLElement).setAttribute(key, nextValue as string);
 };
 
-const patchProps = (node: DOMNodeType, props: PropsType, nextProps: PropsType, vNode: NamedVNodeType | null = null) => {
+const patchProps = (node: DOMNodeType, props: PropsType | null, nextProps: PropsType | null) => {
     const mergedProps = { ...props, ...nextProps };
 
     Object.keys(mergedProps).forEach((key) => {
-        if (props[key] !== nextProps[key]) {
-            patchProp(node, key, props[key], nextProps[key]);
+        if (props === null || nextProps === null || props[key] !== nextProps[key]) {
+            patchProp(
+                node,
+                key,
+                props !== null ? props[key] : undefined,
+                nextProps !== null ? nextProps[key] : undefined
+            );
         }
     });
 };
@@ -207,11 +212,9 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
-    console.log(nextVNode)
     const vNode = (node as any).v || recycleNode(node);
 
     const newNode = patchNode(node, vNode, nextVNode);
-    console.log(newNode)
     if (newNode) {
         node = newNode;
         (node as any).v = nextVNode;

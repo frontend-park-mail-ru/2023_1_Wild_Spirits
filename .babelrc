@@ -1,4 +1,4 @@
 {
-    "presets": ["@babel/preset-env", "@babel/preset-typescript"],
-    "plugins": ["@babel/plugin-syntax-jsx", ["@babel/plugin-transform-react-jsx", { "pragma": "createVNode" }]]
+    "plugins": ["@babel/plugin-syntax-jsx", ["@babel/plugin-transform-react-jsx", { "pragma": "createVNode" }]],
+    "presets": ["@babel/preset-env", ["@babel/preset-typescript", { "jsxPragma": "createVNode" }]]
 }

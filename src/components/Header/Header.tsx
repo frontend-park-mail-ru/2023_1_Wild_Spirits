@@ -1,7 +1,6 @@
 /** @module Components */
 
-import { createVNode as cvn, Component } from "modules/vdom";
-const createVNode = cvn;
+import { createVNode, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
@@ -64,7 +63,7 @@ export class Header extends Component<any> {
             store.dispatch(selectCategory({ category: categoryId }));
         }
         requestManager.request(loadEvents);
-    }
+    };
 
     /**
      * handles city selection
@@ -100,13 +99,19 @@ export class Header extends Component<any> {
             if (userData !== undefined) {
                 return (
                     <div className="profile-link">
-                        <a id="profile-link" className="js-router-link link profile-link__profile-block" href={`/profile/${userData.id}`}>
+                        <a
+                            id="profile-link"
+                            className="js-router-link link profile-link__profile-block"
+                            href={`/profile/${userData.id}`}
+                        >
                             <div className="profile-link__img-block">
-                                <img className="profile-link__img" src={getUploadsImg(userData.img)} alt="ProfileLink" />
+                                <img
+                                    className="profile-link__img"
+                                    src={getUploadsImg(userData.img)}
+                                    alt="ProfileLink"
+                                />
                             </div>
-                            <div className="profile-link__name-block">
-                                {userData.name}
-                            </div>
+                            <div className="profile-link__name-block">{userData.name}</div>
                         </a>
                         <div id="profile-link-logout">
                             <img className="profile-link__logout-img" src="/assets/img/logout.png" />
@@ -116,22 +121,25 @@ export class Header extends Component<any> {
             }
 
             return [
-                (<a id="login-link" className="link">
+                <a id="login-link" className="link">
                     Вход
-                </a>), 
-                '/',
-                (<a id="signup-link" className="link">
+                </a>,
+                "/",
+                <a id="signup-link" className="link">
                     Регистрация
-                </a>)
+                </a>,
             ];
-        }
+        };
 
         const createCategories = (categories: string[]) => {
-            let res = []
+            let res = [];
             for (const [id, categoryName] of categories.entries()) {
                 const isSelected = id === store.getState().header.selectedCategoryId;
                 res.push(
-                    <a onClick={()=>this.#categoryLinkClick(id)} className={"header__category" + (isSelected ? " category-selected" : "")}>
+                    <a
+                        onClick={() => this.#categoryLinkClick(id)}
+                        className={"header__category" + (isSelected ? " category-selected" : "")}
+                    >
                         {categoryName}
                     </a>
                 );
@@ -140,15 +148,15 @@ export class Header extends Component<any> {
                 }
             }
             return res;
-        }
+        };
 
-        const cities = getCitiesNames(store.getState().header).map(cityName => <option>{cityName}</option>);
+        const cities = getCitiesNames(store.getState().header).map((cityName) => <option>{cityName}</option>);
         const categories = createCategories(store.getState().header.categories);
 
         return (
             <div className="header">
                 <div className="header__logo">
-                    <img src="/assets/img/logo-full.svg" alt="logo"/>
+                    <img src="/assets/img/logo-full.svg" alt="logo" />
                 </div>
 
                 <div className="header__top__line">
@@ -159,24 +167,24 @@ export class Header extends Component<any> {
                     </div>
 
                     <div className="header__city__selector">
-                        <select id="header-city-select">
-                            {cities}
-                        </select>
+                        <select id="header-city-select">{cities}</select>
                     </div>
 
                     <div>
-                        <input type="text" id="header-search" placeholder="Поиск" value={store.getState().header.searchQuery} className="search"/>
+                        <input
+                            type="text"
+                            id="header-search"
+                            placeholder="Поиск"
+                            value={store.getState().header.searchQuery}
+                            className="search"
+                        />
                     </div>
 
-                    <div className="profile-link">
-                        {getProfileLink()}
-                    </div>
+                    <div className="profile-link">{getProfileLink()}</div>
                 </div>
 
-                <div className="header__bottom__line">
-                    {categories}
-                </div>
+                <div className="header__bottom__line">{categories}</div>
             </div>
-        )
+        );
     }
 }

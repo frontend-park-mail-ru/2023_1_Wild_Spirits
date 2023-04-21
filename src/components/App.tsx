@@ -1,7 +1,6 @@
 /** @module Components */
 
-import { createVNode as cvn, Component } from "modules/vdom";
-const createVNode = cvn;
+import { createVNode, Component } from "modules/vdom";
 
 import { Header } from "components/Header/Header";
 
@@ -32,19 +31,20 @@ import { loadAuthorization, loadFriends } from "requests/user";
 import { loadTags } from "requests/tags";
 // import { SidebarTags } from "./Tags/SidebarTags";
 import { requestManager } from "requests/index";
+import { EventList } from "./Events/EventList/EventList";
 
 /**
  * @classdesc Main app component
  * @class
  * @extends Component
  */
-export class App extends Component<null> {
+export class App extends Component<any> {
     constructor() {
-        super(null);
+        super({});
     }
 
     didCreate(): void {
-        console.log('did create')
+        console.error("App Created");
         requestManager.request(loadAuthorization);
         requestManager.request(loadTags);
     }
@@ -64,7 +64,12 @@ export class App extends Component<null> {
         // let modalWindow = "";
         // router.reset();
 
-        return <div><Header></Header></div>;
+        return (
+            <div>
+                <Header></Header>
+                <EventList />
+            </div>
+        );
 
         // if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
         //     switch (store.getState().modalWindow.name) {

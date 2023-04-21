@@ -1,7 +1,6 @@
 /** @module Components */
 
-import { Component } from "components/Component";
-import { EventCard } from "components/Events/EventCard/EventCard";
+import { EventCard, EventCardProps } from "components/Events/EventCard/EventCard";
 import { TEventLight } from "models/Events";
 import EventListTemplate from "templates/Events/EventList/EventList.handlebars";
 import EventListEmptyTemplate from "templates/Events/EventList/EventListEmpty.handlebars";
@@ -13,6 +12,7 @@ import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
+import { createVNode, Component } from "modules/vdom";
 
 const SLICE_SIZE = 160;
 
@@ -21,16 +21,9 @@ const SLICE_SIZE = 160;
  * @class
  * @extends Component
  */
-export class EventList extends Component {
-    constructor(parent: Component) {
-        super(parent);
-    }
-
-    loadEvents() {
-        if (!router.isUrlChanged()) {
-            return;
-        }
-
+export class EventList extends Component<any> {
+    didCreate() {
+        console.log("envents loading . . .");
         store.dispatch(setEventsCardsLoadStart());
 
         requestManager.request(loadEvents);
@@ -40,7 +33,7 @@ export class EventList extends Component {
         const { cards } = store.getState().events;
 
         if (cards.loadStatus === LoadStatus.DONE) {
-            let cardsComponents: EventCard[] = cards.data.map((event: TEventLight) => {
+            const cardsProps: EventCardProps[] = cards.data.map((event: TEventLight) => {
                 const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
                 let dates: string[] = [];
                 if (dateStart) {
@@ -56,29 +49,38 @@ export class EventList extends Component {
                 }
                 // const places: string[] = event.places.map((place) => place.name);
                 const places = event.places;
-                return new EventCard(this, {
-					id: event.id,
-					name: event.name,
-					img: getUploadsImg(event.img),
-					description:
-						event.description.length > SLICE_SIZE
-							? event.description.slice(0, SLICE_SIZE)
-							: event.description,
-					dates,
-					places,
-					org: event.org,
-				});
+                return {
+                    id: event.id,
+                    name: event.name,
+                    img: getUploadsImg(event.img),
+                    description:
+                        event.description.length > SLICE_SIZE
+                            ? event.description.slice(0, SLICE_SIZE)
+                            : event.description,
+                    dates,
+                    places,
+                    org: event.org,
+                };
             });
-            const renderedEvents: string[] = cardsComponents.map((component) => component.render());
 
-            if (renderedEvents.length === 0) {
-                return EventListEmptyTemplate();
+            if (cardsProps.length === 0) {
+                return (
+                    <div className="event-list-empty">
+                        <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
+                    </div>
+                );
             }
-            return EventListTemplate({ events: renderedEvents });
+            return (
+                <div className="event-list">
+                    {cardsProps.map((props) => (
+                        <EventCard {...props} />
+                    ))}
+                </div>
+            );
         } else if (cards.loadStatus === LoadStatus.ERROR) {
-            return "Error";
+            return <div> Error </div>;
         }
 
-        return "Loading . . .";
+        return <div> Loading . . . </div>;
     }
 }
