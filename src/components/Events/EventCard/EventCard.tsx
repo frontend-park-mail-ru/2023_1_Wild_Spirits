@@ -1,12 +1,12 @@
 /** @module Components */
 
+import { createVNode, Component } from "modules/vdom";
 import { store } from "flux";
 import { TOrgLight } from "models/Events";
 import { isAuthorized } from "flux/slices/userSlice";
-import EventCardTemplate from "templates/Events/EventCard/EventCard.handlebars";
-import EventCardMarkerTemplate from "templates/Events/EventCard/EventCardMarker.handlebars";
 import "./styles.scss";
-import { createVNode, Component } from "modules/vdom";
+import { Link } from "components/Common/Link";
+import { EventCardMarker } from "./EventCardMarker";
 
 export interface EventCardProps {
     id: number;
@@ -31,34 +31,38 @@ export class EventCard extends Component<EventCardProps> {
     render() {
         return (
             <div className="card event-card">
-                <a
-                    id={`event_${this.props.id}`}
-                    className="js-router-link event-card__content"
-                    href="/events/{{eventId}}"
-                >
+                <Link id={`event_${this.props.id}`} className="event-card__content" href={`/events/${this.props.id}`}>
                     <div className="card__img-block">
-                        <img className="card__img" src="{{img}}" alt="{{name}}" />
+                        <img className="card__img" src={this.props.img} alt={this.props.name} />
                     </div>
                     <div className="card__body event-card__body">
                         <div className="card__title">{this.props.name}</div>
                         <div className="card__description">{this.props.description}</div>
                         <hr className="card__hr" />
-                        {this.props.dates}
+                        <EventCardMarker
+                            img_src="/assets/img/calendar_icon.png"
+                            title="Даты"
+                            items={this.props.dates}
+                        />
                         <hr className="card__hr" />
-                        {this.props.places}
+                        <EventCardMarker
+                            img_src="/assets/img/position_icon.png"
+                            title="Места"
+                            items={this.props.places}
+                        />
                     </div>
-                </a>
+                </Link>
                 <div className="event-card__footer">
                     <div className="event-card__button-block">
-                        <div className="heart-icon-container"></div>
-                        <div className="comment-icon-container"></div>
-                        <div className="invite-icon-container"></div>
+                        <img src="/assets/img/heart-icon.svg" alt="like" />
+                        <img src="/assets/img/comment-icon.svg" alt="comment" />
+                        <img src="/assets/img/invite-icon.svg" alt="invite" />
                         {isAuthorized(store.getState().user) ? (
-                            <a href="/editevent/{{eventId}}" className="js-router-link edit-link">
-                                <div className="edit-icon-container"></div>
-                            </a>
+                            <Link href={`/editevent/${this.props.id}`} className="edit-link">
+                                <img src="/assets/img/edit-icon.svg" alt="invite" />
+                            </Link>
                         ) : (
-                            <div className="bookmark-icon-container"></div>
+                            <img src="/assets/img/bookmark-icon.svg" alt="invite" />
                         )}
                     </div>
                 </div>

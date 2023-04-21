@@ -1,6 +1,6 @@
 import { deepEqual } from "./objectsManipulation";
 
-export abstract class Component<TProps> {
+export abstract class Component<TProps extends any = any> {
     context: unknown;
     setState: any;
     forceUpdate: any;
@@ -58,7 +58,7 @@ export const createVNode = <T extends Component<TProps>, TProps>(
             const result = (tagName as TagNameTypeFunc<TProps>)(props as TProps, children);
             return result;
         } catch {
-            const instance = new (tagName as ComponentConstructor<T, TProps>)(props as TProps, ...children);
+            const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children } as TProps);
             let vnode = instance.render() as unknown as NamedVNodeType;
             vnode._instance = instance;
             return vnode;

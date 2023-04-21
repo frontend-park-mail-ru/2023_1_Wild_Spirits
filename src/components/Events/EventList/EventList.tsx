@@ -21,7 +21,11 @@ const SLICE_SIZE = 160;
  * @class
  * @extends Component
  */
-export class EventList extends Component<any> {
+export class EventList extends Component {
+    constructor() {
+        super({});
+    }
+
     didCreate() {
         console.log("envents loading . . .");
         store.dispatch(setEventsCardsLoadStart());
