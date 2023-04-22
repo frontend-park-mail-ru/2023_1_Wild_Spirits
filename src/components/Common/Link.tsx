@@ -7,7 +7,7 @@ interface LinkProps {
     id?: string;
     href: string;
     className?: string;
-    children: JSX.Element[] | JSX.Element;
+    children: JSX.Element[] | JSX.Element | string;
 }
 
 /**

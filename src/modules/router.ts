@@ -30,7 +30,7 @@ class Router {
     }
 
     getNextUrl() {
-        const result = this.#locationParts.splice(0)[0];
+        const result = this.#locationParts.splice(0, 1)[0];
         return result;
     }
 
@@ -85,22 +85,22 @@ class Router {
 
 export let router = new Router();
 
-const getLinks = () => document.querySelectorAll(".js-router-link");
+// const getLinks = () => document.querySelectorAll(".js-router-link");
 
-function linkEvent(event: Event) {
-    event.preventDefault();
-    const currentTarget = event.currentTarget as HTMLLinkElement;
-    router.go(currentTarget.href);
-}
+// function linkEvent(event: Event) {
+//     event.preventDefault();
+//     const currentTarget = event.currentTarget as HTMLLinkElement;
+//     router.go(currentTarget.href);
+// }
 
-export const addRouterEvents = () => {
-    getLinks().forEach((link) => {
-        link.addEventListener("click", linkEvent);
-    });
-};
+// export const addRouterEvents = () => {
+//     getLinks().forEach((link) => {
+//         link.addEventListener("click", linkEvent);
+//     });
+// };
 
-export const removeRouterEvents = () => {
-    getLinks().forEach((link) => {
-        link.removeEventListener("click", linkEvent);
-    });
-};
+// export const removeRouterEvents = () => {
+//     getLinks().forEach((link) => {
+//         link.removeEventListener("click", linkEvent);
+//     });
+// };

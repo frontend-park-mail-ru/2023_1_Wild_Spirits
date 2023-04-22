@@ -19,6 +19,7 @@ import { logoutUser } from "requests/user";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests/index";
+import { Link } from "components/Common/Link";
 
 /**
  * @class
@@ -99,9 +100,9 @@ export class Header extends Component<any> {
             if (userData !== undefined) {
                 return (
                     <div className="profile-link">
-                        <a
+                        <Link
                             id="profile-link"
-                            className="js-router-link link profile-link__profile-block"
+                            className="profile-link__profile-block"
                             href={`/profile/${userData.id}`}
                         >
                             <div className="profile-link__img-block">
@@ -112,7 +113,7 @@ export class Header extends Component<any> {
                                 />
                             </div>
                             <div className="profile-link__name-block">{userData.name}</div>
-                        </a>
+                        </Link>
                         <div id="profile-link-logout">
                             <img className="profile-link__logout-img" src="/assets/img/logout.png" />
                         </div>
@@ -161,9 +162,9 @@ export class Header extends Component<any> {
 
                 <div className="header__top__line">
                     <div className="header__head">
-                        <a href="/" className="js-router-link black-link">
+                        <Link href="/" className="js-router-link black-link">
                             Event Radar
-                        </a>
+                        </Link>
                     </div>
 
                     <div className="header__city__selector">

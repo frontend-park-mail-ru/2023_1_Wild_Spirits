@@ -2,36 +2,23 @@
 
 import { createVNode, Component } from "modules/vdom";
 
+import { EventList } from "components/Events/EventList/EventList";
+import { EventPage } from "components/Events/EventPage/EventPage";
 import { Header } from "components/Header/Header";
 
-// import { Component } from "components/Component";
-// import { Header } from "components/Header/Header";
-// import { EventList } from "components/Events/EventList/EventList";
-// import { ModalWindow } from "components/ModalWindow/ModalWindow";
-// import { Login } from "components/Auth/Login/Login";
-// import { Registration } from "components/Auth/Registration/Registration";
-
-// import { Calendar } from "./Calendar/Calendar";
-
-// import { FriendListCard } from "components/Auth/Profile/FriendList/FriendListCard";
-// import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
-
-import { addRouterEvents, removeRouterEvents, router } from "modules/router";
 // import { Profile } from "./Auth/Profile/Profile";
 import { svgInliner } from "modules/svgLoader";
+import { router } from "modules/router";
 
-import { store } from "flux";
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
 import { isAuthorized } from "flux/slices/userSlice";
 // import { EventPage } from "./Events/EventPage/EventPage";
 // import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 
-import { loadEvents } from "requests/events";
 import { loadAuthorization, loadFriends } from "requests/user";
+import { requestManager } from "requests/index";
 import { loadTags } from "requests/tags";
 // import { SidebarTags } from "./Tags/SidebarTags";
-import { requestManager } from "requests/index";
-import { EventList } from "./Events/EventList/EventList";
 
 /**
  * @classdesc Main app component
@@ -61,31 +48,17 @@ export class App extends Component<any> {
     // }
 
     render(): JSX.Element {
-        // let modalWindow = "";
-        // router.reset();
+        router.reset();
+        const url = router.getNextUrl();
+        console.error("app rerender");
 
         return (
             <div>
                 <Header></Header>
-                <EventList />
+                {url === "/" && <EventList />}
+                {url === "/events" && <EventPage />}
             </div>
         );
-
-        // if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
-        //     switch (store.getState().modalWindow.name) {
-        //         case ModalWindowName.LOGIN:
-        //             this.#modalWindowComponent.content = this.#loginComponent.render();
-        //             break;
-        //         case ModalWindowName.REGISTER:
-        //             this.#modalWindowComponent.content = this.#registerComponent.render();
-        //             break;
-        //         case ModalWindowName.FRIENDLIST:
-        //             this.#modalWindowComponent.content = this.#friendListComponent.render();
-        //             break;
-        //     }
-
-        //     modalWindow = this.#modalWindowComponent.render();
-        // }
 
         // const createEventBtn = () => {
         //     return isAuthorized(store.getState().user) ? CreateEventBtn() : "";
@@ -144,6 +117,22 @@ export class App extends Component<any> {
         //         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
         //     })
         // );
+
+        // if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
+        //     switch (store.getState().modalWindow.name) {
+        //         case ModalWindowName.LOGIN:
+        //             this.#modalWindowComponent.content = this.#loginComponent.render();
+        //             break;
+        //         case ModalWindowName.REGISTER:
+        //             this.#modalWindowComponent.content = this.#registerComponent.render();
+        //             break;
+        //         case ModalWindowName.FRIENDLIST:
+        //             this.#modalWindowComponent.content = this.#friendListComponent.render();
+        //             break;
+        //     }
+
+        //     modalWindow = this.#modalWindowComponent.render();
+        // }
 
         // const template = AppTemplate({
         //     header: this.#headerComponent.render(),

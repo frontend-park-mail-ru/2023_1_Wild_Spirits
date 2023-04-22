@@ -1,28 +1,5 @@
 import { deepEqual } from "./objectsManipulation";
 
-export abstract class Component<TProps extends any = any> {
-    context: unknown;
-    setState: any;
-    forceUpdate: any;
-    props: TProps;
-    state: any;
-    refs: any;
-
-    constructor(props: TProps) {
-        this.props = props;
-    }
-
-    didCreate() {}
-
-    willUpdate() {}
-
-    didUpdate() {}
-
-    willDestroy() {}
-
-    abstract render(): JSX.Element;
-}
-
 type PropType = Function | null | false | string | undefined;
 
 type PropsType = { [key: string]: PropType };
@@ -48,11 +25,80 @@ export type VNodeType = NamedVNodeType | string | undefined | null | boolean;
 
 export type DOMNodeType = HTMLElement | ChildNode;
 
-export const createVNode = <T extends Component<TProps>, TProps>(
+export abstract class Component<TProps extends any = any, TState = {}> {
+    context: unknown;
+    forceUpdate: any;
+    props: TProps;
+    state: TState;
+    refs: any;
+
+    constructor(props: TProps) {
+        this.state = {} as TState;
+        this.props = props;
+    }
+
+    setState(newState: TState) {
+        this.state = newState;
+        console.log(this.state);
+        patchVDOM();
+    }
+
+    didCreate() {}
+
+    willUpdate() {}
+
+    didUpdate() {}
+
+    willDestroy() {}
+
+    abstract render(): JSX.Element;
+}
+
+type VDOMRenderFunc = () => JSX.Element;
+
+interface VDOM {
+    root: DOMNodeType;
+    renderFunc: VDOMRenderFunc;
+
+    isRerendering: boolean;
+    needRerender: boolean;
+}
+
+let rootVDOM: VDOM | undefined = undefined;
+
+export const patchVDOM = () => {
+    if (rootVDOM === undefined) {
+        return;
+    }
+
+    if (!rootVDOM.isRerendering) {
+        rootVDOM.isRerendering = true;
+        rootVDOM.root = patch(rootVDOM.renderFunc() as unknown as VNodeType, rootVDOM.root);
+        rootVDOM.isRerendering = false;
+        if (rootVDOM.needRerender) {
+            rootVDOM.needRerender = false;
+            patchVDOM();
+        }
+    } else {
+        rootVDOM.needRerender = true;
+    }
+};
+
+export const createVDOM = (root: HTMLElement, renderFunc: VDOMRenderFunc) => {
+    rootVDOM = {
+        root: patch(renderFunc() as unknown as VNodeType, root),
+        renderFunc,
+        isRerendering: false,
+        needRerender: false,
+    };
+};
+
+export function createVNode<T extends Component<TProps>, TProps>(
     tagName: TagNameType<T, TProps>,
     props: PropsType | TProps = {},
     ...children: ChildType[]
-): VNodeType => {
+): VNodeType {
+    console.log(arguments);
     if (typeof tagName === "function") {
         try {
             const result = (tagName as TagNameTypeFunc<TProps>)(props as TProps, children);
@@ -60,6 +106,7 @@ export const createVNode = <T extends Component<TProps>, TProps>(
         } catch {
             const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children } as TProps);
             let vnode = instance.render() as unknown as NamedVNodeType;
+            console.log("instance", instance);
             vnode._instance = instance;
             return vnode;
         }
@@ -72,7 +119,7 @@ export const createVNode = <T extends Component<TProps>, TProps>(
         props,
         children: children.flat(),
     };
-};
+}
 
 const isTypeStrBoolNone = (vNode: VNodeType): boolean => {
     return (
@@ -108,11 +155,23 @@ export const createDOMNode = (vNode: VNodeType) => {
 //     return node;
 // };
 
-export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
-    if (nextVNode === undefined) {
-        node.remove();
-        return;
+const tryCopyState = (vNode: VNodeType, nextVNode: VNodeType) => {
+    vNode = vNode as NamedVNodeType;
+    nextVNode = nextVNode as NamedVNodeType;
+
+    if (vNode._instance && nextVNode._instance) {
+        console.log("COPY", vNode._instance, nextVNode._instance);
+        nextVNode._instance.state = vNode._instance.state;
     }
+};
+
+export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
+    // if (nextVNode === undefined) {
+    //     node.remove();
+    //     return;
+    // }
+
+    tryCopyState(vNode, nextVNode);
 
     if (isTypeStrBoolNone(vNode) || isTypeStrBoolNone(nextVNode)) {
         if (vNode !== nextVNode) {
@@ -142,6 +201,10 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     if (instancePropsChanged) {
         vNode?._instance?.willUpdate();
     }
+
+    //tryCopyState(vNode, nextVNode);
+
+    console.log("COPY2", vNode._instance, nextVNode._instance);
 
     patchProps(node, vNode.props, nextVNode.props);
     patchChildren(node, vNode.children, nextVNode.children);
@@ -202,6 +265,8 @@ const patchProps = (node: DOMNodeType, props: PropsType | null, nextProps: Props
 };
 
 const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildren: VNodeType[]) => {
+    const nextVChildrenLength = nextVChildren ? nextVChildren.length : 0;
+
     parent.childNodes.forEach((childNode, i) => {
         patchNode(childNode, vChildren[i], nextVChildren[i]);
     });
@@ -209,6 +274,13 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
     nextVChildren.slice(vChildren.length).forEach((vChild) => {
         parent.appendChild(createDOMNode(vChild));
     });
+
+    const curChildLenght = parent.childNodes.length;
+
+    for (let i = nextVChildrenLength; i < curChildLenght; i++) {
+        //destroy(parent.childNodes[nextVChildrenLength]);
+        parent.removeChild(parent.childNodes[nextVChildrenLength]);
+    }
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {

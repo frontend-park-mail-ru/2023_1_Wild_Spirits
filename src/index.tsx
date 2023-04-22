@@ -2,7 +2,7 @@ import { ajax } from "modules/ajax";
 import config from "config";
 import "@style";
 
-import { createVNode, patch, VNodeType, DOMNodeType } from "./modules/vdom";
+import { createVNode, patch, VNodeType, DOMNodeType, createVDOM, patchVDOM } from "./modules/vdom";
 import { App } from "components/App";
 
 import { store } from "flux";
@@ -33,11 +33,10 @@ const createVApp = () => {
     );
 };
 
-let root = patch(createVApp() as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
+createVDOM(document.getElementById("app") as HTMLElement, createVApp);
 
-store.subscribe(() => {
-    root = patch(createVApp() as unknown as VNodeType, root);
-});
+store.subscribe(patchVDOM);
+router.subscribe(patchVDOM);
 
 // type TestFooProps = { test: string };
 
