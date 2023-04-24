@@ -4,6 +4,7 @@ import { createVNode as cvn, Component } from "modules/vdom";
 const createVNode = cvn;
 
 import { Header } from "components/Header/Header";
+import { Profile } from "./Auth/Profile/Profile";
 
 // import { Component } from "components/Component";
 // import { Header } from "components/Header/Header";
@@ -47,6 +48,8 @@ export class App extends Component<null> {
         console.log('did create')
         requestManager.request(loadAuthorization);
         requestManager.request(loadTags);
+
+        // addRouterEvents();
     }
 
     // rerender() {
@@ -63,8 +66,19 @@ export class App extends Component<null> {
     render(): JSX.Element {
         // let modalWindow = "";
         // router.reset();
+        
+        router.reset();
 
-        return <div><Header></Header></div>;
+        const content = router.switchAny<JSX.Element>({
+            "/profile": () => <Profile/>
+        }, () => (
+            <span>404</span>
+        ));
+
+        return <div>
+            <Header/>
+            {content}
+        </div>;
 
         // if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
         //     switch (store.getState().modalWindow.name) {

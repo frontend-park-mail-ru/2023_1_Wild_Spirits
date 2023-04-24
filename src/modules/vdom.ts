@@ -2,11 +2,14 @@ import { deepEqual } from "./objectsManipulation";
 
 export abstract class Component<TProps> {
     context: unknown;
-    setState: any;
+    // setState: any;
     forceUpdate: any;
     props: TProps;
     state: any;
     refs: any;
+
+    vNode: VNodeType;
+    domNode: DOMNodeType | undefined;
 
     constructor(props: TProps) {
         this.props = props;
@@ -19,6 +22,21 @@ export abstract class Component<TProps> {
     didUpdate() {}
 
     willDestroy() {}
+
+    rerender() {
+        console.log(this)
+        console.error('rerender', this.vNode, this.domNode);
+        if (this.domNode === undefined) {
+            console.error("rerendering component without domNode assigned")
+            return;
+        }
+        patchNode(this.domNode, this.vNode, this.render() as unknown as VNodeType);
+    }
+
+    setState(state: any) {
+        this.state = state;
+        this.rerender();
+    }
 
     abstract render(): JSX.Element;
 }
@@ -58,6 +76,7 @@ export const createVNode = <T extends Component<TProps>, TProps>(
         } catch {
             const instance = new (tagName as ComponentConstructor<T, TProps>)(props as TProps, ...children);
             let vnode = instance.render() as unknown as NamedVNodeType;
+            instance.vNode = vnode;
             vnode._instance = instance;
             return vnode;
         }
@@ -96,17 +115,19 @@ export const createDOMNode = (vNode: VNodeType) => {
         node.appendChild(createDOMNode(child));
     });
 
-    console.log('node:', vNode);
+    let instance = (vNode as NamedVNodeType)?._instance;
 
-    (vNode as NamedVNodeType)?._instance?.didCreate();
+    if (instance) {
+        // console.log('instance before:', instance);
+        (vNode as NamedVNodeType)!._instance!.domNode = node;
+        (vNode as NamedVNodeType)!._instance!.didCreate();
+        // console.log('instance after:', instance)
+    }
+
+    // (vNode as NamedVNodeType)?._instance?.didCreate();
 
     return node;
 };
-
-// export const mount = (node : Node, target) => {
-//     target.replaceWith(node);
-//     return node;
-// };
 
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
     if (nextVNode === undefined) {
@@ -198,7 +219,9 @@ const patchProps = (node: DOMNodeType, props: PropsType, nextProps: PropsType, v
 
 const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildren: VNodeType[]) => {
     parent.childNodes.forEach((childNode, i) => {
+        // console.log('next child:', nextVChildren[i])
         patchNode(childNode, vChildren[i], nextVChildren[i]);
+        // console.log('next child:', nextVChildren[i])
     });
 
     nextVChildren.slice(vChildren.length).forEach((vChild) => {
@@ -207,21 +230,24 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
-    console.log(nextVNode)
     const vNode = (node as any).v || recycleNode(node);
 
+    // console.log('patch:', vNode)
+
     const newNode = patchNode(node, vNode, nextVNode);
-    console.log(newNode)
+    console.log(nextVNode)
     if (newNode) {
         node = newNode;
         (node as any).v = nextVNode;
     }
+
     return node;
 };
 
 const TEXT_NODE_TYPE = 3;
 
 const recycleNode = (node: DOMNodeType) => {
+    console.log('recycle:', node)
     if (node.nodeType === TEXT_NODE_TYPE) {
         return node.nodeValue;
     }

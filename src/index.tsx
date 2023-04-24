@@ -33,7 +33,8 @@ let app = new App();
 let root = patch(app.render() as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
 
 store.subscribe(() => {
-  root = patch(app.render() as unknown as VNodeType, root);
+  // root = patch(app.render() as unknown as VNodeType, root);
+  app.rerender();
 });
 
 // type TestFooProps = { test: string };
