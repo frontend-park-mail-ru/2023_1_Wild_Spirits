@@ -9,12 +9,10 @@ type ChildType = VNodeType | string | undefined | null | boolean;
 // type FunctionComponent = (props: PropsType, children: ChildType[]) => VNodeType;
 
 type TagNameFuncType<TProps> = (props: TProps, children: ChildType[]) => VNodeType;
-
 type ComponentConstructor<T extends Component<TProps>, TProps> = new (props: TProps, ...children: ChildType[]) => T;
-
 type TagNameType<T extends Component<TProps>, TProps> =
-    | TagNameFuncType<TProps>
     | string
+    | TagNameFuncType<TProps>
     | ComponentConstructor<T, TProps>;
 
 const InstanceFieldName = "_instance" as const;
@@ -22,10 +20,9 @@ const InstanceFieldName = "_instance" as const;
 type TagVNodeType = { tagName: string; props: PropsType; children: ChildType[] };
 type ComponentVNodeType = TagVNodeType & { [InstanceFieldName]: Component };
 type SimpleVNodeType = string | undefined | null | boolean;
-
 export type VNodeType = SimpleVNodeType | TagVNodeType | ComponentVNodeType;
 
-export type DOMNodeType = HTMLElement | ChildNode; // TODO Create custom type
+export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO Create custom type
 
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
@@ -229,8 +226,8 @@ const convertKey = (key: string) => {
 
 const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: PropType) => {
     key = convertKey(key);
-    if (key.startsWith("on")) {
-        const eventName = key.slice(2) as keyof HTMLElementEventMap;
+    if (((nextValue: PropType): nextValue is Function => key.startsWith("on"))(nextValue)) {
+        const eventName = key.slice(2);
 
         (node as any)[eventName] = nextValue;
 
@@ -242,12 +239,12 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
         return;
     }
 
-    if (nextValue == null || nextValue === false) {
+    if (nextValue === null || nextValue === undefined || nextValue === false) {
         (node as HTMLElement).removeAttribute(key);
         return;
     }
 
-    (node as HTMLElement).setAttribute(key, nextValue as string);
+    (node as HTMLElement).setAttribute(key, nextValue);
 };
 
 const patchProps = (node: DOMNodeType, props: PropsType | null, nextProps: PropsType | null) => {
@@ -285,12 +282,12 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
-    const vNode = (node as any).v || recycleNode(node);
+    const vNode = node.v || recycleNode(node);
 
     const newNode = patchNode(node, vNode, nextVNode);
     if (newNode) {
         node = newNode;
-        (node as any).v = nextVNode;
+        node.v = nextVNode;
     }
     return node;
 };
