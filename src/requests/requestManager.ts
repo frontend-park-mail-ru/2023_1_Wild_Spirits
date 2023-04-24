@@ -12,11 +12,13 @@ type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R ? (...arg
 class RequestManager {
     #requests: { [key: string]: { callback: (...args: any[]) => void; dependencies: string[] } };
     #doneRequests: Set<string>;
+    #runningRequests: Set<{ name: string; args: any[] }>;
     #awaitingRequests: Set<{ name: string; args: any[] }>;
 
     constructor() {
         this.#requests = {};
         this.#doneRequests = new Set();
+        this.#runningRequests = new Set();
         this.#awaitingRequests = new Set();
     }
 
@@ -51,39 +53,79 @@ class RequestManager {
         };
     }
 
+    #removeRunning(name: string) {
+        for (const req of this.#runningRequests) {
+            if (req.name === name) {
+                this.#runningRequests.delete(req);
+            }
+        }
+    }
+
+    #removeAwaiting(name: string) {
+        for (const req of this.#awaitingRequests) {
+            if (req.name === name) {
+                this.#awaitingRequests.delete(req);
+            }
+        }
+    }
+
     resolveRequest(name: string, args: any[]) {
         this.#doneRequests.add(name);
-        this.#awaitingRequests.delete({ name: name, args: args });
+        this.#removeRunning(name);
+        this.#removeAwaiting(name);
         this.#onRequestResolution(name);
     }
 
     #onRequestResolution(name: string) {
         Array.from(this.#awaitingRequests)
             .filter((request) => this.#requests[request.name].dependencies.includes(name))
-            .forEach(({ name, args }) => {
-                this.request(name, ...args);
+            .forEach(({ name: reqName, args }) => {
+                if (!this.#isRunning(reqName)) {
+                    this.request(reqName, ...args);
+                }
             });
+    }
+
+    #isRunning(name: string): boolean {
+        let result = false;
+        this.#runningRequests.forEach(({ name: reqName }) => (result = result || name === reqName));
+        return result;
+    }
+
+    #isAwaiting(name: string): boolean {
+        let result = false;
+        this.#awaitingRequests.forEach(({ name: reqName }) => (result = result || name === reqName));
+        return result;
     }
 
     request<T extends TRequest | string>(request: T, ...args: Parameters<OmitFirstArg<T>>) {
         //        const name = typeof request === 'function' ? request.name : request;
         const name = typeof request === "string" ? request : request.name;
 
-        this.#awaitingRequests.add({ name: name, args: args });
+        this.#doneRequests.delete(name);
+
         let dependencyCnt = 0;
 
         this.#requests[name].dependencies.forEach((dependencyName) => {
             if (!this.#doneRequests.has(dependencyName)) {
-                const awaitingRequestsNames = Array.from(this.#awaitingRequests).map((request) => request.name);
-                if (!awaitingRequestsNames.includes(dependencyName)) {
-                    this.request(dependencyName);
-                }
+                // const awaitingRequestsNames = Array.from(this.#awaitingRequests).map((request) => request.name);
+                // if (!awaitingRequestsNames.includes(dependencyName)) {
+                //     this.request(dependencyName);
+                // }
                 dependencyCnt++;
             }
         });
 
         if (dependencyCnt === 0) {
+            this.#runningRequests.add({ name, args });
+            if (this.#isAwaiting(name)) {
+                this.#removeAwaiting(name);
+            }
             this.#requests[name].callback(...args);
+        } else {
+            if (!this.#isAwaiting(name)) {
+                this.#awaitingRequests.add({ name, args });
+            }
         }
     }
 }
