@@ -8,22 +8,24 @@ type ChildType = VNodeType | string | undefined | null | boolean;
 
 // type FunctionComponent = (props: PropsType, children: ChildType[]) => VNodeType;
 
-type TagNameTypeFunc<TProps> = (props: TProps, children: ChildType[]) => VNodeType;
+type TagNameFuncType<TProps> = (props: TProps, children: ChildType[]) => VNodeType;
 
 type ComponentConstructor<T extends Component<TProps>, TProps> = new (props: TProps, ...children: ChildType[]) => T;
 
 type TagNameType<T extends Component<TProps>, TProps> =
-    | TagNameTypeFunc<TProps>
+    | TagNameFuncType<TProps>
     | string
     | ComponentConstructor<T, TProps>;
 
-type NamedVNodeType = { tagName: string; props: PropsType; children: ChildType[] } & {
-    _instance?: Component<any>;
-};
+const InstanceFieldName = "_instance" as const;
 
-export type VNodeType = NamedVNodeType | string | undefined | null | boolean;
+type TagVNodeType = { tagName: string; props: PropsType; children: ChildType[] };
+type ComponentVNodeType = TagVNodeType & { [InstanceFieldName]: Component };
+type SimpleVNodeType = string | undefined | null | boolean;
 
-export type DOMNodeType = HTMLElement | ChildNode;
+export type VNodeType = SimpleVNodeType | TagVNodeType | ComponentVNodeType;
+
+export type DOMNodeType = HTMLElement | ChildNode; // TODO Create custom type
 
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
@@ -93,35 +95,40 @@ export const createVDOM = (root: HTMLElement, renderFunc: VDOMRenderFunc) => {
     };
 };
 
-export function createVNode<T extends Component<TProps>, TProps>(
+const JSXToVNode = (jsx: JSX.Element): TagVNodeType => jsx as unknown as TagVNodeType;
+
+export const createVNode = <T extends Component<TProps>, TProps extends PropsType = PropsType>(
     tagName: TagNameType<T, TProps>,
-    props: PropsType | TProps = {},
+    props: TProps = {} as TProps,
     ...children: ChildType[]
-): VNodeType {
-    console.log(arguments);
+): VNodeType => {
     if (typeof tagName === "function") {
         try {
-            const result = (tagName as TagNameTypeFunc<TProps>)(props as TProps, children);
+            const result: VNodeType = (tagName as TagNameFuncType<TProps>)(props, children);
             return result;
         } catch {
-            const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children } as TProps);
-            let vnode = instance.render() as unknown as NamedVNodeType;
-            console.log("instance", instance);
-            vnode._instance = instance;
+            const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
+            let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
             return vnode;
         }
     }
 
-    tagName = tagName as string;
-    props = props as PropsType;
     return {
         tagName,
         props,
         children: children.flat(),
     };
-}
+};
 
-const isTypeStrBoolNone = (vNode: VNodeType): boolean => {
+const isNodeTypeComponent = (vNode: VNodeType): vNode is ComponentVNodeType => {
+    return !isNodeTypeSimple(vNode) && vNode.hasOwnProperty(InstanceFieldName);
+};
+
+const isNodeTypeTag = (vNode: VNodeType): vNode is TagVNodeType => {
+    return !isNodeTypeSimple(vNode) && !vNode.hasOwnProperty(InstanceFieldName);
+};
+
+const isNodeTypeSimple = (vNode: VNodeType): vNode is SimpleVNodeType => {
     return (
         typeof vNode === "string" || typeof vNode === "boolean" || typeof vNode === "undefined" || typeof vNode === null
     );
@@ -131,7 +138,7 @@ export const createDOMNode = (vNode: VNodeType) => {
     if (typeof vNode === "string") {
         return document.createTextNode(vNode);
     }
-    if (typeof vNode === "boolean" || vNode == null) {
+    if (isNodeTypeSimple(vNode)) {
         return document.createTextNode("");
     }
 
@@ -145,38 +152,35 @@ export const createDOMNode = (vNode: VNodeType) => {
         node.appendChild(createDOMNode(child));
     });
 
-    (vNode as NamedVNodeType)?._instance?.didCreate();
+    if (isNodeTypeComponent(vNode)) {
+        vNode._instance.didCreate();
+    }
 
     return node;
 };
 
-// export const mount = (node : Node, target) => {
-//     target.replaceWith(node);
-//     return node;
-// };
-
-const tryCopyState = (vNode: VNodeType, nextVNode: VNodeType) => {
-    vNode = vNode as NamedVNodeType;
-    nextVNode = nextVNode as NamedVNodeType;
-
-    if (vNode._instance && nextVNode._instance) {
-        console.log("COPY", vNode._instance, nextVNode._instance);
-        nextVNode._instance.state = vNode._instance.state;
-    }
+const tryCopyState = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
+    const result = !deepEqual(nextVNode._instance.state, vNode._instance.state);
+    nextVNode._instance.state = vNode._instance.state;
+    return result;
 };
 
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
+    // TODO ???
     // if (nextVNode === undefined) {
     //     node.remove();
     //     return;
     // }
 
-    tryCopyState(vNode, nextVNode);
+    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && tryCopyState(vNode, nextVNode)) {
+        console.log("isChanged");
+        nextVNode = { ...JSXToVNode(nextVNode._instance.render()), _instance: nextVNode._instance };
+    }
 
-    if (isTypeStrBoolNone(vNode) || isTypeStrBoolNone(nextVNode)) {
+    if (isNodeTypeSimple(vNode) || isNodeTypeSimple(nextVNode)) {
         if (vNode !== nextVNode) {
-            if (!isTypeStrBoolNone(vNode)) {
-                (vNode as NamedVNodeType)?._instance?.willDestroy();
+            if (isNodeTypeComponent(vNode)) {
+                vNode._instance.willDestroy();
             }
             const nextNode = createDOMNode(nextVNode);
             node.replaceWith(nextNode);
@@ -186,31 +190,28 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         return node;
     }
 
-    vNode = vNode as NamedVNodeType;
-    nextVNode = nextVNode as NamedVNodeType;
     if (vNode.tagName !== nextVNode.tagName) {
-        if (!isTypeStrBoolNone(vNode)) {
-            (vNode as NamedVNodeType)?._instance?.willDestroy();
+        if (isNodeTypeComponent(vNode)) {
+            vNode._instance.willDestroy();
         }
         const nextNode = createDOMNode(nextVNode);
         node.replaceWith(nextNode);
         return nextNode;
     }
 
-    const instancePropsChanged = !deepEqual(vNode._instance?.props, nextVNode._instance?.props);
+    const instancePropsChanged =
+        isNodeTypeComponent(vNode) &&
+        isNodeTypeComponent(nextVNode) &&
+        !deepEqual(vNode._instance.props, nextVNode._instance.props);
     if (instancePropsChanged) {
-        vNode?._instance?.willUpdate();
+        vNode._instance.willUpdate();
     }
-
-    //tryCopyState(vNode, nextVNode);
-
-    console.log("COPY2", vNode._instance, nextVNode._instance);
 
     patchProps(node, vNode.props, nextVNode.props);
     patchChildren(node, vNode.children, nextVNode.children);
 
     if (instancePropsChanged) {
-        vNode?._instance?.didUpdate();
+        vNode._instance.didUpdate();
     }
 
     return node;
@@ -278,7 +279,7 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
     const curChildLenght = parent.childNodes.length;
 
     for (let i = nextVChildrenLength; i < curChildLenght; i++) {
-        //destroy(parent.childNodes[nextVChildrenLength]);
+        // TODO destroy(parent.childNodes[nextVChildrenLength]);
         parent.removeChild(parent.childNodes[nextVChildrenLength]);
     }
 };

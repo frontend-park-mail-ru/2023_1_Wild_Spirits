@@ -48,7 +48,7 @@ export class EventPage extends Component<any, TState> {
                 name: place.name,
                 address: place.address,
             }));
-            console.log(this.state.name);
+            //console.log(this.state.name);
             return (
                 <div className="event-page">
                     <div className="event-page__name">{event.name}</div>

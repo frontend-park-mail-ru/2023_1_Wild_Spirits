@@ -15,7 +15,6 @@ import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { createVNode, Component } from "modules/vdom";
 
 const SLICE_SIZE = 160;
-
 /**
  * Event list component
  * @class
@@ -27,7 +26,7 @@ export class EventList extends Component {
     }
 
     didCreate() {
-        console.log("envents loading . . .");
+        console.error("envents loading . . .");
         store.dispatch(setEventsCardsLoadStart());
 
         requestManager.request(loadEvents);

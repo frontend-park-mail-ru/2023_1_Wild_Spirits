@@ -50,7 +50,7 @@ export class App extends Component<any> {
     render(): JSX.Element {
         router.reset();
         const url = router.getNextUrl();
-        console.error("app rerender");
+        //console.error("app rerender");
 
         return (
             <div>
