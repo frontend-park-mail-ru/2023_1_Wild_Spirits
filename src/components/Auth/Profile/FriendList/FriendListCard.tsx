@@ -2,34 +2,14 @@
 
 import { createVNode, Component } from "modules/vdom";
 
-import { requestManager } from "requests";
-
 import { Link } from "components/Common/Link";
-
 import { store } from "flux";
 import { openFriendsList } from "flux/slices/modalWindowSlice";
-
-import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
-import { loadFriends } from "requests/user";
 
 export class FriendListCard extends Component {
     constructor() {
         super({});
-
-        // this.registerEvent(() => document.getElementById("friends-list-link"), "click", this.#onLinkClick);
-        // this.registerEvent(() => document.getElementById("findFriends"), "click", this.#openFriendsList);
-    }
-
-    #onLinkClick() {
-        const id = store.getState().user.currentProfile?.id;
-        if (id === undefined) {
-            return;
-        }
-
-        const searchName = store.getState().friendList.friendSearchQuery;
-        requestManager.request(loadFriends, id, searchName);
-        store.dispatch(openFriendsList());
     }
 
     #openFriendsList() {
@@ -49,10 +29,10 @@ export class FriendListCard extends Component {
                     const href = `/profile/${friend.user_id}`;
                     return (
                         <div className="friend-list-card__friends-block__block-item">
-                            <Link href={href} className="js-router-link">
+                            <Link href={href}>
                                 <img src={friend.avatar} className="friend-list-card__friends-block__avatar"/>
                             </Link>
-                            <a href={href} className="black-link js-router-link">{friend.name}</a>
+                            <a href={href} className="black-link">{friend.name}</a>
                         </div>
                     )
                 })
@@ -61,7 +41,7 @@ export class FriendListCard extends Component {
             const mine = store.getState().user.data?.id === store.getState().user.currentProfile?.id;
 
             if (mine) {
-                return  <span>У вас пока нет друзей <a href="#" className="link" id="findFriends">найти</a></span>;
+                return  <span>У вас пока нет друзей <Link href="#" className="link" onClick={this.#openFriendsList}>найти</Link></span>;
             }
             
             return <span>У этого пользователя нет друзей</span>
@@ -71,7 +51,7 @@ export class FriendListCard extends Component {
 
         return (
             <div className="friend-list-card">
-                <Link href="#" id="friends-list-link" className="friend-list-card__header link js-router-link">
+                <Link href="#" onClick={this.#openFriendsList} className="friend-list-card__header link">
                     Друзья
                 </Link>
                 <hr/>

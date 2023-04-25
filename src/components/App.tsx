@@ -9,14 +9,11 @@ import { Profile } from "./Auth/Profile/Profile";
 import { FriendListCard } from "./Auth/Profile/FriendList/FriendListCard";
 import { Calendar } from "./Calendar/Calendar";
 
-// import { Profile } from "./Auth/Profile/Profile";
 import { svgInliner } from "modules/svgLoader";
 import { router } from "modules/router";
 
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
 import { isAuthorized } from "flux/slices/userSlice";
-// import { EventPage } from "./Events/EventPage/EventPage";
-// import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 
 import { loadAuthorization, loadFriends } from "requests/user";
 import { requestManager } from "requests/index";
@@ -24,7 +21,9 @@ import { loadTags } from "requests/tags";
 import { ModalWindow } from "./ModalWindow/ModalWindow";
 import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 import { EventProcessingState } from "models/Events";
+import { store } from "flux";
 // import { SidebarTags } from "./Tags/SidebarTags";
+
 
 /**
  * @classdesc Main app component
@@ -43,17 +42,6 @@ export class App extends Component<any> {
 
         // addRouterEvents();
     }
-
-    // rerender() {
-    //     removeRouterEvents();
-    //     this.removeChildEvents();
-    //     if (this.parent instanceof HTMLElement) {
-    //         this.parent.innerHTML = this.render();
-    //     }
-    //     this.addChildEvents();
-    //     svgInliner.applyRules();
-    //     addRouterEvents();
-    // }
 
     render(): JSX.Element {
         router.reset();
@@ -74,14 +62,9 @@ export class App extends Component<any> {
             );
         }
 
-        return (
-            // <div>
-            //     <Header />
-            //     {url === "/" && <EventList />}
-            //     {url === "/events" && <EventPage />}
-            //     {url === "/profile" && <Profile />}
-            // </div>
+        const modalWindowShown = store.getState().modalWindow.name !== ModalWindowName.NONE;
 
+        return (
             <div className="app">
                 <div className="header">
                     <Header />
@@ -99,90 +82,8 @@ export class App extends Component<any> {
                         {url === "/profile" && [<FriendListCard/>, <CreateEventBtn/>, <Calendar/>]}
                     </div>
                 </div>
-                {/* <ModalWindow/> */}
+                {modalWindowShown && <ModalWindow/>}
             </div>
         );
-
-        // const createEventBtn = () => {
-        //     return isAuthorized(store.getState().user) ? CreateEventBtn() : "";
-        // };
-
-        // const { content, sidebar } = router.switchAny<{ content: string; sidebar: string }>(
-        //     {
-        //         "/": () => {
-        //             this.#eventListComponent.loadEvents();
-        //             return {
-        //                 content: this.#eventListComponent.render(),
-        //                 sidebar: createEventBtn() + this.#calendarComponent.render() + this.#tagsComponent.render(),
-        //             };
-        //         },
-        //         "/profile": () => {
-        //             if (router.isUrlChanged()) {
-        //                 this.#profileComponent.loadProfile();
-        //                 requestManager.request(loadEvents);
-        //             }
-        //             return {
-        //                 content:
-        //                     this.#profileComponent.render() +
-        //                     DelimiterTemplate({ content: "Предстоящие мероприятия" }) +
-        //                     this.#eventListComponent.render(),
-        //                 sidebar:
-        //                     this.#friendListCardComponent.render() +
-        //                     createEventBtn() +
-        //                     this.#calendarComponent.render() +
-        //                     this.#tagsComponent.render(),
-        //             };
-        //         },
-        //         "/events": () => {
-        //             this.#eventComponent.loadEvent();
-        //             return {
-        //                 content: this.#eventComponent.render(),
-        //                 sidebar: createEventBtn() + this.#calendarComponent.render() + this.#tagsComponent.render(),
-        //             };
-        //         },
-        //         "/createevent": () => {
-        //             this.#eventProcessingComponent.setCreate();
-        //             return {
-        //                 content: this.#eventProcessingComponent.render(),
-        //                 sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
-        //             };
-        //         },
-        //         "/editevent": () => {
-        //             this.#eventProcessingComponent.setEdit();
-        //             return {
-        //                 content: this.#eventProcessingComponent.render(),
-        //                 sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
-        //             };
-        //         },
-        //     },
-        //     () => ({
-        //         content: "404",
-        //         sidebar: this.#calendarComponent.render() + this.#tagsComponent.render(),
-        //     })
-        // );
-
-        // if (store.getState().modalWindow.name !== ModalWindowName.NONE) {
-        //     switch (store.getState().modalWindow.name) {
-        //         case ModalWindowName.LOGIN:
-        //             this.#modalWindowComponent.content = this.#loginComponent.render();
-        //             break;
-        //         case ModalWindowName.REGISTER:
-        //             this.#modalWindowComponent.content = this.#registerComponent.render();
-        //             break;
-        //         case ModalWindowName.FRIENDLIST:
-        //             this.#modalWindowComponent.content = this.#friendListComponent.render();
-        //             break;
-        //     }
-
-        //     modalWindow = this.#modalWindowComponent.render();
-        // }
-
-        // const template = AppTemplate({
-        //     header: this.#headerComponent.render(),
-        //     content: content,
-        //     footer: "Footer",
-        //     modalWindow: modalWindow,
-        //     sidebar: sidebar,
-        // });
     }
 }
