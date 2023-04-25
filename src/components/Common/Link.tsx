@@ -24,7 +24,6 @@ export class Link extends Component<LinkProps> {
     }
 
     handleClick(event: PointerEvent) {
-        console.log(event);
         event.preventDefault();
 
         router.go(this.props.href);

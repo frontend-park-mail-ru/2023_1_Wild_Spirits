@@ -29,8 +29,6 @@ export class Tags extends Component<TagsProps> {
     };
 
     render() {
-        console.log(this.props.toggleTag ? "tag" : "tag-selectable");
-        console.log(this.props.toggleTag);
         return (
             <div className="tags-menu">
                 {Object.entries(this.props.tagsState.tags ? this.props.tagsState.tags : {}).map(

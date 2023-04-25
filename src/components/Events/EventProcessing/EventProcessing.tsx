@@ -1,7 +1,6 @@
 import { VDOM, Component } from "modules/vdom";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
-import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
 import { toWebP } from "modules/imgConverter";
 import { store } from "flux";
 import { kickUnauthorized } from "flux/slices/userSlice";
@@ -9,6 +8,7 @@ import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
 import { EventProcessingForm, EventProcessingState } from "models/Events";
 import {
+    setEventProcessingErrorMsg,
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
     setEventProcessingLoadStart,
@@ -19,6 +19,7 @@ import { loadEventProcessingCreate, loadEventProcessingEdit } from "requests/eve
 import { dateToServer } from "modules/dateParser";
 import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
+import { loadPlaces } from "requests/places";
 
 type EventProcessingFormKey = keyof EventProcessingForm;
 
@@ -82,6 +83,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     didCreate() {
+        requestManager.request(loadPlaces);
         if (this.props.type === EventProcessingState.CREATE) {
             this.setCreate();
         } else {
@@ -130,10 +132,22 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
     }
 
+    handleChangePlace(placeId: number) {
+        store.dispatch(setEventProcessingFormDataField({ field: "place", value: placeId }));
+    }
+
     handleSubmit(event: SubmitEvent) {
         event.preventDefault();
         const { processing } = store.state.events;
-        if (processing.loadStatus !== LoadStatus.DONE) {
+        if (processing.loadStatus !== LoadStatus.DONE || store.state.places.places.loadStatus !== LoadStatus.DONE) {
+            return;
+        }
+        if (processing.formData.place === -1) {
+            store.dispatch(setEventProcessingErrorMsg("Не выбрано место"));
+            return;
+        }
+        const place = store.state.places.places.data.find((value) => value.id === processing.formData.place);
+        if (!place) {
             return;
         }
 
@@ -159,15 +173,23 @@ export class EventProcessing extends Component<EventProcessingProps> {
         );
 
         const sendForm = (data: FormData) => {
+            formData.set("place", place.name);
+
+            console.group("EventProcessing FormData");
+            for (const i of data) console.log(i);
+            console.groupEnd();
+
             const isCreate = !this.#isEdit();
             const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
             const url: string = "/events" + (!isCreate ? `/${processing.formData.id}` : "");
 
             ajax.removeHeaders("Content-Type");
             ajaxMethod({ url: url, credentials: true, body: data })
-                .then(({ status }) => {
+                .then(({ json, status }) => {
                     if (status === AjaxResultStatus.SUCCESS) {
                         router.go("/");
+                    } else {
+                        store.dispatch(setEventProcessingErrorMsg(json.errorMsg));
                     }
                 })
                 .catch((error) => {
@@ -194,10 +216,11 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const { processing } = store.state.events;
         if (processing.loadStatus === LoadStatus.DONE) {
             const { formData } = processing;
+            const places =
+                store.state.places.places.loadStatus === LoadStatus.DONE ? store.state.places.places.data : [];
             const isEdit = this.props.type === EventProcessingState.EDIT;
             const hasImg = formData.img !== "" || processing.tempFileUrl;
             const imgUrl = formData.img || processing.tempFileUrl || "";
-            console.log(formData);
 
             return (
                 <div className="event-processing">
@@ -277,25 +300,27 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                 }}
                             />
                         </div>
+
                         <div className="event-processing__form-block">
                             <label htmlFor="event-processing-place" className="form-label">
                                 Место проведения:
                             </label>
-                            <input
+                            <select
                                 name="place"
                                 className="form-control"
                                 id="event-processing-place"
-                                list="test"
                                 placeholder="Выберите место проведения..."
-                                value={formData.place}
-                                required
-                            />
-                            <datalist id="test">
-                                <option value="ВДНХ"></option>
-                                <option value="Битца"></option>
-                                <option value="Большой театр"></option>
-                                <option value="Третьяковская галерея"></option>
-                            </datalist>
+                                onChange={(e) => this.handleChangePlace(parseInt(e.target.value))}
+                            >
+                                <option selected={formData.place === -1} disabled value={-1}>
+                                    Выберите место проведения...
+                                </option>
+                                {places.map((place) => (
+                                    <option selected={formData.place === place.id} value={place.id}>
+                                        {place.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="event-processing__form-block">
@@ -317,6 +342,8 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                 onChange={(e) => this.handleChangeImg(toEvent(e))}
                             />
                         </div>
+
+                        <div className="event-processing__form-block">{processing.errorMsg}</div>
 
                         <div className="event-processing__button-block">
                             <input
