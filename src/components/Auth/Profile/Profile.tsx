@@ -76,7 +76,7 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
         const image = inputFiles[0];
         this.#tempAvatarUrl = URL.createObjectURL(image);
 
-        // this.setState({editing: false});
+        this.setState({editing: false});
     };
 
     getProfileId(): number | undefined {
@@ -91,8 +91,8 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
     loadProfile() {
         // const id = this.getProfileId();
 
-        console.log(this.props)
-
+        // console.log(this.props)
+        console.log('load profile', this.props.id)
         requestManager.request(loadProfile, this.props.id);
 
         // if (id !== undefined) {
@@ -164,8 +164,7 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
-        // this.#editing = false;
-        // this.setState({editing: false});
+        this.setState({editing: false});
     }
 
     render(): JSX.Element {
@@ -203,7 +202,6 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
                                     value={city}
                                     id="profile-city-select"
                                 >
-
                                     {
                                         cities.map(city => <option>{city}</option>)
                                     }
@@ -260,10 +258,10 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
 
             if (mine) {
                 if (this.state.editing) {
-                    return <div>
-                        <input className="button" type="submit" value="Сохранить"/>
+                    return [
+                        <input className="button" type="submit" value="Сохранить"/>,
                         <span className="warning" id="profile-description-error-message">{this.#errorMsg}</span> 
-                    </div>
+                    ]
                 }
                 return <input type="button" id="edit-profile-btn" onClick={()=>{this.setState({editing: true})}} className="button" value="Редактировать"></input>
             }
@@ -278,7 +276,7 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
         }
 
         return (
-            <form id="edit-profile-form" onSubmit={(event) => {event.preventDefault(); console.log(event)}} className="profile-description">
+            <form id="edit-profile-form" onSubmit={(event) => {this.#submitForm(event as unknown as SubmitEvent)}} className="profile-description">
                 <div className="profile-description__img-container">
                     <label htmlFor="avatar-picker">
                         <img src={avatar} className={"profile-description__img" + (this.state.editing ? " pointy" : "")}/>

@@ -19,11 +19,11 @@ export class Table extends Component<TabelProps> {
         return (
             <div className="table">
                 {this.props.data.map((element) => (
-                    <div className="table__block">
-                        <div className="table__cell grey">{element.title}</div>
+                    [
+                        <div className="table__cell grey">{element.title}</div>,
                         <div className="table__cell">{element.value}</div>
-                    </div>
-                ))}
+                    ]
+                )).flat()}
             </div>
         );
     }

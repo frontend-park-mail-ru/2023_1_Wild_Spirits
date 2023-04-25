@@ -1,7 +1,6 @@
 /** @module Components */
 
-import { Component } from "components/Component";
-import CalendarTemplate from "templates/Calendar/Calendar.handlebars";
+import { createVNode, Component } from "modules/vdom";
 
 import { loadEvents } from "requests/events";
 
@@ -25,12 +24,8 @@ import { requestManager } from "requests";
  * Component for calendar
  */
 export class Calendar extends Component {
-    constructor(parent: Component) {
-        super(parent);
-
-        this.registerEvent(() => document.getElementsByClassName("calendar-date"), "click", this.#toggleDate);
-        this.registerEvent(() => document.getElementById("prevMonthBtn"), "click", this.#decrementMonth);
-        this.registerEvent(() => document.getElementById("nextMonthBtn"), "click", this.#incrementMonth);
+    constructor() {
+        super({});
     }
 
     #toggleDate(event: PointerEvent) {
@@ -75,7 +70,6 @@ export class Calendar extends Component {
         }
 
         requestManager.request(loadEvents);
-        // loadEvents();
     }
 
     #incrementMonth = () => {
@@ -153,14 +147,52 @@ export class Calendar extends Component {
         return weeks;
     };
 
-    render() {
+    render(): JSX.Element {
         const currentYear = store.getState().calendar.year;
         const currentMonth = store.getState().calendar.month;
 
-        return CalendarTemplate({
-            month: getMonthName(store.getState().calendar),
-            year: currentYear,
-            weeks: this.getMonthWeeks(currentYear, currentMonth),
-        });
+        const month = getMonthName(store.getState().calendar);
+        const weeks = this.getMonthWeeks(currentYear, currentMonth);
+
+        return (
+            <div className="calendar">
+                <div className="calendar-header">
+                    <button className="arrow-button" onClick={this.#decrementMonth}>
+                        <img src="/assets/img/arrow-icon.svg" />
+                    </button>
+                    <div className="calendar-header__month-container">
+                        <span className="calendar-header__month">{month}</span>
+                        <span className="calendar-header__year">{currentYear.toString()}</span>
+                    </div>
+                    <button className="arrow-button" onClick={this.#incrementMonth}>
+                        <img src="/assets/img/arrow-icon.svg" className="reversed"/>
+                    </button>
+                </div>
+                <table>
+                    <tr className="top-row">
+                        <th>ПН</th>
+                        <th>ВТ</th>
+                        <th>СР</th>
+                        <th>ЧТ</th>
+                        <th>ПТ</th>
+                        <th>СБ</th>
+                        <th>ВС</th>
+                    </tr>
+                    {
+                        weeks.map(week => (
+                            <tr>
+                                {week.map(date => (
+                                    <td>
+                                        <button onClick={(event) => this.#toggleDate(event as unknown as PointerEvent)}
+                                            className={`calendar-date current ${date.style}`}>{date.date.toString()}
+                                        </button>
+                                    </td>
+                                ))}
+                            </tr>
+                        ))
+                    }
+                </table>
+            </div>
+        );
     }
 }

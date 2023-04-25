@@ -211,7 +211,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     patchChildren(node, vNode.children, nextVNode.children);
 
     if (instancePropsChanged) {
-        vNode._instance.didUpdate();
+        (nextVNode as ComponentVNodeType)._instance.didUpdate();
     }
 
     return node;

@@ -21,10 +21,6 @@ export class FriendListCard extends Component {
         // this.registerEvent(() => document.getElementById("findFriends"), "click", this.#openFriendsList);
     }
 
-    didCreate(): void {
-        
-    }
-
     #onLinkClick() {
         const id = store.getState().user.currentProfile?.id;
         if (id === undefined) {

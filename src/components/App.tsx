@@ -7,6 +7,7 @@ import { EventPage } from "components/Events/EventPage/EventPage";
 import { Header } from "components/Header/Header";
 import { Profile } from "./Auth/Profile/Profile";
 import { FriendListCard } from "./Auth/Profile/FriendList/FriendListCard";
+import { Calendar } from "./Calendar/Calendar";
 
 // import { Profile } from "./Auth/Profile/Profile";
 import { svgInliner } from "modules/svgLoader";
@@ -58,13 +59,19 @@ export class App extends Component<any> {
         router.reset();
         const url = router.getNextUrl();
 
-        // if (url === "/profile" && router.isUrlChanged()) {
-
-        // }
-
         const getProfileId = () => {
             const url = router.getNextUrl();
             return parseInt(url.slice(1));
+        }
+
+        const CreateEventBtn = () => {
+            return (
+                <div className="full-button-link-container">
+                    <a href="/createevent" className="full-button-link js-router-link">
+                        Создать мероприятие
+                    </a>
+                </div>
+            );
         }
 
         return (
@@ -84,11 +91,12 @@ export class App extends Component<any> {
                     <div className="content">
                         {url === "/" && <EventList />}
                         {url === "/events" && <EventPage />}
-                        {url === "/profile" && <Profile id={getProfileId()}/>}
+                        {url === "/profile" && [<Profile id={getProfileId()}/>, <EventList/>]}
                         {url === "/createevent" && <EventProcessing type={EventProcessingState.CREATE} />}
                     </div>
                     <div className="sidebar">
-                        {url === "/profile" && <FriendListCard/>}
+                        {url === "/" && [<CreateEventBtn/>, <Calendar/>]}
+                        {url === "/profile" && [<FriendListCard/>, <CreateEventBtn/>, <Calendar/>]}
                     </div>
                 </div>
                 {/* <ModalWindow/> */}
