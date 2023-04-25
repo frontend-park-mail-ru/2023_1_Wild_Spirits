@@ -34,6 +34,11 @@ const initialState: EventsState = {
     processing: { loadStatus: LoadStatus.NONE },
 };
 
+interface FormField<T, K extends keyof T> {
+    field: K;
+    value: T[K];
+}
+
 const eventsSlice = createSlice({
     name: "events",
     initialState: initialState,
@@ -86,6 +91,23 @@ const eventsSlice = createSlice({
             };
             return state;
         },
+        setEventProcessingFormDataField: <KEY extends keyof EventProcessingForm>(
+            state: EventsState,
+            action: PayloadAction<FormField<EventProcessingForm, KEY>>
+        ) => {
+            if (state.processing.loadStatus === LoadStatus.DONE) {
+                state.processing.formData[action.payload.field] = action.payload.value;
+            }
+            return state;
+        },
+        setEventProcessingFormImg: (state: EventsState, action: PayloadAction<string>) => {
+            if (state.processing.loadStatus === LoadStatus.DONE) {
+                state.processing.tempFileUrl = action.payload;
+            }
+
+            return state;
+        },
+
         toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
                 const tag = state.processing.tags.tags[action.payload];
@@ -117,6 +139,8 @@ export const {
     setSelectedEventLoadError,
     setEventProcessingLoadStart,
     setEventProcessingFormData,
+    setEventProcessingFormDataField,
+    setEventProcessingFormImg,
     toggleEventProcessingTag,
     setEventProcessingTempFileUrl,
     setEventProcessingLoadError,

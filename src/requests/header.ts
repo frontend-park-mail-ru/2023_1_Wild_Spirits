@@ -6,11 +6,10 @@ import { selectCity, setCities } from "flux/slices/headerSlice";
 import { setCategories } from "flux/slices/headerSlice";
 import { TRequestResolver } from "./requestTypes";
 
-export const loadCities = (resolveRequest: TRequestResolver) =>
-    ajax
-        .get<ResponseBody<{ cities: { id: number; name: string }[] }>>({
-            url: "/cities",
-        })
+export const loadCities = (resolveRequest: TRequestResolver) => {
+    ajax.get<ResponseBody<{ cities: { id: number; name: string }[] }>>({
+        url: "/cities",
+    })
         .then(({ json, response }) => {
             if (response.ok) {
                 store.dispatch(
@@ -22,14 +21,15 @@ export const loadCities = (resolveRequest: TRequestResolver) =>
         })
         .catch((error) => {
             console.log("catch:", error);
+            resolveRequest();
             // store.dispatch(setCities({ cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"] }));
         });
+};
 
-export const loadCategories = (resolveRequest: TRequestResolver) =>
-    ajax
-        .get<ResponseBody<{ categories: { id: number; name: string }[] }>>({
-            url: "/categories",
-        })
+export const loadCategories = (resolveRequest: TRequestResolver) => {
+    ajax.get<ResponseBody<{ categories: { id: number; name: string }[] }>>({
+        url: "/categories",
+    })
         .then(({ json, response }) => {
             if (response.ok) {
                 store.dispatch(setCategories({ categories: json.body.categories }));
@@ -40,3 +40,4 @@ export const loadCategories = (resolveRequest: TRequestResolver) =>
             console.log("catch:", error);
             // store.dispatch(setCategories({ categories: ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"] }));
         });
+};

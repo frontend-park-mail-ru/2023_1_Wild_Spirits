@@ -26,7 +26,6 @@ export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO
 
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
-    forceUpdate: any;
     props: TProps;
     state: TState;
     refs: any;
@@ -49,6 +48,10 @@ export abstract class Component<TProps extends any = any, TState = {}> {
     didUpdate() {}
 
     willDestroy() {}
+
+    forceUpdate() {
+        patchVDOM();
+    }
 
     abstract render(): JSX.Element;
 }

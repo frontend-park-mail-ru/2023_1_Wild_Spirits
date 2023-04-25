@@ -1,10 +1,7 @@
 /** @module Components */
 
-import { createVNode, Component, patchVDOM } from "modules/vdom";
+import { createVNode, Component } from "modules/vdom";
 import { router } from "modules/router";
-import EventPageTemplate from "templates/Events/EventPage/EventPage.handlebars";
-import TableTemplate from "templates/Common/Table.handlebars";
-import { createTable } from "components/Common/CreateTable";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
@@ -12,18 +9,16 @@ import { loadEventPage } from "requests/events";
 import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
-
-type TState = { name: string };
+import { Table } from "components/Common/Table";
 
 /**
  * Event list component
  * @class
  * @extends Component
  */
-export class EventPage extends Component<any, TState> {
+export class EventPage extends Component<any> {
     constructor() {
         super({});
-        this.state = { name: "NAME" };
     }
 
     getEventId(): number {
@@ -41,6 +36,7 @@ export class EventPage extends Component<any, TState> {
 
     render() {
         const { selectedEvent } = store.getState().events;
+        console.log(selectedEvent);
         if (selectedEvent.loadStatus === LoadStatus.DONE) {
             const { event, organizer, places } = selectedEvent;
             const fixedPlaces = Object.values(places).map((place) => ({
@@ -48,7 +44,9 @@ export class EventPage extends Component<any, TState> {
                 name: place.name,
                 address: place.address,
             }));
-            //console.log(this.state.name);
+
+            console.log(event.tags);
+
             return (
                 <div className="event-page">
                     <div className="event-page__name">{event.name}</div>
@@ -66,11 +64,19 @@ export class EventPage extends Component<any, TState> {
                         ))}
                     </div>
                     <div className="event-page__tags tags-menu">
-                        {event.tags.map((tag) => (
+                        {(event.tags !== null ? event.tags : []).map((tag) => (
                             <div className="tag">{tag}</div>
                         ))}
                     </div>
-                    <div className="event-page__more-info">{/* {{{moreInfo}}} */}</div>
+                    <div className="event-page__more-info">
+                        <Table
+                            data={[
+                                { title: "Организатор", value: organizer.name },
+                                { title: "Номер телефона", value: organizer.phone },
+                                { title: "Почта", value: organizer.email },
+                            ]}
+                        />
+                    </div>
                     <div className="event-page__button-block">
                         <div className="button-outline button-outline-like event-page__button">
                             <div className="heart-icon-container event-page__button-icon"></div>
@@ -78,16 +84,6 @@ export class EventPage extends Component<any, TState> {
                         <div className="button-outline button-outline-other event-page__button">
                             <div className="bookmark-icon-container event-page__button-icon"></div>
                         </div>
-                        <button
-                            onClick={() => {
-                                console.log("Force rerender start ", this.state.name);
-                                this.setState({ name: "FORCE!!!" });
-                                console.log("Force rerender end", this.state.name);
-                            }}
-                        >
-                            Force rerender {this.state.name}
-                        </button>
-
                         <div className="button-outline button-outline-other event-page__button">
                             <div className="invite-icon-container event-page__button-icon"></div>
                             <div className="event-page__button-text"> Пригласить друга </div>

@@ -21,6 +21,8 @@ import { loadAuthorization, loadFriends } from "requests/user";
 import { requestManager } from "requests/index";
 import { loadTags } from "requests/tags";
 import { ModalWindow } from "./ModalWindow/ModalWindow";
+import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
+import { EventProcessingState } from "models/Events";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 /**
@@ -60,6 +62,11 @@ export class App extends Component<any> {
 
         // }
 
+        const getProfileId = () => {
+            const url = router.getNextUrl();
+            return parseInt(url.slice(1));
+        }
+
         return (
             // <div>
             //     <Header />
@@ -69,22 +76,22 @@ export class App extends Component<any> {
             // </div>
 
             <div className="app">
-            <div className="header">
-                <Header />
-            </div>
-
-            <div className="row">
-                <div className="content">
-                    {url === "/" && <EventList />}
-                    {url === "/events" && <EventPage />}
-                    {url === "/profile" && <Profile />}
+                <div className="header">
+                    <Header />
                 </div>
-                <div className="sidebar">
-                    {url === "/profile" && <FriendListCard/>}
-                </div>
-            </div>
 
-            {/* <ModalWindow/> */}
+                <div className="row">
+                    <div className="content">
+                        {url === "/" && <EventList />}
+                        {url === "/events" && <EventPage />}
+                        {url === "/profile" && <Profile id={getProfileId()}/>}
+                        {url === "/createevent" && <EventProcessing type={EventProcessingState.CREATE} />}
+                    </div>
+                    <div className="sidebar">
+                        {url === "/profile" && <FriendListCard/>}
+                    </div>
+                </div>
+                {/* <ModalWindow/> */}
             </div>
         );
 

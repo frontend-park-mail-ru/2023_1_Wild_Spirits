@@ -29,12 +29,12 @@ import { requestManager } from "requests";
  * @class
  * @extends Component
  */
-export class Profile extends Component<any, {editing: boolean}> {
+export class Profile extends Component<{id: number}, {editing: boolean}> {
     #tempAvatarUrl: string | undefined;
     #errorMsg: string = "";
 
-    constructor() {
-        super({});
+    constructor(props: {id: number}) {
+        super(props);
         this.state = {editing: false};
 
         // this.loadProfile();
@@ -50,6 +50,14 @@ export class Profile extends Component<any, {editing: boolean}> {
         // this.registerEvent(() => document.getElementById("edit-profile-form"), "submit", this.#submitForm);
         // this.registerEvent(() => document.getElementById("edit-profile-form"), "change", this.#formChanged);
         // this.registerEvent(() => document.getElementById("add-friend-btn"), "click", this.#addFriend);
+    }
+
+    didCreate(): void {
+        this.loadProfile();
+    }
+
+    didUpdate(): void {
+        this.loadProfile();
     }
 
     #formChanged = (event: Event) => {
@@ -81,11 +89,15 @@ export class Profile extends Component<any, {editing: boolean}> {
     }
 
     loadProfile() {
-        const id = this.getProfileId();
+        // const id = this.getProfileId();
 
-        if (id !== undefined) {
-            requestManager.request(loadProfile, id);
-        }
+        console.log(this.props)
+
+        requestManager.request(loadProfile, this.props.id);
+
+        // if (id !== undefined) {
+        //     requestManager.request(loadProfile, id);
+        // }
     }
 
     #addFriend = () => {
