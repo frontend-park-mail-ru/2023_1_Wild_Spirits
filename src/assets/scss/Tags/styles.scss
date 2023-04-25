@@ -10,32 +10,31 @@
 .tag {
     background-color: var(--main-selected-color);
     color: white;
-
-    cursor: pointer;
+    text-align: center;
+    padding: 10px;
 
     border: 1px solid var(--main-selected-color);
     border-radius: 15px;
 
     box-shadow: 0px 4px 4px rgb(0 0 0 / 25%);
-
-    text-align: center;
-
-    padding: 10px;
 }
 
-.tag:hover {
-    background-color: white;
-    color: var(--main-selected-color);
-}
+.tag-selectable {
+    @extend .tag;
+    cursor: pointer;
 
-.tag.active {
-    background-color: var(--input-el-color);
-    border-color: var(--input-el-color);
+    &:hover {
+        background-color: white;
+        color: var(--main-selected-color);
+    }
 
-    color: white;
-}
+    &.active {
+        background-color: var(--input-el-color);
+        border-color: var(--input-el-color);
 
-.tag.active:hover {
-    background-color: white;
-    color: var(--input-el-color);
+        &:hover {
+            background-color: white;
+            color: var(--input-el-color);
+        }
+    }
 }

@@ -60,6 +60,7 @@ export class App extends Component<any> {
                 {url === "/" && <EventList />}
                 {url === "/events" && <EventPage />}
                 {url === "/createevent" && <EventProcessing type={EventProcessingState.CREATE} />}
+                {url === "/editevent" && <EventProcessing type={EventProcessingState.EDIT} />}
             </div>
         );
 

@@ -107,7 +107,6 @@ const eventsSlice = createSlice({
 
             return state;
         },
-
         toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
                 const tag = state.processing.tags.tags[action.payload];

@@ -203,15 +203,15 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         isNodeTypeComponent(vNode) &&
         isNodeTypeComponent(nextVNode) &&
         !deepEqual(vNode._instance.props, nextVNode._instance.props);
-    if (instancePropsChanged) {
-        vNode._instance.willUpdate();
+    if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
+        nextVNode._instance.willUpdate();
     }
 
     patchProps(node, vNode.props, nextVNode.props);
     patchChildren(node, vNode.children, nextVNode.children);
 
-    if (instancePropsChanged) {
-        vNode._instance.didUpdate();
+    if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
+        nextVNode._instance.didUpdate();
     }
 
     return node;

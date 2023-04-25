@@ -17,6 +17,8 @@ import {
 import { requestManager } from "requests";
 import { loadEventProcessingCreate, loadEventProcessingEdit } from "requests/events";
 import { dateToServer } from "modules/dateParser";
+import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
+import { toSubmitEvent } from "modules/CastEvents";
 
 type EventProcessingFormKey = keyof EventProcessingForm;
 
@@ -69,102 +71,25 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     setCreate() {
-        if (!router.isUrlChanged()) {
-            return;
-        }
-
+        store.dispatch(setEventProcessingLoadStart());
         requestManager.request(loadEventProcessingCreate);
     }
 
     setEdit() {
-        if (!router.isUrlChanged()) {
-            return;
-        }
-
         store.dispatch(setEventProcessingLoadStart());
         const eventId = parseInt(router.getNextUrl().slice(1));
         requestManager.request(loadEventProcessingEdit, eventId);
     }
 
     didCreate() {
-        this.setCreate();
-    }
-
-    #handleSubmit(event: SubmitEvent) {
-        event.preventDefault();
-        const { processing } = store.getState().events;
-        if (processing.loadStatus !== LoadStatus.DONE) {
-            return;
-        }
-
-        const form = event.target as HTMLFormElement;
-
-        let formData = new FormData(form);
-
-        const dateStart = formData.get("dateStart") as string;
-        const dateEnd = formData.get("dateEnd") as string;
-
-        if (dateStart) {
-            formData.set("dateStart", dateToServer(dateStart) || "");
-        }
-        if (dateEnd) {
-            formData.set("dateEnd", dateToServer(dateEnd) || "");
-        }
-        formData.set(
-            "tags",
-            Object.entries(processing.tags.tags)
-                .filter(([_, value]) => value.selected)
-                .map(([key, _]) => key)
-                .join(",")
-        );
-
-        const sendForm = (data: FormData) => {
-            const isCreate = !this.#isEdit();
-            const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
-            const url: string = "/events" + (!isCreate ? `/${processing.formData.id}` : "");
-
-            ajax.removeHeaders("Content-Type");
-            ajaxMethod({ url: url, credentials: true, body: data })
-                .then(({ status }) => {
-                    if (status === AjaxResultStatus.SUCCESS) {
-                        router.go("/");
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
-        };
-
-        if (processing.tempFileUrl !== undefined) {
-            toWebP(processing.tempFileUrl, (imageBlob: Blob) => {
-                formData.set("file", imageBlob);
-                sendForm(formData);
-            });
+        if (this.props.type === EventProcessingState.CREATE) {
+            this.setCreate();
         } else {
-            sendForm(formData);
+            this.setEdit();
         }
     }
 
-    // #handleChange(event: Event) {
-    //     const { processing } = store.getState().events;
-    //     if (processing.loadStatus !== LoadStatus.DONE) {
-    //         return;
-    //     }
-
-    //     const target = event.target as HTMLInputElement;
-    //     if (target.name === "file") {
-    //         const files = target.files;
-    //         if (files && files.length > 0) {
-    //             processing.tempFileUrl = URL.createObjectURL(files[0]);
-    //         }
-    //     } else {
-    //         const name: keyof EventProcessingForm = target.name as keyof EventProcessingForm;
-    //         (processing.formData[name] as string) = target.value;
-    //     }
-    // }
-
-    #handleRemove(event: Event) {
+    handleRemove() {
         const { processing } = store.getState().events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
@@ -279,7 +204,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                     <form
                         className="form event-processing__form"
                         id="event-processing-form"
-                        onSubmit={(e) => this.handleSubmit(e as unknown as SubmitEvent)}
+                        onSubmit={(e) => this.handleSubmit(toSubmitEvent(e))}
                     >
                         <InputField
                             fieldName="name"
@@ -344,9 +269,14 @@ export class EventProcessing extends Component<EventProcessingProps> {
                             changeHandler={this.handleChangeField}
                         />
 
-                        {/* <div className="event-processing__tags">
-                            {tags}
-                        </div> */}
+                        <div className="event-processing__tags">
+                            <Tags
+                                tagsState={processing.tags}
+                                toggleTag={({ tag }: ToggleTagFuncProps) => {
+                                    store.dispatch(toggleEventProcessingTag(tag));
+                                }}
+                            />
+                        </div>
                         <div className="event-processing__form-block">
                             <label htmlFor="event-processing-place" className="form-label">
                                 Место проведения:
@@ -401,6 +331,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                     id="event-processing-remove"
                                     type="button"
                                     value="Удалить"
+                                    onClick={this.handleRemove}
                                 />
                             ) : (
                                 ""
