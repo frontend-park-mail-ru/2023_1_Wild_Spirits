@@ -1,14 +1,14 @@
 /** @module Components */
 
-import { createVNode as cvn, Component } from "modules/vdom";
-const createVNode = cvn;
-
+import { createVNode, Component } from "modules/vdom";
 import { store } from "flux";
 import { TOrgLight } from "models/Events";
 import { isAuthorized } from "flux/slices/userSlice";
 import "./styles.scss";
+import { Link } from "components/Common/Link";
+import { EventCardMarker } from "./EventCardMarker";
 
-interface EventCardProps {
+export interface EventCardProps {
     id: number;
     name: string;
     description: string;
@@ -28,73 +28,63 @@ export class EventCard extends Component<EventCardProps> {
         super(props);
     }
 
-    render(): JSX.Element {
-        const eventCardMarker = (items: string[], img_src: string, title: string) => {
-            return (
-                <div className="event-card__marked">
-                    <div className="event-card__logo-block">
-                        <img className="event-card__logo" src={img_src} alt={title} />
-                    </div>
-                    <div className="event-card__marked-text-block">
-                        {items.map(item => (
-                            <div className="event-card__marked-text">
-                                {item}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )
-        }
-
-        const eventBtn = () => {
-            if (isAuthorized(store.getState().user)) {
-                return (
-                    <a href={`/editevent/${this.props.id}`} className="js-router-link edit-link">
-                        <div className="edit-icon-container"></div>
-                    </a>
-                )
-            }
-
-            return <div className="bookmark-icon-container"></div>;
-        }
-
+    render() {
         return (
             <div className="card event-card">
-                <a id={`event_${this.props.id}`} className="js-router-link event-card__content" href={`/events/${this.props.id}`}>
+                <Link id={`event_${this.props.id}`} className="event-card__content" href={`/events/${this.props.id}`}>
                     <div className="card__img-block">
                         <img className="card__img" src={this.props.img} alt={this.props.name} />
                     </div>
                     <div className="card__body event-card__body">
-                        <div className="card__title">
-                            {this.props.name}
-                        </div>
-                        <div className="card__description">
-                            {this.props.description}
-                        </div>
+                        <div className="card__title">{this.props.name}</div>
+                        <div className="card__description">{this.props.description}</div>
                         <hr className="card__hr" />
-                        {eventCardMarker(
-                            this.props.dates,
-                            "/assets/img/calendar_icon.png",
-                            "Даты"
-                        )}
+                        <EventCardMarker
+                            img_src="/assets/img/calendar_icon.png"
+                            title="Даты"
+                            items={this.props.dates}
+                        />
                         <hr className="card__hr" />
-                        {eventCardMarker(
-                            this.props.places,
-                            "/assets/img/position_icon.png",
-                            "Места"
-                        )}
+                        <EventCardMarker
+                            img_src="/assets/img/position_icon.png"
+                            title="Места"
+                            items={this.props.places}
+                        />
                     </div>
-                </a>
+                </Link>
                 <div className="event-card__footer">
                     <div className="event-card__button-block">
-                        <div className="heart-icon-container"></div>
-                        <div className="comment-icon-container"></div>
-                        <div className="invite-icon-container"></div>
-
-                        {eventBtn()}
+                        <img src="/assets/img/heart-icon.svg" alt="like" />
+                        <img src="/assets/img/comment-icon.svg" alt="comment" />
+                        <img src="/assets/img/invite-icon.svg" alt="invite" />
+                        {isAuthorized(store.getState().user) ? (
+                            <Link href={`/editevent/${this.props.id}`} className="edit-link">
+                                <img src="/assets/img/edit-icon.svg" alt="invite" />
+                            </Link>
+                        ) : (
+                            <img src="/assets/img/bookmark-icon.svg" alt="invite" />
+                        )}
                     </div>
                 </div>
             </div>
         );
+
+        // return EventCardTemplate({
+        //     eventId: this.#props.id,
+        //     img: this.#props.img,
+        //     name: this.#props.name,
+        //     desc: this.#props.description,
+        //     dates: EventCardMarkerTemplate({
+        //         img_src: "/assets/img/calendar_icon.png",
+        //         title: "Даты",
+        //         items: this.#props.dates,
+        //     }),
+        //     places: EventCardMarkerTemplate({
+        //         img_src: "/assets/img/position_icon.png",
+        //         title: "Места",
+        //         items: this.#props.places,
+        //     }),
+        //     mine: isAuthorized(store.getState().user),
+        // });
     }
 }

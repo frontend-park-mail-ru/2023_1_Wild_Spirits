@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode as cvn, Component } from "modules/vdom";
+import { createVNode as cvn, Component, patchVDOM } from "modules/vdom";
 const createVNode = cvn;
 
 import { createTable } from "components/Common/CreateTable";
@@ -25,18 +25,19 @@ import { ResponseErrorDefault } from "responses/ResponseBase";
 import { requestManager } from "requests";
 
 /**
- * Registration component
+ * Profile component
  * @class
  * @extends Component
  */
-export class Profile extends Component<any> {
-    #editing: boolean;
+export class Profile extends Component<any, {editing: boolean}> {
     #tempAvatarUrl: string | undefined;
     #errorMsg: string = "";
 
     constructor() {
         super({});
-        this.#editing = false;
+        this.state = {editing: false};
+
+        // this.loadProfile();
 
         // this.registerEvent(
         //     () => document.getElementById("edit-profile-btn"),
@@ -49,11 +50,6 @@ export class Profile extends Component<any> {
         // this.registerEvent(() => document.getElementById("edit-profile-form"), "submit", this.#submitForm);
         // this.registerEvent(() => document.getElementById("edit-profile-form"), "change", this.#formChanged);
         // this.registerEvent(() => document.getElementById("add-friend-btn"), "click", this.#addFriend);
-    }
-
-    didCreate() {
-        // console.log('vNode:', this.vNode)
-        this.loadProfile();
     }
 
     #formChanged = (event: Event) => {
@@ -72,7 +68,7 @@ export class Profile extends Component<any> {
         const image = inputFiles[0];
         this.#tempAvatarUrl = URL.createObjectURL(image);
 
-        // this.rerender();
+        // this.setState({editing: false});
     };
 
     getProfileId(): number | undefined {
@@ -156,7 +152,8 @@ export class Profile extends Component<any> {
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
-        this.#editing = false;
+        // this.#editing = false;
+        // this.setState({editing: false});
     }
 
     render(): JSX.Element {
@@ -171,7 +168,7 @@ export class Profile extends Component<any> {
             email?: string | undefined;
             city_name?: string;
         }) => {
-            if (this.#editing) {
+            if (this.state.editing) {
                 const cities = getCitiesNames(store.getState().header);
                 const city = store.getState().user.currentProfile?.city_name
 
@@ -250,13 +247,13 @@ export class Profile extends Component<any> {
             const mine = user_data.id === profile_data.id;
 
             if (mine) {
-                if (this.#editing) {
-                    return [
-                        <input className="button" type="submit" value="Сохранить"/>,
-                        <span className="warning" id="profile-description-error-message">{this.#errorMsg}</span>
-                    ]
+                if (this.state.editing) {
+                    return <div>
+                        <input className="button" type="submit" value="Сохранить"/>
+                        <span className="warning" id="profile-description-error-message">{this.#errorMsg}</span> 
+                    </div>
                 }
-                return <input type="button" id="edit-profile-btn" onClick={()=>{this.#editing = true; this.rerender()}} className="button" value="Редактировать"></input>
+                return <input type="button" id="edit-profile-btn" onClick={()=>{this.setState({editing: true})}} className="button" value="Редактировать"></input>
             }
             
             const isFriend = store.getState().user.currentProfile?.is_friend;
@@ -269,13 +266,13 @@ export class Profile extends Component<any> {
         }
 
         return (
-            <form id="edit-profile-form" className="profile-description">
+            <form id="edit-profile-form" onSubmit={(event) => {event.preventDefault(); console.log(event)}} className="profile-description">
                 <div className="profile-description__img-container">
                     <label htmlFor="avatar-picker">
-                        <img src={avatar} className={"profile-description__img" + (this.#editing ? " pointy" : "")}/>
+                        <img src={avatar} className={"profile-description__img" + (this.state.editing ? " pointy" : "")}/>
                     </label>
 
-                    {this.#editing && <input className="invisible" id="avatar-picker" type="file" accept="image/*" name="avatar"></input>}
+                    {this.state.editing && <input className="invisible" id="avatar-picker" type="file" accept="image/*" name="avatar"></input>}
 
                 </div>
                 <div className="profile-description__description-block">

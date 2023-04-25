@@ -2,7 +2,7 @@ import { ajax } from "modules/ajax";
 import config from "config";
 import "@style";
 
-import { patch, createVNode as cvn, VNodeType, DOMNodeType, Component } from "./modules/vdom";
+import { createVNode, patch, VNodeType, DOMNodeType, createVDOM, patchVDOM } from "./modules/vdom";
 import { App } from "components/App";
 
 import { store } from "flux";
@@ -25,17 +25,18 @@ ajax.host = config.HOST;
 
 // app.rerender();
 
+const createVApp = () => {
+    return (
+        <div>
+            <App />
+        </div>
+    );
+};
 
-const createVNode = cvn;
+createVDOM(document.getElementById("app") as HTMLElement, createVApp);
 
-let app = new App();
-
-let root = patch(app.render() as unknown as VNodeType, document.getElementById("app") as DOMNodeType);
-
-store.subscribe(() => {
-  // root = patch(app.render() as unknown as VNodeType, root);
-  app.rerender();
-});
+store.subscribe(patchVDOM);
+router.subscribe(patchVDOM);
 
 // type TestFooProps = { test: string };
 
