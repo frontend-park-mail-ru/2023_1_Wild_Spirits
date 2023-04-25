@@ -1,4 +1,4 @@
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
 import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
@@ -18,7 +18,7 @@ import { requestManager } from "requests";
 import { loadEventProcessingCreate, loadEventProcessingEdit } from "requests/events";
 import { dateToServer } from "modules/dateParser";
 import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
-import { toSubmitEvent } from "modules/CastEvents";
+import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
 type EventProcessingFormKey = keyof EventProcessingForm;
 
@@ -43,7 +43,7 @@ const InputField = ({ fieldName, value, title, type, requered, changeHandler }: 
                 type={type}
                 id={`event-processing-${fieldName}`}
                 value={value}
-                onChange={(e) => changeHandler(e as unknown as Event, fieldName)}
+                onChange={(e) => changeHandler(toEvent(e), fieldName)}
                 required={requered ? true : false}
             />
         </div>
@@ -63,7 +63,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     #isEdit(): boolean {
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus === LoadStatus.DONE) {
             return processing.processingState === EventProcessingState.EDIT;
         }
@@ -90,7 +90,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     handleRemove() {
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -108,7 +108,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
     handleChangeField(event: Event, filedName: keyof EventProcessingForm) {
         console.log("handleChangeName");
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -118,7 +118,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     handleChangeImg(event: Event) {
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -132,7 +132,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
     handleSubmit(event: SubmitEvent) {
         event.preventDefault();
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -187,11 +187,11 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     render() {
-        if (kickUnauthorized(store.getState().user)) {
+        if (kickUnauthorized(store.state.user)) {
             return <div></div>;
         }
 
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus === LoadStatus.DONE) {
             const { formData } = processing;
             const isEdit = this.props.type === EventProcessingState.EDIT;
@@ -234,7 +234,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                 className="form-control event-processing__form-textarea"
                                 id="event-processing-description"
                                 required
-                                onChange={(e) => this.handleChangeField(e as unknown as Event, "description")}
+                                onChange={(e) => this.handleChangeField(toEvent(e), "description")}
                             >
                                 {formData.description}
                             </textarea>
@@ -314,7 +314,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                 className={`form-control ${hasImg ? "invisible" : ""}`}
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) => this.handleChangeImg(e as unknown as Event)}
+                                onChange={(e) => this.handleChangeImg(toEvent(e))}
                             />
                         </div>
 

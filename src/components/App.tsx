@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { EventList } from "components/Events/EventList/EventList";
 import { EventPage } from "components/Events/EventPage/EventPage";

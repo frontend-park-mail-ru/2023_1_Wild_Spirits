@@ -14,7 +14,7 @@ export const loadCities = (resolveRequest: TRequestResolver) => {
             if (response.ok) {
                 store.dispatch(
                     setCities({ cities: json.body.cities }),
-                    selectCity({ city: store.getState().user.data?.city_name })
+                    selectCity({ city: store.state.user.data?.city_name })
                 );
             }
             resolveRequest();

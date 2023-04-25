@@ -12,7 +12,7 @@ import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 const SLICE_SIZE = 160;
 /**
@@ -33,7 +33,7 @@ export class EventList extends Component {
     }
 
     render() {
-        const { cards } = store.getState().events;
+        const { cards } = store.state.events;
 
         if (cards.loadStatus === LoadStatus.DONE) {
             const cardsProps: EventCardProps[] = cards.data.map((event: TEventLight) => {

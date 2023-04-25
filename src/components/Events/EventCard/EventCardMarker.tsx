@@ -1,4 +1,4 @@
-import { createVNode } from "modules/vdom";
+import { VDOM } from "modules/vdom";
 interface EventCardMarkProps {
     img_src: string;
     title: string;

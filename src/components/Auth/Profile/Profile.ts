@@ -70,7 +70,7 @@ export class Profile extends Component {
     getProfileId(): number | undefined {
         const url = router.getNextUrl();
         if (url === undefined) {
-            const user_data = store.getState().user.data;
+            const user_data = store.state.user.data;
             return user_data !== undefined ? user_data.id : undefined;
         }
         return parseInt(url.slice(1));
@@ -101,14 +101,14 @@ export class Profile extends Component {
             return;
         }
 
-        const userData = store.getState().user.data;
+        const userData = store.state.user.data;
 
         if (!userData) {
             return;
         }
 
         let formData = new FormData(form as HTMLFormElement);
-        const city_id = store.getState().header.cities.find((city) => city.name === formData.get("city_id"));
+        const city_id = store.state.header.cities.find((city) => city.name === formData.get("city_id"));
 
         if (!city_id) {
             return;
@@ -137,7 +137,7 @@ export class Profile extends Component {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(
                     setData({ ...json.body.user }),
-                    setCurrentProfile({ profile: json.body, id: store.getState().user.data!.id })
+                    setCurrentProfile({ profile: json.body, id: store.state.user.data!.id })
                 );
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
@@ -152,7 +152,7 @@ export class Profile extends Component {
     }
 
     render() {
-        if (kickUnauthorized(store.getState().user)) {
+        if (kickUnauthorized(store.state.user)) {
             return "";
         }
 
@@ -166,8 +166,8 @@ export class Profile extends Component {
             if (this.#editing) {
                 return EditTableTemplate({
                     name: profile_data.name,
-                    cities: getCitiesNames(store.getState().header),
-                    city: store.getState().user.currentProfile,
+                    cities: getCitiesNames(store.state.header),
+                    city: store.state.user.currentProfile,
                 });
             }
             return TableTemplate({
@@ -179,23 +179,23 @@ export class Profile extends Component {
             });
         };
 
-        const user_data = store.getState().user.data;
+        const user_data = store.state.user.data;
         if (!user_data) {
             return "Вы не авторизованы";
         }
 
-        const profile_data = store.getState().user.currentProfile;
+        const profile_data = store.state.user.currentProfile;
 
         if (!profile_data) {
             return "Такого пользователя не существует";
         }
 
         return ProfileTemplate({
-            avatar: this.#tempAvatarUrl || getUploadsImg(store.getState().user.currentProfile!.img),
+            avatar: this.#tempAvatarUrl || getUploadsImg(store.state.user.currentProfile!.img),
             table: getTable(profile_data),
             editing: this.#editing,
             mine: user_data.id === profile_data.id,
-            isFriend: store.getState().user.currentProfile?.is_friend,
+            isFriend: store.state.user.currentProfile?.is_friend,
             errorMsg: this.#errorMsg,
         });
     }

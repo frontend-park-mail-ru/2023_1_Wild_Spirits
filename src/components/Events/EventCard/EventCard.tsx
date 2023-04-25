@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { TOrgLight } from "models/Events";
 import { isAuthorized } from "flux/slices/userSlice";
@@ -57,7 +57,7 @@ export class EventCard extends Component<EventCardProps> {
                         <img src="/assets/img/heart-icon.svg" alt="like" />
                         <img src="/assets/img/comment-icon.svg" alt="comment" />
                         <img src="/assets/img/invite-icon.svg" alt="invite" />
-                        {isAuthorized(store.getState().user) ? (
+                        {isAuthorized(store.state.user) ? (
                             <Link href={`/editevent/${this.props.id}`} className="edit-link">
                                 <img src="/assets/img/edit-icon.svg" alt="invite" />
                             </Link>

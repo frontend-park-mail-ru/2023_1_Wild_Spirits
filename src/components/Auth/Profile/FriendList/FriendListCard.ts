@@ -21,12 +21,12 @@ export class FriendListCard extends Component {
     }
 
     #onLinkClick() {
-        const id = store.getState().user.currentProfile?.id;
+        const id = store.state.user.currentProfile?.id;
         if (id === undefined) {
             return;
         }
 
-        const searchName = store.getState().friendList.friendSearchQuery;
+        const searchName = store.state.friendList.friendSearchQuery;
         requestManager.request(loadFriends, id, searchName);
         store.dispatch(openFriendsList());
     }
@@ -36,13 +36,13 @@ export class FriendListCard extends Component {
     }
 
     render() {
-        const friends = store.getState().user.currentProfile?.friendsPreview?.map(({ id, name, img }) => ({
+        const friends = store.state.user.currentProfile?.friendsPreview?.map(({ id, name, img }) => ({
             user_id: id,
             name: name,
             avatar: getUploadsImg(img),
         }));
 
-        const mine = store.getState().user.data?.id === store.getState().user.currentProfile?.id;
+        const mine = store.state.user.data?.id === store.state.user.currentProfile?.id;
 
         return FriendListCardTemplate({
             friends: friends,

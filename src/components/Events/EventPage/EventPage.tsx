@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import { router } from "modules/router";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -23,20 +23,17 @@ export class EventPage extends Component<any> {
 
     getEventId(): number {
         const url = router.getNextUrl();
-        console.log(url);
         return parseInt(url.slice(1));
     }
 
     didCreate() {
-        console.error("didCreate EventPage");
         store.dispatch(setSelectedEventLoadStart());
         const eventId = this.getEventId();
         requestManager.request(loadEventPage, eventId);
     }
 
     render() {
-        const { selectedEvent } = store.getState().events;
-        console.log(selectedEvent);
+        const { selectedEvent } = store.state.events;
         if (selectedEvent.loadStatus === LoadStatus.DONE) {
             const { event, organizer, places } = selectedEvent;
             const fixedPlaces = Object.values(places).map((place) => ({
@@ -44,8 +41,6 @@ export class EventPage extends Component<any> {
                 name: place.name,
                 address: place.address,
             }));
-
-            console.log(event.tags);
 
             return (
                 <div className="event-page">

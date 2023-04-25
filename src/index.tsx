@@ -2,7 +2,7 @@ import { ajax } from "modules/ajax";
 import config from "config";
 import "@style";
 
-import { createVNode, patch, VNodeType, DOMNodeType, createVDOM, patchVDOM } from "./modules/vdom";
+import { VDOM, patch, VNodeType, DOMNodeType, createVDOM, patchVDOM } from "./modules/vdom";
 import { App } from "components/App";
 
 import { store } from "flux";

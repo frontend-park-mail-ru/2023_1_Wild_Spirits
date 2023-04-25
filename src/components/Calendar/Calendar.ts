@@ -40,8 +40,8 @@ export class Calendar extends Component {
             return;
         }
 
-        const currentYear = store.getState().calendar.year;
-        const currentMonth = store.getState().calendar.month;
+        const currentYear = store.state.calendar.year;
+        const currentMonth = store.state.calendar.month;
 
         const dateString = dateEl.textContent;
 
@@ -51,8 +51,8 @@ export class Calendar extends Component {
 
         const date = new Date(currentYear, currentMonth, parseInt(dateString));
 
-        const startDate = store.getState().calendar.startDate;
-        const finishDate = store.getState().calendar.finishDate;
+        const startDate = store.state.calendar.startDate;
+        const finishDate = store.state.calendar.finishDate;
 
         if (startDate === undefined) {
             store.dispatch(setStartDate({ date: date }));
@@ -98,7 +98,7 @@ export class Calendar extends Component {
         let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
 
         const checkSelection = (date: Date): { isSelected: boolean; isInner: boolean } => {
-            const startDate = store.getState().calendar.startDate;
+            const startDate = store.state.calendar.startDate;
 
             if (!startDate) {
                 return {
@@ -107,7 +107,7 @@ export class Calendar extends Component {
                 };
             }
 
-            const finishDate = store.getState().calendar.finishDate;
+            const finishDate = store.state.calendar.finishDate;
 
             if (!finishDate) {
                 return {
@@ -154,11 +154,11 @@ export class Calendar extends Component {
     };
 
     render() {
-        const currentYear = store.getState().calendar.year;
-        const currentMonth = store.getState().calendar.month;
+        const currentYear = store.state.calendar.year;
+        const currentMonth = store.state.calendar.month;
 
         return CalendarTemplate({
-            month: getMonthName(store.getState().calendar),
+            month: getMonthName(store.state.calendar),
             year: currentYear,
             weeks: this.getMonthWeeks(currentYear, currentMonth),
         });

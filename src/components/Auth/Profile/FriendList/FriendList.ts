@@ -27,7 +27,7 @@ export class FriendList extends Component {
         }
 
         const searchName = input.value;
-        const id = store.getState().user.currentProfile?.id;
+        const id = store.state.user.currentProfile?.id;
         if (id === undefined) {
             return;
         }
@@ -37,7 +37,7 @@ export class FriendList extends Component {
     };
 
     render() {
-        const friends = store.getState().friendList.friends.map(({ id, name, img }) => ({
+        const friends = store.state.friendList.friends.map(({ id, name, img }) => ({
             user_id: id,
             name: name,
             avatar: getUploadsImg(img),
@@ -45,7 +45,7 @@ export class FriendList extends Component {
 
         return FriendListTemplate({
             friends: friends?.concat(friends),
-            friendSearchQuery: store.getState().friendList.friendSearchQuery,
+            friendSearchQuery: store.state.friendList.friendSearchQuery,
         });
     }
 }

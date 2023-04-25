@@ -1,4 +1,4 @@
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 export class EventProcessing extends Component {
     render() {

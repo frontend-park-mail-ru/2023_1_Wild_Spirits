@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
@@ -58,7 +58,7 @@ export class Header extends Component<any> {
     };
 
     #categoryLinkClick = (categoryId: number) => {
-        if (store.getState().header.selectedCategoryId === categoryId) {
+        if (store.state.header.selectedCategoryId === categoryId) {
             store.dispatch(clearCategory());
         } else {
             store.dispatch(selectCategory({ category: categoryId }));
@@ -95,7 +95,7 @@ export class Header extends Component<any> {
 
     render() {
         const getProfileLink = () => {
-            const userData = store.getState().user.data;
+            const userData = store.state.user.data;
 
             if (userData !== undefined) {
                 return (
@@ -135,7 +135,7 @@ export class Header extends Component<any> {
         const createCategories = (categories: string[]) => {
             let res = [];
             for (const [id, categoryName] of categories.entries()) {
-                const isSelected = id === store.getState().header.selectedCategoryId;
+                const isSelected = id === store.state.header.selectedCategoryId;
                 res.push(
                     <a
                         onClick={() => this.#categoryLinkClick(id)}
@@ -151,8 +151,8 @@ export class Header extends Component<any> {
             return res;
         };
 
-        const cities = getCitiesNames(store.getState().header).map((cityName) => <option>{cityName}</option>);
-        const categories = createCategories(store.getState().header.categories);
+        const cities = getCitiesNames(store.state.header).map((cityName) => <option>{cityName}</option>);
+        const categories = createCategories(store.state.header.categories);
 
         return (
             <div className="header">
@@ -176,7 +176,7 @@ export class Header extends Component<any> {
                             type="text"
                             id="header-search"
                             placeholder="Поиск"
-                            value={store.getState().header.searchQuery}
+                            value={store.state.header.searchQuery}
                             className="search"
                         />
                     </div>
