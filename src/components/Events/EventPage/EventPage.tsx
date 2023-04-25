@@ -36,6 +36,7 @@ export class EventPage extends Component<any> {
 
     render() {
         const { selectedEvent } = store.getState().events;
+        console.log(selectedEvent);
         if (selectedEvent.loadStatus === LoadStatus.DONE) {
             const { event, organizer, places } = selectedEvent;
             const fixedPlaces = Object.values(places).map((place) => ({
@@ -43,6 +44,9 @@ export class EventPage extends Component<any> {
                 name: place.name,
                 address: place.address,
             }));
+
+            console.log(event.tags);
+
             return (
                 <div className="event-page">
                     <div className="event-page__name">{event.name}</div>
@@ -60,18 +64,19 @@ export class EventPage extends Component<any> {
                         ))}
                     </div>
                     <div className="event-page__tags tags-menu">
-                        {event.tags.map((tag) => (
+                        {(event.tags !== null ? event.tags : []).map((tag) => (
                             <div className="tag">{tag}</div>
                         ))}
                     </div>
-                    <Table
-                        data={[
-                            { title: "Организатор", value: organizer.name },
-                            { title: "Номер телефона", value: organizer.phone },
-                            { title: "Почта", value: organizer.email },
-                        ]}
-                    />
-                    <div className="event-page__more-info">{/* {{{moreInfo}}} */}</div>
+                    <div className="event-page__more-info">
+                        <Table
+                            data={[
+                                { title: "Организатор", value: organizer.name },
+                                { title: "Номер телефона", value: organizer.phone },
+                                { title: "Почта", value: organizer.email },
+                            ]}
+                        />
+                    </div>
                     <div className="event-page__button-block">
                         <div className="button-outline button-outline-like event-page__button">
                             <div className="heart-icon-container event-page__button-icon"></div>
