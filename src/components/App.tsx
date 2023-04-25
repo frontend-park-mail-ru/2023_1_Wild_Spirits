@@ -18,6 +18,8 @@ import { isAuthorized } from "flux/slices/userSlice";
 import { loadAuthorization, loadFriends } from "requests/user";
 import { requestManager } from "requests/index";
 import { loadTags } from "requests/tags";
+import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
+import { EventProcessingState } from "models/Events";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 /**
@@ -57,6 +59,7 @@ export class App extends Component<any> {
                 <Header></Header>
                 {url === "/" && <EventList />}
                 {url === "/events" && <EventPage />}
+                {url === "/createevent" && <EventProcessing type={EventProcessingState.CREATE} />}
             </div>
         );
 
