@@ -29,23 +29,6 @@ import { Link } from "components/Common/Link";
 export class Header extends Component<any> {
     constructor() {
         super({});
-
-        // this.registerEvent(() => document.getElementById("header-city-select"), "change", this.#selectCity);
-        // this.registerEvent(() => document.getElementsByClassName("header__category"), "click", this.#categoryLinkClick);
-
-        // this.registerEvent(() => document.getElementById("header-search"), "change", this.#search);
-
-        // this.registerEvent(
-        //     () => document.getElementById("login-link"),
-        //     "click",
-        //     () => store.dispatch.bind(store)(openLogin())
-        // );
-        // this.registerEvent(
-        //     () => document.getElementById("signup-link"),
-        //     "click",
-        //     () => store.dispatch.bind(store)(openRegister())
-        // );
-        // this.registerEvent(() => document.getElementById("profile-link-logout"), "click", this.#onLogout);
     }
 
     didCreate(): void {
@@ -87,12 +70,6 @@ export class Header extends Component<any> {
         requestManager.request(loadEvents);
     };
 
-    // postRender() {
-    //     const select = document.getElementsByTagName("select")[0];
-    //     const selectedCityName = getSelectedCityName(store.getState().header);
-    //     select.value = selectedCityName ? selectedCityName : "";
-    // }
-
     render() {
         const getProfileLink = () => {
             const userData = store.state.user.data;
@@ -115,18 +92,19 @@ export class Header extends Component<any> {
                             <div className="profile-link__name-block">{userData.name}</div>
                         </Link>
                         <div id="profile-link-logout">
-                            <img className="profile-link__logout-img" src="/assets/img/logout.png" />
+                            <img className="profile-link__logout-img" src="/assets/img/logout.png"
+                                onClick={this.#onLogout}/>
                         </div>
                     </div>
                 );
             }
 
             return [
-                <a id="login-link" className="link">
+                <a className="link" onClick={() => store.dispatch.bind(store)(openLogin())}>
                     Вход
                 </a>,
                 "/",
-                <a id="signup-link" className="link">
+                <a className="link" onClick={() => store.dispatch.bind(store)(openRegister())}>
                     Регистрация
                 </a>,
             ];
@@ -168,13 +146,13 @@ export class Header extends Component<any> {
                     </div>
 
                     <div className="header__city__selector">
-                        <select id="header-city-select">{cities}</select>
+                        <select onChange={(e) => this.#selectCity(e as unknown as Event)}>{cities}</select>
                     </div>
 
                     <div>
                         <input
                             type="text"
-                            id="header-search"
+                            onChange={e => this.#search(e as unknown as Event)}
                             placeholder="Поиск"
                             value={store.state.header.searchQuery}
                             className="search"

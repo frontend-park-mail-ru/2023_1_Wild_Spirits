@@ -212,8 +212,8 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         isNodeTypeComponent(vNode) &&
         isNodeTypeComponent(nextVNode) &&
         !deepEqual(vNode._instance.props, nextVNode._instance.props);
-    if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
-        nextVNode._instance.willUpdate();
+    if (instancePropsChanged) {
+        vNode._instance.willUpdate();
     }
 
     patchProps(node, vNode.props, nextVNode.props);

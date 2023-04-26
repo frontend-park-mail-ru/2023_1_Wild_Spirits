@@ -9,6 +9,7 @@ interface LinkProps {
     href: string;
     className?: string;
     children: JSX.Element[] | JSX.Element | string;
+    onClick?: ()=>void;
 }
 
 /**
@@ -25,6 +26,10 @@ export class Link extends Component<LinkProps> {
 
     handleClick(event: PointerEvent) {
         event.preventDefault();
+        
+        if (this.props.onClick) {
+            this.props.onClick();
+        }
 
         router.go(this.props.href);
     }

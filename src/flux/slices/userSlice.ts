@@ -65,7 +65,7 @@ const userSlice = createSlice({
         ) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
-                const friends = action.payload.profile.friends || state.currentProfile?.friends;
+                const friends = action.payload.profile.friends || state.currentProfile?.friendsPreview;
 
                 state.currentProfile = {
                     ...state.currentProfile,
