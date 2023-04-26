@@ -141,10 +141,12 @@ export class Calendar extends Component {
         };
         const days = range(firstDate, lastDate).map(generateDate);
 
-        const rows = Math.ceil(days.length / 7);
-        const weeks = range(0, rows).map((row) => days.slice(row * 7, (row + 1) * 7));
+        return days;
 
-        return weeks;
+        // const rows = Math.ceil(days.length / 7);
+        // const weeks = range(0, rows).map((row) => days.slice(row * 7, (row + 1) * 7));
+
+        // return weeks;
     };
 
     render(): JSX.Element {
@@ -153,6 +155,8 @@ export class Calendar extends Component {
 
         const month = getMonthName(store.getState().calendar);
         const weeks = this.getMonthWeeks(currentYear, currentMonth);
+
+        console.log(weeks)
 
         return (
             <div className="calendar">
@@ -168,7 +172,7 @@ export class Calendar extends Component {
                         <img src="/assets/img/arrow-icon.svg" className="reversed"/>
                     </button>
                 </div>
-                <table>
+                {/* <table>
                     <tr className="top-row">
                         <th>ПН</th>
                         <th>ВТ</th>
@@ -191,7 +195,26 @@ export class Calendar extends Component {
                             </tr>
                         ))
                     }
-                </table>
+                </table> */}
+                <div className="calendar-grid">
+                    <div className="calendar__weekday">ПН</div>
+                    <div className="calendar__weekday">ВТ</div>
+                    <div className="calendar__weekday">СР</div>
+                    <div className="calendar__weekday">ЧТ</div>
+                    <div className="calendar__weekday">ПТ</div>
+                    <div className="calendar__weekday">СБ</div>
+                    <div className="calendar__weekday">ВС</div>
+
+                    <div className="calendar__row-border"></div>
+
+                    {
+                        weeks.map(date=> (
+                            <button onClick={(event) => this.#toggleDate(event as unknown as PointerEvent)}
+                                className={`calendar-date current ${date.style}`}>{date.date.toString()}
+                            </button>
+                        ))
+                    }
+                </div>
             </div>
         );
     }
