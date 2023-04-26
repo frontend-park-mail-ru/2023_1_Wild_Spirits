@@ -9,12 +9,40 @@
     width: 100%;
     border: #969696 solid 1px;
     border-radius: 6px;
+
+    &-error {
+        @extend .form-control;
+        border-color: red;
+    }
 }
 
 .form-label {
     margin: 16px 0 4px 8px;
 }
 
+.form-label-required {
+    @extend .form-label;
+
+    &:before {
+        color: red;
+        content: "* ";
+    }
+}
+
+.form-required-title {
+    font-size: 18px;
+}
+
 .form-submit {
     margin: 20px auto 0 auto;
+}
+
+.form-error {
+    color: red;
+    font-weight: bold;
+    margin-top: 8px;
+
+    &:after {
+        content: " ";
+    }
 }

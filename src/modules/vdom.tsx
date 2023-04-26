@@ -8,7 +8,7 @@ type ChildType = VNodeType | string | undefined | null | boolean;
 
 // type FunctionComponent = (props: PropsType, children: ChildType[]) => VNodeType;
 
-type TagNameFuncType<TProps> = (props: TProps, children: ChildType[]) => VNodeType;
+type TagNameFuncType<TProps> = (props: TProps, ...children: ChildType[]) => VNodeType;
 type ComponentConstructor<T extends Component<TProps>, TProps> = new (props: TProps, ...children: ChildType[]) => T;
 type TagNameType<T extends Component<TProps>, TProps> =
     | string
@@ -104,7 +104,7 @@ export namespace VDOM {
     ): VNodeType => {
         if (typeof tagName === "function") {
             try {
-                const result: VNodeType = (tagName as TagNameFuncType<TProps>)(props, children);
+                const result: VNodeType = (tagName as TagNameFuncType<TProps>)({ ...props, children });
                 return result;
             } catch {
                 const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });

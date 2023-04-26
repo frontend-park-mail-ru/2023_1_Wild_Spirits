@@ -20,7 +20,7 @@ import { requestManager } from "requests/index";
 import { loadTags } from "requests/tags";
 import { ModalWindow } from "./ModalWindow/ModalWindow";
 import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
-import { EventProcessingState } from "models/Events";
+import { EventProcessingType } from "models/Events";
 import { store } from "flux";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
@@ -74,8 +74,8 @@ export class App extends Component<any> {
                         {url === "/" && <EventList />}
                         {url === "/events" && <EventPage />}
                         {url === "/profile" && [<Profile id={getProfileId()} />, <EventList />]}
-                        {url === "/createevent" && <EventProcessing type={EventProcessingState.CREATE} />}
-                        {url === "/editevent" && <EventProcessing type={EventProcessingState.EDIT} />}
+                        {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
+                        {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                     </div>
                     <div className="sidebar">
                         {url === "/" && [<CreateEventBtn />, <Calendar />]}

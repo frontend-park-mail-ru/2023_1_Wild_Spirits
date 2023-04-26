@@ -1,7 +1,8 @@
 .card {
     --lm-card-border-radius: 20px;
-    --lm-card-width: 290px;
+    --lm-card-width: 340px;
     --lm-card-border-width: 1px;
+    --lm-card-border-body-margin: 20px;
     --lm-card-inner-border-radius: calc(var(--lm-card-border-radius) - (var(--lm-card-border-width)));
     display: flex;
     flex-direction: column;
@@ -28,14 +29,13 @@
 }
 
 .card__body {
-    margin: 5px 15px 20px 15px;
+    margin: 5px var(--lm-card-border-body-margin) 16px;
 }
 
 .card__title {
     color: #008666;
     font-size: 20px;
     line-height: 23px;
-    text-align: center;
     text-decoration-line: underline;
     text-underline-offset: 0.15em;
 }

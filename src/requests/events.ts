@@ -13,7 +13,7 @@ import {
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
-import { EventProcessingState } from "models/Events";
+import { EventProcessingType } from "models/Events";
 
 /**
  * fill itself with events from server
@@ -129,7 +129,7 @@ export const loadEventProcessingEdit = (resolveRequest: TRequestResolver, eventI
                 setEventProcessingFormData({
                     ...json.body,
                     tags: tags,
-                    processingState: EventProcessingState.EDIT,
+                    processingState: EventProcessingType.EDIT,
                 })
             );
         },
@@ -156,7 +156,7 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
                 img: "",
                 tags: [],
             },
-            processingState: EventProcessingState.CREATE,
+            processingState: EventProcessingType.CREATE,
             tags: getTags([]),
             places: [],
         })

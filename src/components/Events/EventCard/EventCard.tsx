@@ -40,13 +40,13 @@ export class EventCard extends Component<EventCardProps> {
                         <div className="card__description">{this.props.description}</div>
                         <hr className="card__hr" />
                         <EventCardMarker
-                            img_src="/assets/img/calendar_icon.png"
+                            img_src="/assets/img/card/calendar-icon.svg"
                             title="Даты"
                             items={this.props.dates}
                         />
                         <hr className="card__hr" />
                         <EventCardMarker
-                            img_src="/assets/img/position_icon.png"
+                            img_src="/assets/img/card/place-icon.svg"
                             title="Места"
                             items={this.props.places}
                         />
@@ -54,15 +54,15 @@ export class EventCard extends Component<EventCardProps> {
                 </Link>
                 <div className="event-card__footer">
                     <div className="event-card__button-block">
-                        <img src="/assets/img/heart-icon.svg" alt="like" />
-                        <img src="/assets/img/comment-icon.svg" alt="comment" />
-                        <img src="/assets/img/invite-icon.svg" alt="invite" />
+                        <img src="/assets/img/card/like-icon.svg" alt="like" />
+                        <img src="/assets/img/card/comment-icon.svg" alt="comment" />
+                        <img src="/assets/img/card/invite-icon.svg" alt="invite" />
                         {isAuthorized(store.state.user) ? (
-                            <Link href={`/editevent/${this.props.id}`} className="edit-link">
-                                <img src="/assets/img/edit-icon.svg" alt="invite" />
+                            <Link href={`/editevent/${this.props.id}`} className="flex">
+                                <img src="/assets/img/card/edit-icon.svg" alt="invite" />
                             </Link>
                         ) : (
-                            <img src="/assets/img/bookmark-icon.svg" alt="invite" />
+                            <img src="/assets/img/card/save-icon.svg" alt="invite" />
                         )}
                     </div>
                 </div>

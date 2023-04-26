@@ -1,7 +1,7 @@
 import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
-import { EventProcessingForm, EventProcessingState, SelectedEventData, TEvent, TEventPlace } from "models/Events";
+import { EventProcessingForm, EventProcessingType, SelectedEventData, TEvent, TEventPlace } from "models/Events";
 import { TEventLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
 import { TagsState } from "./tagsSlice";
@@ -9,17 +9,19 @@ import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
 
 interface EventProcessingPayload {
-    processingState: EventProcessingState.Type;
+    processingState: EventProcessingType.Type;
     event: TEvent;
     places?: TEventPlace[];
     tags: TagsState;
 }
 
-interface EventProcessingData {
-    processingState: EventProcessingState.Type;
+export type EventProcessingErrorsType = { [key in keyof EventProcessingForm | "default"]?: string };
+
+export interface EventProcessingData {
+    processingState: EventProcessingType.Type;
     formData: EventProcessingForm;
     tags: TagsState;
-    errorMsg: string;
+    errors: EventProcessingErrorsType;
     tempFileUrl?: string;
 }
 
@@ -90,13 +92,13 @@ const eventsSlice = createSlice({
                     img: getUploadsImg(event.img),
                 },
                 tags: tags,
-                errorMsg: "",
+                errors: {},
             };
             return state;
         },
-        setEventProcessingErrorMsg: (state: EventsState, action: PayloadAction<string>) => {
+        setEventProcessingErrors: (state: EventsState, action: PayloadAction<EventProcessingErrorsType>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
-                state.processing.errorMsg = action.payload;
+                state.processing.errors = action.payload;
             }
             return state;
         },
@@ -106,14 +108,14 @@ const eventsSlice = createSlice({
         ) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
                 state.processing.formData[action.payload.field] = action.payload.value;
-                state.processing.errorMsg = "";
+                delete state.processing.errors[action.payload.field];
             }
             return state;
         },
         setEventProcessingFormImg: (state: EventsState, action: PayloadAction<string>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
                 state.processing.tempFileUrl = action.payload;
-                state.processing.errorMsg = "";
+                delete state.processing.errors.img;
             }
 
             return state;
@@ -123,15 +125,8 @@ const eventsSlice = createSlice({
                 const tag = state.processing.tags.tags[action.payload];
                 if (tag !== undefined) {
                     state.processing.tags.tags[action.payload].selected = !tag.selected;
-                    state.processing.errorMsg = "";
+                    // state.processing.errors = {};
                 }
-            }
-            return state;
-        },
-        setEventProcessingTempFileUrl: (state: EventsState, action: PayloadAction<string>) => {
-            if (state.processing.loadStatus === LoadStatus.DONE) {
-                state.processing.tempFileUrl = action.payload;
-                state.processing.errorMsg = "";
             }
             return state;
         },
@@ -151,11 +146,10 @@ export const {
     setSelectedEventLoadError,
     setEventProcessingLoadStart,
     setEventProcessingFormData,
-    setEventProcessingErrorMsg,
+    setEventProcessingErrors,
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
     toggleEventProcessingTag,
-    setEventProcessingTempFileUrl,
     setEventProcessingLoadError,
 } = eventsSlice.actions;
 export default eventsSlice;

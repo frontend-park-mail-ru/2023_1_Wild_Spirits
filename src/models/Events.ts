@@ -50,7 +50,7 @@ export interface SelectedEventData {
     organizer: TOrganizer;
 }
 
-export namespace EventProcessingState {
+export namespace EventProcessingType {
     export const CREATE = "CREATE";
     export const EDIT = "EDIT";
     export type Type = typeof CREATE | typeof EDIT;

@@ -10,6 +10,8 @@ import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
 import { Table } from "components/Common/Table";
+import { isAuthorized } from "flux/slices/userSlice";
+import { Link } from "components/Common/Link";
 
 /**
  * Event list component
@@ -73,15 +75,35 @@ export class EventPage extends Component<any> {
                         />
                     </div>
                     <div className="event-page__button-block">
-                        <div className="button-outline button-outline-like event-page__button">
-                            <div className="heart-icon-container event-page__button-icon"></div>
+                        <div>
+                            <div className="button-outline button-outline-like event-page__button">
+                                <img
+                                    className="event-page__button-icon-like"
+                                    src="/assets/img/page/like-icon.svg"
+                                    alt="like"
+                                />
+                            </div>
+                            <div>320</div>
                         </div>
                         <div className="button-outline button-outline-other event-page__button">
-                            <div className="bookmark-icon-container event-page__button-icon"></div>
+                            <img className="event-page__button-icon" src="/assets/img/page/save-icon.svg" alt="save" />
                         </div>
-                        <div className="button-outline button-outline-other event-page__button">
-                            <div className="invite-icon-container event-page__button-icon"></div>
+                        <div className="button-outline button-outline-other event-page__button-invite">
+                            <img
+                                src="/assets/img/page/invite-icon.svg"
+                                alt="invite"
+                                className="event-page__button-icon"
+                            />
                             <div className="event-page__button-text"> Пригласить друга </div>
+                        </div>
+                        <div className="button-outline button-outline-other event-page__button">
+                            {isAuthorized(store.state.user) ? (
+                                <Link href={`/editevent/${event.id}`} className="event-page__button-icon">
+                                    <img src="/assets/img/page/edit-icon.svg" alt="edit" />
+                                </Link>
+                            ) : (
+                                <img src="/assets/img/card/save-icon.svg" alt="save" />
+                            )}
                         </div>
                     </div>
                 </div>

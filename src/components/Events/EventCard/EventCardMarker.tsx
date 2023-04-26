@@ -11,9 +11,11 @@ export const EventCardMarker = ({ img_src, title, items }: EventCardMarkProps) =
             <div className="event-card__logo-block">
                 <img className="event-card__logo" src={img_src} alt={title} />
             </div>
-            <div className="event-card__marked-text-block">
+            <div className="event-card__marked-content-block">
                 {items.map((item) => (
-                    <div className="event-card__marked-text">{item}</div>
+                    <div className="event-card__marked-content">
+                        <div className="event-card__marked-text">{item}</div>
+                    </div>
                 ))}
             </div>
         </div>

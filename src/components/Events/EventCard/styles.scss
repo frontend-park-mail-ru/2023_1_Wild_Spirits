@@ -22,14 +22,19 @@
     display: flex;
 }
 
-.event-card__marked-text-block {
-    margin-top: 4px;
+.event-card__marked-content-block {
     font-size: 16px;
     line-height: 19px;
 }
 
+.event-card__marked-content {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
 .event-card__marked-text {
-    margin-bottom: 10px;
+    display: flex;
 }
 
 .event-card__logo-block {
@@ -47,7 +52,7 @@
     display: flex;
     justify-content: flex-end;
 
-    margin: 0 15px 10px 15px;
+    margin: 0 calc(var(--lm-card-border-body-margin) + 5px) var(--lm-card-border-body-margin);
 }
 
 .event-card__button-block {
@@ -59,8 +64,4 @@
 
 .event-card__button-link {
     margin: 0 auto;
-}
-
-.edit-link:hover svg * {
-    fill: var(--link-color);
 }
