@@ -80,7 +80,7 @@ export class Header extends Component<any> {
                     <div className="profile-link">
                         <Link
                             id="profile-link"
-                            className="profile-link__profile-block"
+                            className="profile-link__profile-block link"
                             href={`/profile/${userData.id}`}
                         >
                             <div className="profile-link__img-block">

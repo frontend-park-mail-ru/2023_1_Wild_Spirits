@@ -53,7 +53,7 @@ export class FriendList extends Component {
         const renderUser = (user: {user_id: number, name: string, avatar: string}) => {
             return (
                 <div className="friend-list__item">
-                    <Link href={`/profile/${user.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
+                    <Link className="link" href={`/profile/${user.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
                         <div className="friend-list__item__avatar-block">
                             <img className="friend-list__item__avatar" src={user.avatar} />
                             <div className="friend-list__item__description">

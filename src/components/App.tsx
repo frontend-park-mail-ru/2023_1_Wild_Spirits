@@ -8,6 +8,7 @@ import { Header } from "components/Header/Header";
 import { Profile } from "./Auth/Profile/Profile";
 import { FriendListCard } from "./Auth/Profile/FriendList/FriendListCard";
 import { Calendar } from "./Calendar/Calendar";
+import { Tags } from "./Tags/Tags";
 
 import { svgInliner } from "modules/svgLoader";
 import { router } from "modules/router";
@@ -22,6 +23,7 @@ import { ModalWindow } from "./ModalWindow/ModalWindow";
 import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 import { EventProcessingType } from "models/Events";
 import { store } from "flux";
+import { toggleTag } from "flux/slices/tagsSlice";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 /**
@@ -78,7 +80,9 @@ export class App extends Component<any> {
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                     </div>
                     <div className="sidebar">
-                        {url === "/" && [<CreateEventBtn />, <Calendar />]}
+                        {url === "/" && [<CreateEventBtn />, <Calendar />, 
+                                         <Tags tagsState={store.state.tags}
+                                               toggleTag={(tag)=>store.dispatch(toggleTag(tag))}/>]}
                         {url === "/profile" && [<FriendListCard />, <CreateEventBtn />, <Calendar />]}
                     </div>
                 </div>
