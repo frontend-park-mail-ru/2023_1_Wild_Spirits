@@ -1,8 +1,8 @@
 .event-processing {
     display: flex;
-    margin: 0 auto;
-    margin-bottom: 100px;
+    margin: 40px auto 100px;
     max-width: 800px;
+    flex-direction: column;
 }
 
 .event-processing__form-textarea {

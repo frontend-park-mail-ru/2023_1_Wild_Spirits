@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { Link } from "components/Common/Link";
 import { requestManager } from "requests";
@@ -20,13 +20,13 @@ export class FriendList extends Component {
     }
 
     didCreate() {
-        const id = store.getState().user.currentProfile?.id;
+        const id = store.state.user.currentProfile?.id;
 
         if (id === undefined) {
             return;
         }
 
-        const searchName = store.getState().friendList.friendSearchQuery;
+        const searchName = store.state.friendList.friendSearchQuery;
         requestManager.request(loadFriends, id, searchName);
     }
 
@@ -38,7 +38,7 @@ export class FriendList extends Component {
         }
 
         const searchName = input.value;
-        const id = store.getState().user.currentProfile?.id;
+        const id = store.state.user.currentProfile?.id;
         if (id === undefined) {
             return;
         }
@@ -48,39 +48,42 @@ export class FriendList extends Component {
     };
 
     render(): JSX.Element {
-        const friends = store.getState().friendList.friends.map(({ id, name, img }) => ({
-            user_id: id,
-            name: name,
-            avatar: getUploadsImg(img),
-        })).map(friend => {
-            return (
-                <div className="friend-list__item">
-                    <Link href={`/profile/${friend.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
-                        <div className="friend-list__item__avatar-block">
-                            <img className="friend-list__item__avatar" src={friend.avatar}/>
-                            <div className="friend-list__item__description">
-                                <span className="friend-list__item__friend-name">
-                                    {friend.name}
-                                </span>
+        const friends = store.state.friendList.friends
+            .map(({ id, name, img }) => ({
+                user_id: id,
+                name: name,
+                avatar: getUploadsImg(img),
+            }))
+            .map((friend) => {
+                return (
+                    <div className="friend-list__item">
+                        <Link href={`/profile/${friend.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
+                            <div className="friend-list__item__avatar-block">
+                                <img className="friend-list__item__avatar" src={friend.avatar} />
+                                <div className="friend-list__item__description">
+                                    <span className="friend-list__item__friend-name">{friend.name}</span>
+                                </div>
                             </div>
-                        </div>            
-                    </Link>
-                    <div className="tick-friend-icon-container"></div>
-                </div>
-            )
-        })
+                        </Link>
+                        <div className="tick-friend-icon-container"></div>
+                    </div>
+                );
+            });
 
         return (
             <div>
                 <h2 className="friend-list__title">Друзья</h2>
 
-                <input type="text" onChange={(e)=>this.#reload(e as unknown as Event)} className="search friend-search" placeholder="Поиск"
-                    value={store.getState().friendList.friendSearchQuery}/>
+                <input
+                    type="text"
+                    onChange={(e) => this.#reload(e as unknown as Event)}
+                    className="search friend-search"
+                    placeholder="Поиск"
+                    value={store.state.friendList.friendSearchQuery}
+                />
 
-                <div className="friend-list">
-                    {friends}
-                </div>
+                <div className="friend-list">{friends}</div>
             </div>
-        )
+        );
     }
 }

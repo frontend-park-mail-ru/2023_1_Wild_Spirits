@@ -1,7 +1,6 @@
 /** @module Components */
 
-import { createVNode as cvn, Component, patchVDOM } from "modules/vdom";
-const createVNode = cvn;
+import { VDOM, Component, patchVDOM } from "modules/vdom";
 
 import { createTable } from "components/Common/CreateTable";
 // import { Component } from "components/Component";
@@ -29,13 +28,13 @@ import { requestManager } from "requests";
  * @class
  * @extends Component
  */
-export class Profile extends Component<{id: number}, {editing: boolean}> {
+export class Profile extends Component<{ id: number }, { editing: boolean }> {
     #tempAvatarUrl: string | undefined;
     #errorMsg: string = "";
 
-    constructor(props: {id: number}) {
+    constructor(props: { id: number }) {
         super(props);
-        this.state = {editing: false};
+        this.state = { editing: false };
 
         // this.loadProfile();
 
@@ -76,13 +75,13 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
         const image = inputFiles[0];
         this.#tempAvatarUrl = URL.createObjectURL(image);
 
-        this.setState({editing: false});
+        this.setState({ editing: false });
     };
 
     getProfileId(): number | undefined {
         const url = router.getNextUrl();
         if (url === undefined) {
-            const user_data = store.getState().user.data;
+            const user_data = store.state.user.data;
             return user_data !== undefined ? user_data.id : undefined;
         }
         return parseInt(url.slice(1));
@@ -92,7 +91,7 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
         // const id = this.getProfileId();
 
         // console.log(this.props)
-        console.log('load profile', this.props.id)
+        console.log("load profile", this.props.id);
         requestManager.request(loadProfile, this.props.id);
 
         // if (id !== undefined) {
@@ -117,14 +116,14 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
             return;
         }
 
-        const userData = store.getState().user.data;
+        const userData = store.state.user.data;
 
         if (!userData) {
             return;
         }
 
         let formData = new FormData(form as HTMLFormElement);
-        const city_id = store.getState().header.cities.find((city) => city.name === formData.get("city_id"));
+        const city_id = store.state.header.cities.find((city) => city.name === formData.get("city_id"));
 
         if (!city_id) {
             return;
@@ -153,7 +152,7 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(
                     setData({ ...json.body.user }),
-                    setCurrentProfile({ profile: json.body, id: store.getState().user.data!.id })
+                    setCurrentProfile({ profile: json.body, id: store.state.user.data!.id })
                 );
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
@@ -164,11 +163,11 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
-        this.setState({editing: false});
+        this.setState({ editing: false });
     }
 
     render(): JSX.Element {
-        if (kickUnauthorized(store.getState().user)) {
+        if (kickUnauthorized(store.state.user)) {
             return <span></span>;
         }
 
@@ -180,77 +179,57 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
             city_name?: string;
         }) => {
             if (this.state.editing) {
-                const cities = getCitiesNames(store.getState().header);
-                const city = store.getState().user.currentProfile?.city_name
+                const cities = getCitiesNames(store.state.header);
+                const city = store.state.user.currentProfile?.city_name;
 
                 return (
                     <div className="table">
-                        <div className="table__cell grey">
-                            Имя
-                        </div>
+                        <div className="table__cell grey">Имя</div>
                         <div className="table__cell">
                             <input className="form-control" name="name" type="text" value={profile_data.name} />
                         </div>
 
-                        <div className="table__cell grey">
-                            Город
-                        </div>
+                        <div className="table__cell grey">Город</div>
                         <div className="table__cell">
                             <div className="header__city__selector">
-                                <select
-                                    name="city_id"
-                                    value={city}
-                                    id="profile-city-select"
-                                >
-                                    {
-                                        cities.map(city => <option>{city}</option>)
-                                    }
+                                <select name="city_id" value={city} id="profile-city-select">
+                                    {cities.map((city) => (
+                                        <option>{city}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
                     </div>
-                )
+                );
             }
             const rows = createTable({
                 Имя: profile_data.name,
                 Почта: profile_data.email ? profile_data.email : "не указана",
                 Город: profile_data.city_name ? profile_data.city_name : "Москва",
-            })
+            });
 
-            let cells = []
+            let cells = [];
 
             for (const row of rows) {
-                cells.push(
-                    <div className="table__cell grey">
-                        {row.title}
-                    </div>
-                );
-                cells.push(
-                    <div className="table__cell">
-                        {row.value}
-                    </div>
-                )
+                cells.push(<div className="table__cell grey">{row.title}</div>);
+                cells.push(<div className="table__cell">{row.value}</div>);
             }
 
-            return (
-                <div className="table">
-                    {cells}
-                </div>
-            )
+            return <div className="table">{cells}</div>;
         };
 
-        const user_data = store.getState().user.data;
+        const user_data = store.state.user.data;
         if (!user_data) {
             return <span>Вы не авторизованы</span>;
         }
 
-        const profile_data = store.getState().user.currentProfile;
+        const profile_data = store.state.user.currentProfile;
 
         if (!profile_data) {
             return <span>Такого пользователя не существует</span>;
         }
 
-        const avatar = getUploadsImg(store.getState().user.currentProfile!.img);
+        const avatar = getUploadsImg(store.state.user.currentProfile!.img);
         const table = getTable(profile_data);
 
         const profileBtn = () => {
@@ -259,41 +238,65 @@ export class Profile extends Component<{id: number}, {editing: boolean}> {
             if (mine) {
                 if (this.state.editing) {
                     return [
-                        <input className="button" type="submit" value="Сохранить"/>,
-                        <span className="warning" id="profile-description-error-message">{this.#errorMsg}</span> 
-                    ]
+                        <input className="button" type="submit" value="Сохранить" />,
+                        <span className="warning" id="profile-description-error-message">
+                            {this.#errorMsg}
+                        </span>,
+                    ];
                 }
-                return <input type="button" id="edit-profile-btn" onClick={()=>{this.setState({editing: true})}} className="button" value="Редактировать"></input>
+                return (
+                    <input
+                        type="button"
+                        id="edit-profile-btn"
+                        onClick={() => {
+                            this.setState({ editing: true });
+                        }}
+                        className="button"
+                        value="Редактировать"
+                    ></input>
+                );
             }
-            
-            const isFriend = store.getState().user.currentProfile?.is_friend;
+
+            const isFriend = store.state.user.currentProfile?.is_friend;
 
             if (isFriend) {
                 return <span>Вы дружите</span>;
             }
 
             return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;
-        }
+        };
 
         return (
-            <form id="edit-profile-form" onSubmit={(event) => {this.#submitForm(event as unknown as SubmitEvent)}} className="profile-description">
+            <form
+                id="edit-profile-form"
+                onSubmit={(event) => {
+                    this.#submitForm(event as unknown as SubmitEvent);
+                }}
+                className="profile-description"
+            >
                 <div className="profile-description__img-container">
                     <label htmlFor="avatar-picker">
-                        <img src={avatar} className={"profile-description__img" + (this.state.editing ? " pointy" : "")}/>
+                        <img
+                            src={avatar}
+                            className={"profile-description__img" + (this.state.editing ? " pointy" : "")}
+                        />
                     </label>
 
-                    {this.state.editing && <input className="invisible" id="avatar-picker" type="file" accept="image/*" name="avatar"></input>}
-
+                    {this.state.editing && (
+                        <input
+                            className="invisible"
+                            id="avatar-picker"
+                            type="file"
+                            accept="image/*"
+                            name="avatar"
+                        ></input>
+                    )}
                 </div>
                 <div className="profile-description__description-block">
-                    <div className="profile-description__table-container">
-                        {table}
-                    </div>
-                    <div className="profile-description__button-block">
-                        {profileBtn()}
-                    </div>
+                    <div className="profile-description__table-container">{table}</div>
+                    <div className="profile-description__button-block">{profileBtn()}</div>
                 </div>
             </form>
-        )
+        );
     }
 }

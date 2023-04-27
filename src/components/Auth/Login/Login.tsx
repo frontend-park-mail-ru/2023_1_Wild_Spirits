@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import { validateForm, warningMsg } from "components/Auth/FormValidation";
 
 import { store } from "flux";
@@ -40,7 +40,7 @@ export class Login extends Component {
             <div>
                 <h2 className="auth__title">Вход</h2>
 
-                <form className="auth__form" onSubmit={(e)=>this.#formSubmit(e as unknown as SubmitEvent)}>
+                <form className="auth__form" onSubmit={(e) => this.#formSubmit(e as unknown as SubmitEvent)}>
                     <div id="common-warning" className="warning"></div>
                     <div className="input-group">
                         <label htmlFor="email">Почта</label>
@@ -55,11 +55,13 @@ export class Login extends Component {
                     </div>
 
                     <div className="submit-group">
-                        <a className="link-button" onClick={()=>store.dispatch.bind(store)(openRegister())}>Регистрация</a>
+                        <a className="link-button" onClick={() => store.dispatch.bind(store)(openRegister())}>
+                            Регистрация
+                        </a>
                         <input type="submit" value="Вход" className="button" />
                     </div>
                 </form>
             </div>
-        )
+        );
     }
 }

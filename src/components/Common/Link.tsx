@@ -1,7 +1,8 @@
 /** @module Components */
 
+import { toPointerEvent } from "modules/CastEvents";
 import { router } from "modules/router";
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 interface LinkProps {
     id?: string;
@@ -24,7 +25,6 @@ export class Link extends Component<LinkProps> {
     }
 
     handleClick(event: PointerEvent) {
-        console.log(event);
         event.preventDefault();
         
         if (this.props.onClick) {
@@ -40,7 +40,7 @@ export class Link extends Component<LinkProps> {
                 id={this.props.id}
                 className={this.props.className}
                 href={this.props.href}
-                onClick={(e) => this.handleClick(e as unknown as PointerEvent)}
+                onClick={(e) => this.handleClick(toPointerEvent(e))}
             >
                 {Array.isArray(this.props.children) ? this.props.children.map((child) => child) : this.props.children}
             </a>

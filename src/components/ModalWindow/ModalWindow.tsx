@@ -1,4 +1,4 @@
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 
 import { store } from "flux";
@@ -34,9 +34,9 @@ export class ModalWindow extends Component {
 
     render(): JSX.Element {
         const getContent = () => {
-            switch (store.getState().modalWindow.name) {
+            switch (store.state.modalWindow.name) {
                 case ModalWindowName.LOGIN:
-                    return <Login/>;
+                    return <Login />;
                 case ModalWindowName.REGISTER:
                     return <Registration/>;
                 case ModalWindowName.FRIEND_LIST:
@@ -44,14 +44,19 @@ export class ModalWindow extends Component {
                 case ModalWindowName.CITY_SELECTOR:
                     return <CityPicker/>
             }
-        }
+        };
 
         return (
             <div className="modal" onClick={() => store.dispatch.bind(store)(close())}>
-                <div className="modal__form__container" onClick={(e)=>{this.#stopEventPropagation(e as unknown as Event)}}>
+                <div
+                    className="modal__form__container"
+                    onClick={(e) => {
+                        this.#stopEventPropagation(e as unknown as Event);
+                    }}
+                >
                     {getContent()}
                 </div>
             </div>
-        )
+        );
     }
 }

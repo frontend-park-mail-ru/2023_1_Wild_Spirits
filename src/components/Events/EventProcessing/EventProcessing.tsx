@@ -1,14 +1,16 @@
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { router } from "modules/router";
-import EventCreateTemplate from "templates/Events/EventProcessing/EventProcessing.handlebars";
 import { toWebP } from "modules/imgConverter";
 import { store } from "flux";
 import { kickUnauthorized } from "flux/slices/userSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import "./styles.scss";
-import { EventProcessingForm, EventProcessingState } from "models/Events";
+import { EventProcessingForm, EventProcessingType } from "models/Events";
 import {
+    EventProcessingData,
+    EventProcessingErrorsType,
+    setEventProcessingErrors,
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
     setEventProcessingLoadStart,
@@ -17,39 +19,13 @@ import {
 import { requestManager } from "requests";
 import { loadEventProcessingCreate, loadEventProcessingEdit } from "requests/events";
 import { dateToServer } from "modules/dateParser";
-
-type EventProcessingFormKey = keyof EventProcessingForm;
-
-interface InputFieldProps {
-    fieldName: EventProcessingFormKey;
-    value: string | undefined;
-    title: string;
-    type: "text" | "date" | "time";
-    requered?: boolean;
-    changeHandler: (event: Event, fieldName: EventProcessingFormKey) => void;
-}
-
-const InputField = ({ fieldName, value, title, type, requered, changeHandler }: InputFieldProps) => {
-    return (
-        <div className="event-processing__form-block">
-            <label htmlFor={`event-processing-${fieldName}`} className="form-label">
-                {title}
-            </label>
-            <input
-                name={fieldName}
-                className="form-control"
-                type={type}
-                id={`event-processing-${fieldName}`}
-                value={value}
-                onChange={(e) => changeHandler(e as unknown as Event, fieldName)}
-                required={requered ? true : false}
-            />
-        </div>
-    );
-};
+import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
+import { toEvent, toSubmitEvent } from "modules/CastEvents";
+import { loadPlaces } from "requests/places";
+import { FormFieldBase, InputField, InputFieldType, TextareaField } from "./FormFields";
 
 export interface EventProcessingProps {
-    type: EventProcessingState.Type;
+    type: EventProcessingType.Type;
 }
 
 export class EventProcessing extends Component<EventProcessingProps> {
@@ -61,111 +37,35 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     #isEdit(): boolean {
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus === LoadStatus.DONE) {
-            return processing.processingState === EventProcessingState.EDIT;
+            return processing.processingState === EventProcessingType.EDIT;
         }
         return false;
     }
 
     setCreate() {
-        if (!router.isUrlChanged()) {
-            return;
-        }
-
+        store.dispatch(setEventProcessingLoadStart());
         requestManager.request(loadEventProcessingCreate);
     }
 
     setEdit() {
-        if (!router.isUrlChanged()) {
-            return;
-        }
-
         store.dispatch(setEventProcessingLoadStart());
         const eventId = parseInt(router.getNextUrl().slice(1));
         requestManager.request(loadEventProcessingEdit, eventId);
     }
 
     didCreate() {
-        this.setCreate();
-    }
-
-    #handleSubmit(event: SubmitEvent) {
-        event.preventDefault();
-        const { processing } = store.getState().events;
-        if (processing.loadStatus !== LoadStatus.DONE) {
-            return;
-        }
-
-        const form = event.target as HTMLFormElement;
-
-        let formData = new FormData(form);
-
-        const dateStart = formData.get("dateStart") as string;
-        const dateEnd = formData.get("dateEnd") as string;
-
-        if (dateStart) {
-            formData.set("dateStart", dateToServer(dateStart) || "");
-        }
-        if (dateEnd) {
-            formData.set("dateEnd", dateToServer(dateEnd) || "");
-        }
-        formData.set(
-            "tags",
-            Object.entries(processing.tags.tags)
-                .filter(([_, value]) => value.selected)
-                .map(([key, _]) => key)
-                .join(",")
-        );
-
-        const sendForm = (data: FormData) => {
-            const isCreate = !this.#isEdit();
-            const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
-            const url: string = "/events" + (!isCreate ? `/${processing.formData.id}` : "");
-
-            ajax.removeHeaders("Content-Type");
-            ajaxMethod({ url: url, credentials: true, body: data })
-                .then(({ status }) => {
-                    if (status === AjaxResultStatus.SUCCESS) {
-                        router.go("/");
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-            ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
-        };
-
-        if (processing.tempFileUrl !== undefined) {
-            toWebP(processing.tempFileUrl, (imageBlob: Blob) => {
-                formData.set("file", imageBlob);
-                sendForm(formData);
-            });
+        requestManager.request(loadPlaces);
+        if (this.props.type === EventProcessingType.CREATE) {
+            this.setCreate();
         } else {
-            sendForm(formData);
+            this.setEdit();
         }
     }
 
-    // #handleChange(event: Event) {
-    //     const { processing } = store.getState().events;
-    //     if (processing.loadStatus !== LoadStatus.DONE) {
-    //         return;
-    //     }
-
-    //     const target = event.target as HTMLInputElement;
-    //     if (target.name === "file") {
-    //         const files = target.files;
-    //         if (files && files.length > 0) {
-    //             processing.tempFileUrl = URL.createObjectURL(files[0]);
-    //         }
-    //     } else {
-    //         const name: keyof EventProcessingForm = target.name as keyof EventProcessingForm;
-    //         (processing.formData[name] as string) = target.value;
-    //     }
-    // }
-
-    #handleRemove(event: Event) {
-        const { processing } = store.getState().events;
+    handleRemove() {
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -183,7 +83,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
     handleChangeField(event: Event, filedName: keyof EventProcessingForm) {
         console.log("handleChangeName");
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -193,7 +93,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
     }
 
     handleChangeImg(event: Event) {
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
@@ -205,26 +105,46 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
     }
 
-    handleSubmit(event: SubmitEvent) {
-        event.preventDefault();
-        const { processing } = store.getState().events;
-        if (processing.loadStatus !== LoadStatus.DONE) {
+    handleChangePlace(placeId: number) {
+        store.dispatch(setEventProcessingFormDataField({ field: "place", value: placeId }));
+    }
+
+    validateFormData(): { eventId: number; formData: FormData; tempFileUrl?: string } | undefined {
+        const { processing } = store.state.events;
+        if (processing.loadStatus !== LoadStatus.DONE || store.state.places.places.loadStatus !== LoadStatus.DONE) {
             return;
         }
+        const formData = new FormData();
+        let errors: EventProcessingErrorsType = {};
 
-        const form = event.target as HTMLFormElement;
+        processing.formData.name === ""
+            ? (errors.name = "Забыли указать название")
+            : formData.set("name", processing.formData.name);
 
-        let formData = new FormData(form);
+        // processing.formData.teaser === ""
+        //     ? (errors.teaser = "Нет краткого описания")
+        //     : formData.set("teaser", processing.formData.teaser);
 
-        const dateStart = formData.get("dateStart") as string;
-        const dateEnd = formData.get("dateEnd") as string;
+        processing.formData.description === ""
+            ? (errors.description = "Нет подробного описания")
+            : formData.set("description", processing.formData.description);
 
-        if (dateStart) {
-            formData.set("dateStart", dateToServer(dateStart) || "");
+        if (processing.formData.place === -1) {
+            errors.place = "Не выбрано место";
+        } else {
+            const place = store.state.places.places.data.find((value) => value.id === processing.formData.place);
+            place ? formData.set("place", place.name) : (errors.place = "Место не найдено, попробуйте выбрать другое");
         }
-        if (dateEnd) {
-            formData.set("dateEnd", dateToServer(dateEnd) || "");
-        }
+
+        const dateStart = dateToServer(processing.formData.dateStart);
+        dateStart ? formData.set("dateStart", dateStart) : (errors.dateStart = "Место начала обязательно");
+
+        const timeStart = processing.formData.timeStart;
+        timeStart ? formData.set("timeStart", timeStart) : (errors.timeStart = "Время начала обязательно");
+
+        formData.set("dateEnd", dateToServer(processing.formData.dateEnd) || "");
+        formData.set("timeEnd", processing.formData.timeEnd || "");
+
         formData.set(
             "tags",
             Object.entries(processing.tags.tags)
@@ -233,16 +153,50 @@ export class EventProcessing extends Component<EventProcessingProps> {
                 .join(",")
         );
 
+        console.log(processing.formData.img || processing.tempFileUrl);
+
+        if (!(processing.formData.img || processing.tempFileUrl)) {
+            errors.img = "Добавьте картинку";
+        }
+
+        if (Object.keys(errors).length > 0) {
+            store.dispatch(setEventProcessingErrors(errors));
+            return;
+        }
+        for (const i of formData.entries()) console.log(i[0], i[1]);
+        return {
+            eventId: processing.formData.id,
+            formData,
+            tempFileUrl: processing.tempFileUrl,
+        };
+        // return new FormData();
+    }
+
+    handleSubmit(event: SubmitEvent) {
+        event.preventDefault();
+
+        const result = this.validateFormData();
+        if (!result) {
+            return;
+        }
+        const { eventId, formData, tempFileUrl } = result;
+
         const sendForm = (data: FormData) => {
+            console.group("EventProcessing FormData");
+            for (const i of data) console.log(i);
+            console.groupEnd();
+
             const isCreate = !this.#isEdit();
             const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
-            const url: string = "/events" + (!isCreate ? `/${processing.formData.id}` : "");
+            const url: string = "/events" + (!isCreate ? `/${eventId}` : "");
 
             ajax.removeHeaders("Content-Type");
             ajaxMethod({ url: url, credentials: true, body: data })
-                .then(({ status }) => {
+                .then(({ json, status }) => {
                     if (status === AjaxResultStatus.SUCCESS) {
                         router.go("/");
+                    } else {
+                        store.dispatch(setEventProcessingErrors({ default: json.errorMsg }));
                     }
                 })
                 .catch((error) => {
@@ -251,8 +205,8 @@ export class EventProcessing extends Component<EventProcessingProps> {
             ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
         };
 
-        if (processing.tempFileUrl !== undefined) {
-            toWebP(processing.tempFileUrl, (imageBlob: Blob) => {
+        if (tempFileUrl !== undefined) {
+            toWebP(tempFileUrl, (imageBlob: Blob) => {
                 formData.set("file", imageBlob);
                 sendForm(formData);
             });
@@ -261,37 +215,55 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
     }
 
+    getFieldData(
+        fieldName: keyof EventProcessingForm,
+        title: string,
+        type: InputFieldType,
+        required: boolean = false,
+        min?: string
+    ) {
+        const { formData, errors } = store.state.events.processing as EventProcessingData;
+
+        return {
+            fieldName,
+            title,
+            type,
+            required,
+            min,
+            value: formData[fieldName],
+            errorMsg: errors[fieldName],
+            changeHandler: this.handleChangeField,
+        };
+    }
+
     render() {
-        if (kickUnauthorized(store.getState().user)) {
+        if (kickUnauthorized(store.state.user)) {
             return <div></div>;
         }
 
-        const { processing } = store.getState().events;
+        const { processing } = store.state.events;
         if (processing.loadStatus === LoadStatus.DONE) {
             const { formData } = processing;
-            const isEdit = this.props.type === EventProcessingState.EDIT;
+            const places =
+                store.state.places.places.loadStatus === LoadStatus.DONE ? store.state.places.places.data : [];
+            const isEdit = this.props.type === EventProcessingType.EDIT;
             const hasImg = formData.img !== "" || processing.tempFileUrl;
             const imgUrl = formData.img || processing.tempFileUrl || "";
-            console.log(formData);
 
             return (
                 <div className="event-processing">
+                    {/* <div className="form-required-title">
+                        <span className="form-label-required"></span> - Обязательные поля
+                    </div> */}
                     <form
                         className="form event-processing__form"
                         id="event-processing-form"
-                        onSubmit={(e) => this.handleSubmit(e as unknown as SubmitEvent)}
+                        onSubmit={(e) => this.handleSubmit(toSubmitEvent(e))}
                     >
-                        <InputField
-                            fieldName="name"
-                            title="Название мероприятия:"
-                            type="text"
-                            value={formData.name}
-                            changeHandler={this.handleChangeField}
-                            requered={true}
-                        />
+                        <InputField {...this.getFieldData("name", "Название мероприятия", "text", true)} />
 
                         {/* <label htmlFor="event-processing-teaser" className="form-label">
-                            Тизер:
+                            Тизер
                         </label>
                         <textarea
                             name="teaser"
@@ -300,73 +272,53 @@ export class EventProcessing extends Component<EventProcessingProps> {
                         >
                             {formData.description}
                         </textarea> */}
-                        <div className="event-processing__form-block">
-                            <label htmlFor="event-processing-description" className="form-label">
-                                Полное описание:
-                            </label>
-                            <textarea
-                                name="description"
-                                className="form-control event-processing__form-textarea"
-                                id="event-processing-description"
-                                required
-                                onChange={(e) => this.handleChangeField(e as unknown as Event, "description")}
-                            >
-                                {formData.description}
-                            </textarea>
+
+                        <TextareaField
+                            fieldName="description"
+                            title="Полное описание"
+                            value={formData.description}
+                            changeHandler={this.handleChangeField}
+                            required={true}
+                            errorMsg={processing.errors.description}
+                        />
+
+                        <InputField {...this.getFieldData("dateStart", "Дата начала", "date", true, "2023-01-01")} />
+                        <InputField {...this.getFieldData("timeStart", "Время начала", "time", true)} />
+                        <InputField {...this.getFieldData("dateEnd", "Дата конца", "date", false, "2023-01-01")} />
+                        <InputField {...this.getFieldData("timeEnd", "Время конца", "time")} />
+
+                        <div className="event-processing__tags">
+                            <Tags
+                                tagsState={processing.tags}
+                                toggleTag={({ tag }: ToggleTagFuncProps) => {
+                                    store.dispatch(toggleEventProcessingTag(tag));
+                                }}
+                            />
                         </div>
 
-                        <InputField
-                            fieldName="dateStart"
-                            title="Дата начала:"
-                            type="date"
-                            value={formData.dateStart}
-                            changeHandler={this.handleChangeField}
-                        />
-                        <InputField
-                            fieldName="timeStart"
-                            title="Время начала:"
-                            type="time"
-                            value={formData.timeStart}
-                            changeHandler={this.handleChangeField}
-                        />
-                        <InputField
-                            fieldName="dateEnd"
-                            title="Дата конца:"
-                            type="date"
-                            value={formData.dateEnd}
-                            changeHandler={this.handleChangeField}
-                        />
-                        <InputField
-                            fieldName="timeEnd"
-                            title="Время конца:"
-                            type="time"
-                            value={formData.timeEnd}
-                            changeHandler={this.handleChangeField}
-                        />
-
-                        {/* <div className="event-processing__tags">
-                            {tags}
-                        </div> */}
-                        <div className="event-processing__form-block">
-                            <label htmlFor="event-processing-place" className="form-label">
-                                Место проведения:
-                            </label>
-                            <input
+                        <FormFieldBase
+                            fieldName="place"
+                            title="Место проведения"
+                            required={true}
+                            errorMsg={processing.errors.place}
+                        >
+                            <select
                                 name="place"
                                 className="form-control"
                                 id="event-processing-place"
-                                list="test"
                                 placeholder="Выберите место проведения..."
-                                value={formData.place}
-                                required
-                            />
-                            <datalist id="test">
-                                <option value="ВДНХ"></option>
-                                <option value="Битца"></option>
-                                <option value="Большой театр"></option>
-                                <option value="Третьяковская галерея"></option>
-                            </datalist>
-                        </div>
+                                onChange={(e) => this.handleChangePlace(parseInt(e.target.value))}
+                            >
+                                <option selected={formData.place === -1} disabled value={-1}>
+                                    Выберите место проведения...
+                                </option>
+                                {places.map((place) => (
+                                    <option selected={formData.place === place.id} value={place.id}>
+                                        {place.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </FormFieldBase>
 
                         <div className="event-processing__form-block">
                             {hasImg ? (
@@ -374,8 +326,8 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                     <img className="event-processing__img-prev" src={imgUrl} alt="Картинка :3" />
                                 </label>
                             ) : (
-                                <label htmlFor="event-processing-img" className="form-label">
-                                    Картинка:
+                                <label htmlFor="event-processing-img" className="form-label-required">
+                                    Картинка
                                 </label>
                             )}
                             <input
@@ -384,9 +336,13 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                 className={`form-control ${hasImg ? "invisible" : ""}`}
                                 type="file"
                                 accept="image/*"
-                                onChange={(e) => this.handleChangeImg(e as unknown as Event)}
+                                onChange={(e) => this.handleChangeImg(toEvent(e))}
                             />
+
+                            {processing.errors.img && <div className="form-error">{processing.errors.img}</div>}
                         </div>
+
+                        <div className="form-error">{processing.errors.default}</div>
 
                         <div className="event-processing__button-block">
                             <input
@@ -401,6 +357,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                                     id="event-processing-remove"
                                     type="button"
                                     value="Удалить"
+                                    onClick={this.handleRemove}
                                 />
                             ) : (
                                 ""

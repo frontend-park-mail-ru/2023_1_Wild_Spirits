@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import { validateForm, warningMsg } from "components/Auth/FormValidation";
 import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
@@ -22,9 +22,8 @@ export class Registration extends Component {
 
     #toggleForm = () => {
         const submitButton = document.getElementById("register-submit-button") as HTMLButtonElement;
-        if (submitButton)
-            submitButton.disabled = !submitButton.disabled;
-    }
+        if (submitButton) submitButton.disabled = !submitButton.disabled;
+    };
 
     /**
      * form submit event handler
@@ -45,7 +44,7 @@ export class Registration extends Component {
             <div>
                 <h2 className="auth__title">Регистрация</h2>
 
-                <form className="auth__form" onSubmit={(e)=>this.#formSubmit(e as unknown as SubmitEvent)}>
+                <form className="auth__form" onSubmit={(e) => this.#formSubmit(e as unknown as SubmitEvent)}>
                     <div id="common-warning" className="warning"></div>
                     <div className="input-group">
                         <label htmlFor="nickname">Имя</label>
@@ -72,16 +71,24 @@ export class Registration extends Component {
                     </div>
 
                     <div className="input-group input-group-inline">
-                        <input name="accept" type="checkbox" onChange={this.#toggleForm}/>
+                        <input name="accept" type="checkbox" onChange={this.#toggleForm} />
                         <label htmlFor="accept">Я согласен с обработкой персональных данных</label>
                     </div>
 
                     <div className="submit-group">
-                        <a className="link-button" onClick={() => store.dispatch.bind(store)(openLogin())}>Вход</a>
-                        <input disabled={true} type="submit" value="Регистрация" className="button" id="register-submit-button" />
+                        <a className="link-button" onClick={() => store.dispatch.bind(store)(openLogin())}>
+                            Вход
+                        </a>
+                        <input
+                            disabled={true}
+                            type="submit"
+                            value="Регистрация"
+                            className="button"
+                            id="register-submit-button"
+                        />
                     </div>
                 </form>
             </div>
-        )
+        );
     }
 }

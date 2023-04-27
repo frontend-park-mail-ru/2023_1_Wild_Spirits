@@ -5,6 +5,7 @@ import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEve
 import { addFriend, loadAuthorization, loadFriends, loadProfile, loginUser, logoutUser, registerUser } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
+import { loadPlaces } from "./places";
 
 interface SetupRequestsType {
     request: TRequest;
@@ -26,6 +27,10 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadTags,
+        dependencies: [],
+    },
+    {
+        request: loadPlaces,
         dependencies: [],
     },
     {
@@ -58,11 +63,11 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadEventProcessingEdit,
-        dependencies: [loadAuthorization, loadTags],
+        dependencies: [loadAuthorization, loadTags, loadPlaces],
     },
     {
         request: loadEventProcessingCreate,
-        dependencies: [loadAuthorization, loadTags],
+        dependencies: [loadAuthorization, loadTags, loadPlaces],
     },
     {
         request: loadEventPage,

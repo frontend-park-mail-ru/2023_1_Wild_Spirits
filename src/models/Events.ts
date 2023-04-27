@@ -12,13 +12,13 @@ interface TEventDates {
 type TCity = { id: number; name: string };
 
 export interface TEventPlace {
+    id: number;
     name: string;
-    city: TCity;
+    lon: number;
+    lat: number;
     address: string;
-    coords: {
-        lat: number;
-        long: number;
-    };
+    images: string[];
+    city: TCity;
 }
 
 export interface TEventBase {
@@ -50,7 +50,7 @@ export interface SelectedEventData {
     organizer: TOrganizer;
 }
 
-export namespace EventProcessingState {
+export namespace EventProcessingType {
     export const CREATE = "CREATE";
     export const EDIT = "EDIT";
     export type Type = typeof CREATE | typeof EDIT;
@@ -64,6 +64,6 @@ export interface EventProcessingForm {
     dateEnd?: string;
     timeStart?: string;
     timeEnd?: string;
-    place: string;
+    place: number;
     img: string;
 }

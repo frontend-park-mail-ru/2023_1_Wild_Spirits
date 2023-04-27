@@ -13,6 +13,10 @@ const dateSwap = (date: string | undefined, split: string, join: string): string
 };
 
 export const dateToServer = (date: string | undefined): string | undefined => {
+    if (date === "--") {
+        return;
+    }
+
     return dateSwap(date, "-", ".");
 };
 

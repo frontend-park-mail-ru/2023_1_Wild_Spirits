@@ -1,4 +1,4 @@
-import { deepEqual } from "./objectsManipulation";
+import { deepEqual } from "modules/objectsManipulation";
 
 type PropType = Function | null | false | string | undefined;
 
@@ -8,7 +8,7 @@ type ChildType = VNodeType | string | undefined | null | boolean;
 
 // type FunctionComponent = (props: PropsType, children: ChildType[]) => VNodeType;
 
-type TagNameFuncType<TProps> = (props: TProps, children: ChildType[]) => VNodeType;
+type TagNameFuncType<TProps> = (props: TProps, ...children: ChildType[]) => VNodeType;
 type ComponentConstructor<T extends Component<TProps>, TProps> = new (props: TProps, ...children: ChildType[]) => T;
 type TagNameType<T extends Component<TProps>, TProps> =
     | string
@@ -96,28 +96,39 @@ export const createVDOM = (root: HTMLElement, renderFunc: VDOMRenderFunc) => {
 
 const JSXToVNode = (jsx: JSX.Element): TagVNodeType => jsx as unknown as TagVNodeType;
 
-export const createVNode = <T extends Component<TProps>, TProps extends PropsType = PropsType>(
-    tagName: TagNameType<T, TProps>,
-    props: TProps = {} as TProps,
-    ...children: ChildType[]
-): VNodeType => {
-    if (typeof tagName === "function") {
-        try {
-            const result: VNodeType = (tagName as TagNameFuncType<TProps>)(props, children);
-            return result;
-        } catch {
-            const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
-            let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
-            return vnode;
+export namespace VDOM {
+    export const createVNode = <T extends Component<TProps>, TProps extends PropsType = PropsType>(
+        tagName: TagNameType<T, TProps>,
+        props: TProps = {} as TProps,
+        ...children: ChildType[]
+    ): VNodeType => {
+        if (typeof tagName === "function") {
+            try {
+                const result: VNodeType = (tagName as TagNameFuncType<TProps>)({ ...props, children });
+                return result;
+            } catch {
+                const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
+                const jsx = JSXToVNode(instance.render());
+                if (Array.isArray(jsx)) {
+                    (jsx as any)._instance = instance;
+                    return jsx;
+                }
+                let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
+                return vnode;
+            }
         }
-    }
 
-    return {
-        tagName,
-        props,
-        children: children.flat(),
+        return {
+            tagName,
+            props,
+            children: children.flat(),
+        };
     };
-};
+
+    export const createFragment = (_: any, args: any[]) => {
+        return args;
+    };
+}
 
 const isNodeTypeComponent = (vNode: VNodeType): vNode is ComponentVNodeType => {
     return !isNodeTypeSimple(vNode) && vNode.hasOwnProperty(InstanceFieldName);
@@ -172,7 +183,6 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     // }
 
     if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && tryCopyState(vNode, nextVNode)) {
-        console.log("isChanged");
         nextVNode = { ...JSXToVNode(nextVNode._instance.render()), _instance: nextVNode._instance };
     }
 
@@ -209,8 +219,8 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     patchProps(node, vNode.props, nextVNode.props);
     patchChildren(node, vNode.children, nextVNode.children);
 
-    if (instancePropsChanged) {
-        (nextVNode as ComponentVNodeType)._instance.didUpdate();
+    if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
+        nextVNode._instance.didUpdate();
     }
 
     return node;
@@ -304,7 +314,7 @@ const recycleNode = (node: DOMNodeType) => {
     const tagName = node.nodeName.toLowerCase();
     const children: ChildType[] = [].map.call(node.childNodes, recycleNode) as ChildType[];
 
-    return createVNode(tagName, {}, children as any);
+    return VDOM.createVNode(tagName, {}, children as any);
 };
 
 function listener(this: any, event: Event) {

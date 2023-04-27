@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { loadEvents } from "requests/events";
 
@@ -35,8 +35,8 @@ export class Calendar extends Component {
             return;
         }
 
-        const currentYear = store.getState().calendar.year;
-        const currentMonth = store.getState().calendar.month;
+        const currentYear = store.state.calendar.year;
+        const currentMonth = store.state.calendar.month;
 
         const dateString = dateEl.textContent;
 
@@ -46,8 +46,8 @@ export class Calendar extends Component {
 
         const date = new Date(currentYear, currentMonth, parseInt(dateString));
 
-        const startDate = store.getState().calendar.startDate;
-        const finishDate = store.getState().calendar.finishDate;
+        const startDate = store.state.calendar.startDate;
+        const finishDate = store.state.calendar.finishDate;
 
         if (startDate === undefined) {
             store.dispatch(setStartDate({ date: date }));
@@ -92,7 +92,7 @@ export class Calendar extends Component {
         let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
 
         const checkSelection = (date: Date): { isSelected: boolean; isInner: boolean } => {
-            const startDate = store.getState().calendar.startDate;
+            const startDate = store.state.calendar.startDate;
 
             if (!startDate) {
                 return {
@@ -101,7 +101,7 @@ export class Calendar extends Component {
                 };
             }
 
-            const finishDate = store.getState().calendar.finishDate;
+            const finishDate = store.state.calendar.finishDate;
 
             if (!finishDate) {
                 return {
@@ -149,11 +149,11 @@ export class Calendar extends Component {
         // return weeks;
     };
 
-    render(): JSX.Element {
-        const currentYear = store.getState().calendar.year;
-        const currentMonth = store.getState().calendar.month;
+    render() {
+        const currentYear = store.state.calendar.year;
+        const currentMonth = store.state.calendar.month;
 
-        const month = getMonthName(store.getState().calendar);
+        const month = getMonthName(store.state.calendar);
         const weeks = this.getMonthWeeks(currentYear, currentMonth);
 
         return (
@@ -167,33 +167,9 @@ export class Calendar extends Component {
                         <span className="calendar-header__year">{currentYear.toString()}</span>
                     </div>
                     <button className="arrow-button" onClick={this.#incrementMonth}>
-                        <img src="/assets/img/arrow-icon.svg" className="reversed"/>
+                        <img src="/assets/img/arrow-icon.svg" className="reversed" />
                     </button>
                 </div>
-                {/* <table>
-                    <tr className="top-row">
-                        <th>ПН</th>
-                        <th>ВТ</th>
-                        <th>СР</th>
-                        <th>ЧТ</th>
-                        <th>ПТ</th>
-                        <th>СБ</th>
-                        <th>ВС</th>
-                    </tr>
-                    {
-                        weeks.map(week => (
-                            <tr>
-                                {week.map(date => (
-                                    <td>
-                                        <button onClick={(event) => this.#toggleDate(event as unknown as PointerEvent)}
-                                            className={`calendar-date current ${date.style}`}>{date.date.toString()}
-                                        </button>
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
-                    }
-                </table> */}
                 <div className="calendar-grid">
                     <div className="calendar__weekday">ПН</div>
                     <div className="calendar__weekday">ВТ</div>

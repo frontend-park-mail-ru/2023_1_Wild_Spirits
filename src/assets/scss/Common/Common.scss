@@ -4,6 +4,7 @@
 
 .row {
     display: flex;
+    margin: 0 auto;
 }
 
 .content {
@@ -23,6 +24,10 @@
     .sidebar {
         display: none;
     }
+}
+
+.flex {
+    display: flex;
 }
 
 .table {

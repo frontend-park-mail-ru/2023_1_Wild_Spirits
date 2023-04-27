@@ -1,4 +1,4 @@
-import { createVNode, Component } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 
@@ -8,7 +8,7 @@ export class CityPicker extends Component<{}, {query: string}> {
     constructor() {
         super({});
 
-        this.state = {query: ""};
+        this.state = {query: "М"};
     }
 
     #search = (event: Event) => {
@@ -26,11 +26,12 @@ export class CityPicker extends Component<{}, {query: string}> {
 
     render(): JSX.Element {
         console.log('q:', this.state)
-        const cities = store.getState().header.cities
+        const cities = store.state.header.cities
                             .map(city=>city.name)
                             .filter(city=>city.includes(this.state.query));
 
-        console.log('cities:', cities)
+        // const cities = ["", ""]
+        // console.log('cities:', cities)
         return (
             <div className="city-picker">
                 <div className="city-picker__header">
