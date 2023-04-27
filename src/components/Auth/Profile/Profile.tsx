@@ -30,6 +30,10 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
     constructor(props: { id: number }) {
         super(props);
         this.state = { editing: false };
+
+        console.log('constructor')
+
+        this.setEditing = this.setEditing.bind(this);
     }
 
     didCreate(): void {
@@ -56,7 +60,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         const image = inputFiles[0];
         this.#tempAvatarUrl = URL.createObjectURL(image);
 
-        this.setState({ editing: false });
+        // this.setState({ editing: false });
     };
 
     getProfileId(): number | undefined {
@@ -80,11 +84,11 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         }
     };
 
-    #setEditing() {
-        this.setState({editing: true})
+    setEditing() {
+        this.setState({editing: true});
     }
 
-    #unsetEditing() {
+    unsetEditing() {
 
     }
 
@@ -144,7 +148,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
-        this.setState({ editing: false });
+        // this.setState({ editing: false });
     }
 
     render(): JSX.Element {
@@ -229,7 +233,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                     <input
                         type="button"
                         id="edit-profile-btn"
-                        onClick={this.#setEditing.bind(this)}
+                        onClick={this.setEditing}
                         className="button"
                         value="Редактировать"
                     ></input>
