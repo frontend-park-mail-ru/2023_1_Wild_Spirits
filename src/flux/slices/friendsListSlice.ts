@@ -10,11 +10,13 @@ type FriendState = {
 interface FriendListState {
     friendSearchQuery: string;
     friends: FriendState[];
+    foundUsers: FriendState[];
 }
 
 const friendListInitialState: FriendListState = {
     friendSearchQuery: "",
-    friends: []
+    friends: [],
+    foundUsers: []
 }
 
 const friendListSlice = createSlice({
@@ -23,6 +25,10 @@ const friendListSlice = createSlice({
     reducers: {
         setFriends: (state: FriendListState, action) => {
             state.friends = action.payload.friends;
+            return state;
+        },
+        setFoundUsers: (state: FriendListState, action) => {
+            state.foundUsers = action.payload.users;
             return state;
         },
         setFriendSearchQuery: (state: FriendListState, action) => {
@@ -36,5 +42,5 @@ const friendListSlice = createSlice({
     }
 })
 
-export const { setFriends, setFriendSearchQuery, clearFriendSearchQuery } = friendListSlice.actions;
+export const { setFriends, setFoundUsers, setFriendSearchQuery, clearFriendSearchQuery } = friendListSlice.actions;
 export default friendListSlice

@@ -1,7 +1,7 @@
 import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
-import { EventProcessingForm, EventProcessingState, SelectedEventData, TEvent, TEventPlace } from "models/Events";
+import { EventProcessingForm, EventProcessingType, SelectedEventData, TEvent, TEventPlace } from "models/Events";
 import { TEventLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
 import { TagsState } from "./tagsSlice";
@@ -9,16 +9,19 @@ import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
 
 interface EventProcessingPayload {
-    processingState: EventProcessingState.Type;
+    processingState: EventProcessingType.Type;
     event: TEvent;
     places?: TEventPlace[];
     tags: TagsState;
 }
 
-interface EventProcessingData {
-    processingState: EventProcessingState.Type;
+export type EventProcessingErrorsType = { [key in keyof EventProcessingForm | "default"]?: string };
+
+export interface EventProcessingData {
+    processingState: EventProcessingType.Type;
     formData: EventProcessingForm;
     tags: TagsState;
+    errors: EventProcessingErrorsType;
     tempFileUrl?: string;
 }
 
@@ -33,6 +36,11 @@ const initialState: EventsState = {
     selectedEvent: { loadStatus: LoadStatus.NONE },
     processing: { loadStatus: LoadStatus.NONE },
 };
+
+interface FormField<T, K extends keyof T> {
+    field: K;
+    value: T[K];
+}
 
 const eventsSlice = createSlice({
     name: "events",
@@ -68,6 +76,7 @@ const eventsSlice = createSlice({
         },
         setEventProcessingFormData: (state: EventsState, action: PayloadAction<EventProcessingPayload>) => {
             const { event, places, tags, processingState } = action.payload;
+            const placeId = places && places.length > 0 ? places[0].id : -1;
             state.processing = {
                 loadStatus: LoadStatus.DONE,
                 processingState,
@@ -79,11 +88,36 @@ const eventsSlice = createSlice({
                     dateEnd: dateFromServer(event.dates.dateEnd),
                     timeStart: event.dates.timeStart,
                     timeEnd: event.dates.timeEnd,
-                    place: "ВДНХ",
+                    place: placeId,
                     img: getUploadsImg(event.img),
                 },
                 tags: tags,
+                errors: {},
             };
+            return state;
+        },
+        setEventProcessingErrors: (state: EventsState, action: PayloadAction<EventProcessingErrorsType>) => {
+            if (state.processing.loadStatus === LoadStatus.DONE) {
+                state.processing.errors = action.payload;
+            }
+            return state;
+        },
+        setEventProcessingFormDataField: <KEY extends keyof EventProcessingForm>(
+            state: EventsState,
+            action: PayloadAction<FormField<EventProcessingForm, KEY>>
+        ) => {
+            if (state.processing.loadStatus === LoadStatus.DONE) {
+                state.processing.formData[action.payload.field] = action.payload.value;
+                delete state.processing.errors[action.payload.field];
+            }
+            return state;
+        },
+        setEventProcessingFormImg: (state: EventsState, action: PayloadAction<string>) => {
+            if (state.processing.loadStatus === LoadStatus.DONE) {
+                state.processing.tempFileUrl = action.payload;
+                delete state.processing.errors.img;
+            }
+
             return state;
         },
         toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
@@ -91,13 +125,8 @@ const eventsSlice = createSlice({
                 const tag = state.processing.tags.tags[action.payload];
                 if (tag !== undefined) {
                     state.processing.tags.tags[action.payload].selected = !tag.selected;
+                    // state.processing.errors = {};
                 }
-            }
-            return state;
-        },
-        setEventProcessingTempFileUrl: (state: EventsState, action: PayloadAction<string>) => {
-            if (state.processing.loadStatus === LoadStatus.DONE) {
-                state.processing.tempFileUrl = action.payload;
             }
             return state;
         },
@@ -117,8 +146,10 @@ export const {
     setSelectedEventLoadError,
     setEventProcessingLoadStart,
     setEventProcessingFormData,
+    setEventProcessingErrors,
+    setEventProcessingFormDataField,
+    setEventProcessingFormImg,
     toggleEventProcessingTag,
-    setEventProcessingTempFileUrl,
     setEventProcessingLoadError,
 } = eventsSlice.actions;
 export default eventsSlice;

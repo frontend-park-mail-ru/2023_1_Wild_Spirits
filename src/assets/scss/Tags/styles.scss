@@ -1,0 +1,40 @@
+.tags-menu {
+    display: flex;
+
+    margin-top: 40px;
+
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background-color: var(--main-selected-color);
+    color: white;
+    text-align: center;
+    padding: 10px;
+
+    border: 1px solid var(--main-selected-color);
+    border-radius: 15px;
+
+    box-shadow: 0px 4px 4px rgb(0 0 0 / 25%);
+}
+
+.tag-selectable {
+    @extend .tag;
+    cursor: pointer;
+
+    &:hover {
+        background-color: white;
+        color: var(--main-selected-color);
+    }
+
+    &.active {
+        background-color: var(--input-el-color);
+        border-color: var(--input-el-color);
+
+        &:hover {
+            background-color: white;
+            color: var(--input-el-color);
+        }
+    }
+}

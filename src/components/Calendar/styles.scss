@@ -95,3 +95,20 @@ table {
 
     pointer-events: none;
 }
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+.calendar__weekday {
+    font-size: 24px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.calendar__row-border {
+    grid-column: 1 / 8;
+    margin: 10px 0 10px 0;
+    border-bottom: 1px solid black;
+}

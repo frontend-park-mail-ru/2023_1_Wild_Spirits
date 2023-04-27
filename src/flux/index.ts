@@ -8,6 +8,7 @@ import tagsSlice from "./slices/tagsSlice";
 import calendarSlice from "./slices/calendarSlice";
 import eventsSlice from "./slices/eventSlice";
 import friendsListSlice from "./slices/friendsListSlice";
+import placesSlice from "./slices/placesSlice";
 
 export type SlicesMapObject<S = any> = {
     [K in keyof S]: Slice<S[K]>;
@@ -33,6 +34,7 @@ export let store = configureStore({
     modalWindow: modalWindowSlice,
     header: headerSlice,
     tags: tagsSlice,
+    places: placesSlice,
     calendar: calendarSlice,
     events: eventsSlice,
     friendList: friendsListSlice,

@@ -13,7 +13,7 @@ import {
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
-import { EventProcessingState } from "models/Events";
+import { EventProcessingType } from "models/Events";
 
 /**
  * fill itself with events from server
@@ -35,18 +35,18 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
         ) as UrlPropsType;
     };
 
-    const city = getSelectedCityName(store.getState().header);
+    const city = getSelectedCityName(store.state.header);
 
-    const startDate = store.getState().calendar.startDate;
-    const finishDate = store.getState().calendar.finishDate || startDate;
+    const startDate = store.state.calendar.startDate;
+    const finishDate = store.state.calendar.finishDate || startDate;
 
     const props = filterProps({
-        tags: getSelectedTags(store.getState().tags),
+        tags: getSelectedTags(store.state.tags),
         cities: city,
-        categories: getSelectedCategory(store.getState().header),
+        categories: getSelectedCategory(store.state.header),
         dateStart: dateToString(startDate),
         dateEnd: dateToString(finishDate),
-        search: store.getState().header.searchQuery,
+        search: store.state.header.searchQuery,
     });
 
     ajax.get<ResponseEventsLight>({
@@ -106,7 +106,7 @@ export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number)
 const getTags = (tags: string[] | null): TagsState => {
     return {
         tags: Object.fromEntries(
-            Object.entries(store.getState().tags.tags).map(([key, value]) => {
+            Object.entries(store.state.tags.tags).map(([key, value]) => {
                 return [
                     key,
                     {
@@ -129,7 +129,7 @@ export const loadEventProcessingEdit = (resolveRequest: TRequestResolver, eventI
                 setEventProcessingFormData({
                     ...json.body,
                     tags: tags,
-                    processingState: EventProcessingState.EDIT,
+                    processingState: EventProcessingType.EDIT,
                 })
             );
         },
@@ -156,7 +156,7 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
                 img: "",
                 tags: [],
             },
-            processingState: EventProcessingState.CREATE,
+            processingState: EventProcessingType.CREATE,
             tags: getTags([]),
             places: [],
         })

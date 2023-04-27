@@ -84,9 +84,9 @@ class Ajax {
             Object.entries(urlProps)
                 .map(([key, value]) => {
                     if (Array.isArray(value)) {
-                        return value.map((innerValue) => `${key}=${innerValue}`).join("&");
+                        return value.map((innerValue) => `${key}=${encodeURIComponent(innerValue)}`).join("&");
                     }
-                    return `${key}=${value}`;
+                    return `${key}=${encodeURIComponent(value)}`;
                 })
                 .join("&")
         );
