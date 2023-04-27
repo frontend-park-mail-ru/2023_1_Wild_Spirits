@@ -17,6 +17,7 @@ import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { ResponseErrorDefault } from "responses/ResponseBase";
 import { requestManager } from "requests";
+import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
 /**
  * Profile component
@@ -31,9 +32,8 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         super(props);
         this.state = { editing: false };
 
-        console.log('constructor')
-
         this.setEditing = this.setEditing.bind(this);
+        this.submitForm = this.submitForm.bind(this);
     }
 
     didCreate(): void {
@@ -84,15 +84,14 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         }
     };
 
-    setEditing() {
-        this.setState({editing: true});
+    setEditing(e: Event) {
+        e.preventDefault();
+        this.setState({ editing: true });
     }
 
-    unsetEditing() {
+    unsetEditing() {}
 
-    }
-
-    #submitForm = (event: SubmitEvent) => {
+    submitForm = (event: SubmitEvent) => {
         event.preventDefault();
 
         const form = event.target;
@@ -233,7 +232,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                     <input
                         type="button"
                         id="edit-profile-btn"
-                        onClick={this.setEditing}
+                        onClick={(e) => this.setEditing(toEvent(e))}
                         className="button"
                         value="Редактировать"
                     ></input>
@@ -249,14 +248,10 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;
         };
 
-        console.log(this.state)
-
         return (
             <form
                 id="edit-profile-form"
-                onSubmit={(event) => {
-                    this.#submitForm(event as unknown as SubmitEvent);
-                }}
+                onSubmit={(e) => this.submitForm(toSubmitEvent(e))}
                 className="profile-description"
             >
                 <div className="profile-description__img-container">
