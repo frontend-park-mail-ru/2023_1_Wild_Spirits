@@ -8,6 +8,7 @@ import { router } from "modules/router";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Login } from "components/Auth/Login/Login";
 import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
+import { CityPicker } from "components/CityPicker/CityPicker";
 
 /**
  * Modal window component
@@ -38,8 +39,10 @@ export class ModalWindow extends Component {
                     return <Login/>;
                 case ModalWindowName.REGISTER:
                     return <Registration/>;
-                case ModalWindowName.FRIENDLIST:
+                case ModalWindowName.FRIEND_LIST:
                     return <FriendList/>;
+                case ModalWindowName.CITY_SELECTOR:
+                    return <CityPicker/>
             }
         }
 

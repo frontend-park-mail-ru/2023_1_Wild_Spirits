@@ -156,8 +156,6 @@ export class Calendar extends Component {
         const month = getMonthName(store.getState().calendar);
         const weeks = this.getMonthWeeks(currentYear, currentMonth);
 
-        console.log(weeks)
-
         return (
             <div className="calendar">
                 <div className="calendar-header">

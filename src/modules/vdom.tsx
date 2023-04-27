@@ -37,7 +37,6 @@ export abstract class Component<TProps extends any = any, TState = {}> {
 
     setState(newState: TState) {
         this.state = newState;
-        console.log(this.state);
         patchVDOM();
     }
 

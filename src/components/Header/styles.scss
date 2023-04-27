@@ -1,27 +1,38 @@
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    --hovered-radius: 15px;
+    --logo-size: 112px;
+}
+
 .header__logo {
     position: absolute;
 }
 
 .header__logo img {
-    width: 90px;
-    height: 90px;
+    width: var(--logo-size);
+    height: var(--logo-size);
     padding-top: 0;
 }
 
 .header__head {
-    font-size: 48px;
+    // font-size: 24px;
+
+    font-size: clamp(24px, 3vw, 48px);
+
     font-weight: lighter;
+
+    // @media screen and (min-width: 1100px) {
+    //     font-size: 48px;
+    // }
 }
 
 .header__menu {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.header {
-    display: flex;
-    flex-direction: column;
 }
 
 .header__top__line {
@@ -39,10 +50,14 @@
     font-size: 32px;
 
     cursor: pointer;
-}
 
-.header__category:hover {
-    background-color: rgb(231, 231, 231);
+    border-radius: var(--hovered-radius);
+
+    padding: 5px 10px 5px 10px;
+
+    &:hover {
+        background-color: var(--hovering-el-color);
+    }
 }
 
 .category-selected {
@@ -84,7 +99,7 @@ select {
 
     cursor: pointer;
 
-    background: right url("/assets/img/down-arrow-icon.svg") no-repeat;
+    // background: left url("/assets/img/position_icon.png") no-repeat;
 
     outline: none;
 }
@@ -93,15 +108,49 @@ select > option {
     background-color: white;
 }
 
+.header__city-selector__button {
+    appearance: none;
+    background-color: white;
+    border: none;
+    border-radius: var(--hovered-radius);
+    font-size: 24px;
+
+    cursor: pointer;
+
+    padding: 5px 10px 5px 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 6px;
+
+    & img {
+        height: 24px;
+    }
+
+    &:hover {
+        background-color: var(--hovering-el-color);
+    }
+}
+
+.header__search-container {
+    flex-grow: 1;
+    max-width: 30%;
+    min-width: 200px;
+
+    display: flex;
+}
+
 .search {
     font-size: 17px;
-    padding: 5px;
+    padding: 7px;
     border: solid black 1px;
     border-radius: 15px;
     appearance: none;
     background-color: transparent;
     box-shadow: none;
-    width: 250px;
+    flex-grow: 1;
 
     background: calc(100% - 9px) url('/assets/img/search-icon.svg') no-repeat;
 }

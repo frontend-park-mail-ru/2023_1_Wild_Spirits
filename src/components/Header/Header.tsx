@@ -14,6 +14,7 @@ import {
 } from "flux/slices/headerSlice";
 import { loadEvents } from "requests/events";
 import { loadCategories, loadCities } from "requests/header";
+import { openCitySelector } from "flux/slices/modalWindowSlice";
 
 import { logoutUser } from "requests/user";
 import "./styles.scss";
@@ -122,15 +123,14 @@ export class Header extends Component<any> {
                         {categoryName}
                     </a>
                 );
-                if (id < categories.length - 1) {
-                    res.push(<div className="header__category__delimiter"></div>);
-                }
             }
             return res;
         };
 
         const cities = getCitiesNames(store.getState().header).map((cityName) => <option>{cityName}</option>);
         const categories = createCategories(store.getState().header.categories);
+
+        const selectedCityName = getSelectedCityName(store.getState().header);
 
         return (
             <div className="header">
@@ -145,11 +145,7 @@ export class Header extends Component<any> {
                         </Link>
                     </div>
 
-                    <div className="header__city__selector">
-                        <select onChange={(e) => this.#selectCity(e as unknown as Event)}>{cities}</select>
-                    </div>
-
-                    <div>
+                    <div className="header__search-container">
                         <input
                             type="text"
                             onChange={e => this.#search(e as unknown as Event)}
@@ -157,6 +153,17 @@ export class Header extends Component<any> {
                             value={store.getState().header.searchQuery}
                             className="search"
                         />
+                    </div>
+
+                    <div className="header__city-selector">
+                        <button className="header__city-selector__button"
+                            onClick={()=>store.dispatch(openCitySelector())}>
+                            <img src="/assets/img/position_icon.png"></img>
+                            <span>
+                                {selectedCityName}
+                            </span>
+                        </button>
+                        {/* <select onChange={(e) => this.#selectCity(e as unknown as Event)}>{cities}</select> */}
                     </div>
 
                     <div className="profile-link">{getProfileLink()}</div>

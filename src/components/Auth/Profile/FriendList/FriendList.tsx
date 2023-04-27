@@ -8,10 +8,11 @@ import { loadFriends } from "requests/user";
 
 import { store } from "flux";
 import { close } from "flux/slices/modalWindowSlice";
-import { router } from "modules/router";
 
 import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
+
+import "./styles.scss"
 
 export class FriendList extends Component {
     constructor() {
