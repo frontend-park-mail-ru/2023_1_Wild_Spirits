@@ -27,17 +27,32 @@ export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
     props: TProps;
-    state: TState;
+    #state: TState;
+    #interState: TState;
     refs: any;
 
     constructor(props: TProps) {
-        this.state = {} as TState;
+        this.#state = {} as TState;
+        this.#interState = {} as TState;
         this.props = props;
     }
 
     setState(newState: TState) {
-        this.state = newState;
+        this.#interState = newState;
         patchVDOM();
+    }
+
+    get state() {
+        return this.#state;
+    }
+
+    set state(newState: TState) {
+        this.#state = newState;
+        this.#interState = newState;
+    }
+
+    getInterState() {
+        return this.#interState;
     }
 
     didCreate() {}
@@ -169,9 +184,8 @@ export const createDOMNode = (vNode: VNodeType) => {
     return node;
 };
 
-const tryCopyState = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
-    const result = !deepEqual(nextVNode._instance.state, vNode._instance.state);
-    nextVNode._instance.state = vNode._instance.state;
+const isStateChanged = (vNode: ComponentVNodeType): boolean => {
+    const result = !deepEqual(vNode._instance.state, vNode._instance.getInterState());
     return result;
 };
 
@@ -182,8 +196,12 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     //     return;
     // }
 
-    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && tryCopyState(vNode, nextVNode)) {
-        nextVNode = { ...JSXToVNode(nextVNode._instance.render()), _instance: nextVNode._instance };
+    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode)) {
+        nextVNode._instance.state = vNode._instance.getInterState();
+        const newNextVNode = JSXToVNode(nextVNode._instance.render());
+        nextVNode.tagName = newNextVNode.tagName;
+        nextVNode.props = newNextVNode.props;
+        nextVNode.children = newNextVNode.children;
     }
 
     if (isNodeTypeSimple(vNode) || isNodeTypeSimple(nextVNode)) {
