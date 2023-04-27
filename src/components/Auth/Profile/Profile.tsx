@@ -80,6 +80,14 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         }
     };
 
+    #setEditing() {
+        this.setState({editing: true})
+    }
+
+    #unsetEditing() {
+
+    }
+
     #submitForm = (event: SubmitEvent) => {
         event.preventDefault();
 
@@ -221,9 +229,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                     <input
                         type="button"
                         id="edit-profile-btn"
-                        onClick={() => {
-                            this.setState({ editing: true });
-                        }}
+                        onClick={this.#setEditing.bind(this)}
                         className="button"
                         value="Редактировать"
                     ></input>
@@ -238,6 +244,8 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
 
             return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;
         };
+
+        console.log(this.state)
 
         return (
             <form

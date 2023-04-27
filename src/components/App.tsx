@@ -12,6 +12,7 @@ import { Tags } from "./Tags/Tags";
 
 import { svgInliner } from "modules/svgLoader";
 import { router } from "modules/router";
+import { loadEvents } from "requests/events";
 
 import { ModalWindowName } from "flux/slices/modalWindowSlice";
 import { isAuthorized } from "flux/slices/userSlice";
@@ -82,7 +83,9 @@ export class App extends Component<any> {
                     <div className="sidebar">
                         {url === "/" && [<CreateEventBtn />, <Calendar />, 
                                          <Tags tagsState={store.state.tags}
-                                               toggleTag={(tag)=>store.dispatch(toggleTag(tag))}/>]}
+                                               toggleTag={(tag)=>{
+                                                   store.dispatch(toggleTag(tag));
+                                                   requestManager.request(loadEvents)}}/>]}
                         {url === "/profile" && [<FriendListCard />, <CreateEventBtn />, <Calendar />]}
                     </div>
                 </div>
