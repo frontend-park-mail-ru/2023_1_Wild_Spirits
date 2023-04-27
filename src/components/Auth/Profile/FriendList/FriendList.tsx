@@ -4,7 +4,7 @@ import { VDOM, Component } from "modules/vdom";
 
 import { Link } from "components/Common/Link";
 import { requestManager } from "requests";
-import { loadFriends } from "requests/user";
+import { loadFriends, searchUsers } from "requests/user";
 
 import { store } from "flux";
 import { close } from "flux/slices/modalWindowSlice";
@@ -45,30 +45,47 @@ export class FriendList extends Component {
 
         store.dispatch(setFriendSearchQuery(searchName));
         requestManager.request(loadFriends, id, searchName);
+        requestManager.request(searchUsers, searchName);
     };
 
     render(): JSX.Element {
+        
+        const renderUser = (user: {user_id: number, name: string, avatar: string}) => {
+            return (
+                <div className="friend-list__item">
+                    <Link href={`/profile/${user.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
+                        <div className="friend-list__item__avatar-block">
+                            <img className="friend-list__item__avatar" src={user.avatar} />
+                            <div className="friend-list__item__description">
+                                <span className="friend-list__item__friend-name">{user.name}</span>
+                            </div>
+                        </div>
+                    </Link>
+                    <div className="tick-friend-icon-container"></div>
+                </div>
+            );
+        }
+
         const friends = store.state.friendList.friends
             .map(({ id, name, img }) => ({
                 user_id: id,
                 name: name,
                 avatar: getUploadsImg(img),
             }))
-            .map((friend) => {
-                return (
-                    <div className="friend-list__item">
-                        <Link href={`/profile/${friend.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
-                            <div className="friend-list__item__avatar-block">
-                                <img className="friend-list__item__avatar" src={friend.avatar} />
-                                <div className="friend-list__item__description">
-                                    <span className="friend-list__item__friend-name">{friend.name}</span>
-                                </div>
-                            </div>
-                        </Link>
-                        <div className="tick-friend-icon-container"></div>
-                    </div>
-                );
-            });
+
+        let filtered_ids = friends.map(friend => friend.user_id)
+
+        if (store.state.user.data) {
+            filtered_ids.push(store.state.user.data.id)
+        }
+
+        const foundUsers = store.state.friendList.foundUsers
+            .map(({ id, name, img }) => ({
+                user_id: id,
+                name: name,
+                avatar: getUploadsImg(img),
+            }))
+            .filter(user => !filtered_ids.includes(user.user_id))
 
         return (
             <div>
@@ -82,7 +99,20 @@ export class FriendList extends Component {
                     value={store.state.friendList.friendSearchQuery}
                 />
 
-                <div className="friend-list">{friends}</div>
+                <div className="friend-list">
+                    {
+                        (friends.length > 0) && friends.length > 0 && <div>
+                            <h2>Друзья</h2>
+                            {friends.map(renderUser)}
+                        </div>
+                    }
+                    {
+                        (store.state.friendList.friendSearchQuery !== '' && foundUsers.length > 0) && <div>
+                            <h2>Все пользователи</h2>
+                            {foundUsers.map(renderUser)}
+                        </div>
+                    }
+                </div>
             </div>
         );
     }

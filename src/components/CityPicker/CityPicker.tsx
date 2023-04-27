@@ -8,7 +8,7 @@ export class CityPicker extends Component<{}, {query: string}> {
     constructor() {
         super({});
 
-        this.state = {query: "М"};
+        this.state = {query: ""};
     }
 
     #search = (event: Event) => {
@@ -19,19 +19,13 @@ export class CityPicker extends Component<{}, {query: string}> {
         }
 
         this.setState({query: searchInput.value});
-
-        // store.dispatch(setSearchQuery(searchInput.value));
-        // requestManager.request(loadEvents);
     };
 
     render(): JSX.Element {
-        console.log('q:', this.state)
         const cities = store.state.header.cities
                             .map(city=>city.name)
                             .filter(city=>city.includes(this.state.query));
 
-        // const cities = ["", ""]
-        // console.log('cities:', cities)
         return (
             <div className="city-picker">
                 <div className="city-picker__header">
@@ -39,7 +33,7 @@ export class CityPicker extends Component<{}, {query: string}> {
 
                     <input className="search"
                            value={this.state.query}
-                           onChange={e=>this.#search(e as unknown as Event)}
+                           onInput={e=>this.#search(e as unknown as Event)}
                     ></input>
                 </div>
 

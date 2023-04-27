@@ -2,7 +2,7 @@ import { configureRequestManager } from "./requestManager";
 
 import { loadCategories, loadCities } from "./header";
 import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage } from "./events";
-import { addFriend, loadAuthorization, loadFriends, loadProfile, loginUser, logoutUser, registerUser } from "./user";
+import { addFriend, loadAuthorization, loadFriends, loadProfile, loginUser, logoutUser, registerUser, searchUsers } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
 import { loadPlaces } from "./places";
@@ -73,6 +73,10 @@ const requests: SetupRequestsType[] = [
         request: loadEventPage,
         dependencies: [loadAuthorization, loadTags],
     },
+    {
+        request: searchUsers,
+        dependencies: [],
+    }
 ];
 
 export let requestManager = configureRequestManager(requests);

@@ -4,7 +4,7 @@ import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
 import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError } from "flux/slices/userSlice";
-import { setFriends } from "flux/slices/friendsListSlice";
+import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 
@@ -66,6 +66,20 @@ export const loadFriends = (resolveRequest: TRequestResolver, user_id: number, s
         resolveRequest(user_id, search);
     });
 };
+
+export const searchUsers = (resolveRequest: TRequestResolver, name: string) => {
+    ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
+        url: "/users",
+        urlProps: {
+            name: name
+        },
+    }).then(({json, response, status}) => {
+        if (status === AjaxResultStatus.SUCCESS) {
+            store.dispatch(setFoundUsers({ users: json.body.users }));
+        }
+        resolveRequest();
+    })
+}
 
 export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
     ajax
