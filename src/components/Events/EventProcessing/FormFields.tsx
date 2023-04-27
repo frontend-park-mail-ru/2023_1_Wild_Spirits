@@ -66,8 +66,8 @@ export const InputField = ({
                 type={type}
                 id={`event-processing-${fieldName}`}
                 value={value}
-                min={min && min}
-                onChange={(e) => changeHandler(toEvent(e), fieldName)}
+                min={min}
+                onInput={(e) => changeHandler(toEvent(e), fieldName)}
             />
         </FormFieldBase>
     );
@@ -80,7 +80,7 @@ export const TextareaField = ({ fieldName, value, title, required, errorMsg, cha
                 name={fieldName}
                 className={`event-processing__form-textarea ${errorMsg ? "form-control-error" : "form-control"}`}
                 id={`event-processing-${fieldName}`}
-                onChange={(e) => changeHandler(toEvent(e), fieldName)}
+                onInput={(e) => changeHandler(toEvent(e), fieldName)}
             >
                 {value}
             </textarea>
