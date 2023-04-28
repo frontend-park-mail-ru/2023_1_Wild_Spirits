@@ -8,6 +8,8 @@ import "./styles.scss";
 import { Link } from "components/Common/Link";
 import { EventCardMarker } from "./EventCardMarker";
 
+import { SVGInline } from "components/Common/SVGInline";
+
 export interface HoveredImgProps {
     default: string;
     hovered: string;
@@ -33,13 +35,21 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
 
     render() {
         return (
-            <img
-                className="pointy"
-                src={this.state.isHovered ? this.props.hovered : this.props.default}
-                alt={this.props.alt}
-                onMouseEnter={this.handleMouseEnter}
-                onMouseLeave={this.handleMouseLeave}
-            />
+            // <img
+            //     className="pointy"
+            //     src={this.state.isHovered ? this.props.hovered : this.props.default}
+            //     alt={this.props.alt}
+            //     onMouseEnter={this.handleMouseEnter}
+            //     onMouseLeave={this.handleMouseLeave}
+            // />
+            // <SVGInline src="/assets/img/card/like-icon.svg" alt="like"/>
+            <div>
+                <SVGInline
+                    className="pointy"
+                    src={this.state.isHovered ? this.props.hovered : this.props.default}
+                    alt={this.props.alt}
+                />
+            </div>
         );
     }
 }
@@ -98,19 +108,19 @@ export class EventCard extends Component<EventCardProps> {
                         <HoveredImg
                             default="/assets/img/card/comment-icon.svg"
                             hovered="/assets/img/card/comment-icon-hover.svg"
-                            alt="like"
+                            alt="comment"
                         />
                         <HoveredImg
                             default="/assets/img/card/invite-icon.svg"
                             hovered="/assets/img/card/invite-icon-hover.svg"
-                            alt="like"
+                            alt="invite"
                         />
                         {isAuthorized(store.state.user) ? (
                             <Link href={`/editevent/${this.props.id}`} className="flex">
                                 <HoveredImg
                                     default="/assets/img/card/edit-icon.svg"
                                     hovered="/assets/img/card/edit-icon-hover.svg"
-                                    alt="like"
+                                    alt="edit"
                                 />
                             </Link>
                         ) : (
