@@ -87,12 +87,14 @@
 
 .button-danger {
     @extend .button-base;
+    @include button-hover(#e92424, white);
+
     background: #e92424;
     color: #ffffff;
-    border: 1px solid $input-el-color;
+    border: 1px solid #e92424;
     padding: 10px;
 
-    &:hover {
-        background: #ff7a7a;
-    }
+    // &:hover {
+    //     background: #ff7a7a;
+    // }
 }
