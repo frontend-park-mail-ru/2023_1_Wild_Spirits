@@ -27,6 +27,7 @@ import { store } from "flux";
 import { toggleTag } from "flux/slices/tagsSlice";
 import { Link } from "./Common/Link";
 import { Loading } from "./Common/Loading";
+import { TestMap } from "./Map/TestMap";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 /**
@@ -85,6 +86,7 @@ export class App extends Component<any> {
                         )}
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
+                        {url === "/map" && <TestMap />}
                     </div>
                     <div className="sidebar">
                         {url === "/" && [

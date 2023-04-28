@@ -110,6 +110,9 @@ export const createConf = (env, argv) => {
                 "@style": path.resolve(__dirname, "./src/assets/scss/style.scss"),
             },
         },
+        externals: {
+            "yandex-maps": "ymaps",
+        },
         mode: argv.mode,
         devServer: {
             static: {
