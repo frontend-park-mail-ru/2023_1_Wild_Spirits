@@ -59,7 +59,7 @@
         background-color: var(--hovering-el-color);
     }
 
-    .category-selected {
+    &.category-selected {
         background-color: var(--main-selected-color);
         color: white;
     }
