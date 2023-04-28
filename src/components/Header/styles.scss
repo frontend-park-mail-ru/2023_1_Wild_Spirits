@@ -58,27 +58,26 @@
     &:hover {
         background-color: var(--hovering-el-color);
     }
+
+    .category-selected {
+        background-color: var(--main-selected-color);
+        color: white;
+    }
+
+    &.category-selected:hover {
+        background-color: var(--main-selected-color);
+    }
+
+    &-fake-item {
+        @extend .header__category;
+        width: 90px;
+        background-color: #f8f8f8;
+    }
 }
 
-.category-selected {
-    background-color: var(--main-selected-color);
-    color: white;
-}
-
-.header__category.category-selected:hover {
-    background-color: var(--main-selected-color);
-}
-
-.header__bottom__line {
+.header__bottom-line {
     display: flex;
     justify-content: center;
-}
-
-.header__category__delimiter {
-    width: 0;
-    height: auto;
-
-    border: 1px solid black;
 }
 
 .rotated {

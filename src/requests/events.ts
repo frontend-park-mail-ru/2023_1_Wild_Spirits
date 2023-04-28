@@ -43,7 +43,7 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
     const props = filterProps({
         tags: getSelectedTags(store.state.tags),
         cities: city,
-        categories: getSelectedCategory(store.state.header),
+        categories: getSelectedCategory(store.state.header)?.name,
         dateStart: dateToString(startDate),
         dateEnd: dateToString(finishDate),
         search: store.state.header.searchQuery,

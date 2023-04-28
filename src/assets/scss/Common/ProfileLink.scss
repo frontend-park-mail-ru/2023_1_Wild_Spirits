@@ -1,12 +1,17 @@
 .profile-link {
     display: flex;
     align-items: center;
+    height: 48px;
 }
 
 .profile-link__profile-block {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.profile-link__img-block {
+    display: flex;
 }
 
 .profile-link__img {

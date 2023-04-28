@@ -25,6 +25,8 @@ import { EventProcessing } from "./Events/EventProcessing/EventProcessing";
 import { EventProcessingType } from "models/Events";
 import { store } from "flux";
 import { toggleTag } from "flux/slices/tagsSlice";
+import { Link } from "./Common/Link";
+import { Loading } from "./Common/Loading";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 /**
@@ -57,9 +59,9 @@ export class App extends Component<any> {
         const CreateEventBtn = () => {
             return (
                 <div className="full-button-link-container">
-                    <a href="/createevent" className="full-button-link js-router-link">
+                    <Link href="/createevent" className="full-button-link js-router-link">
                         Создать мероприятие
-                    </a>
+                    </Link>
                 </div>
             );
         };
@@ -76,16 +78,26 @@ export class App extends Component<any> {
                     <div className="content">
                         {url === "/" && <EventList />}
                         {url === "/events" && <EventPage />}
-                        {url === "/profile" && [<Profile id={getProfileId()} />, <EventList />]}
+                        {url === "/profile" && (
+                            <div>
+                                <Profile id={getProfileId()} /> <EventList />
+                            </div>
+                        )}
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                     </div>
                     <div className="sidebar">
-                        {url === "/" && [<CreateEventBtn />, <Calendar />, 
-                                         <Tags tagsState={store.state.tags}
-                                               toggleTag={(tag)=>{
-                                                   store.dispatch(toggleTag(tag));
-                                                   requestManager.request(loadEvents)}}/>]}
+                        {url === "/" && [
+                            <CreateEventBtn />,
+                            <Calendar />,
+                            <Tags
+                                tagsState={store.state.tags}
+                                toggleTag={(tag) => {
+                                    store.dispatch(toggleTag(tag));
+                                    requestManager.request(loadEvents);
+                                }}
+                            />,
+                        ]}
                         {url === "/profile" && [<FriendListCard />, <CreateEventBtn />, <Calendar />]}
                     </div>
                 </div>

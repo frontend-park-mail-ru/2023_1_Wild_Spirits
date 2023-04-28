@@ -1,10 +1,11 @@
-import { ajax } from "modules/ajax";
+import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseBody } from "responses/ResponseBase";
 
 import { store } from "flux";
 import { selectCity, setCities } from "flux/slices/headerSlice";
 import { setCategories } from "flux/slices/headerSlice";
 import { TRequestResolver } from "./requestTypes";
+import { TCategory } from "models/Category";
 
 export const loadCities = (resolveRequest: TRequestResolver) => {
     ajax.get<ResponseBody<{ cities: { id: number; name: string }[] }>>({
@@ -27,12 +28,12 @@ export const loadCities = (resolveRequest: TRequestResolver) => {
 };
 
 export const loadCategories = (resolveRequest: TRequestResolver) => {
-    ajax.get<ResponseBody<{ categories: { id: number; name: string }[] }>>({
+    ajax.get<ResponseBody<{ categories: TCategory[] }>>({
         url: "/categories",
     })
-        .then(({ json, response }) => {
-            if (response.ok) {
-                store.dispatch(setCategories({ categories: json.body.categories }));
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setCategories(json.body.categories));
             }
             resolveRequest();
         })

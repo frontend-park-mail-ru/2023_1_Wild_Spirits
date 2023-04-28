@@ -65,3 +65,11 @@
 .event-card__button-link {
     margin: 0 auto;
 }
+
+.event-card-loading {
+    @extend .event-card;
+    height: 500px;
+
+    align-items: center;
+    justify-content: center;
+}

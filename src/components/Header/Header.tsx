@@ -21,6 +21,7 @@ import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests/index";
 import { Link } from "components/Common/Link";
+import { CategoriesMenu } from "./CategoriesMenu";
 
 /**
  * @class
@@ -39,15 +40,6 @@ export class Header extends Component<any> {
 
     #onLogout = () => {
         requestManager.request(logoutUser);
-    };
-
-    #categoryLinkClick = (categoryId: number) => {
-        if (store.state.header.selectedCategoryId === categoryId) {
-            store.dispatch(clearCategory());
-        } else {
-            store.dispatch(selectCategory({ category: categoryId }));
-        }
-        requestManager.request(loadEvents);
     };
 
     /**
@@ -93,8 +85,11 @@ export class Header extends Component<any> {
                             <div className="profile-link__name-block">{userData.name}</div>
                         </Link>
                         <div id="profile-link-logout">
-                            <img className="profile-link__logout-img" src="/assets/img/logout.png"
-                                onClick={this.#onLogout}/>
+                            <img
+                                className="profile-link__logout-img"
+                                src="/assets/img/logout.png"
+                                onClick={this.#onLogout}
+                            />
                         </div>
                     </div>
                 );
@@ -111,24 +106,7 @@ export class Header extends Component<any> {
             ];
         };
 
-        const createCategories = (categories: string[]) => {
-            let res = [];
-            for (const [id, categoryName] of categories.entries()) {
-                const isSelected = id === store.state.header.selectedCategoryId;
-                res.push(
-                    <a
-                        onClick={() => this.#categoryLinkClick(id)}
-                        className={"header__category" + (isSelected ? " category-selected" : "")}
-                    >
-                        {categoryName}
-                    </a>
-                );
-            }
-            return res;
-        };
-
         const cities = getCitiesNames(store.state.header).map((cityName) => <option>{cityName}</option>);
-        const categories = createCategories(store.state.header.categories);
 
         const selectedCityName = getSelectedCityName(store.state.header);
 
@@ -148,7 +126,7 @@ export class Header extends Component<any> {
                     <div className="header__search-container">
                         <input
                             type="text"
-                            onChange={e => this.#search(e as unknown as Event)}
+                            onChange={(e) => this.#search(e as unknown as Event)}
                             placeholder="Поиск"
                             value={store.state.header.searchQuery}
                             className="search"
@@ -156,12 +134,12 @@ export class Header extends Component<any> {
                     </div>
 
                     <div className="header__city-selector">
-                        <button className="header__city-selector__button"
-                            onClick={()=>store.dispatch(openCitySelector())}>
+                        <button
+                            className="header__city-selector__button"
+                            onClick={() => store.dispatch(openCitySelector())}
+                        >
                             <img src="/assets/img/position_icon.png"></img>
-                            <span>
-                                {selectedCityName}
-                            </span>
+                            <span>{selectedCityName}</span>
                         </button>
                         {/* <select onChange={(e) => this.#selectCity(e as unknown as Event)}>{cities}</select> */}
                     </div>
@@ -169,7 +147,7 @@ export class Header extends Component<any> {
                     <div className="profile-link">{getProfileLink()}</div>
                 </div>
 
-                <div className="header__bottom__line">{categories}</div>
+                <CategoriesMenu />
             </div>
         );
     }

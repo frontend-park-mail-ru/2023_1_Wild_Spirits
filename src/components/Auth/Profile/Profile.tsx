@@ -204,13 +204,13 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
 
         const user_data = store.state.user.data;
         if (!user_data) {
-            return <span>Вы не авторизованы</span>;
+            return <div>Вы не авторизованы</div>;
         }
 
         const profile_data = store.state.user.currentProfile;
 
         if (!profile_data) {
-            return <span>Такого пользователя не существует</span>;
+            return <div>Такого пользователя не существует</div>;
         }
 
         const avatar = getUploadsImg(store.state.user.currentProfile!.img);
@@ -249,31 +249,33 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         };
 
         return (
-            <form
-                id="edit-profile-form"
-                onSubmit={(e) => this.submitForm(toSubmitEvent(e))}
-                className="profile-description"
-            >
-                <div className="profile-description__img-container">
-                    <label htmlFor="avatar-picker" className={this.state.editing ? "form-label-img-editable" : ""}>
-                        <img src={avatar} className="profile-description__img" />
-                    </label>
+            <div>
+                <form
+                    id="edit-profile-form"
+                    onSubmit={(e) => this.submitForm(toSubmitEvent(e))}
+                    className="profile-description"
+                >
+                    <div className="profile-description__img-container">
+                        <label htmlFor="avatar-picker" className={this.state.editing ? "form-label-img-editable" : ""}>
+                            <img src={avatar} className="profile-description__img" />
+                        </label>
 
-                    {this.state.editing && (
-                        <input
-                            className="invisible"
-                            id="avatar-picker"
-                            type="file"
-                            accept="image/*"
-                            name="avatar"
-                        ></input>
-                    )}
-                </div>
-                <div className="profile-description__description-block">
-                    <div className="profile-description__table-container">{table}</div>
-                    <div className="profile-description__button-block">{profileBtn()}</div>
-                </div>
-            </form>
+                        {this.state.editing && (
+                            <input
+                                className="invisible"
+                                id="avatar-picker"
+                                type="file"
+                                accept="image/*"
+                                name="avatar"
+                            ></input>
+                        )}
+                    </div>
+                    <div className="profile-description__description-block">
+                        <div className="profile-description__table-container">{table}</div>
+                        <div className="profile-description__button-block">{profileBtn()}</div>
+                    </div>
+                </form>
+            </div>
         );
     }
 }

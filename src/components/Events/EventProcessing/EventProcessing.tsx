@@ -238,7 +238,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
     render() {
         if (kickUnauthorized(store.state.user)) {
-            return <div></div>;
+            return <div className="Exit"></div>;
         }
 
         const { processing } = store.state.events;

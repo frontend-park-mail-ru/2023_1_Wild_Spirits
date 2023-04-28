@@ -10,7 +10,7 @@ type TCity = {
 };
 
 interface HeaderState {
-    categories: string[];
+    categories: TCategory[];
     selectedCategoryId: number | undefined;
     citiesLoadStatus: LoadStatus.Type;
     cities: TCity[];
@@ -36,8 +36,8 @@ const headerSlice = createSlice({
             state.citiesLoadStatus = LoadStatus.DONE;
             return state;
         },
-        setCategories: (state: HeaderState, action: PayloadAction<{ categories: TCategory[] }>) => {
-            state.categories = action.payload.categories.map((category: TCategory) => category.name);
+        setCategories: (state: HeaderState, action: PayloadAction<TCategory[]>) => {
+            state.categories = action.payload;
             return state;
         },
         selectCity: (state: HeaderState, action: PayloadAction<{ city: number | string | TCity | undefined }>) => {
@@ -51,12 +51,11 @@ const headerSlice = createSlice({
             }
             return state;
         },
-        selectCategory: (state: HeaderState, action: PayloadAction<{ category: number | string }>) => {
-            const category = action.payload.category;
-            if (typeof category == "number") {
-                state.selectedCategoryId = category;
+        selectCategory: (state: HeaderState, action: PayloadAction<number | string>) => {
+            if (typeof action.payload == "number") {
+                state.selectedCategoryId = action.payload;
             } else {
-                state.selectedCategoryId = state.categories.findIndex((el) => el === category);
+                state.selectedCategoryId = state.categories.findIndex((el) => el.id === action.payload);
             }
             return state;
         },
@@ -83,12 +82,8 @@ export const getCitiesNames = (state: HeaderState): string[] => {
     return state.cities.map((city) => city.name);
 };
 
-export const getSelectedCategory = (state: HeaderState): string | undefined => {
-    if (state.selectedCategoryId !== undefined) {
-        return state.categories[state.selectedCategoryId];
-    }
-
-    return undefined;
+export const getSelectedCategory = (state: HeaderState): TCategory | undefined => {
+    return state.categories.find((el) => el.id === state.selectedCategoryId);
 };
 
 export const { setCities, setCategories, selectCity, selectCategory, clearCategory, setSearchQuery, clearSearchQuery } =
