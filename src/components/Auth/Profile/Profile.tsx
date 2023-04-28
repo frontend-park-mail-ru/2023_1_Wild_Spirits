@@ -255,11 +255,8 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                 className="profile-description"
             >
                 <div className="profile-description__img-container">
-                    <label htmlFor="avatar-picker">
-                        <img
-                            src={avatar}
-                            className={"profile-description__img" + (this.state.editing ? " pointy" : "")}
-                        />
+                    <label htmlFor="avatar-picker" className={this.state.editing ? "form-label-img-editable" : ""}>
+                        <img src={avatar} className="profile-description__img" />
                     </label>
 
                     {this.state.editing && (

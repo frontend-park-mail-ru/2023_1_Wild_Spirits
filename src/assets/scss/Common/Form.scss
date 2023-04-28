@@ -46,3 +46,27 @@
         content: " ";
     }
 }
+
+.form-label-img-editable {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:before {
+        content: "";
+        background-image: url("/assets/img/form/edit-icon-hover.svg");
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        background-image: url("/assets/img/form/edit-icon.svg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        display: flex;
+        width: 40%;
+        height: 40%;
+    }
+}

@@ -248,7 +248,8 @@ export class EventProcessing extends Component<EventProcessingProps> {
                 store.state.places.places.loadStatus === LoadStatus.DONE ? store.state.places.places.data : [];
             const isEdit = this.props.type === EventProcessingType.EDIT;
             const hasImg = formData.img !== "" || processing.tempFileUrl;
-            const imgUrl = formData.img || processing.tempFileUrl || "";
+            const imgUrl = processing.tempFileUrl || formData.img || "";
+            console.log(formData.img, processing.tempFileUrl);
 
             return (
                 <div className="event-processing">
@@ -322,8 +323,15 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
                         <div className="event-processing__form-block">
                             {hasImg ? (
-                                <label htmlFor="event-processing-img" className="form-label">
-                                    <img className="event-processing__img-prev" src={imgUrl} alt="Картинка :3" />
+                                <label
+                                    htmlFor="event-processing-img"
+                                    className="form-label-img-editable event-processing__img-label"
+                                >
+                                    <img
+                                        className="event-processing__img-prev form-img-editable"
+                                        src={imgUrl}
+                                        alt="Картинка :3"
+                                    />
                                 </label>
                             ) : (
                                 <label htmlFor="event-processing-img" className="form-label-required">
