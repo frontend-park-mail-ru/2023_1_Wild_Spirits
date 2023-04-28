@@ -23,6 +23,7 @@ import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 import { loadPlaces } from "requests/places";
 import { FormFieldBase, InputField, InputFieldType, TextareaField } from "./FormFields";
+import { Loading } from "components/Common/Loading";
 
 export interface EventProcessingProps {
     type: EventProcessingType.Type;
@@ -238,32 +239,42 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
     render() {
         if (kickUnauthorized(store.state.user)) {
-            return <div className="Exit"></div>;
+            return <div></div>;
         }
 
         const { processing } = store.state.events;
-        if (processing.loadStatus === LoadStatus.DONE) {
-            const { formData } = processing;
-            const places =
-                store.state.places.places.loadStatus === LoadStatus.DONE ? store.state.places.places.data : [];
-            const isEdit = this.props.type === EventProcessingType.EDIT;
-            const hasImg = formData.img !== "" || processing.tempFileUrl;
-            const imgUrl = processing.tempFileUrl || formData.img || "";
-            console.log(formData.img, processing.tempFileUrl);
+        if (processing.loadStatus === LoadStatus.ERROR) {
+            return <div>Error!!!</div>;
+        }
 
+        if (processing.loadStatus !== LoadStatus.DONE) {
             return (
-                <div className="event-processing">
-                    {/* <div className="form-required-title">
+                <div className="laoding-page-container">
+                    <Loading size="xxl" />
+                </div>
+            );
+        }
+
+        const { formData } = processing;
+        const places = store.state.places.places.loadStatus === LoadStatus.DONE ? store.state.places.places.data : [];
+        const isEdit = this.props.type === EventProcessingType.EDIT;
+        const hasImg = formData.img !== "" || processing.tempFileUrl;
+        const imgUrl = processing.tempFileUrl || formData.img || "";
+        console.log(formData.img, processing.tempFileUrl);
+
+        return (
+            <div className="event-processing">
+                {/* <div className="form-required-title">
                         <span className="form-label-required"></span> - Обязательные поля
                     </div> */}
-                    <form
-                        className="form event-processing__form"
-                        id="event-processing-form"
-                        onSubmit={(e) => this.handleSubmit(toSubmitEvent(e))}
-                    >
-                        <InputField {...this.getFieldData("name", "Название мероприятия", "text", true)} />
+                <form
+                    className="form event-processing__form"
+                    id="event-processing-form"
+                    onSubmit={(e) => this.handleSubmit(toSubmitEvent(e))}
+                >
+                    <InputField {...this.getFieldData("name", "Название мероприятия", "text", true)} />
 
-                        {/* <label htmlFor="event-processing-teaser" className="form-label">
+                    {/* <label htmlFor="event-processing-teaser" className="form-label">
                             Тизер
                         </label>
                         <textarea
@@ -274,110 +285,105 @@ export class EventProcessing extends Component<EventProcessingProps> {
                             {formData.description}
                         </textarea> */}
 
-                        <TextareaField
-                            fieldName="description"
-                            title="Полное описание"
-                            value={formData.description}
-                            changeHandler={this.handleChangeField}
-                            required={true}
-                            errorMsg={processing.errors.description}
+                    <TextareaField
+                        fieldName="description"
+                        title="Полное описание"
+                        value={formData.description}
+                        changeHandler={this.handleChangeField}
+                        required={true}
+                        errorMsg={processing.errors.description}
+                    />
+
+                    <InputField {...this.getFieldData("dateStart", "Дата начала", "date", true, "2023-01-01")} />
+                    <InputField {...this.getFieldData("timeStart", "Время начала", "time", true)} />
+                    <InputField {...this.getFieldData("dateEnd", "Дата конца", "date", false, "2023-01-01")} />
+                    <InputField {...this.getFieldData("timeEnd", "Время конца", "time")} />
+
+                    <div className="event-processing__tags">
+                        <Tags
+                            tagsState={processing.tags}
+                            toggleTag={({ tag }: ToggleTagFuncProps) => {
+                                store.dispatch(toggleEventProcessingTag(tag));
+                            }}
+                        />
+                    </div>
+
+                    <FormFieldBase
+                        fieldName="place"
+                        title="Место проведения"
+                        required={true}
+                        errorMsg={processing.errors.place}
+                    >
+                        <select
+                            name="place"
+                            className="form-control"
+                            id="event-processing-place"
+                            placeholder="Выберите место проведения..."
+                            onChange={(e) => this.handleChangePlace(parseInt(e.target.value))}
+                        >
+                            <option selected={formData.place === -1} disabled value={-1}>
+                                Выберите место проведения...
+                            </option>
+                            {places.map((place) => (
+                                <option selected={formData.place === place.id} value={place.id}>
+                                    {place.name}
+                                </option>
+                            ))}
+                        </select>
+                    </FormFieldBase>
+
+                    <div className="event-processing__form-block">
+                        {hasImg ? (
+                            <label
+                                htmlFor="event-processing-img"
+                                className="form-label-img-editable event-processing__img-label"
+                            >
+                                <img
+                                    className="event-processing__img-prev form-img-editable"
+                                    src={imgUrl}
+                                    alt="Картинка :3"
+                                />
+                            </label>
+                        ) : (
+                            <label htmlFor="event-processing-img" className="form-label-required">
+                                Картинка
+                            </label>
+                        )}
+                        <input
+                            id="event-processing-img"
+                            name="file"
+                            className={`form-control ${hasImg ? "invisible" : ""}`}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => this.handleChangeImg(toEvent(e))}
                         />
 
-                        <InputField {...this.getFieldData("dateStart", "Дата начала", "date", true, "2023-01-01")} />
-                        <InputField {...this.getFieldData("timeStart", "Время начала", "time", true)} />
-                        <InputField {...this.getFieldData("dateEnd", "Дата конца", "date", false, "2023-01-01")} />
-                        <InputField {...this.getFieldData("timeEnd", "Время конца", "time")} />
+                        {processing.errors.img && <div className="form-error">{processing.errors.img}</div>}
+                    </div>
 
-                        <div className="event-processing__tags">
-                            <Tags
-                                tagsState={processing.tags}
-                                toggleTag={({ tag }: ToggleTagFuncProps) => {
-                                    store.dispatch(toggleEventProcessingTag(tag));
-                                }}
-                            />
-                        </div>
+                    <div className="form-error">{processing.errors.default}</div>
 
-                        <FormFieldBase
-                            fieldName="place"
-                            title="Место проведения"
-                            required={true}
-                            errorMsg={processing.errors.place}
-                        >
-                            <select
-                                name="place"
-                                className="form-control"
-                                id="event-processing-place"
-                                placeholder="Выберите место проведения..."
-                                onChange={(e) => this.handleChangePlace(parseInt(e.target.value))}
-                            >
-                                <option selected={formData.place === -1} disabled value={-1}>
-                                    Выберите место проведения...
-                                </option>
-                                {places.map((place) => (
-                                    <option selected={formData.place === place.id} value={place.id}>
-                                        {place.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </FormFieldBase>
-
-                        <div className="event-processing__form-block">
-                            {hasImg ? (
-                                <label
-                                    htmlFor="event-processing-img"
-                                    className="form-label-img-editable event-processing__img-label"
-                                >
-                                    <img
-                                        className="event-processing__img-prev form-img-editable"
-                                        src={imgUrl}
-                                        alt="Картинка :3"
-                                    />
-                                </label>
-                            ) : (
-                                <label htmlFor="event-processing-img" className="form-label-required">
-                                    Картинка
-                                </label>
-                            )}
+                    <div className="event-processing__button-block">
+                        <input
+                            className="button form-submit"
+                            id="event-processing-submit"
+                            type="submit"
+                            value={isEdit ? "Сохранить изменения" : "Создать"}
+                        />
+                        {isEdit ? (
                             <input
-                                id="event-processing-img"
-                                name="file"
-                                className={`form-control ${hasImg ? "invisible" : ""}`}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => this.handleChangeImg(toEvent(e))}
+                                className="button-danger form-submit"
+                                id="event-processing-remove"
+                                type="button"
+                                value="Удалить"
+                                onClick={this.handleRemove}
                             />
-
-                            {processing.errors.img && <div className="form-error">{processing.errors.img}</div>}
-                        </div>
-
-                        <div className="form-error">{processing.errors.default}</div>
-
-                        <div className="event-processing__button-block">
-                            <input
-                                className="button form-submit"
-                                id="event-processing-submit"
-                                type="submit"
-                                value={isEdit ? "Сохранить изменения" : "Создать"}
-                            />
-                            {isEdit ? (
-                                <input
-                                    className="button-danger form-submit"
-                                    id="event-processing-remove"
-                                    type="button"
-                                    value="Удалить"
-                                    onClick={this.handleRemove}
-                                />
-                            ) : (
-                                ""
-                            )}
-                        </div>
-                    </form>
-                </div>
-            );
-        } else if (processing.loadStatus === LoadStatus.ERROR) {
-            return <div>Error!!!</div>;
-        }
-
-        return <div>Loadig . . .</div>;
+                        ) : (
+                            ""
+                        )}
+                    </div>
+                </form>
+            </div>
+        );
     }
 }
