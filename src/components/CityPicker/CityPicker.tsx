@@ -3,6 +3,8 @@ import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 
 import "./styles.scss";
+import { selectCity } from "flux/slices/headerSlice";
+import { close } from "flux/slices/modalWindowSlice";
 
 export class CityPicker extends Component<{}, {query: string}> {
     constructor() {
@@ -40,7 +42,7 @@ export class CityPicker extends Component<{}, {query: string}> {
                 <div className="city-picker__content">
                     {
                         cities.map(city=>(
-                            <button className="city-picker__item">{city}</button>)
+                            <button onClick={()=>store.dispatch(selectCity({city: city}), close())} className="city-picker__item">{city}</button>)
                         )
                     }
                 </div>

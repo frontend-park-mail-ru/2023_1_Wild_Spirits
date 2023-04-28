@@ -33,6 +33,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         this.state = { editing: false };
 
         this.setEditing = this.setEditing.bind(this);
+        this.unsetEditing = this.unsetEditing.bind(this);
         this.submitForm = this.submitForm.bind(this);
     }
 
@@ -89,7 +90,10 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         this.setState({ editing: true });
     }
 
-    unsetEditing() {}
+    unsetEditing(e: Event) {
+        e.preventDefault();
+        this.setState({ editing: false});
+    }
 
     submitForm = (event: SubmitEvent) => {
         event.preventDefault();
@@ -226,12 +230,18 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                         <span className="warning" id="profile-description-error-message">
                             {this.#errorMsg}
                         </span>,
+                        <input
+                            type="button"
+                            onClick={(e) => this.unsetEditing(toEvent(e))}
+                            className="button-danger"
+                            value="Отменить"
+                        ></input>
                     ];
                 }
+
                 return (
                     <input
                         type="button"
-                        id="edit-profile-btn"
                         onClick={(e) => this.setEditing(toEvent(e))}
                         className="button"
                         value="Редактировать"

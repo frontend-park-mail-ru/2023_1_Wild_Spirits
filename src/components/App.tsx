@@ -10,7 +10,6 @@ import { FriendListCard } from "./Auth/Profile/FriendList/FriendListCard";
 import { Calendar } from "./Calendar/Calendar";
 import { Tags } from "./Tags/Tags";
 
-import { svgInliner } from "modules/svgLoader";
 import { router } from "modules/router";
 import { loadEvents } from "requests/events";
 
@@ -29,6 +28,8 @@ import { Link } from "./Common/Link";
 import { Loading } from "./Common/Loading";
 import { TestMap } from "./Map/TestMap";
 // import { SidebarTags } from "./Tags/SidebarTags";
+
+import { SVGInline } from "./Common/SVGInline";
 
 /**
  * @classdesc Main app component

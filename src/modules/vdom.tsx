@@ -184,8 +184,8 @@ export const createDOMNode = (vNode: VNodeType) => {
     return node;
 };
 
-const isStateChanged = (vNode: ComponentVNodeType): boolean => {
-    const result = !deepEqual(vNode._instance.state, vNode._instance.getInterState());
+const isStateChanged = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
+    const result = !deepEqual(vNode._instance.state, vNode._instance.getInterState()) || !deepEqual(vNode._instance.state, nextVNode._instance.state);
     return result;
 };
 
@@ -196,7 +196,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     //     return;
     // }
 
-    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode)) {
+    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
         nextVNode._instance.state = vNode._instance.getInterState();
         const newNextVNode = JSXToVNode(nextVNode._instance.render());
         nextVNode.tagName = newNextVNode.tagName;
@@ -255,6 +255,11 @@ const convertKey = (key: string) => {
 };
 
 const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: PropType) => {
+    if (key === 'dangerouslySetInnerHTML') {
+        (node as HTMLElement).innerHTML = (nextValue as any).__html;
+        return;
+    }
+
     key = convertKey(key);
     if (((nextValue: PropType): nextValue is Function => key.startsWith("on"))(nextValue)) {
         const eventName = key.slice(2);
