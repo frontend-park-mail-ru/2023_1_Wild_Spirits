@@ -49,29 +49,34 @@ export class FriendList extends Component {
     };
 
     render(): JSX.Element {
-        
         const renderUser = (user: {user_id: number, name: string, avatar: string}) => {
             return (
-                <div className="friend-list__item">
-                    <Link className="link" href={`/profile/${user.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
+                <Link className="friend-list__item" href={`/profile/${user.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
+                    <span className="link">
                         <div className="friend-list__item__avatar-block">
                             <img className="friend-list__item__avatar" src={user.avatar} />
                             <div className="friend-list__item__description">
                                 <span className="friend-list__item__friend-name">{user.name}</span>
                             </div>
                         </div>
-                    </Link>
+                    </span>
                     <div className="tick-friend-icon-container"></div>
-                </div>
+                </Link>
             );
         }
 
-        const friends = store.state.friendList.friends
-            .map(({ id, name, img }) => ({
-                user_id: id,
-                name: name,
-                avatar: getUploadsImg(img),
-            }))
+        const friends = (() => {
+            if (store.state.friendList.friends === null) {
+                return []
+            }
+
+            return store.state.friendList.friends
+                        .map(({ id, name, img }) => ({
+                            user_id: id,
+                            name: name,
+                            avatar: getUploadsImg(img),
+                        }))
+        })();
 
         let filtered_ids = friends.map(friend => friend.user_id)
 
@@ -79,40 +84,58 @@ export class FriendList extends Component {
             filtered_ids.push(store.state.user.data.id)
         }
 
-        const foundUsers = store.state.friendList.foundUsers
-            .map(({ id, name, img }) => ({
-                user_id: id,
-                name: name,
-                avatar: getUploadsImg(img),
-            }))
-            .filter(user => !filtered_ids.includes(user.user_id))
+        const foundUsers = (() => {
+            if (store.state.friendList.foundUsers === null) {
+                return []
+            }
 
-        return (
-            <div>
-                <h2 className="friend-list__title">Друзья</h2>
+            return store.state.friendList.foundUsers
+                        .map(({ id, name, img }) => ({
+                            user_id: id,
+                            name: name,
+                            avatar: getUploadsImg(img),
+                        }))
+                        .filter(user => !filtered_ids.includes(user.user_id))
+        })();
 
-                <input
-                    type="text"
-                    onChange={(e) => this.#reload(e as unknown as Event)}
-                    className="search friend-search"
-                    placeholder="Поиск"
-                    value={store.state.friendList.friendSearchQuery}
-                />
-
-                <div className="friend-list">
+        const UserBlock = ({title, users}: {title: string, users: {user_id: number, name: string, avatar: string}[]}) => {
+            return (
+                <div>
                     {
-                        (friends.length > 0) && friends.length > 0 && <div>
-                            <h2>Друзья</h2>
-                            {friends.map(renderUser)}
-                        </div>
-                    }
-                    {
-                        (store.state.friendList.friendSearchQuery !== '' && foundUsers.length > 0) && <div>
-                            <h2>Все пользователи</h2>
-                            {foundUsers.map(renderUser)}
+                        (users.length > 0) && users.length > 0 && <div>
+                            <h2>{title}</h2>
+                            {users.map(renderUser)}
                         </div>
                     }
                 </div>
+            )
+        }
+
+        const queryEmpty = store.state.friendList.friendSearchQuery !== '';
+        const empty = queryEmpty && friends.length ===0 && foundUsers.length === 0;
+
+        return (
+            <div>
+                <div className="friend-list__header">
+                    <h2 className="friend-list__title">Друзья</h2>
+
+                    <input
+                        type="text"
+                        onChange={(e) => this.#reload(e as unknown as Event)}
+                        className="search friend-search"
+                        placeholder="Поиск"
+                        value={store.state.friendList.friendSearchQuery}
+                    />
+                </div>
+
+                {
+                    empty ? <div>Пользователей с таким именем не найдено</div> : 
+                    
+                    <div className="friend-list">
+                        <UserBlock title="Друзья" users={friends}/>
+                        {queryEmpty && <UserBlock title="Все пользователи" users={foundUsers}/>}
+                    </div>
+                }
             </div>
         );
     }

@@ -59,7 +59,7 @@ const userSlice = createSlice({
         addToFriends: (state: UserState) => {
             const currentProfile = state.currentProfile;
             if (currentProfile && state.data) {
-                state.data?.friends?.push({
+                state.data.friends?.push({
                     id: currentProfile.id,
                     name: currentProfile.name,
                     img: currentProfile.img
@@ -68,6 +68,19 @@ const userSlice = createSlice({
                     state.currentProfile.is_friend = true;
                 }
             }
+
+            return state;
+        },
+        removeFromFriends: (state: UserState) => {
+            const currentProfile = state.currentProfile;
+            if (currentProfile && state.data && state.data.friends) {
+                state.data.friends = state.data.friends.filter(user => user.id !== currentProfile.id);
+            }
+
+            if (state.currentProfile) {
+                state.currentProfile.is_friend = false;
+            }
+
             return state;
         },
         logout: (state: UserState) => {
@@ -80,7 +93,7 @@ const userSlice = createSlice({
         ) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
-                const friends = action.payload.profile.friends || state.currentProfile?.friendsPreview;
+                const friends = action.payload.profile.friends;
 
                 state.currentProfile = {
                     ...state.currentProfile,
@@ -122,11 +135,23 @@ export const kickUnauthorized = (userState: UserState) => {
     return false;
 };
 
+export const mineProfile = (userState: UserState) => {
+    if (userState.data === undefined) {
+        return false;
+    }
+    if (userState.currentProfile === undefined) {
+        return false;
+    }
+
+    return userState.data.id === userState.currentProfile.id;
+}
+
 export const {
     authorizedLoadStart,
     authorizedLoadError,
     setData,
     addToFriends,
+    removeFromFriends,
     logout,
     setCurrentProfile,
     setCurrentProfileFriends,

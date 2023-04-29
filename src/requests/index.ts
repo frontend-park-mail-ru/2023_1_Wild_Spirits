@@ -2,7 +2,7 @@ import { configureRequestManager } from "./requestManager";
 
 import { loadCategories, loadCities } from "./header";
 import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage } from "./events";
-import { addFriend, loadAuthorization, loadFriends, loadProfile, loginUser, logoutUser, registerUser, searchUsers } from "./user";
+import { addFriend, deleteFriend, loadAuthorization, loadFriends, loadProfile, loginUser, logoutUser, registerUser, searchUsers } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
 import { loadPlaces } from "./places";
@@ -75,6 +75,10 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: searchUsers,
+        dependencies: [],
+    },
+    {
+        request: deleteFriend,
         dependencies: [],
     }
 ];

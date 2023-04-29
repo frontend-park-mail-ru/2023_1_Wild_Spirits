@@ -3,7 +3,7 @@ import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser"
 import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError } from "flux/slices/userSlice";
+import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError, removeFromFriends } from "flux/slices/userSlice";
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
@@ -92,6 +92,19 @@ export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
         .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(addToFriends());
+            }
+            resolveRequest(user_id);
+        });
+
+export const deleteFriend = (resolveRequest: TRequestResolver, user_id: number) =>
+    ajax
+        .delete({
+            url: `/friends/${user_id}`,
+            credentials: true,
+        })
+        .then(({ status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(removeFromFriends());
             }
             resolveRequest(user_id);
         });

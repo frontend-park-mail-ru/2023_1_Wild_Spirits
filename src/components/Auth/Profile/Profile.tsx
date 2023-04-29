@@ -10,7 +10,7 @@ import { getCitiesNames } from "flux/slices/headerSlice";
 
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
-import { addFriend, loadFriends, loadProfile } from "requests/user";
+import { addFriend, deleteFriend, loadFriends, loadProfile } from "requests/user";
 import { router } from "modules/router";
 import { toWebP } from "modules/imgConverter";
 import "./styles.scss";
@@ -19,18 +19,20 @@ import { ResponseErrorDefault } from "responses/ResponseBase";
 import { requestManager } from "requests";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
+import { mineProfile } from "flux/slices/userSlice";
+
 /**
  * Profile component
  * @class
  * @extends Component
  */
-export class Profile extends Component<{ id: number }, { editing: boolean }> {
+export class Profile extends Component<{ id: number }, { editing: boolean, tempAvatarUrl: string | undefined }> {
     #tempAvatarUrl: string | undefined;
     #errorMsg: string = "";
 
     constructor(props: { id: number }) {
         super(props);
-        this.state = { editing: false };
+        this.state = { editing: false, tempAvatarUrl: undefined };
 
         this.setEditing = this.setEditing.bind(this);
         this.unsetEditing = this.unsetEditing.bind(this);
@@ -59,7 +61,9 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         }
 
         const image = inputFiles[0];
-        this.#tempAvatarUrl = URL.createObjectURL(image);
+        // this.#tempAvatarUrl = URL.createObjectURL(image);
+
+        this.setState({...this.state, tempAvatarUrl: URL.createObjectURL(image)});
 
         // this.setState({ editing: false });
     };
@@ -78,21 +82,21 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
     }
 
     #addFriend = () => {
-        const id = this.getProfileId();
+        requestManager.request(addFriend, this.props.id);
+    }
 
-        if (id !== undefined) {
-            requestManager.request(addFriend, id);
-        }
-    };
+    #deleteFriend = () => {
+        requestManager.request(deleteFriend, this.props.id);
+    }
 
     setEditing(e: Event) {
         e.preventDefault();
-        this.setState({ editing: true });
+        this.setState({ ...this.state, editing: true });
     }
 
     unsetEditing(e: Event) {
         e.preventDefault();
-        this.setState({ editing: false});
+        this.setState({ editing: false, tempAvatarUrl: undefined });
     }
 
     submitForm = (event: SubmitEvent) => {
@@ -151,7 +155,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 
-        // this.setState({ editing: false });
+        this.setState({ editing: false, tempAvatarUrl: undefined });
     }
 
     render(): JSX.Element {
@@ -190,11 +194,22 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                     </div>
                 );
             }
-            const rows = createTable({
-                Имя: profile_data.name,
-                Почта: profile_data.email ? profile_data.email : "не указана",
-                Город: profile_data.city_name ? profile_data.city_name : "Москва",
-            });
+
+            const rows = (() => {
+                if (mineProfile(store.state.user)) {
+                    return createTable({
+                        Имя: profile_data.name,
+                        Почта: profile_data.email ? profile_data.email : "не указана",
+                        Город: profile_data.city_name ? profile_data.city_name : "Москва",
+                    } 
+                )}
+
+                return createTable({
+                    Имя: profile_data.name,
+                    Почта: "не указана",
+                    Город: profile_data.city_name ? profile_data.city_name : "Москва",
+                });
+            })();
 
             let cells = [];
 
@@ -217,7 +232,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             return <div>Такого пользователя не существует</div>;
         }
 
-        const avatar = getUploadsImg(store.state.user.currentProfile!.img);
+        const avatar = this.state.tempAvatarUrl || getUploadsImg(store.state.user.currentProfile!.img);
         const table = getTable(profile_data);
 
         const profileBtn = () => {
@@ -252,7 +267,14 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             const isFriend = store.state.user.currentProfile?.is_friend;
 
             if (isFriend) {
-                return <span>Вы дружите</span>;
+                return (
+                    <input
+                        type="button"
+                        onClick={() => this.#deleteFriend()}
+                        className="button-danger"
+                        value="Удалить из друзей"
+                    ></input>
+                )
             }
 
             return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;
@@ -263,6 +285,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                 <form
                     id="edit-profile-form"
                     onSubmit={(e) => this.submitForm(toSubmitEvent(e))}
+                    onChange={(e) => this.#formChanged(toEvent(e))}
                     className="profile-description"
                 >
                     <div className="profile-description__img-container">
