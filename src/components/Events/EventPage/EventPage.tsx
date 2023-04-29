@@ -13,6 +13,7 @@ import { Table } from "components/Common/Table";
 import { isAuthorized } from "flux/slices/userSlice";
 import { Link } from "components/Common/Link";
 import { Loading } from "components/Common/Loading";
+import { EventPageMap } from "./EventPageMap";
 
 /**
  * Event list component
@@ -64,6 +65,9 @@ export class EventPage extends Component {
                             {place.city}, {place.name}, {place.address}
                         </div>
                     ))}
+                </div>
+                <div className="event-page__map">
+                    <EventPageMap points={Object.values(places).map(({ lat, lon }) => ({ lat, lon }))} />
                 </div>
                 <div className="event-page__tags tags-menu">
                     {(event.tags !== null ? event.tags : []).map((tag) => (

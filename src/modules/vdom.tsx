@@ -26,6 +26,8 @@ export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO
 
 let stateQueue: (() => void)[] = [];
 
+let didMountInstaces: Component[] = [];
+
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
     props: TProps;
@@ -51,6 +53,8 @@ export abstract class Component<TProps extends any = any, TState = {}> {
     }
 
     didCreate() {}
+
+    didMount() {}
 
     willUpdate() {}
 
@@ -84,7 +88,9 @@ export const patchVDOM = () => {
 
     if (!rootVDOM.isRerendering) {
         rootVDOM.isRerendering = true;
+        didMountInstaces = [];
         rootVDOM.root = patch(rootVDOM.renderFunc() as unknown as VNodeType, rootVDOM.root);
+        didMountInstaces.forEach((instance) => instance.didMount());
         rootVDOM.isRerendering = false;
         if (rootVDOM.needRerender) {
             rootVDOM.needRerender = false;
@@ -179,6 +185,7 @@ export const createDOMNode = (vNode: VNodeType) => {
 
     if (isNodeTypeComponent(vNode)) {
         vNode._instance.didCreate();
+        didMountInstaces.push(vNode._instance);
     }
 
     return node;
@@ -403,6 +410,7 @@ export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
         node = newNode;
         node.v = nextVNode;
     }
+
     return node;
 };
 
