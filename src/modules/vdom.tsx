@@ -30,17 +30,15 @@ export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
     props: TProps;
     #state: TState;
-    #interState: TState;
     refs: any;
 
     constructor(props: TProps) {
         this.#state = {} as TState;
-        this.#interState = {} as TState;
         this.props = props;
     }
 
     setState(newState: TState) {
-        this.#interState = newState;
+        this.#state = newState;
         patchVDOM();
     }
 
@@ -50,11 +48,6 @@ export abstract class Component<TProps extends any = any, TState = {}> {
 
     set state(newState: TState) {
         this.#state = newState;
-        this.#interState = newState;
-    }
-
-    getInterState() {
-        return this.#interState;
     }
 
     didCreate() {}
@@ -178,6 +171,9 @@ export const createDOMNode = (vNode: VNodeType) => {
     patchProps(node, {}, props);
 
     children.forEach((child) => {
+        if (isNodeTypeComponent(child)) {
+            convertComponentToTag(child);
+        }
         node.appendChild(createDOMNode(child));
     });
 
@@ -188,11 +184,37 @@ export const createDOMNode = (vNode: VNodeType) => {
     return node;
 };
 
-const isStateChanged = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
-    const result =
-        !deepEqual(vNode._instance.state, vNode._instance.getInterState()) ||
-        !deepEqual(vNode._instance.state, nextVNode._instance.state);
-    return result;
+// const isStateChanged = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
+//     const result =
+//         !deepEqual(vNode._instance.state, vNode._instance.getInterState()) ||
+//         !deepEqual(vNode._instance.state, nextVNode._instance.state);
+//     return result;
+// };
+
+const convertComponentToTag = (vNode: ComponentVNodeType) => {
+    const newVNode = JSXToVNode(vNode._instance.render());
+    vNode.tagName = newVNode.tagName;
+    vNode.props = newVNode.props;
+    vNode.children = newVNode.children;
+};
+
+const tryPatchComponent = (vNode: VNodeType, nextVNode: VNodeType): boolean => {
+    if (isNodeTypeComponent(nextVNode)) {
+        // if (nextVNode.tagName.toLowerCase() === "hoveredimg") console.log("tryPatchComponent hoveredimg");
+        let isPropsChanged = false;
+        if (isNodeTypeComponent(vNode)) {
+            isPropsChanged = !deepEqual(vNode._instance.props, nextVNode._instance.props);
+            vNode._instance.props = nextVNode._instance.props;
+            nextVNode._instance = vNode._instance;
+        }
+        convertComponentToTag(nextVNode);
+        return isPropsChanged;
+        // const newNextVNode = JSXToVNode(nextVNode._instance.render());
+        // nextVNode.tagName = newNextVNode.tagName;
+        // nextVNode.props = newNextVNode.props;
+        // nextVNode.children = newNextVNode.children;
+    }
+    return false;
 };
 
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
@@ -202,17 +224,19 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     //     return;
     // }
 
-    if (isNodeTypeComponent(nextVNode)) {
-        if (isNodeTypeComponent(vNode)) {
-            vNode._instance.state = vNode._instance.getInterState();
-            vNode._instance.props = nextVNode._instance.props;
-            nextVNode._instance = vNode._instance;
-        }
-        const newNextVNode = JSXToVNode(nextVNode._instance.render());
-        nextVNode.tagName = newNextVNode.tagName;
-        nextVNode.props = newNextVNode.props;
-        nextVNode.children = newNextVNode.children;
-    }
+    const isComponentPropsChanged = tryPatchComponent(vNode, nextVNode);
+
+    // if (isNodeTypeComponent(nextVNode)) {
+    //     if (isNodeTypeComponent(vNode)) {
+    //         vNode._instance.state = vNode._instance.state;
+    //         vNode._instance.props = nextVNode._instance.props;
+    //         nextVNode._instance = vNode._instance;
+    //     }
+    //     const newNextVNode = JSXToVNode(nextVNode._instance.render());
+    //     nextVNode.tagName = newNextVNode.tagName;
+    //     nextVNode.props = newNextVNode.props;
+    //     nextVNode.children = newNextVNode.children;
+    // }
     // if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
     //     vNode._instance.state = vNode._instance.getInterState();
     //     vNode._instance.props = nextVNode._instance.props;
@@ -245,11 +269,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         return nextNode;
     }
 
-    const instancePropsChanged =
-        isNodeTypeComponent(vNode) &&
-        isNodeTypeComponent(nextVNode) &&
-        !deepEqual(vNode._instance.props, nextVNode._instance.props);
-    if (instancePropsChanged) {
+    if (isNodeTypeComponent(vNode) && isComponentPropsChanged) {
         vNode._instance.willUpdate();
     }
 
@@ -258,7 +278,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         patchChildren(node, vNode.children, nextVNode.children);
     }
 
-    if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
+    if (isNodeTypeComponent(nextVNode) && isComponentPropsChanged) {
         nextVNode._instance.didUpdate();
     }
 
@@ -351,9 +371,20 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
         patchNode(childNode, vChildren[i], nextVChildren[i]);
     });
 
-    nextVChildren.slice(vChildren.length).forEach((vChild) => {
-        parent.appendChild(createDOMNode(vChild));
-    });
+    for (let i = vChildren.length; i < nextVChildren.length; i++) {
+        console.warn(nextVChildren[i]);
+        if (isNodeTypeComponent(nextVChildren[i])) {
+            if ((nextVChildren[i] as ComponentVNodeType).tagName.toLowerCase() === "hoveredimg")
+                console.log("patchChildren hoveredimg");
+            convertComponentToTag(nextVChildren[i] as ComponentVNodeType);
+        }
+        parent.appendChild(createDOMNode(nextVChildren[i]));
+    }
+
+    // nextVChildren.slice(vChildren.length).forEach((vChild, i) => {
+    //     vChildren.length + i;
+    //     parent.appendChild(createDOMNode(vChild));
+    // });
 
     const curChildLenght = parent.childNodes.length;
 

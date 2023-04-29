@@ -25,8 +25,8 @@ export class SVGInline extends Component<SVGInlineProps, { img: string }> {
 
     render(): JSX.Element {
         return (
-            <div className={this.props.className + " flex"} dangerouslySetInnerHTML={{ __html: this.state.img }}>
-                img
+            <div className={this.props.className + " flex"}>
+                <span dangerouslySetInnerHTML={{ __html: this.state.img }}> img </span>
             </div>
         );
     }

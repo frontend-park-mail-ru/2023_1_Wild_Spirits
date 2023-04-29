@@ -16,6 +16,15 @@ export interface HoveredImgProps {
     alt: string;
 }
 
+class TestImg extends Component<{ src: string }> {
+    constructor(props: { src: string }) {
+        super(props);
+    }
+    render() {
+        return <img className="pointy" src={this.props.src} alt={"alt"} />;
+    }
+}
+
 export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean }> {
     constructor(props: HoveredImgProps) {
         super(props);
@@ -26,14 +35,17 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
     }
 
     handleMouseEnter() {
+        console.log("handleMouseEnter");
         this.setState({ isHovered: true });
     }
 
     handleMouseLeave() {
+        console.log("handleMouseLeave");
         this.setState({ isHovered: false });
     }
 
     render() {
+        // this.props.alt === "edit" && console.log("isHovered", this.state.isHovered);
         return (
             // <img
             //     className="pointy"
@@ -43,12 +55,9 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
             //     onMouseLeave={this.handleMouseLeave}
             // />
             // <SVGInline src="/assets/img/card/like-icon.svg" alt="like"/>
-            <div>
-                <SVGInline
-                    className="pointy"
-                    src={this.state.isHovered ? this.props.hovered : this.props.default}
-                    alt={this.props.alt}
-                />
+            <div className="flex pointy" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave}>
+                <TestImg src={this.state.isHovered ? this.props.hovered : this.props.default} />
+                <SVGInline className="" src={this.props.default} alt={this.props.alt} />
             </div>
         );
     }
