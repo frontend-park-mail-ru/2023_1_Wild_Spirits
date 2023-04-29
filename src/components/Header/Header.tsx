@@ -136,7 +136,7 @@ export class Header extends Component<any> {
                     <div className="header__city-selector">
                         <button
                             className="header__city-selector__button"
-                            onClick={() => store.dispatch(openCitySelector())}
+                            onClick={() => {store.dispatch(openCitySelector())}}
                         >
                             <img src="/assets/img/position_icon.png"></img>
                             <span>{selectedCityName}</span>

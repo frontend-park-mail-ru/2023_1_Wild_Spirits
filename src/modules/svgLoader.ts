@@ -1,81 +1,48 @@
 /** @module svg */
 
+import { LoadStatus } from "requests/LoadStatus";
+
+type resolverT = (value: string | PromiseLike<string>) => void;
+type rejectT = (reason?: any) => void;
+
 class SVGLoader {
-    images: {[key: string]: string}
+    images: {[key: string]: {status: LoadStatus.Type, data: string | undefined}}
+    subscribers: {[key: string]: {resolve: resolverT, reject: rejectT}[]}
     constructor() {
         this.images = {}
+        this.subscribers = {}
     }
 
     async addImage(url: string): Promise<string> {
-        return fetch(url).then(response => 
-            response.text().then(img => this.images[url] = img));
+        this.images[url] = {status: LoadStatus.LOADING, data: undefined};
+        const response = await fetch(url)
+        const data = await response.text();
+        this.images[url].data = data
+        this.images[url].status = LoadStatus.DONE;
+
+        this.subscribers[url].forEach(({resolve, reject}) => resolve(data));
+        return data;
     }
 
     async getImage(url: string): Promise<string> {
-        // if (this.images[url]) {
-        //     return this.images[url];
-        // }
+        if (this.images[url] === undefined) {
+            return this.addImage(url);
+        }
 
-        // return this.addImage(url);
+        if (this.images[url].status === LoadStatus.LOADING) {
+            return new Promise<string>((resolve, reject) => {
+                if (this.subscribers[url]) {
+                    this.subscribers[url].push({resolve, reject});
+                } else {
+                    this.subscribers[url] = [{resolve, reject}];
+                }
+            })
+        }
 
-        return fetch(url).then(response => 
-            response.text());
+        return this.images[url].data!;
     }
 }
 
 let svgLoader = new SVGLoader();
 
 export {svgLoader};
-
-// type HTMLCollectionGetter = ()=>HTMLCollection;
-// interface SVGInlinerRule {
-//     collectionGetter: HTMLCollectionGetter,
-//     url: string
-// }
-
-// class SVGInliner {
-//     loader: SVGLoader
-//     rules: SVGInlinerRule[]
-
-//     constructor(loader: SVGLoader, rules: SVGInlinerRule[]) {
-//         this.loader = loader
-//         this.rules = rules
-//     }
-
-//     async inlineSVG(containers: HTMLCollection, url: string) {
-//         const svgImage = await this.loader.getImage(url);
-//         for (const container of containers) {
-//             container.innerHTML = svgImage;
-//         }
-//     }
-
-//     async applyRules() {
-//         for (const {collectionGetter, url} of this.rules) {
-//             this.inlineSVG(collectionGetter(), url);
-//         }
-//     }
-// }
-
-// const classCollectionGetter = (className: string) => {
-//     return ()=>document.getElementsByClassName(className)
-// }
-
-// const basicIconRule = (iconName: string) => ({
-//     collectionGetter: classCollectionGetter(`${iconName}-icon-container`),
-//     url: `/assets/img/${iconName}-icon.svg`
-// });
-
-// let loader = new SVGLoader();
-
-// const inlinerRules = [
-//     basicIconRule("comment"),
-//     basicIconRule("heart"),
-//     basicIconRule("invite"),
-//     basicIconRule("bookmark"),
-//     basicIconRule("edit"),
-//     basicIconRule("tick-friend")
-// ]
-
-// let svgInliner = new SVGInliner(loader, inlinerRules)
-
-// export { svgInliner };

@@ -4,7 +4,7 @@ import { VDOM, Component, patchVDOM } from "modules/vdom";
 
 import { createTable } from "components/Common/CreateTable";
 import { store } from "flux";
-import { setData, setCurrentProfile, kickUnauthorized } from "flux/slices/userSlice";
+import { setUserData, setCurrentProfile, kickUnauthorized } from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
 
@@ -61,11 +61,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
         }
 
         const image = inputFiles[0];
-        // this.#tempAvatarUrl = URL.createObjectURL(image);
-
         this.setState({...this.state, tempAvatarUrl: URL.createObjectURL(image)});
-
-        // this.setState({ editing: false });
     };
 
     getProfileId(): number | undefined {
@@ -143,7 +139,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
         }).then(({ json, response, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(
-                    setData({ ...json.body.user }),
+                    setUserData({ ...json.body.user }),
                     setCurrentProfile({ profile: json.body, id: store.state.user.data!.id })
                 );
             } else if (response.status === 409) {

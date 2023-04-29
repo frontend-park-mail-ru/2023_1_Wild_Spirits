@@ -8,6 +8,7 @@ import { create } from "handlebars";
 
 interface TUserLightDataType extends TUserLight {
     friends?: TFriend[];
+    organizer_id?: number
 }
 
 type FriendState = {
@@ -27,8 +28,10 @@ interface UserState {
         city_name?: string;
         is_friend?: boolean;
 
-        friendsPreview?: FriendState[];
+        phone?: string;
+        website?: string | null;
 
+        friendsPreview?: FriendState[];
         friends?: FriendState[];
     };
 }
@@ -38,6 +41,12 @@ const userInitialState: UserState = {
     data: undefined,
     currentProfile: undefined,
 };
+
+interface TOrganizer extends TUser {
+    organizer_id?: number,
+    phone?: string,
+    website?: string | null
+}
 
 const userSlice = createSlice({
     name: "user",
@@ -51,7 +60,7 @@ const userSlice = createSlice({
             state.authorizedLoadStatus = LoadStatus.ERROR;
             return state;
         },
-        setData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
+        setUserData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
             state.authorizedLoadStatus = LoadStatus.DONE;
             state.data = action.payload;
             return state;
@@ -89,8 +98,9 @@ const userSlice = createSlice({
         },
         setCurrentProfile: (
             state: UserState,
-            action: PayloadAction<{ id: number; profile: { user: TUser; friends?: TFriend[] | undefined } }>
+            action: PayloadAction<{ id: number; profile: { user: TOrganizer, friends?: TFriend[] | undefined } }>
         ) => {
+            console.log(action.payload)
             if (action.payload) {
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends;
@@ -102,6 +112,7 @@ const userSlice = createSlice({
                     id: action.payload.id,
                 };
             }
+            console.log(state)
             return state;
         },
         setCurrentProfileFriends: (state: UserState, action: PayloadAction<{ friends: TFriend[] }>) => {
@@ -149,7 +160,7 @@ export const mineProfile = (userState: UserState) => {
 export const {
     authorizedLoadStart,
     authorizedLoadError,
-    setData,
+    setUserData,
     addToFriends,
     removeFromFriends,
     logout,

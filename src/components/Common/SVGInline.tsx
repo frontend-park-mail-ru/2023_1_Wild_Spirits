@@ -17,8 +17,6 @@ export class SVGInline extends Component<SVGInlineProps, {img: string}> {
 
     didCreate() {
         svgLoader.getImage(this.props.src).then(img => {
-            console.groupCollapsed(this.props.src)
-            console.groupEnd()
             this.setState({img: img})
         });
     }
