@@ -2,9 +2,9 @@
 
 import { VDOM, Component, patchVDOM } from "modules/vdom";
 
-import { createTable } from "components/Common/CreateTable";
+import { createTable, filterTableContents, TableContents } from "components/Common/CreateTable";
 import { store } from "flux";
-import { setUserData, setCurrentProfile, kickUnauthorized } from "flux/slices/userSlice";
+import { setUserData, setCurrentProfile, kickUnauthorized, isOrganizer, CurrentProfileState } from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
 
@@ -63,15 +63,6 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
         const image = inputFiles[0];
         this.setState({...this.state, tempAvatarUrl: URL.createObjectURL(image)});
     };
-
-    getProfileId(): number | undefined {
-        const url = router.getNextUrl();
-        if (url === undefined) {
-            const user_data = store.state.user.data;
-            return user_data !== undefined ? user_data.id : undefined;
-        }
-        return parseInt(url.slice(1));
-    }
 
     loadProfile() {
         requestManager.request(loadProfile, this.props.id);
@@ -138,10 +129,34 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
             body: formData,
         }).then(({ json, response, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(
-                    setUserData({ ...json.body.user }),
-                    setCurrentProfile({ profile: json.body, id: store.state.user.data!.id })
-                );
+                if (!store.state.user.data || !store.state.user.currentProfile) {
+                    return;
+                }
+
+                let userData = {
+                    id: store.state.user.data.id,
+                    name: formData.get('name') as string,
+                    city_name: json.body.user.city_name,
+                    img: json.body.user.img,
+                }
+
+                let currentProfileData = {
+                    id: store.state.user.currentProfile.id,
+                    profile: {
+                        user: {
+                            id: store.state.user.currentProfile.id,
+                            city_name: json.body.user.city_name,
+                            name: formData.get('name') as string,
+                            img: json.body.user.img,
+                            phone: formData.get('phone') as string,
+                            email: formData.get('email') as string,
+                            website: formData.get('website') as string || undefined,
+                        }
+                    }
+                }
+
+                store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
+
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
@@ -159,23 +174,25 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
             return <span></span>;
         }
 
-        const getTable = (profile_data: {
-            id: number;
-            name: string;
-            img: string;
-            email?: string | undefined;
-            city_name?: string;
-        }) => {
+        const getTable = (profile_data: CurrentProfileState) => {
             if (this.state.editing) {
                 const cities = getCitiesNames(store.state.header);
                 const city = store.state.user.currentProfile?.city_name;
 
+                type FieldType = {title: string, name: string, value: string};
+                const renderField = ({title, name, value}: FieldType) => {
+                    return [
+                            <div className="table__cell grey">{title}</div>,
+                            <div className="table__cell">
+                                <input className="form-control" name={name} type="text" value={value} />
+                            </div>
+                        ]
+                }
+
                 return (
                     <div className="table">
-                        <div className="table__cell grey">Имя</div>
-                        <div className="table__cell">
-                            <input className="form-control" name="name" type="text" value={profile_data.name} />
-                        </div>
+                        {renderField({title: "Имя", name: "name", value: profile_data.name})}
+                        {profile_data.email && renderField({title: "Почта", name: "email", value: profile_data.email})}
 
                         <div className="table__cell grey">Город</div>
                         <div className="table__cell">
@@ -187,24 +204,35 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                                 </select>
                             </div>
                         </div>
+
+                        {profile_data.phone && renderField({title: "Телефон", name: "phone", value: profile_data.phone})}
+                        {profile_data.phone && renderField({title: "Сайт", name: "website", value: profile_data.website || ""})}
+
                     </div>
                 );
             }
 
             const rows = (() => {
-                if (mineProfile(store.state.user)) {
-                    return createTable({
-                        Имя: profile_data.name,
-                        Почта: profile_data.email ? profile_data.email : "не указана",
-                        Город: profile_data.city_name ? profile_data.city_name : "Москва",
-                    } 
-                )}
-
-                return createTable({
+                let tableContents: TableContents = {
                     Имя: profile_data.name,
-                    Почта: "не указана",
+                    Почта: undefined,
                     Город: profile_data.city_name ? profile_data.city_name : "Москва",
-                });
+                    Телефон: undefined,
+                    Сайт: undefined,
+                }
+
+                if (mineProfile(store.state.user)) {
+                    tableContents["Почта"] = profile_data.email || "не указана";
+                } else {
+                    tableContents["Почта"] = "не указана";
+                }
+
+                if (isOrganizer(store.state.user)) {
+                    tableContents["Телефон"] = profile_data.phone;
+                    tableContents["Сайт"] = profile_data.website;
+                }
+
+                return createTable(filterTableContents(tableContents));
             })();
 
             let cells = [];

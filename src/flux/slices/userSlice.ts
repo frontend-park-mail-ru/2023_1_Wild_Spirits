@@ -17,23 +17,25 @@ type FriendState = {
     img: string;
 }
 
+export interface CurrentProfileState {
+    id: number;
+    name: string;
+    img: string;
+    email?: string;
+    city_name?: string;
+    is_friend?: boolean;
+
+    phone?: string;
+    website?: string;
+
+    friendsPreview?: FriendState[];
+    friends?: FriendState[];
+}
+
 interface UserState {
     authorizedLoadStatus: LoadStatus.Type;
     data?: TUserLightDataType;
-    currentProfile?: {
-        id: number;
-        name: string;
-        img: string;
-        email?: string;
-        city_name?: string;
-        is_friend?: boolean;
-
-        phone?: string;
-        website?: string | null;
-
-        friendsPreview?: FriendState[];
-        friends?: FriendState[];
-    };
+    currentProfile?: CurrentProfileState;
 }
 
 const userInitialState: UserState = {
@@ -45,7 +47,7 @@ const userInitialState: UserState = {
 interface TOrganizer extends TUser {
     organizer_id?: number,
     phone?: string,
-    website?: string | null
+    website?: string
 }
 
 const userSlice = createSlice({
@@ -100,19 +102,16 @@ const userSlice = createSlice({
             state: UserState,
             action: PayloadAction<{ id: number; profile: { user: TOrganizer, friends?: TFriend[] | undefined } }>
         ) => {
-            console.log(action.payload)
             if (action.payload) {
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends;
 
                 state.currentProfile = {
-                    ...state.currentProfile,
                     ...profile,
                     friendsPreview: friends,
                     id: action.payload.id,
                 };
             }
-            console.log(state)
             return state;
         },
         setCurrentProfileFriends: (state: UserState, action: PayloadAction<{ friends: TFriend[] }>) => {
@@ -155,6 +154,10 @@ export const mineProfile = (userState: UserState) => {
     }
 
     return userState.data.id === userState.currentProfile.id;
+}
+
+export const isOrganizer = (userState: UserState) => {
+    return userState.currentProfile?.phone !== undefined;
 }
 
 export const {

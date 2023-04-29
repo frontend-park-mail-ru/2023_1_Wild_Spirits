@@ -42,8 +42,6 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
             if (response.ok && json.body) {
                 store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
-
-            console.log(json)
             resolveRequest(id);
         })
         .catch((error) => {
@@ -173,10 +171,6 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
         },
     })
         .then(({json, response, status}) => {
-            console.log(json)
-            console.log(response)
-            console.log(status)
-
             resolveRequest();
         })
 }

@@ -21,6 +21,7 @@ class SVGLoader {
         this.images[url].status = LoadStatus.DONE;
 
         this.subscribers[url].forEach(({resolve, reject}) => resolve(data));
+        this.subscribers[url] = [];
         return data;
     }
 

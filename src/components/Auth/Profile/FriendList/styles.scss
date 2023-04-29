@@ -26,6 +26,8 @@
     width: var(--avatar-size);
     height: var(--avatar-size);
 
+    object-fit: cover;
+
     border: 3px solid transparent;
     border-radius: 50%;
 }
