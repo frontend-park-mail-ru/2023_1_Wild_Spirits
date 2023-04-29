@@ -126,11 +126,13 @@ export namespace VDOM {
             } catch {
                 const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
                 const jsx = JSXToVNode(instance.render());
-                if (Array.isArray(jsx)) {
-                    (jsx as any)._instance = instance;
-                    return jsx;
-                }
-                let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
+                // if (Array.isArray(jsx)) {
+                //     (jsx as any)._instance = instance;
+                //     return jsx;
+                // }
+                // console.log(tagName.name);
+                let vnode: ComponentVNodeType = { tagName: tagName.name, props, children, _instance: instance };
+                //let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
                 return vnode;
             }
         }
@@ -200,15 +202,26 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     //     return;
     // }
 
-    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
-        vNode._instance.state = vNode._instance.getInterState();
-        vNode._instance.props = nextVNode._instance.props;
-        nextVNode._instance = vNode._instance;
+    if (isNodeTypeComponent(nextVNode)) {
+        if (isNodeTypeComponent(vNode)) {
+            vNode._instance.state = vNode._instance.getInterState();
+            vNode._instance.props = nextVNode._instance.props;
+            nextVNode._instance = vNode._instance;
+        }
         const newNextVNode = JSXToVNode(nextVNode._instance.render());
         nextVNode.tagName = newNextVNode.tagName;
         nextVNode.props = newNextVNode.props;
         nextVNode.children = newNextVNode.children;
     }
+    // if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
+    //     vNode._instance.state = vNode._instance.getInterState();
+    //     vNode._instance.props = nextVNode._instance.props;
+    //     nextVNode._instance = vNode._instance;
+    //     const newNextVNode = JSXToVNode(nextVNode._instance.render());
+    //     nextVNode.tagName = newNextVNode.tagName;
+    //     nextVNode.props = newNextVNode.props;
+    //     nextVNode.children = newNextVNode.children;
+    // }
 
     if (isNodeTypeSimple(vNode) || isNodeTypeSimple(nextVNode)) {
         if (vNode !== nextVNode) {
@@ -288,9 +301,9 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
             return;
         }
 
-        console.log("dangerouslySetInnerHTML S", (node as HTMLElement).innerHTML, node, (nextValue as any).__html);
+        // console.log("dangerouslySetInnerHTML S", (node as HTMLElement).innerHTML, node, (nextValue as any).__html);
         (node as HTMLElement).innerHTML = (nextValue as any).__html;
-        console.log("dangerouslySetInnerHTML E", (node as HTMLElement).innerHTML, node);
+        // console.log("dangerouslySetInnerHTML E", (node as HTMLElement).innerHTML, node);
         return;
     }
 
