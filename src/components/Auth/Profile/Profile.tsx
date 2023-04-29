@@ -92,7 +92,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
 
     unsetEditing(e: Event) {
         e.preventDefault();
-        this.setState({ editing: false});
+        this.setState({ editing: false });
     }
 
     submitForm = (event: SubmitEvent) => {
@@ -142,6 +142,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                     setData({ ...json.body.user }),
                     setCurrentProfile({ profile: json.body, id: store.state.user.data!.id })
                 );
+                this.setState({ editing: false });
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
@@ -150,8 +151,6 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             }
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
-
-        // this.setState({ editing: false });
     }
 
     render(): JSX.Element {
@@ -235,7 +234,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                             onClick={(e) => this.unsetEditing(toEvent(e))}
                             className="button-danger"
                             value="Отменить"
-                        ></input>
+                        ></input>,
                     ];
                 }
 

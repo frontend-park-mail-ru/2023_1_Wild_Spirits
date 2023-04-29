@@ -3,6 +3,7 @@
 import { VDOM, Component } from "modules/vdom";
 import "./styles.scss";
 import * as ymaps from "yandex-maps";
+
 /**
  * Event list component
  * @class
@@ -26,10 +27,9 @@ export class TestMap extends Component {
     createMap() {
         console.error("TestMap createMap");
 
-        ymaps.ready(init);
-        function init() {
+        const init = () => {
             // Создание карты.
-            var myMap = new ymaps.Map("map-container", {
+            let ymap = new ymaps.Map("map-container", {
                 // Координаты центра карты.
                 // Порядок по умолчанию: «широта, долгота».
                 // Чтобы не определять координаты центра карты вручную,
@@ -39,14 +39,15 @@ export class TestMap extends Component {
                 // от 0 (весь мир) до 19.
                 zoom: 7,
             });
-            console.warn(myMap);
-        }
+            // this.forceUpdate();
+        };
+        ymaps.ready(init);
     }
 
     render() {
         return (
             <div>
-                <div id="map-container" className="map map-container"></div>
+                <div id="map-container" className="map map-container" {...{ stopPatch: true }}></div>
                 <input type="button" value="Create Map!" onClick={this.createMap} />
             </div>
         );

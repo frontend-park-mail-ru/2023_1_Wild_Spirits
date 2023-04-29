@@ -1,6 +1,6 @@
 import { deepEqual } from "modules/objectsManipulation";
 
-type PropType = Function | null | false | string | undefined;
+type PropType = Function | null | boolean | string | undefined;
 
 type PropsType = { [key: string]: PropType };
 
@@ -23,6 +23,8 @@ type SimpleVNodeType = string | undefined | null | boolean;
 export type VNodeType = SimpleVNodeType | TagVNodeType | ComponentVNodeType;
 
 export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO Create custom type
+
+let stateQueue: (() => void)[] = [];
 
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
@@ -185,7 +187,9 @@ export const createDOMNode = (vNode: VNodeType) => {
 };
 
 const isStateChanged = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
-    const result = !deepEqual(vNode._instance.state, vNode._instance.getInterState()) || !deepEqual(vNode._instance.state, nextVNode._instance.state);
+    const result =
+        !deepEqual(vNode._instance.state, vNode._instance.getInterState()) ||
+        !deepEqual(vNode._instance.state, nextVNode._instance.state);
     return result;
 };
 
@@ -197,7 +201,9 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     // }
 
     if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
-        nextVNode._instance.state = vNode._instance.getInterState();
+        vNode._instance.state = vNode._instance.getInterState();
+        vNode._instance.props = nextVNode._instance.props;
+        nextVNode._instance = vNode._instance;
         const newNextVNode = JSXToVNode(nextVNode._instance.render());
         nextVNode.tagName = newNextVNode.tagName;
         nextVNode.props = newNextVNode.props;
@@ -235,13 +241,31 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     }
 
     patchProps(node, vNode.props, nextVNode.props);
-    patchChildren(node, vNode.children, nextVNode.children);
+    if (noStopPatch(nextVNode.props)) {
+        patchChildren(node, vNode.children, nextVNode.children);
+    }
 
     if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
         nextVNode._instance.didUpdate();
     }
 
     return node;
+};
+
+const isStopPatch = (props: PropsType) => {
+    if (props === null) {
+        return false;
+    }
+    // console.warn("props.dangerouslySetInnerHTML", props.dangerouslySetInnerHTML);
+    if (props.stopPatch === true || props.dangerouslySetInnerHTML !== undefined) {
+        return true;
+    }
+    return false;
+};
+
+const noStopPatch = (props: PropsType) => {
+    return !isStopPatch(props);
+    // return props === null || props.stopPatch !== true || !props.dangerouslySetInnerHTML;
 };
 
 const convertKey = (key: string) => {
@@ -254,9 +278,19 @@ const convertKey = (key: string) => {
     return key.toLowerCase();
 };
 
+const isAlwaysPatchPropKey = (key: string) => {
+    return key === "dangerouslySetInnerHTML" || key === "referTo";
+};
+
 const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: PropType) => {
-    if (key === 'dangerouslySetInnerHTML') {
+    if (key === "dangerouslySetInnerHTML") {
+        if ((node as HTMLElement).innerHTML === (nextValue as any).__html) {
+            return;
+        }
+
+        console.log("dangerouslySetInnerHTML S", (node as HTMLElement).innerHTML, node, (nextValue as any).__html);
         (node as HTMLElement).innerHTML = (nextValue as any).__html;
+        console.log("dangerouslySetInnerHTML E", (node as HTMLElement).innerHTML, node);
         return;
     }
 
@@ -279,14 +313,14 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
         return;
     }
 
-    (node as HTMLElement).setAttribute(key, nextValue);
+    (node as HTMLElement).setAttribute(key, nextValue.toString());
 };
 
 const patchProps = (node: DOMNodeType, props: PropsType | null, nextProps: PropsType | null) => {
     const mergedProps = { ...props, ...nextProps };
 
     Object.keys(mergedProps).forEach((key) => {
-        if (props === null || nextProps === null || props[key] !== nextProps[key]) {
+        if (props === null || nextProps === null || isAlwaysPatchPropKey(key) || props[key] !== nextProps[key]) {
             patchProp(
                 node,
                 key,
@@ -317,6 +351,7 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
+    console.error("patch");
     const vNode = node.v || recycleNode(node);
 
     const newNode = patchNode(node, vNode, nextVNode);
