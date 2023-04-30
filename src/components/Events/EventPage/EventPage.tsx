@@ -40,7 +40,11 @@ export class EventPage extends Component {
         }
 
         if (selectedEvent.loadStatus !== LoadStatus.DONE) {
-            return <Loading />;
+            return (
+                <div className="laoding-page-container">
+                    <Loading size="xxl" />
+                </div>
+            );
         }
 
         const { event, organizer, places } = selectedEvent;

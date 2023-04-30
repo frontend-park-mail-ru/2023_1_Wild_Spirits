@@ -26,7 +26,7 @@ import { store } from "flux";
 import { toggleTag } from "flux/slices/tagsSlice";
 import { Link } from "./Common/Link";
 import { Loading } from "./Common/Loading";
-import { TestMap } from "./Map/TestMap";
+import { Map } from "./Map/Map";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 import { SVGInline } from "./Common/SVGInline";
@@ -72,6 +72,16 @@ export class App extends Component<any> {
             );
         };
 
+        const GoMapBtn = () => {
+            return (
+                <div className="full-button-link-container">
+                    <Link href="/map" className="full-button-link js-router-link">
+                        Поиск по карте
+                    </Link>
+                </div>
+            );
+        };
+
         const modalWindowShown = store.state.modalWindow.name !== ModalWindowName.NONE;
 
         return (
@@ -91,11 +101,12 @@ export class App extends Component<any> {
                         )}
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
-                        {url === "/map" && <TestMap />}
+                        {url === "/map" && <Map />}
                     </div>
                     <div className="sidebar">
                         {url === "/" && [
                             <CreateEventBtn />,
+                            <GoMapBtn />,
                             <Calendar />,
                             <Tags
                                 tagsState={store.state.tags}

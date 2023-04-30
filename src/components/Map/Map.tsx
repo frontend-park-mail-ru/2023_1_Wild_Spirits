@@ -10,8 +10,9 @@ import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import { EventsLightDataToCardProps } from "models/Events";
 import { MapEventCard } from "components/Events/EventCard/MapEventCard";
+import { router } from "modules/router";
 
-interface TestMapState {
+interface MapState {
     map: ymaps.Map | undefined;
 }
 
@@ -22,8 +23,9 @@ const randFloat = (min: number, max: number) => Math.random() * (max - min) + mi
  * @class
  * @extends Component
  */
-export class TestMap extends Component<any, TestMapState> {
-    #timer = 10;
+export class Map extends Component<any, MapState> {
+    timer: NodeJS.Timeout | undefined = undefined;
+    isMapMouseDown: boolean = false;
 
     constructor() {
         super({});
@@ -31,12 +33,12 @@ export class TestMap extends Component<any, TestMapState> {
 
         this.addMarker = this.addMarker.bind(this);
         this.printMarker = this.printMarker.bind(this);
+        this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
     }
 
     didCreate() {
         window.addEventListener("mouseup", this.handleMouseUp);
-        console.error("envents loading . . .");
         store.dispatch(setEventsCardsLoadStart());
 
         requestManager.request(loadEvents);
@@ -47,24 +49,31 @@ export class TestMap extends Component<any, TestMapState> {
         this.createMap();
     }
 
-    didUpdate() {
-        console.error("TestMap didUpdate");
-    }
-
     willDestroy() {
         window.removeEventListener("mouseup", this.handleMouseUp);
+        if (this.state.map) {
+            this.state.map.destroy();
+        }
     }
 
     handleMouseDown() {
-        console.log("mouseUP");
+        console.log("mouseDOWN");
+        this.isMapMouseDown = true;
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
     }
 
     handleMouseUp() {
         console.log("mouseUP");
+        if (this.isMapMouseDown) {
+            this.timer = setTimeout(() => requestManager.request(loadEvents), 1000);
+            this.isMapMouseDown = false;
+        }
     }
 
     printMarker() {
-        console.log(this.#timer);
+        console.log(this.timer);
         if (!this.state.map) {
             return;
         }
@@ -89,25 +98,19 @@ export class TestMap extends Component<any, TestMapState> {
                     ) as HTMLElement
                 ).innerHTML;
 
-                console.log("inner", testCard);
-
                 const placemark = new ymaps.Placemark([randFloat(52, 58), randFloat(32, 38)], {
                     hintContent: testCard,
                 });
+                placemark.events.add("click", () => router.go(`/events/${cards.data[i].id}`));
                 this.state.map.geoObjects.add(placemark);
             }
         }
     }
 
     createMap() {
-        console.error("TestMap createMap");
-
         const init = () => {
-            // Создание карты.
             let ymap = new ymaps.Map("map-container", {
                 center: [55.76, 37.64],
-                // Уровень масштабирования. Допустимые значения:
-                // от 0 (весь мир) до 19.
                 zoom: 7,
             });
             this.setState({ map: ymap });
@@ -124,7 +127,7 @@ export class TestMap extends Component<any, TestMapState> {
                     id="map-container"
                     className="map map-container"
                     {...{ stopPatch: true }}
-                    onMouseUpCapture={() => console.log("UP!!!")}
+                    onMouseDown={this.handleMouseDown}
                 ></div>
                 <input type="button" onClick={this.addMarker} value="AddMarker" />
                 <input type="button" onClick={this.printMarker} value="PrintMarker" />
