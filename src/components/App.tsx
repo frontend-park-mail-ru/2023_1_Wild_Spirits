@@ -49,6 +49,10 @@ export class App extends Component<any> {
         // addRouterEvents();
     }
 
+    willDestroy(): void {
+        console.error("Add Destroy");
+    }
+
     render(): JSX.Element {
         router.reset();
         const url = router.getNextUrl();

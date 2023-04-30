@@ -1,12 +1,21 @@
 /** @module Components */
 
-import { VDOM, Component } from "modules/vdom";
+import { VDOM, Component, createDOMNode, JSXToVNode } from "modules/vdom";
 import "./styles.scss";
 import * as ymaps from "yandex-maps";
+import { store } from "flux";
+import { loadEvents } from "requests/events";
+import { requestManager } from "requests";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
+import { LoadStatus } from "requests/LoadStatus";
+import { EventsLightDataToCardProps } from "models/Events";
+import { MapEventCard } from "components/Events/EventCard/MapEventCard";
 
 interface TestMapState {
     map: ymaps.Map | undefined;
 }
+
+const randFloat = (min: number, max: number) => Math.random() * (max - min) + min;
 
 /**
  * Event list component
@@ -14,18 +23,26 @@ interface TestMapState {
  * @extends Component
  */
 export class TestMap extends Component<any, TestMapState> {
+    #timer = 10;
+
     constructor() {
         super({});
         this.state = { map: undefined };
 
         this.addMarker = this.addMarker.bind(this);
+        this.printMarker = this.printMarker.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
     }
 
     didCreate() {
-        console.error("TestMap didCreate");
+        window.addEventListener("mouseup", this.handleMouseUp);
+        console.error("envents loading . . .");
+        store.dispatch(setEventsCardsLoadStart());
+
+        requestManager.request(loadEvents);
     }
 
-    didMount(): void {
+    didMount() {
         console.error("TestMap didMount");
         this.createMap();
     }
@@ -34,17 +51,52 @@ export class TestMap extends Component<any, TestMapState> {
         console.error("TestMap didUpdate");
     }
 
-    addMarker() {
+    willDestroy() {
+        window.removeEventListener("mouseup", this.handleMouseUp);
+    }
+
+    handleMouseDown() {
+        console.log("mouseUP");
+    }
+
+    handleMouseUp() {
+        console.log("mouseUP");
+    }
+
+    printMarker() {
+        console.log(this.#timer);
         if (!this.state.map) {
             return;
         }
-        const placemark = new ymaps.Placemark([55.37, 35.45], {
-            hintContent:
-                "<div><div>Какое-то мероприятие</div> <img width='100px' src='https://kudago.com//media/thumbs/xl/images/event/0e/1a/0e1a08d91c1c0eafb67fc997917fabd3.jpg'></div>",
-            balloonContent: "<div style='color:#ff0000'>Это красная метка</div>",
-        });
-        this.state.map.geoObjects.removeAll();
-        this.state.map.geoObjects.add(placemark);
+
+        console.log("getCenter", this.state.map.getCenter());
+        console.log("getBounds", this.state.map.getBounds());
+    }
+
+    addMarker() {
+        const { cards } = store.state.events;
+        if (this.state.map && cards.loadStatus === LoadStatus.DONE) {
+            const cardsProps = EventsLightDataToCardProps(cards.data);
+            this.state.map.geoObjects.removeAll();
+            for (let i = 0; i < cardsProps.length; i++) {
+                const testCard = (
+                    createDOMNode(
+                        JSXToVNode(
+                            <div>
+                                <MapEventCard {...cardsProps[i]} />
+                            </div>
+                        )
+                    ) as HTMLElement
+                ).innerHTML;
+
+                console.log("inner", testCard);
+
+                const placemark = new ymaps.Placemark([randFloat(52, 58), randFloat(32, 38)], {
+                    hintContent: testCard,
+                });
+                this.state.map.geoObjects.add(placemark);
+            }
+        }
     }
 
     createMap() {
@@ -53,22 +105,11 @@ export class TestMap extends Component<any, TestMapState> {
         const init = () => {
             // Создание карты.
             let ymap = new ymaps.Map("map-container", {
-                // Координаты центра карты.
-                // Порядок по умолчанию: «широта, долгота».
-                // Чтобы не определять координаты центра карты вручную,
-                // воспользуйтесь инструментом Определение координат.
                 center: [55.76, 37.64],
                 // Уровень масштабирования. Допустимые значения:
                 // от 0 (весь мир) до 19.
                 zoom: 7,
             });
-            const placemark = new ymaps.Placemark([55.37, 35.45], {
-                hintContent:
-                    "<div><div>Какое-то мероприятие</div> <img width='100px' src='https://kudago.com//media/thumbs/xl/images/event/0e/1a/0e1a08d91c1c0eafb67fc997917fabd3.jpg'></div>",
-                balloonContent: "<div style='color:#ff0000'>Это красная метка</div>",
-            });
-            ymap.geoObjects.add(placemark);
-            ymap.geoObjects.remove(placemark);
             this.setState({ map: ymap });
         };
 
@@ -76,10 +117,17 @@ export class TestMap extends Component<any, TestMapState> {
     }
 
     render() {
+        this.addMarker();
         return (
             <div>
-                <div id="map-container" className="map map-container" {...{ stopPatch: true }}></div>
+                <div
+                    id="map-container"
+                    className="map map-container"
+                    {...{ stopPatch: true }}
+                    onMouseUpCapture={() => console.log("UP!!!")}
+                ></div>
                 <input type="button" onClick={this.addMarker} value="AddMarker" />
+                <input type="button" onClick={this.printMarker} value="PrintMarker" />
             </div>
         );
     }

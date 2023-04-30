@@ -102,15 +102,17 @@ export const patchVDOM = () => {
 };
 
 export const createVDOM = (root: HTMLElement, renderFunc: VDOMRenderFunc) => {
+    didMountInstaces = [];
     rootVDOM = {
         root: patch(renderFunc() as unknown as VNodeType, root),
         renderFunc,
         isRerendering: false,
         needRerender: false,
     };
+    didMountInstaces.forEach((instance) => instance.didMount());
 };
 
-const JSXToVNode = (jsx: JSX.Element): TagVNodeType => jsx as unknown as TagVNodeType;
+export const JSXToVNode = (jsx: JSX.Element): TagVNodeType => jsx as unknown as TagVNodeType;
 
 export namespace VDOM {
     export const createVNode = <T extends Component<TProps>, TProps extends PropsType = PropsType>(
@@ -129,9 +131,7 @@ export namespace VDOM {
                 //     (jsx as any)._instance = instance;
                 //     return jsx;
                 // }
-                // console.log(tagName.name);
                 let vnode: ComponentVNodeType = { tagName: tagName.name, props, children, _instance: instance };
-                //let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
                 return vnode;
             }
         }
@@ -191,13 +191,6 @@ export const createDOMNode = (vNode: VNodeType) => {
     return node;
 };
 
-// const isStateChanged = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
-//     const result =
-//         !deepEqual(vNode._instance.state, vNode._instance.getInterState()) ||
-//         !deepEqual(vNode._instance.state, nextVNode._instance.state);
-//     return result;
-// };
-
 const convertComponentToTag = (vNode: ComponentVNodeType) => {
     const newVNode = JSXToVNode(vNode._instance.render());
     vNode.tagName = newVNode.tagName;
@@ -207,19 +200,18 @@ const convertComponentToTag = (vNode: ComponentVNodeType) => {
 
 const tryPatchComponent = (vNode: VNodeType, nextVNode: VNodeType): boolean => {
     if (isNodeTypeComponent(nextVNode)) {
-        // if (nextVNode.tagName.toLowerCase() === "hoveredimg") console.log("tryPatchComponent hoveredimg");
         let isPropsChanged = false;
         if (isNodeTypeComponent(vNode)) {
-            isPropsChanged = !deepEqual(vNode._instance.props, nextVNode._instance.props);
-            vNode._instance.props = nextVNode._instance.props;
-            nextVNode._instance = vNode._instance;
+            if (vNode._instance.constructor.name !== nextVNode._instance.constructor.name) {
+                // console.log(vNode._instance.constructor.name, nextVNode._instance.constructor.name);
+            } else {
+                isPropsChanged = !deepEqual(vNode._instance.props, nextVNode._instance.props);
+                vNode._instance.props = nextVNode._instance.props;
+                nextVNode._instance = vNode._instance;
+            }
         }
         convertComponentToTag(nextVNode);
         return isPropsChanged;
-        // const newNextVNode = JSXToVNode(nextVNode._instance.render());
-        // nextVNode.tagName = newNextVNode.tagName;
-        // nextVNode.props = newNextVNode.props;
-        // nextVNode.children = newNextVNode.children;
     }
     return false;
 };
@@ -232,27 +224,6 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     // }
 
     const isComponentPropsChanged = tryPatchComponent(vNode, nextVNode);
-
-    // if (isNodeTypeComponent(nextVNode)) {
-    //     if (isNodeTypeComponent(vNode)) {
-    //         vNode._instance.state = vNode._instance.state;
-    //         vNode._instance.props = nextVNode._instance.props;
-    //         nextVNode._instance = vNode._instance;
-    //     }
-    //     const newNextVNode = JSXToVNode(nextVNode._instance.render());
-    //     nextVNode.tagName = newNextVNode.tagName;
-    //     nextVNode.props = newNextVNode.props;
-    //     nextVNode.children = newNextVNode.children;
-    // }
-    // if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
-    //     vNode._instance.state = vNode._instance.getInterState();
-    //     vNode._instance.props = nextVNode._instance.props;
-    //     nextVNode._instance = vNode._instance;
-    //     const newNextVNode = JSXToVNode(nextVNode._instance.render());
-    //     nextVNode.tagName = newNextVNode.tagName;
-    //     nextVNode.props = newNextVNode.props;
-    //     nextVNode.children = newNextVNode.children;
-    // }
 
     if (isNodeTypeSimple(vNode) || isNodeTypeSimple(nextVNode)) {
         if (vNode !== nextVNode) {
@@ -296,7 +267,6 @@ const isStopPatch = (props: PropsType) => {
     if (props === null) {
         return false;
     }
-    // console.warn("props.dangerouslySetInnerHTML", props.dangerouslySetInnerHTML);
     if (props.stopPatch === true || props.dangerouslySetInnerHTML !== undefined) {
         return true;
     }
@@ -305,7 +275,6 @@ const isStopPatch = (props: PropsType) => {
 
 const noStopPatch = (props: PropsType) => {
     return !isStopPatch(props);
-    // return props === null || props.stopPatch !== true || !props.dangerouslySetInnerHTML;
 };
 
 const convertKey = (key: string) => {
@@ -324,13 +293,9 @@ const isAlwaysPatchPropKey = (key: string) => {
 
 const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: PropType) => {
     if (key === "dangerouslySetInnerHTML") {
-        if ((node as HTMLElement).innerHTML === (nextValue as any).__html) {
-            return;
+        if ((node as HTMLElement).innerHTML !== (nextValue as any).__html) {
+            (node as HTMLElement).innerHTML = (nextValue as any).__html;
         }
-
-        // console.log("dangerouslySetInnerHTML S", (node as HTMLElement).innerHTML, node, (nextValue as any).__html);
-        (node as HTMLElement).innerHTML = (nextValue as any).__html;
-        // console.log("dangerouslySetInnerHTML E", (node as HTMLElement).innerHTML, node);
         return;
     }
 
@@ -379,10 +344,8 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
     });
 
     for (let i = vChildren.length; i < nextVChildren.length; i++) {
-        console.warn(nextVChildren[i]);
         if (isNodeTypeComponent(nextVChildren[i])) {
-            if ((nextVChildren[i] as ComponentVNodeType).tagName.toLowerCase() === "hoveredimg")
-                console.log("patchChildren hoveredimg");
+            //if ((nextVChildren[i] as ComponentVNodeType).tagName.toLowerCase() === "hoveredimg")
             convertComponentToTag(nextVChildren[i] as ComponentVNodeType);
         }
         parent.appendChild(createDOMNode(nextVChildren[i]));
@@ -402,7 +365,6 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 };
 
 export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
-    console.error("patch");
     const vNode = node.v || recycleNode(node);
 
     const newNode = patchNode(node, vNode, nextVNode);
@@ -410,7 +372,6 @@ export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
         node = newNode;
         node.v = nextVNode;
     }
-
     return node;
 };
 
@@ -423,8 +384,11 @@ const recycleNode = (node: DOMNodeType) => {
 
     const tagName = node.nodeName.toLowerCase();
     const children: ChildType[] = [].map.call(node.childNodes, recycleNode) as ChildType[];
-
-    return VDOM.createVNode(tagName, {}, children as any);
+    const newVNode = VDOM.createVNode(tagName, {}, children as any);
+    if (isNodeTypeComponent(newVNode)) {
+        convertComponentToTag(newVNode);
+    }
+    return newVNode;
 };
 
 function listener(this: any, event: Event) {

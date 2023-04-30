@@ -16,9 +16,7 @@ export class SVGInline extends Component<SVGInlineProps, { img: string }> {
     }
 
     didCreate() {
-        console.error("this.didCreate");
         svgLoader.getImage(this.props.src).then((img) => {
-            console.warn(this.props.src);
             this.setState({ img: img });
         });
     }
