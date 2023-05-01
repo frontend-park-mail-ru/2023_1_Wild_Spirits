@@ -1,12 +1,20 @@
 import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
-import { EventProcessingForm, EventProcessingType, SelectedEventData, TEvent, TEventPlace } from "models/Events";
+import {
+    EventProcessingForm,
+    EventProcessingType,
+    SelectedEventData,
+    TEvent,
+    TEventMap,
+    TEventPlace,
+} from "models/Events";
 import { TEventLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
 import { TagsState } from "./tagsSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
+import { EventMap } from "yandex-maps";
 
 interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
@@ -29,12 +37,14 @@ interface EventsState {
     cards: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     selectedEvent: LoadStatus.DataDoneOrNotDone<SelectedEventData>;
     processing: LoadStatus.DataDoneOrNotDone<EventProcessingData>;
+    mapEvents: TEventMap[];
 }
 
 const initialState: EventsState = {
     cards: { loadStatus: LoadStatus.NONE },
     selectedEvent: { loadStatus: LoadStatus.NONE },
     processing: { loadStatus: LoadStatus.NONE },
+    mapEvents: [],
 };
 
 interface FormField<T, K extends keyof T> {
@@ -120,6 +130,10 @@ const eventsSlice = createSlice({
 
             return state;
         },
+        setMapEvents: (state: EventsState, action: PayloadAction<TEventMap[]>) => {
+            state.mapEvents = action.payload;
+            return state;
+        },
         toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
                 const tag = state.processing.tags.tags[action.payload];
@@ -149,6 +163,7 @@ export const {
     setEventProcessingErrors,
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
+    setMapEvents,
     toggleEventProcessingTag,
     setEventProcessingLoadError,
 } = eventsSlice.actions;

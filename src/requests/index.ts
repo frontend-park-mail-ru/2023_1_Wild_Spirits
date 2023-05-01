@@ -1,7 +1,13 @@
 import { configureRequestManager } from "./requestManager";
 
 import { loadCategories, loadCities } from "./header";
-import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage } from "./events";
+import {
+    loadEventProcessingEdit,
+    loadEventProcessingCreate,
+    loadEvents,
+    loadEventPage,
+    loadEnventsMap,
+} from "./events";
 import {
     addFriend,
     loadAuthorization,
@@ -84,6 +90,10 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: searchUsers,
+        dependencies: [],
+    },
+    {
+        request: loadEnventsMap,
         dependencies: [],
     },
 ];

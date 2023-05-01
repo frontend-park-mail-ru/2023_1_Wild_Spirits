@@ -3,15 +3,20 @@
 import { VDOM, Component } from "modules/vdom";
 import { Link } from "components/Common/Link";
 
-import { EventCardProps } from "./EventCard";
+export interface MapEventCardProps {
+    id: number;
+    name: string;
+    img: string;
+    dates: string[];
+}
 
 /**
  * event card component
  * @class
  * @extends Component
  */
-export class MapEventCard extends Component<EventCardProps> {
-    constructor(props: EventCardProps) {
+export class MapEventCard extends Component<MapEventCardProps> {
+    constructor(props: MapEventCardProps) {
         super(props);
     }
 

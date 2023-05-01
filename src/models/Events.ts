@@ -4,7 +4,7 @@ import { EventCardProps } from "components/Events/EventCard/EventCard";
 
 const SLICE_SIZE = 160;
 
-interface TEventDates {
+export interface TEventDates {
     dateStart?: string;
     dateEnd?: string;
     timeStart?: string;
@@ -30,6 +30,10 @@ export interface TEventBase {
     description: string;
     img: string;
     dates: TEventDates;
+}
+
+export interface TEventMap extends TEventBase {
+    coords: { lat: number; lon: number };
 }
 
 export interface TOrgLight {
@@ -71,21 +75,28 @@ export interface EventProcessingForm {
     img: string;
 }
 
-export const EventsLightDataToCardProps = (events: TEventLight[]): EventCardProps[] => {
+export const fixEventDates = (dates: TEventDates): string[] => {
+    const { dateStart, dateEnd, timeStart, timeEnd } = dates;
+    let result: string[] = [];
+    if (dateStart) {
+        result.push("Начало: " + dateStart);
+    }
+    if (dateEnd) {
+        result.push("Конец: \u00A0\u00A0\u00A0" + dateEnd);
+    }
+    if (timeStart && timeEnd) {
+        result.push(timeStart + " - " + timeEnd);
+    } else if (timeStart || timeEnd) {
+        result.push((timeStart ? timeStart : timeEnd) as string);
+    }
+
+    return result;
+};
+
+export const eventsLightDataToCardProps = (events: TEventLight[]): EventCardProps[] => {
     return events.map((event: TEventLight) => {
-        const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
-        let dates: string[] = [];
-        if (dateStart) {
-            dates.push("Начало: " + dateStart);
-        }
-        if (dateEnd) {
-            dates.push("Конец: \u00A0\u00A0\u00A0" + dateEnd);
-        }
-        if (timeStart && timeEnd) {
-            dates.push(timeStart + " - " + timeEnd);
-        } else if (timeStart || timeEnd) {
-            dates.push((timeStart ? timeStart : timeEnd) as string);
-        }
+        let dates: string[] = fixEventDates(event.dates);
+
         // const places: string[] = event.places.map((place) => place.name);
         const places = event.places;
         return {

@@ -3,13 +3,14 @@ import { TagsState, getSelectedTags } from "flux/slices/tagsSlice";
 import { getSelectedCityName } from "flux/slices/headerSlice";
 import { getSelectedCategory } from "flux/slices/headerSlice";
 import { AjaxResultStatus, ajax } from "modules/ajax";
-import { ResponseEvent, ResponseEventsLight } from "responses/ResponseEvent";
+import { ResponseEvent, ResponseEventMap, ResponseEventsLight } from "responses/ResponseEvent";
 import {
     setEventProcessingFormData,
     setEventsCards,
     setEventProcessingLoadError,
     setSelectedEvent,
     setSelectedEventLoadError,
+    setMapEvents,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -162,4 +163,27 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
         })
     );
     resolveRequest();
+};
+
+export const loadEnventsMap = (
+    resolveRequest: TRequestResolver,
+    left: number,
+    right: number,
+    bottom: number,
+    top: number
+) => {
+    ajax.get<ResponseEventMap>({
+        url: `/events/geo`,
+        urlProps: { left: left.toString(), right: right.toString(), bottom: bottom.toString(), top: top.toString() },
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setMapEvents(json.body.events));
+            } else {
+            }
+            resolveRequest(left, right, bottom, top);
+        })
+        .catch((error) => {
+            resolveRequest(left, right, bottom, top);
+        });
 };
