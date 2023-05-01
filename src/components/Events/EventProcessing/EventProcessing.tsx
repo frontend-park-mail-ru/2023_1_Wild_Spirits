@@ -364,21 +364,19 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
                     <div className="event-processing__button-block">
                         <input
-                            className="button form-submit"
+                            className="button"
                             id="event-processing-submit"
                             type="submit"
                             value={isEdit ? "Сохранить изменения" : "Создать"}
                         />
-                        {isEdit ? (
+                        {isEdit && (
                             <input
-                                className="button-danger form-submit"
+                                className="button-danger"
                                 id="event-processing-remove"
                                 type="button"
                                 value="Удалить"
                                 onClick={this.handleRemove}
                             />
-                        ) : (
-                            ""
                         )}
                     </div>
                 </form>

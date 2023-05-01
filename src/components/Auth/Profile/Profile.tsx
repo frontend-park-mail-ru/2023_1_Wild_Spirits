@@ -274,7 +274,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                             onClick={(e) => this.unsetEditing(toEvent(e))}
                             className="button-danger"
                             value="Отменить"
-                        ></input>
+                        ></input>,
                     ];
                 }
 

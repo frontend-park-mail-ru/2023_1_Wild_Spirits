@@ -1,6 +1,6 @@
 import { deepEqual } from "modules/objectsManipulation";
 
-type PropType = Function | null | false | string | undefined;
+type PropType = Function | null | boolean | string | undefined;
 
 type PropsType = { [key: string]: PropType };
 
@@ -24,21 +24,23 @@ export type VNodeType = SimpleVNodeType | TagVNodeType | ComponentVNodeType;
 
 export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO Create custom type
 
+let stateQueue: (() => void)[] = [];
+
+let didMountInstaces: Component[] = [];
+
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
     props: TProps;
     #state: TState;
-    #interState: TState;
     refs: any;
 
     constructor(props: TProps) {
         this.#state = {} as TState;
-        this.#interState = {} as TState;
         this.props = props;
     }
 
     setState(newState: TState) {
-        this.#interState = newState;
+        this.#state = newState;
         patchVDOM();
     }
 
@@ -48,14 +50,11 @@ export abstract class Component<TProps extends any = any, TState = {}> {
 
     set state(newState: TState) {
         this.#state = newState;
-        this.#interState = newState;
-    }
-
-    getInterState() {
-        return this.#interState;
     }
 
     didCreate() {}
+
+    didMount() {}
 
     willUpdate() {}
 
@@ -89,7 +88,9 @@ export const patchVDOM = () => {
 
     if (!rootVDOM.isRerendering) {
         rootVDOM.isRerendering = true;
+        didMountInstaces = [];
         rootVDOM.root = patch(rootVDOM.renderFunc() as unknown as VNodeType, rootVDOM.root);
+        didMountInstaces.forEach((instance) => instance.didMount());
         rootVDOM.isRerendering = false;
         if (rootVDOM.needRerender) {
             rootVDOM.needRerender = false;
@@ -101,15 +102,17 @@ export const patchVDOM = () => {
 };
 
 export const createVDOM = (root: HTMLElement, renderFunc: VDOMRenderFunc) => {
+    didMountInstaces = [];
     rootVDOM = {
         root: patch(renderFunc() as unknown as VNodeType, root),
         renderFunc,
         isRerendering: false,
         needRerender: false,
     };
+    didMountInstaces.forEach((instance) => instance.didMount());
 };
 
-const JSXToVNode = (jsx: JSX.Element): TagVNodeType => jsx as unknown as TagVNodeType;
+export const JSXToVNode = (jsx: JSX.Element): TagVNodeType => jsx as unknown as TagVNodeType;
 
 export namespace VDOM {
     export const createVNode = <T extends Component<TProps>, TProps extends PropsType = PropsType>(
@@ -124,11 +127,11 @@ export namespace VDOM {
             } catch {
                 const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
                 const jsx = JSXToVNode(instance.render());
-                if (Array.isArray(jsx)) {
-                    (jsx as any)._instance = instance;
-                    return jsx;
-                }
-                let vnode: ComponentVNodeType = { ...JSXToVNode(instance.render()), _instance: instance };
+                // if (Array.isArray(jsx)) {
+                //     (jsx as any)._instance = instance;
+                //     return jsx;
+                // }
+                let vnode: ComponentVNodeType = { tagName: tagName.name, props, children, _instance: instance };
                 return vnode;
             }
         }
@@ -174,19 +177,43 @@ export const createDOMNode = (vNode: VNodeType) => {
     patchProps(node, {}, props);
 
     children.forEach((child) => {
+        if (isNodeTypeComponent(child)) {
+            convertComponentToTag(child);
+        }
         node.appendChild(createDOMNode(child));
     });
 
     if (isNodeTypeComponent(vNode)) {
         vNode._instance.didCreate();
+        didMountInstaces.push(vNode._instance);
     }
 
     return node;
 };
 
-const isStateChanged = (vNode: ComponentVNodeType, nextVNode: ComponentVNodeType): boolean => {
-    const result = !deepEqual(vNode._instance.state, vNode._instance.getInterState()) || !deepEqual(vNode._instance.state, nextVNode._instance.state);
-    return result;
+const convertComponentToTag = (vNode: ComponentVNodeType) => {
+    const newVNode = JSXToVNode(vNode._instance.render());
+    vNode.tagName = newVNode.tagName;
+    vNode.props = newVNode.props;
+    vNode.children = newVNode.children;
+};
+
+const tryPatchComponent = (vNode: VNodeType, nextVNode: VNodeType): boolean => {
+    if (isNodeTypeComponent(nextVNode)) {
+        let isPropsChanged = false;
+        if (isNodeTypeComponent(vNode)) {
+            if (vNode._instance.constructor.name !== nextVNode._instance.constructor.name) {
+                // console.log(vNode._instance.constructor.name, nextVNode._instance.constructor.name);
+            } else {
+                isPropsChanged = !deepEqual(vNode._instance.props, nextVNode._instance.props);
+                vNode._instance.props = nextVNode._instance.props;
+                nextVNode._instance = vNode._instance;
+            }
+        }
+        convertComponentToTag(nextVNode);
+        return isPropsChanged;
+    }
+    return false;
 };
 
 export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeType) => {
@@ -196,13 +223,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
     //     return;
     // }
 
-    if (isNodeTypeComponent(vNode) && isNodeTypeComponent(nextVNode) && isStateChanged(vNode, nextVNode)) {
-        nextVNode._instance.state = vNode._instance.getInterState();
-        const newNextVNode = JSXToVNode(nextVNode._instance.render());
-        nextVNode.tagName = newNextVNode.tagName;
-        nextVNode.props = newNextVNode.props;
-        nextVNode.children = newNextVNode.children;
-    }
+    const isComponentPropsChanged = tryPatchComponent(vNode, nextVNode);
 
     if (isNodeTypeSimple(vNode) || isNodeTypeSimple(nextVNode)) {
         if (vNode !== nextVNode) {
@@ -226,22 +247,34 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         return nextNode;
     }
 
-    const instancePropsChanged =
-        isNodeTypeComponent(vNode) &&
-        isNodeTypeComponent(nextVNode) &&
-        !deepEqual(vNode._instance.props, nextVNode._instance.props);
-    if (instancePropsChanged) {
+    if (isNodeTypeComponent(vNode) && isComponentPropsChanged) {
         vNode._instance.willUpdate();
     }
 
     patchProps(node, vNode.props, nextVNode.props);
-    patchChildren(node, vNode.children, nextVNode.children);
+    if (noStopPatch(nextVNode.props)) {
+        patchChildren(node, vNode.children, nextVNode.children);
+    }
 
-    if (isNodeTypeComponent(nextVNode) && instancePropsChanged) {
+    if (isNodeTypeComponent(nextVNode) && isComponentPropsChanged) {
         nextVNode._instance.didUpdate();
     }
 
     return node;
+};
+
+const isStopPatch = (props: PropsType) => {
+    if (props === null) {
+        return false;
+    }
+    if (props.stopPatch === true || props.dangerouslySetInnerHTML !== undefined) {
+        return true;
+    }
+    return false;
+};
+
+const noStopPatch = (props: PropsType) => {
+    return !isStopPatch(props);
 };
 
 const convertKey = (key: string) => {
@@ -254,9 +287,15 @@ const convertKey = (key: string) => {
     return key.toLowerCase();
 };
 
+const isAlwaysPatchPropKey = (key: string) => {
+    return key === "dangerouslySetInnerHTML" || key === "referTo";
+};
+
 const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: PropType) => {
-    if (key === 'dangerouslySetInnerHTML') {
-        (node as HTMLElement).innerHTML = (nextValue as any).__html;
+    if (key === "dangerouslySetInnerHTML") {
+        if ((node as HTMLElement).innerHTML !== (nextValue as any).__html) {
+            (node as HTMLElement).innerHTML = (nextValue as any).__html;
+        }
         return;
     }
 
@@ -279,14 +318,14 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
         return;
     }
 
-    (node as HTMLElement).setAttribute(key, nextValue);
+    (node as HTMLElement).setAttribute(key, nextValue.toString());
 };
 
 const patchProps = (node: DOMNodeType, props: PropsType | null, nextProps: PropsType | null) => {
     const mergedProps = { ...props, ...nextProps };
 
     Object.keys(mergedProps).forEach((key) => {
-        if (props === null || nextProps === null || props[key] !== nextProps[key]) {
+        if (props === null || nextProps === null || isAlwaysPatchPropKey(key) || props[key] !== nextProps[key]) {
             patchProp(
                 node,
                 key,
@@ -304,9 +343,18 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
         patchNode(childNode, vChildren[i], nextVChildren[i]);
     });
 
-    nextVChildren.slice(vChildren.length).forEach((vChild) => {
-        parent.appendChild(createDOMNode(vChild));
-    });
+    for (let i = vChildren.length; i < nextVChildren.length; i++) {
+        if (isNodeTypeComponent(nextVChildren[i])) {
+            //if ((nextVChildren[i] as ComponentVNodeType).tagName.toLowerCase() === "hoveredimg")
+            convertComponentToTag(nextVChildren[i] as ComponentVNodeType);
+        }
+        parent.appendChild(createDOMNode(nextVChildren[i]));
+    }
+
+    // nextVChildren.slice(vChildren.length).forEach((vChild, i) => {
+    //     vChildren.length + i;
+    //     parent.appendChild(createDOMNode(vChild));
+    // });
 
     const curChildLenght = parent.childNodes.length;
 
@@ -336,8 +384,11 @@ const recycleNode = (node: DOMNodeType) => {
 
     const tagName = node.nodeName.toLowerCase();
     const children: ChildType[] = [].map.call(node.childNodes, recycleNode) as ChildType[];
-
-    return VDOM.createVNode(tagName, {}, children as any);
+    const newVNode = VDOM.createVNode(tagName, {}, children as any);
+    if (isNodeTypeComponent(newVNode)) {
+        convertComponentToTag(newVNode);
+    }
+    return newVNode;
 };
 
 function listener(this: any, event: Event) {

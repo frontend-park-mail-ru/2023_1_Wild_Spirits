@@ -6,7 +6,6 @@
         "strict": true,
         "isolatedModules": true,
         "baseUrl": "./src",
-
         "moduleResolution": "node",
         "jsx": "preserve"
     },

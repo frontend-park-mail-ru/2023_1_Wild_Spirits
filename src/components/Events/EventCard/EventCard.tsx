@@ -26,14 +26,17 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
     }
 
     handleMouseEnter() {
-        this.setState({ isHovered: true });
+        console.log("handleMouseEnter");
+        !this.state.isHovered && this.setState({ isHovered: true });
     }
 
     handleMouseLeave() {
-        this.setState({ isHovered: false });
+        console.log("handleMouseLeave");
+        this.state.isHovered && this.setState({ isHovered: false });
     }
 
     render() {
+        // this.props.alt === "edit" && console.log("isHovered", this.state.isHovered);
         return (
             // <img
             //     className="pointy"
@@ -43,12 +46,19 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
             //     onMouseLeave={this.handleMouseLeave}
             // />
             // <SVGInline src="/assets/img/card/like-icon.svg" alt="like"/>
-            <div>
-                <SVGInline
+            <div
+                className="flex pointy"
+                onMouseEnter={this.handleMouseEnter}
+                onMouseLeave={this.handleMouseLeave}
+                // onMouseOver={this.handleMouseEnter}
+                // onMouseOut={this.handleMouseLeave}
+            >
+                <img
                     className="pointy"
                     src={this.state.isHovered ? this.props.hovered : this.props.default}
                     alt={this.props.alt}
                 />
+                <SVGInline className="" src={this.props.default} alt={this.props.alt} />
             </div>
         );
     }
@@ -130,23 +140,5 @@ export class EventCard extends Component<EventCardProps> {
                 </div>
             </div>
         );
-
-        // return EventCardTemplate({
-        //     eventId: this.#props.id,
-        //     img: this.#props.img,
-        //     name: this.#props.name,
-        //     desc: this.#props.description,
-        //     dates: EventCardMarkerTemplate({
-        //         img_src: "/assets/img/calendar_icon.png",
-        //         title: "Даты",
-        //         items: this.#props.dates,
-        //     }),
-        //     places: EventCardMarkerTemplate({
-        //         img_src: "/assets/img/position_icon.png",
-        //         title: "Места",
-        //         items: this.#props.places,
-        //     }),
-        //     mine: isAuthorized(store.getState().user),
-        // });
     }
 }

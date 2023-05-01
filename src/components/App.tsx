@@ -27,6 +27,7 @@ import { store } from "flux";
 import { toggleTag } from "flux/slices/tagsSlice";
 import { Link } from "./Common/Link";
 import { Loading } from "./Common/Loading";
+import { Map } from "./Map/Map";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 import { SVGInline } from "./Common/SVGInline";
@@ -49,6 +50,10 @@ export class App extends Component<any> {
         // addRouterEvents();
     }
 
+    willDestroy(): void {
+        console.error("Add Destroy");
+    }
+
     render(): JSX.Element {
         router.reset();
         const url = router.getNextUrl();
@@ -56,6 +61,26 @@ export class App extends Component<any> {
         const getProfileId = () => {
             const url = router.getNextUrl();
             return parseInt(url.slice(1));
+        };
+
+        const CreateEventBtn = () => {
+            return (
+                <div className="full-button-link-container">
+                    <Link href="/createevent" className="full-button-link js-router-link">
+                        Создать мероприятие
+                    </Link>
+                </div>
+            );
+        };
+
+        const GoMapBtn = () => {
+            return (
+                <div className="full-button-link-container">
+                    <Link href="/map" className="full-button-link js-router-link">
+                        Поиск по карте
+                    </Link>
+                </div>
+            );
         };
 
         const modalWindowShown = store.state.modalWindow.name !== ModalWindowName.NONE;
@@ -77,10 +102,12 @@ export class App extends Component<any> {
                         )}
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
+                        {url === "/map" && <Map />}
                     </div>
                     <div className="sidebar">
                         {url === "/" && [
-                            <EventCreateButton />,
+                            <CreateEventBtn />,
+                            <GoMapBtn />,
                             <Calendar />,
                             <Tags
                                 tagsState={store.state.tags}

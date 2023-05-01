@@ -1,5 +1,8 @@
-import { TagsState } from "flux/slices/tagsSlice";
+import { getUploadsImg } from "modules/getUploadsImg";
 import { TOrganizer } from "./Organizer";
+import { EventCardProps } from "components/Events/EventCard/EventCard";
+
+const SLICE_SIZE = 160;
 
 interface TEventDates {
     dateStart?: string;
@@ -67,3 +70,33 @@ export interface EventProcessingForm {
     place: number;
     img: string;
 }
+
+export const EventsLightDataToCardProps = (events: TEventLight[]): EventCardProps[] => {
+    return events.map((event: TEventLight) => {
+        const { dateStart, dateEnd, timeStart, timeEnd } = event.dates;
+        let dates: string[] = [];
+        if (dateStart) {
+            dates.push("Начало: " + dateStart);
+        }
+        if (dateEnd) {
+            dates.push("Конец: \u00A0\u00A0\u00A0" + dateEnd);
+        }
+        if (timeStart && timeEnd) {
+            dates.push(timeStart + " - " + timeEnd);
+        } else if (timeStart || timeEnd) {
+            dates.push((timeStart ? timeStart : timeEnd) as string);
+        }
+        // const places: string[] = event.places.map((place) => place.name);
+        const places = event.places;
+        return {
+            id: event.id,
+            name: event.name,
+            img: getUploadsImg(event.img),
+            description:
+                event.description.length > SLICE_SIZE ? event.description.slice(0, SLICE_SIZE) : event.description,
+            dates,
+            places,
+            org: event.org,
+        };
+    });
+};
