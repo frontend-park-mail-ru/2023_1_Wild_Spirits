@@ -31,7 +31,8 @@ export interface TEventBase {
     img: string;
     dates: TEventDates;
     likes: number;
-    liked: boolean
+    liked: boolean;
+    reminded: boolean;
 }
 
 export interface TOrgLight {

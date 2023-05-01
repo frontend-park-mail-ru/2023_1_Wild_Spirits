@@ -135,13 +135,6 @@ const eventsSlice = createSlice({
             return state;
         },
         likeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
-
-            console.log(state)
-
-            if (state.cards.loadStatus === LoadStatus.DONE) {
-                console.log(state.cards.data.findIndex(event => event.id === action.payload.eventId))
-            }
-
             if (state.cards.loadStatus === LoadStatus.DONE) {
                 const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
 
@@ -161,9 +154,13 @@ const eventsSlice = createSlice({
             return state;
         },
         dislikeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
-            if (state.cards.loadStatus === LoadStatus.DONE && state.cards.data[action.payload.eventId].liked) {
-                state.cards.data[action.payload.eventId].likes--;
-                state.cards.data[action.payload.eventId].liked = false;
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && state.cards.data[id].liked) {
+                    state.cards.data[id].likes--;
+                    state.cards.data[id].liked = false;
+                }
             }
 
             if (state.selectedEvent.loadStatus === LoadStatus.DONE &&

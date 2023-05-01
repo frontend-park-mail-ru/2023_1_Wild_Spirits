@@ -2,7 +2,7 @@
 
 import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
-import { TOrgLight } from "models/Events";
+import { TEvent, TOrgLight } from "models/Events";
 import { isAuthorized } from "flux/slices/userSlice";
 import "./styles.scss";
 import { Link } from "components/Common/Link";
@@ -11,7 +11,7 @@ import { EventCardMarker } from "./EventCardMarker";
 import { SVGInline } from "components/Common/SVGInline";
 
 import { requestManager } from "requests";
-import { likeEvent } from "requests/events";
+import { dislikeEvent, likeEvent } from "requests/events";
 
 export interface HoveredImgProps {
     src: string;
@@ -59,6 +59,14 @@ export class EventCard extends Component<EventCardProps> {
     constructor(props: EventCardProps) {
         super(props);
     }
+    
+    toggleLike(eventId: number, liked: boolean) {
+        if (!liked) {
+            requestManager.request(likeEvent, eventId);
+        } else {
+            requestManager.request(dislikeEvent, eventId);
+        }
+    }
 
     render() {
         return (
@@ -90,8 +98,8 @@ export class EventCard extends Component<EventCardProps> {
                             <HoveredImg
                                 src="/assets/img/card/like-icon.svg"
                                 alt="like"
-                                iconClassName={`stroke-svg-icon${this.props.liked ? " liked" : ""}`}
-                                onClick={()=>requestManager.request(likeEvent, this.props.id)}
+                                iconClassName={`stroke-svg-icon${this.props.liked ? " filled" : ""}`}
+                                onClick={()=>this.toggleLike(this.props.id, this.props.liked)}
                             />
                             <span>{this.props.likes.toString()}</span>
                         </div>
@@ -111,16 +119,16 @@ export class EventCard extends Component<EventCardProps> {
                         {isAuthorized(store.state.user) ? (
                             <Link href={`/editevent/${this.props.id}`} className="flex">
                                 <HoveredImg
-                                    src="/assets/img/card/edit-icon.svg"
+                                    src="/assets/img/card/save-icon.svg"
                                     alt="edit"
-                                    iconClassName="stroke-svg-icon"
+                                    iconClassName="stroke-svg-icon filled"
                                 />
                             </Link>
                         ) : (
                             <HoveredImg
-                                src="/assets/img/card/save-icon.svg"
+                                src="/assets/img/save-icon.svg"
                                 alt="edit"
-                                iconClassName="fill-svg-icon"
+                                iconClassName="stroke-svg-icon"
                             />
                         )}
                     </div>

@@ -82,10 +82,11 @@
     justify-content: center;
 }
 
-.stroke-svg-icon.liked {
+.stroke-svg-icon.filled {
     svg * {
         stroke: var(--main-selected-color);
         fill: var(--main-selected-color); 
+        fill-opacity: 100;
     }
     
     border-color: var(--main-selected-color);

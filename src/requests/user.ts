@@ -9,6 +9,7 @@ import { close } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 import { App } from "components/App";
 import { addToFriends } from "flux/slices/userSlice";
+import { router } from "modules/router";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
@@ -171,6 +172,7 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
         },
     })
         .then(({json, response, status}) => {
+            router.go("/createevent")
             resolveRequest();
         })
 }

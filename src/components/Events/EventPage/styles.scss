@@ -66,10 +66,11 @@
         @extend .event-page__button-outline;
         border-color: black;
 
-        &.liked {
+        &.filled {
             svg * {
                 stroke: var(--main-selected-color);
                 fill: var(--main-selected-color); 
+                fill-opacity: 1;
             }
             
             border-color: var(--main-selected-color);

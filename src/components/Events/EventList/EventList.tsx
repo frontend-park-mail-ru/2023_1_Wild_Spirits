@@ -11,21 +11,31 @@ import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
+import { TRequest } from "requests/requestTypes";
+
+interface EventListProps<PROPS extends any[] = any[]> {
+    request: TRequest<PROPS>,
+    requestArgs?: PROPS
+}
 
 /**
  * Event list component
  * @class
  * @extends Component
  */
-export class EventList extends Component {
-    constructor() {
-        super({});
+export class EventList extends Component<EventListProps, {}> {
+    constructor(props: EventListProps) {
+        super(props);
     }
 
     didCreate() {
         store.dispatch(setEventsCardsLoadStart());
 
-        requestManager.request(loadEvents);
+        if (this.props.requestArgs) {
+            requestManager.request(this.props.request, ...this.props.requestArgs);
+        } else {
+            requestManager.request(this.props.request);
+        }
     }
 
     render() {
@@ -38,8 +48,6 @@ export class EventList extends Component {
         if (cards.loadStatus !== LoadStatus.DONE) {
             return <EventListLoading size={6} />;
         }
-
-        console.log(cards.data)
 
         const cardsProps: EventCardProps[] = EventsLightDataToCardProps(cards.data);
 

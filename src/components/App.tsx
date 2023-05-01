@@ -12,7 +12,7 @@ import { Tags } from "./Tags/Tags";
 import { EventCreateButton } from "./Events/EventCreateButton/EventCreateButton";
 
 import { router } from "modules/router";
-import { loadEvents } from "requests/events";
+import { loadEvents, loadLikedEvents } from "requests/events";
 
 import { ModalWindowName, openOrganizerModal } from "flux/slices/modalWindowSlice";
 import { isAuthorized } from "flux/slices/userSlice";
@@ -63,16 +63,6 @@ export class App extends Component<any> {
             return parseInt(url.slice(1));
         };
 
-        const CreateEventBtn = () => {
-            return (
-                <div className="full-button-link-container">
-                    <Link href="/createevent" className="full-button-link js-router-link">
-                        Создать мероприятие
-                    </Link>
-                </div>
-            );
-        };
-
         const GoMapBtn = () => {
             return (
                 <div className="full-button-link-container">
@@ -93,20 +83,25 @@ export class App extends Component<any> {
 
                 <div className="row">
                     <div className="content">
-                        {url === "/" && <EventList />}
+                        {url === "/" && <EventList request={loadEvents}/>}
                         {url === "/events" && <EventPage />}
-                        {url === "/profile" && (
-                            <div>
-                                <Profile id={getProfileId()} /> <EventList />
-                            </div>
-                        )}
+                        {url === "/profile" && 
+                            (() => {
+                                const profileId = getProfileId();
+                                return (
+                                    <div>
+                                        <Profile id={profileId} /> <EventList request={loadLikedEvents} requestArgs={[profileId]}/>
+                                    </div>
+                                )
+                            })()
+                        }
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                         {url === "/map" && <Map />}
                     </div>
                     <div className="sidebar">
                         {url === "/" && [
-                            <CreateEventBtn />,
+                            <EventCreateButton />,
                             <GoMapBtn />,
                             <Calendar />,
                             <Tags

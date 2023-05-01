@@ -1,7 +1,7 @@
 import { configureRequestManager } from "./requestManager";
 
 import { loadCategories, loadCities } from "./header";
-import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage, likeEvent, dislikeEvent } from "./events";
+import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage, likeEvent, dislikeEvent, loadLikedEvents } from "./events";
 import {
     addFriend,
     loadAuthorization,
@@ -47,6 +47,10 @@ const requests: SetupRequestsType[] = [
     {
         request: loadEvents,
         dependencies: [loadAuthorization, loadCities],
+    },
+    {
+        request: loadLikedEvents,
+        dependencies: [loadCities],
     },
     {
         request: loadProfile,

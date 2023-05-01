@@ -5,7 +5,7 @@ import { router } from "modules/router";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
-import { loadEventPage } from "requests/events";
+import { dislikeEvent, likeEvent, loadEventPage } from "requests/events";
 import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
@@ -15,6 +15,7 @@ import { Link } from "components/Common/Link";
 import { Loading } from "components/Common/Loading";
 import { EventPageMap } from "./EventPageMap";
 import { SVGInline } from "components/Common/SVGInline";
+import { TEvent } from "models/Events";
 
 /**
  * Event list component
@@ -31,6 +32,14 @@ export class EventPage extends Component {
         store.dispatch(setSelectedEventLoadStart());
         const eventId = this.getEventId();
         requestManager.request(loadEventPage, eventId);
+    }
+
+    toggleLike(event: TEvent) {
+        if (!event.liked) {
+            requestManager.request(likeEvent, event.id);
+        } else {
+            requestManager.request(dislikeEvent, event.id);
+        }
     }
 
     render() {
@@ -90,7 +99,8 @@ export class EventPage extends Component {
                 </div>
                 <div className="event-page__button-block">
                     <div className="event-card__stats-container">
-                        <button className={`event-page__button-outline-like event-page__button${event.liked ? "liked" : ""}`}>
+                        <button className={`event-page__button-outline-like event-page__button${event.liked ? " filled" : ""}`}
+                                onClick={() => {this.toggleLike(event)}}>
                             <SVGInline
                                 className="event-page__button-icon-like stroke-svg-icon"
                                 src="/assets/img/page/like-icon.svg"
