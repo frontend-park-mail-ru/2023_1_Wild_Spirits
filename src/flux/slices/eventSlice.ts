@@ -172,6 +172,40 @@ const eventsSlice = createSlice({
 
             return state;
         },
+        featureEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && !state.cards.data[id].reminded) {
+                    state.cards.data[id].reminded = true;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                !state.selectedEvent.event.reminded) {
+                    state.selectedEvent.event.reminded = true;
+                }
+
+            return state;
+        },
+        unfeatureEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && !state.cards.data[id].reminded) {
+                    state.cards.data[id].reminded = false;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                !state.selectedEvent.event.reminded) {
+                    state.selectedEvent.event.reminded = false;
+                }
+
+            return state;
+        },
     },
 });
 
@@ -191,5 +225,7 @@ export const {
     setEventProcessingLoadError,
     likeEvent,
     dislikeEvent,
+    featureEvent,
+    unfeatureEvent,
 } = eventsSlice.actions;
 export default eventsSlice;

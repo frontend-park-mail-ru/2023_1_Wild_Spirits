@@ -113,26 +113,19 @@ export class EventPage extends Component {
                         <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
                         <div className="event-page__button-text"> Пригласить друга </div>
                     </div> */}
-                    <div className="event-page__button-outline event-page__button">
-                        <SVGInline 
-                            className="event-page__button-icon fill-svg-icon"
-                            src="/assets/img/page/save-icon.svg" 
-                            alt="save"
-                        />
-                    </div>
-                    <div className="event-page__button-outline event-page__button">
-                        {isAuthorized(store.state.user) ? (
-                            <Link href={`/editevent/${event.id}`} className="event-page__button-icon">
-                                <SVGInline className="stroke-svg-icon" src="/assets/img/page/edit-icon.svg" alt="edit" />
-                            </Link>
-                        ) : (
+                    {isAuthorized(store.state.user) && event.is_mine ? (
+                        <Link href={`/editevent/${event.id}`} className="event-page__button-outline">
+                            <SVGInline className="event-page__button-icon stroke-svg-icon" src="/assets/img/page/edit-icon.svg" alt="edit" />
+                        </Link>
+                    ) : (
+                        <button className={`event-page__button-outline event-page__button${event.reminded  ? " filled" : ""}`}>
                             <SVGInline 
-                            className="event-page__button-icon fill-svg-icon"
-                            src="/assets/img/page/save-icon.svg" 
-                            alt="save"
-                        />
-                        )}
-                    </div>
+                                className="event-page__button-icon stroke-svg-icon"
+                                src="/assets/img/save-icon.svg" 
+                                alt="save"
+                            />
+                        </button>
+                    )}
                 </div>
             </div>
         );

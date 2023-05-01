@@ -16,6 +16,7 @@ import { TRequestResolver } from "./requestTypes";
 import { EventProcessingType } from "models/Events";
 
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
+import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
 
 const getLoadEventFilterProps  = (): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -186,6 +187,46 @@ export const dislikeEvent = (resolveRequest: TRequestResolver, eventId: number) 
         })
 }
 
+export const featureEvent = (resolveRequest: TRequestResolver, eventId: number) => {
+    ajax.post({
+        url: `/events/${eventId}/remind`,
+        credentials: true
+    })
+        .then(({json, status}) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(feature({eventId: eventId}));
+            } else {
+                console.error('cannot remind');
+            }
+
+            resolveRequest(eventId);
+        })
+        .catch(error => {
+            console.log(error);
+            resolveRequest(eventId);
+        })
+}
+
+export const unfeatureEvent = (resolveRequest: TRequestResolver, eventId: number) => {
+    ajax.post({
+        url: `/events/${eventId}/remind`,
+        credentials: true
+    })
+        .then(({json, status}) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(unfeature({eventId: eventId}));
+            } else {
+                console.error('cannot unremind');
+            }
+
+            resolveRequest(eventId);
+        })
+        .catch(error => {
+            console.log(error);
+            resolveRequest(eventId);
+        })
+}
+
 export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number) => {
     loadEvent({
         eventId,
@@ -253,7 +294,8 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
                 tags: [],
                 liked: false,
                 likes: 0,
-                reminded: false
+                reminded: false,
+                is_mine: false,
             },
             processingState: EventProcessingType.CREATE,
             tags: getTags([]),

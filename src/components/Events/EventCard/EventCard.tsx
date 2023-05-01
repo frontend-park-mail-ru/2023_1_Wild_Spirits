@@ -11,7 +11,7 @@ import { EventCardMarker } from "./EventCardMarker";
 import { SVGInline } from "components/Common/SVGInline";
 
 import { requestManager } from "requests";
-import { dislikeEvent, likeEvent } from "requests/events";
+import { dislikeEvent, likeEvent, featureEvent, unfeatureEvent } from "requests/events";
 
 export interface HoveredImgProps {
     src: string;
@@ -48,6 +48,8 @@ export interface EventCardProps {
     org: TOrgLight;
     likes: number;
     liked: boolean;
+    is_mine: boolean;
+    reminded: boolean;
 }
 
 /**
@@ -65,6 +67,14 @@ export class EventCard extends Component<EventCardProps> {
             requestManager.request(likeEvent, eventId);
         } else {
             requestManager.request(dislikeEvent, eventId);
+        }
+    }
+
+    toggleFeatured(eventId: number, featured: boolean) {
+        if (!featured) {
+            requestManager.request(featureEvent, eventId);
+        } else {
+            requestManager.request(unfeatureEvent, eventId);
         }
     }
 
@@ -116,19 +126,20 @@ export class EventCard extends Component<EventCardProps> {
                             alt="invite"
                             iconClassName="event-card__stroke-icon"
                         /> */}
-                        {isAuthorized(store.state.user) ? (
+                        {isAuthorized(store.state.user) && this.props.is_mine ? (
                             <Link href={`/editevent/${this.props.id}`} className="flex">
                                 <HoveredImg
-                                    src="/assets/img/card/save-icon.svg"
+                                    src="/assets/img/card/edit-icon.svg"
                                     alt="edit"
-                                    iconClassName="stroke-svg-icon filled"
+                                    iconClassName="stroke-svg-icon"
                                 />
                             </Link>
                         ) : (
                             <HoveredImg
-                                src="/assets/img/save-icon.svg"
+                                src="/assets/img/card/save-icon.svg"
                                 alt="edit"
-                                iconClassName="stroke-svg-icon"
+                                iconClassName={`stroke-svg-icon${this.props.reminded ? " filled" : ""}`}
+                                onClick={()=>this.toggleFeatured(this.props.id, this.props.reminded)}
                             />
                         )}
                     </div>

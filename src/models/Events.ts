@@ -33,6 +33,7 @@ export interface TEventBase {
     likes: number;
     liked: boolean;
     reminded: boolean;
+    is_mine: boolean;
 }
 
 export interface TOrgLight {
@@ -101,7 +102,9 @@ export const EventsLightDataToCardProps = (events: TEventLight[]): EventCardProp
             places,
             org: event.org,
             likes: event.likes,
-            liked: event.liked
+            liked: event.liked,
+            is_mine: event.is_mine,
+            reminded: event.reminded
         };
     });
 };

@@ -173,6 +173,7 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
     })
         .then(({json, response, status}) => {
             router.go("/createevent")
+            store.dispatch(close());
             resolveRequest();
         })
 }

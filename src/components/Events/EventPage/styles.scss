@@ -65,16 +65,15 @@
     &-like {
         @extend .event-page__button-outline;
         border-color: black;
+    }
 
-        &.filled {
-            svg * {
-                stroke: var(--main-selected-color);
-                fill: var(--main-selected-color); 
-                fill-opacity: 1;
-            }
-            
-            border-color: var(--main-selected-color);
+    &.filled {
+        svg * {
+            stroke: var(--main-selected-color);
+            fill: var(--main-selected-color); 
         }
+        
+        border-color: var(--main-selected-color);
     }
 
     &:hover {
