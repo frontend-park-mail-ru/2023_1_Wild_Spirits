@@ -20,8 +20,10 @@ class SVGLoader {
         this.images[url].data = data
         this.images[url].status = LoadStatus.DONE;
 
-        this.subscribers[url].forEach(({resolve, reject}) => resolve(data));
-        this.subscribers[url] = [];
+        if (this.subscribers[url] !== undefined) {
+            this.subscribers[url].forEach(({resolve, reject}) => resolve(data));
+            this.subscribers[url] = [];
+        }
         return data;
     }
 

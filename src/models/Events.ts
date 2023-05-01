@@ -41,6 +41,9 @@ export interface TEventLight extends TEventBase {
     places: string[];
     org: TOrgLight;
     //places: TEventPlace[];
+
+    likes: number;
+    liked: boolean
 }
 
 export interface TEvent extends TEventBase {
@@ -97,6 +100,8 @@ export const EventsLightDataToCardProps = (events: TEventLight[]): EventCardProp
             dates,
             places,
             org: event.org,
+            likes: event.likes,
+            isLiked: false
         };
     });
 };

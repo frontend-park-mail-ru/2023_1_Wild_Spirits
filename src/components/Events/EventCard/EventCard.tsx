@@ -10,55 +10,29 @@ import { EventCardMarker } from "./EventCardMarker";
 
 import { SVGInline } from "components/Common/SVGInline";
 
+import { requestManager } from "requests";
+import { likeEvent } from "requests/events";
+
 export interface HoveredImgProps {
-    default: string;
-    hovered: string;
+    src: string;
     alt: string;
+    iconClassName: string;
+    onClick?: ()=>void;
 }
 
 export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean }> {
     constructor(props: HoveredImgProps) {
         super(props);
         this.state = { isHovered: false };
-
-        this.handleMouseEnter = this.handleMouseEnter.bind(this);
-        this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    }
-
-    handleMouseEnter() {
-        console.log("handleMouseEnter");
-        !this.state.isHovered && this.setState({ isHovered: true });
-    }
-
-    handleMouseLeave() {
-        console.log("handleMouseLeave");
-        this.state.isHovered && this.setState({ isHovered: false });
     }
 
     render() {
-        // this.props.alt === "edit" && console.log("isHovered", this.state.isHovered);
         return (
-            // <img
-            //     className="pointy"
-            //     src={this.state.isHovered ? this.props.hovered : this.props.default}
-            //     alt={this.props.alt}
-            //     onMouseEnter={this.handleMouseEnter}
-            //     onMouseLeave={this.handleMouseLeave}
-            // />
-            // <SVGInline src="/assets/img/card/like-icon.svg" alt="like"/>
             <div
                 className="flex pointy"
-                onMouseEnter={this.handleMouseEnter}
-                onMouseLeave={this.handleMouseLeave}
-                // onMouseOver={this.handleMouseEnter}
-                // onMouseOut={this.handleMouseLeave}
+                onClick={() => this.props.onClick ? this.props.onClick() : ()=>{}}
             >
-                <img
-                    className="pointy"
-                    src={this.state.isHovered ? this.props.hovered : this.props.default}
-                    alt={this.props.alt}
-                />
-                <SVGInline className="" src={this.props.default} alt={this.props.alt} />
+                <SVGInline className={this.props.iconClassName} src={this.props.src} alt={this.props.alt} />
             </div>
         );
     }
@@ -72,6 +46,8 @@ export interface EventCardProps {
     dates: string[];
     places: string[];
     org: TOrgLight;
+    likes: number;
+    isLiked: boolean;
 }
 
 /**
@@ -110,31 +86,42 @@ export class EventCard extends Component<EventCardProps> {
                 </Link>
                 <div className="event-card__footer">
                     <div className="event-card__button-block">
-                        <HoveredImg
-                            default="/assets/img/card/like-icon.svg"
-                            hovered="/assets/img/card/like-icon-hover.svg"
-                            alt="like"
-                        />
-                        <HoveredImg
-                            default="/assets/img/card/comment-icon.svg"
-                            hovered="/assets/img/card/comment-icon-hover.svg"
-                            alt="comment"
-                        />
-                        <HoveredImg
-                            default="/assets/img/card/invite-icon.svg"
-                            hovered="/assets/img/card/invite-icon-hover.svg"
+                        <div className="event-card__stats-container">
+                            <HoveredImg
+                                src="/assets/img/card/like-icon.svg"
+                                alt="like"
+                                iconClassName="stroke-svg-icon"
+                                onClick={()=>requestManager.request(likeEvent, this.props.id)}
+                            />
+                            <span>{this.props.likes.toString()}</span>
+                        </div>
+                        {/* <div className="event-card__stats-container">
+                            <HoveredImg
+                                src="/assets/img/card/comment-icon.svg"
+                                alt="comment"
+                                iconClassName="event-card__fill-icon"
+                            />
+                            <span>0</span>
+                        </div> */}
+                        {/* <HoveredImg
+                            src="/assets/img/card/invite-icon.svg"
                             alt="invite"
-                        />
+                            iconClassName="event-card__stroke-icon"
+                        /> */}
                         {isAuthorized(store.state.user) ? (
                             <Link href={`/editevent/${this.props.id}`} className="flex">
                                 <HoveredImg
-                                    default="/assets/img/card/edit-icon.svg"
-                                    hovered="/assets/img/card/edit-icon-hover.svg"
+                                    src="/assets/img/card/edit-icon.svg"
                                     alt="edit"
+                                    iconClassName="stroke-svg-icon"
                                 />
                             </Link>
                         ) : (
-                            <img src="/assets/img/card/save-icon.svg" alt="invite" />
+                            <HoveredImg
+                                src="/assets/img/card/save-icon.svg"
+                                alt="edit"
+                                iconClassName="fill-svg-icon"
+                            />
                         )}
                     </div>
                 </div>

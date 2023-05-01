@@ -1,3 +1,5 @@
+@import "/src/assets/scss/style.scss";
+
 .event-page {
     margin: 48px auto 80px;
     max-width: 800px;
@@ -54,14 +56,50 @@
     }
 }
 
+.event-page__button-outline {
+    @extend .button-base;
+    box-shadow: none;
+    border: 1px solid black;
+    border-radius: 15px;
+
+    &-like {
+        @extend .event-page__button-outline;
+        border-color: black;
+
+        &.liked {
+            svg * {
+                stroke: var(--main-selected-color);
+                fill: var(--main-selected-color); 
+            }
+            
+            border-color: var(--main-selected-color);
+        }
+    }
+
+    &:hover {
+        border-color: var(--main-selected-color);
+
+        .stroke-svg-icon svg * {
+            stroke: var(--main-selected-color);
+        }
+
+        .fill-svg-icon svg * {
+            fill: var(--main-selected-color);
+        }
+    }
+}
+
 .event-page__button-icon {
     display: flex;
-    height: 32px;
     align-self: center;
 
     &-like {
         @extend .event-page__button-icon;
         margin-top: 2px;
+    }
+
+    & svg {
+        height: 32px;
     }
 }
 

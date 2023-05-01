@@ -90,6 +90,46 @@ const loadEvent = ({ eventId, onSuccess, onError, resolveRequest }: LoadEventPro
         });
 };
 
+export const likeEvent = (resolveRequest: TRequestResolver, eventId: number) => {
+    ajax.post({
+        url: `/events/${eventId}/like`,
+        credentials: true
+    })
+        .then(({json, status}) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                console.log('success');
+            } else {
+                console.log('not success');
+            }
+
+            resolveRequest(eventId);
+        })
+        .catch(error => {
+            console.log(error);
+            resolveRequest(eventId);
+        })
+}
+
+export const dislikeEvent = (resolveRequest: TRequestResolver, eventId: number) => {
+    ajax.delete({
+        url: `/events/${eventId}/like`,
+        credentials: true
+    })
+        .then(({json, status}) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                console.log('success');
+            } else {
+                console.log('not success');
+            }
+
+            resolveRequest(eventId);
+        })
+        .catch(error => {
+            console.log(error);
+            resolveRequest(eventId);
+        })
+}
+
 export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number) => {
     loadEvent({
         eventId,

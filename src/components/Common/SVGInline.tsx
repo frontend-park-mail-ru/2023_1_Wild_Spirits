@@ -5,7 +5,7 @@ import { svgLoader } from "modules/svgLoader";
 type SVGInlineProps = {
     src: string;
     alt: string;
-    className: string;
+    className?: string;
 };
 
 export class SVGInline extends Component<SVGInlineProps, { img: string }> {
@@ -23,8 +23,9 @@ export class SVGInline extends Component<SVGInlineProps, { img: string }> {
 
     render(): JSX.Element {
         return (
-            <div className={this.props.className + " flex"}>
-                <span dangerouslySetInnerHTML={{ __html: this.state.img }}> img </span>
+            <div
+                className={this.props.className ? this.props.className + " flex" : "flex"}
+                dangerouslySetInnerHTML={{ __html: this.state.img }}>
             </div>
         );
     }

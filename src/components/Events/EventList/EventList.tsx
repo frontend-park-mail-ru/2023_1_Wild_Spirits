@@ -23,7 +23,6 @@ export class EventList extends Component {
     }
 
     didCreate() {
-        console.error("envents loading . . .");
         store.dispatch(setEventsCardsLoadStart());
 
         requestManager.request(loadEvents);

@@ -1,7 +1,7 @@
 import { configureRequestManager } from "./requestManager";
 
 import { loadCategories, loadCities } from "./header";
-import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage } from "./events";
+import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage, likeEvent, dislikeEvent } from "./events";
 import {
     addFriend,
     loadAuthorization,
@@ -95,7 +95,15 @@ const requests: SetupRequestsType[] = [
     {
         request: deleteFriend,
         dependencies: [],
+    },
+    {
+        request: likeEvent,
+        dependencies: [loadAuthorization],
+    },
+    {
+        request: dislikeEvent,
+        dependencies: [loadAuthorization]
     }
-];
+]
 
 export let requestManager = configureRequestManager(requests);

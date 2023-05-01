@@ -14,6 +14,7 @@ import { isAuthorized } from "flux/slices/userSlice";
 import { Link } from "components/Common/Link";
 import { Loading } from "components/Common/Loading";
 import { EventPageMap } from "./EventPageMap";
+import { SVGInline } from "components/Common/SVGInline";
 
 /**
  * Event list component
@@ -88,30 +89,34 @@ export class EventPage extends Component {
                     />
                 </div>
                 <div className="event-page__button-block">
-                    <div>
-                        <div className="button-outline button-outline-like event-page__button">
-                            <img
-                                className="event-page__button-icon-like"
+                    <div className="event-card__stats-container">
+                        <button className="event-page__button-outline-like event-page__button">
+                            <SVGInline
+                                className="event-page__button-icon-like stroke-svg-icon"
                                 src="/assets/img/page/like-icon.svg"
                                 alt="like"
                             />
-                        </div>
-                        <div>320</div>
+                        </button>
+                        <span>320</span>
                     </div>
-                    <div className="button-outline button-outline-other event-page__button">
-                        <img className="event-page__button-icon" src="/assets/img/page/save-icon.svg" alt="save" />
-                    </div>
-                    <div className="button-outline button-outline-other event-page__button-invite">
-                        <img src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
+                    {/* <div className="event-page__button-outline event-page__button-invite">
+                        <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
                         <div className="event-page__button-text"> Пригласить друга </div>
+                    </div> */}
+                    <div className="event-page__button-outline event-page__button">
+                        <SVGInline 
+                            className="event-page__button-icon fill-svg-icon"
+                            src="/assets/img/page/save-icon.svg" 
+                            alt="save"
+                        />
                     </div>
-                    <div className="button-outline button-outline-other event-page__button">
+                    <div className="event-page__button-outline event-page__button">
                         {isAuthorized(store.state.user) ? (
                             <Link href={`/editevent/${event.id}`} className="event-page__button-icon">
-                                <img src="/assets/img/page/edit-icon.svg" alt="edit" />
+                                <SVGInline className="stroke-svg-icon" src="/assets/img/page/edit-icon.svg" alt="edit" />
                             </Link>
                         ) : (
-                            <img src="/assets/img/card/save-icon.svg" alt="save" />
+                            <SVGInline className="stroke-svg-icon" src="/assets/img/page/save-icon.svg" alt="save" />
                         )}
                     </div>
                 </div>
