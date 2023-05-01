@@ -1,11 +1,19 @@
 import { VDOM } from "modules/vdom";
-import { EventProcessingForm } from "models/Events";
 import { toEvent } from "modules/CastEvents";
+import { EventProcessingForm } from "models/Events";
 
 export type EventProcessingFormKey = keyof EventProcessingForm;
 
+export interface FormFields extends EventProcessingForm {
+    phone: string;
+    website: string;
+}
+
+export type FormFieldNameType = keyof FormFields
+
 export interface FormLabelProps {
-    fieldName: EventProcessingFormKey;
+    prefix: string;
+    fieldName: FormFieldNameType;
     title: string;
     required?: boolean;
 }
@@ -17,7 +25,7 @@ interface BaseFormFieldProps extends FormLabelProps {
 interface BaseTextProps extends BaseFormFieldProps {
     value: string | number | undefined;
     min?: string;
-    changeHandler: (event: Event, fieldName: EventProcessingFormKey) => void;
+    changeHandler?: (event: Event, fieldName: FormFieldNameType) => void;
 }
 
 export type InputFieldType = "text" | "date" | "time";
@@ -27,21 +35,22 @@ export interface InputFieldProps extends BaseTextProps {
 
 export interface TextareaFieldProps extends BaseTextProps {}
 
-export const FormLabel = ({ fieldName, required, title }: FormLabelProps) => {
+export const FormLabel = ({ prefix, fieldName, required, title }: FormLabelProps) => {
     return (
-        <label htmlFor={`event-processing-${fieldName}`} className={required ? "form-label-required" : "form-label"}>
+        <label htmlFor={prefix + "-" + fieldName} className={required ? "form-label-required" : "form-label"}>
             {title}
         </label>
     );
-};
+}
 
 export interface FormFieldBaseProps extends BaseFormFieldProps {
     children: JSX.Element;
 }
-export const FormFieldBase = ({ fieldName, title, required, errorMsg, children }: FormFieldBaseProps) => {
+
+export const FormFieldBase = ({ prefix, fieldName, title, required, errorMsg, children }: FormFieldBaseProps) => {
     return (
-        <div className="event-processing__form-block">
-            <FormLabel fieldName={fieldName} required={required} title={title} />
+        <div className={`${prefix}__form-block`}>
+            <FormLabel prefix={prefix} fieldName={fieldName} required={required} title={title} />
             {children}
             {errorMsg && <div className="form-error">{errorMsg}</div>}
         </div>
@@ -49,6 +58,7 @@ export const FormFieldBase = ({ fieldName, title, required, errorMsg, children }
 };
 
 export const InputField = ({
+    prefix,
     fieldName,
     value,
     title,
@@ -59,28 +69,28 @@ export const InputField = ({
     changeHandler,
 }: InputFieldProps) => {
     return (
-        <FormFieldBase fieldName={fieldName} title={title} required={required} errorMsg={errorMsg}>
+        <FormFieldBase prefix={prefix} fieldName={fieldName} title={title} required={required} errorMsg={errorMsg}>
             <input
                 name={fieldName}
                 className={errorMsg ? "form-control-error" : "form-control"}
                 type={type}
-                id={`event-processing-${fieldName}`}
+                id={`${prefix}-${fieldName}`}
                 value={value}
                 min={min}
-                onInput={(e) => changeHandler(toEvent(e), fieldName)}
+                onInput={changeHandler ? (e) => changeHandler(toEvent(e), fieldName) : undefined}
             />
         </FormFieldBase>
-    );
-};
+    )
+}
 
-export const TextareaField = ({ fieldName, value, title, required, errorMsg, changeHandler }: TextareaFieldProps) => {
+export const TextareaField = ({ prefix, fieldName, value, title, required, errorMsg, changeHandler }: TextareaFieldProps) => {
     return (
-        <FormFieldBase fieldName={fieldName} title={title} required={required} errorMsg={errorMsg}>
+        <FormFieldBase prefix={prefix} fieldName={fieldName} title={title} required={required} errorMsg={errorMsg}>
             <textarea
                 name={fieldName}
-                className={`event-processing__form-textarea ${errorMsg ? "form-control-error" : "form-control"}`}
-                id={`event-processing-${fieldName}`}
-                onInput={(e) => changeHandler(toEvent(e), fieldName)}
+                className={`${prefix}__form-textarea ${errorMsg ? "form-control-error" : "form-control"}`}
+                id={`${prefix}-${fieldName}`}
+                onInput={changeHandler ? (e) => changeHandler(toEvent(e), fieldName) : undefined}
             >
                 {value}
             </textarea>
