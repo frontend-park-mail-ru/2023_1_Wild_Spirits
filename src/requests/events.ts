@@ -15,6 +15,8 @@ import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
 import { EventProcessingType } from "models/Events";
 
+import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
+
 /**
  * fill itself with events from server
  */
@@ -52,6 +54,7 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
     ajax.get<ResponseEventsLight>({
         url: "/events",
         urlProps: props,
+        credentials: true
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
@@ -98,6 +101,7 @@ export const likeEvent = (resolveRequest: TRequestResolver, eventId: number) => 
         .then(({json, status}) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 console.log('success');
+                store.dispatch(like({eventId: eventId}));
             } else {
                 console.log('not success');
             }
@@ -118,6 +122,7 @@ export const dislikeEvent = (resolveRequest: TRequestResolver, eventId: number) 
         .then(({json, status}) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 console.log('success');
+                store.dispatch(dislike({eventId: eventId}))
             } else {
                 console.log('not success');
             }
@@ -195,6 +200,8 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
                 },
                 img: "",
                 tags: [],
+                liked: false,
+                likes: 0
             },
             processingState: EventProcessingType.CREATE,
             tags: getTags([]),

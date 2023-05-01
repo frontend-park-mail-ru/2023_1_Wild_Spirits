@@ -138,7 +138,7 @@ export class Header extends Component<any> {
                             className="header__city-selector__button"
                             onClick={() => {store.dispatch(openCitySelector())}}
                         >
-                            <img src="/assets/img/position_icon.png"></img>
+                            <img src="/assets/img/geo-icon.svg"></img>
                             <span>{selectedCityName}</span>
                         </button>
                         {/* <select onChange={(e) => this.#selectCity(e as unknown as Event)}>{cities}</select> */}

@@ -59,7 +59,7 @@
 .event-page__button-outline {
     @extend .button-base;
     box-shadow: none;
-    border: 1px solid black;
+    border: 2px solid black;
     border-radius: 15px;
 
     &-like {

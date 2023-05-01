@@ -134,6 +134,47 @@ const eventsSlice = createSlice({
             state.processing = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+        likeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+
+            console.log(state)
+
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                console.log(state.cards.data.findIndex(event => event.id === action.payload.eventId))
+            }
+
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && !state.cards.data[id].liked) {
+                    state.cards.data[id].likes++;
+                    state.cards.data[id].liked = true;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                !state.selectedEvent.event.liked) {
+                    state.selectedEvent.event.likes++;
+                    state.selectedEvent.event.liked = true;
+                }
+
+            return state;
+        },
+        dislikeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE && state.cards.data[action.payload.eventId].liked) {
+                state.cards.data[action.payload.eventId].likes--;
+                state.cards.data[action.payload.eventId].liked = false;
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                state.selectedEvent.event.liked) {
+                    state.selectedEvent.event.likes--;
+                    state.selectedEvent.event.liked = false;
+                }
+
+            return state;
+        },
     },
 });
 
@@ -151,5 +192,7 @@ export const {
     setEventProcessingFormImg,
     toggleEventProcessingTag,
     setEventProcessingLoadError,
+    likeEvent,
+    dislikeEvent,
 } = eventsSlice.actions;
 export default eventsSlice;

@@ -81,3 +81,12 @@
     align-items: center;
     justify-content: center;
 }
+
+.stroke-svg-icon.liked {
+    svg * {
+        stroke: var(--main-selected-color);
+        fill: var(--main-selected-color); 
+    }
+    
+    border-color: var(--main-selected-color);
+}

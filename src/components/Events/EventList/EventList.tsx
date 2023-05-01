@@ -39,6 +39,8 @@ export class EventList extends Component {
             return <EventListLoading size={6} />;
         }
 
+        console.log(cards.data)
+
         const cardsProps: EventCardProps[] = EventsLightDataToCardProps(cards.data);
 
         if (cardsProps.length === 0) {
@@ -48,6 +50,7 @@ export class EventList extends Component {
                 </div>
             );
         }
+
         return (
             <div className="event-list">
                 {cardsProps.map((props) => (

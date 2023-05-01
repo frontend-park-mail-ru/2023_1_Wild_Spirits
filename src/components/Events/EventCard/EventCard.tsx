@@ -47,7 +47,7 @@ export interface EventCardProps {
     places: string[];
     org: TOrgLight;
     likes: number;
-    isLiked: boolean;
+    liked: boolean;
 }
 
 /**
@@ -90,7 +90,7 @@ export class EventCard extends Component<EventCardProps> {
                             <HoveredImg
                                 src="/assets/img/card/like-icon.svg"
                                 alt="like"
-                                iconClassName="stroke-svg-icon"
+                                iconClassName={`stroke-svg-icon${this.props.liked ? " liked" : ""}`}
                                 onClick={()=>requestManager.request(likeEvent, this.props.id)}
                             />
                             <span>{this.props.likes.toString()}</span>
