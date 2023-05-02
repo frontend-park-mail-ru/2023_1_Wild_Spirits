@@ -22,8 +22,10 @@ import { dateToServer } from "modules/dateParser";
 import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 import { loadPlaces } from "requests/places";
-import { FormFieldBase, InputField, InputFieldType, TextareaField } from "./FormFields";
+import { EventProcessingFormKey, FormFieldBase, InputField, InputFieldType, TextareaField } from "./FormFields";
 import { Loading } from "components/Common/Loading";
+
+import { FormFieldNameType } from "./FormFields";
 
 export interface EventProcessingProps {
     type: EventProcessingType.Type;
@@ -82,15 +84,14 @@ export class EventProcessing extends Component<EventProcessingProps> {
             });
     }
 
-    handleChangeField(event: Event, filedName: keyof EventProcessingForm) {
-        console.log("handleChangeName");
+    handleChangeField(event: Event, fieldName: FormFieldNameType) {
         const { processing } = store.state.events;
         if (processing.loadStatus !== LoadStatus.DONE) {
             return;
         }
         const target = event.target as HTMLInputElement;
 
-        store.dispatch(setEventProcessingFormDataField({ field: filedName, value: target.value }));
+        store.dispatch(setEventProcessingFormDataField({ field: fieldName as EventProcessingFormKey, value: target.value }));
     }
 
     handleChangeImg(event: Event) {
@@ -154,8 +155,6 @@ export class EventProcessing extends Component<EventProcessingProps> {
                 .join(",")
         );
 
-        console.log(processing.formData.img || processing.tempFileUrl);
-
         if (!(processing.formData.img || processing.tempFileUrl)) {
             errors.img = "Добавьте картинку";
         }
@@ -183,9 +182,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const { eventId, formData, tempFileUrl } = result;
 
         const sendForm = (data: FormData) => {
-            console.group("EventProcessing FormData");
             for (const i of data) console.log(i);
-            console.groupEnd();
 
             const isCreate = !this.#isEdit();
             const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
@@ -226,6 +223,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const { formData, errors } = store.state.events.processing as EventProcessingData;
 
         return {
+            prefix: 'event-processing',
             fieldName,
             title,
             type,
@@ -260,7 +258,6 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const isEdit = this.props.type === EventProcessingType.EDIT;
         const hasImg = formData.img !== "" || processing.tempFileUrl;
         const imgUrl = processing.tempFileUrl || formData.img || "";
-        console.log(formData.img, processing.tempFileUrl);
 
         return (
             <div className="event-processing">
@@ -286,6 +283,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                         </textarea> */}
 
                     <TextareaField
+                        prefix="event-processing"
                         fieldName="description"
                         title="Полное описание"
                         value={formData.description}
@@ -309,6 +307,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                     </div>
 
                     <FormFieldBase
+                        prefix="event-processing"
                         fieldName="place"
                         title="Место проведения"
                         required={true}

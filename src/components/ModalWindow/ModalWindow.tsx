@@ -9,6 +9,7 @@ import { Registration } from "components/Auth/Registration/Registration";
 import { Login } from "components/Auth/Login/Login";
 import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
 import { CityPicker } from "components/CityPicker/CityPicker";
+import { OrganizerModal } from "components/Auth/OrganizerModal/OrganizerModal";
 
 /**
  * Modal window component
@@ -16,14 +17,8 @@ import { CityPicker } from "components/CityPicker/CityPicker";
  * @extends Component
  */
 export class ModalWindow extends Component {
-    #content: any;
-
     constructor() {
         super({});
-    }
-
-    set content(content: any) {
-        this.#content = content;
     }
 
     /**
@@ -42,7 +37,9 @@ export class ModalWindow extends Component {
                 case ModalWindowName.FRIEND_LIST:
                     return <FriendList/>;
                 case ModalWindowName.CITY_SELECTOR:
-                    return <CityPicker/>
+                    return <CityPicker/>;
+                case ModalWindowName.ORGANIZER:
+                    return <OrganizerModal/>;
             }
         };
 

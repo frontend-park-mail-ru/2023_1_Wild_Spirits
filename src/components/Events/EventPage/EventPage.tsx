@@ -5,7 +5,7 @@ import { router } from "modules/router";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
-import { loadEventPage } from "requests/events";
+import { dislikeEvent, likeEvent, loadEventPage } from "requests/events";
 import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
@@ -14,6 +14,8 @@ import { isAuthorized } from "flux/slices/userSlice";
 import { Link } from "components/Common/Link";
 import { Loading } from "components/Common/Loading";
 import { EventPageMap } from "./EventPageMap";
+import { SVGInline } from "components/Common/SVGInline";
+import { TEvent } from "models/Events";
 
 /**
  * Event list component
@@ -30,6 +32,14 @@ export class EventPage extends Component {
         store.dispatch(setSelectedEventLoadStart());
         const eventId = this.getEventId();
         requestManager.request(loadEventPage, eventId);
+    }
+
+    toggleLike(event: TEvent) {
+        if (!event.liked) {
+            requestManager.request(likeEvent, event.id);
+        } else {
+            requestManager.request(dislikeEvent, event.id);
+        }
     }
 
     render() {
@@ -88,32 +98,34 @@ export class EventPage extends Component {
                     />
                 </div>
                 <div className="event-page__button-block">
-                    <div>
-                        <div className="button-outline button-outline-like event-page__button">
-                            <img
-                                className="event-page__button-icon-like"
+                    <div className="event-card__stats-container">
+                        <button className={`event-page__button-outline-like event-page__button${event.liked ? " filled" : ""}`}
+                                onClick={() => {this.toggleLike(event)}}>
+                            <SVGInline
+                                className="event-page__button-icon-like stroke-svg-icon"
                                 src="/assets/img/page/like-icon.svg"
                                 alt="like"
                             />
-                        </div>
-                        <div>320</div>
+                        </button>
+                        <span>{event.likes.toString()}</span>
                     </div>
-                    <div className="button-outline button-outline-other event-page__button">
-                        <img className="event-page__button-icon" src="/assets/img/page/save-icon.svg" alt="save" />
-                    </div>
-                    <div className="button-outline button-outline-other event-page__button-invite">
-                        <img src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
+                    {/* <div className="event-page__button-outline event-page__button-invite">
+                        <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
                         <div className="event-page__button-text"> Пригласить друга </div>
-                    </div>
-                    <div className="button-outline button-outline-other event-page__button">
-                        {isAuthorized(store.state.user) ? (
-                            <Link href={`/editevent/${event.id}`} className="event-page__button-icon">
-                                <img src="/assets/img/page/edit-icon.svg" alt="edit" />
-                            </Link>
-                        ) : (
-                            <img src="/assets/img/card/save-icon.svg" alt="save" />
-                        )}
-                    </div>
+                    </div> */}
+                    {isAuthorized(store.state.user) && event.is_mine ? (
+                        <Link href={`/editevent/${event.id}`} className="event-page__button-outline">
+                            <SVGInline className="event-page__button-icon stroke-svg-icon" src="/assets/img/page/edit-icon.svg" alt="edit" />
+                        </Link>
+                    ) : (
+                        <button className={`event-page__button-outline event-page__button${event.reminded  ? " filled" : ""}`}>
+                            <SVGInline 
+                                className="event-page__button-icon stroke-svg-icon"
+                                src="/assets/img/save-icon.svg" 
+                                alt="save"
+                            />
+                        </button>
+                    )}
                 </div>
             </div>
         );

@@ -57,9 +57,17 @@
 
 .event-card__button-block {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
+    align-items: flex-start;
+    // justify-content: space-between;
+    justify-content: center;
+    gap: 20%;
     width: 100%;
+}
+
+.event-card__stats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .event-card__button-link {
@@ -72,4 +80,14 @@
 
     align-items: center;
     justify-content: center;
+}
+
+.stroke-svg-icon.filled {
+    svg * {
+        stroke: var(--main-selected-color);
+        fill: var(--main-selected-color); 
+        fill-opacity: 1;
+    }
+    
+    border-color: var(--main-selected-color);
 }

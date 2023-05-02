@@ -7,6 +7,11 @@ import {
     loadEvents,
     loadEventPage,
     loadEnventsMap,
+    likeEvent,
+    dislikeEvent,
+    loadLikedEvents,
+    featureEvent,
+    unfeatureEvent,
 } from "./events";
 import {
     addFriend,
@@ -17,6 +22,8 @@ import {
     logoutUser,
     registerUser,
     searchUsers,
+    registerOrganizer,
+    deleteFriend,
 } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
@@ -53,6 +60,10 @@ const requests: SetupRequestsType[] = [
         dependencies: [loadAuthorization, loadCities],
     },
     {
+        request: loadLikedEvents,
+        dependencies: [loadCities],
+    },
+    {
         request: loadProfile,
         dependencies: [loadAuthorization],
     },
@@ -77,6 +88,10 @@ const requests: SetupRequestsType[] = [
         dependencies: [],
     },
     {
+        request: registerOrganizer,
+        dependencies: [],
+    },
+    {
         request: loadEventProcessingEdit,
         dependencies: [loadAuthorization, loadTags, loadPlaces],
     },
@@ -95,6 +110,26 @@ const requests: SetupRequestsType[] = [
     {
         request: loadEnventsMap,
         dependencies: [],
+    },
+    {
+        request: deleteFriend,
+        dependencies: [],
+    },
+    {
+        request: likeEvent,
+        dependencies: [loadAuthorization],
+    },
+    {
+        request: dislikeEvent,
+        dependencies: [loadAuthorization],
+    },
+    {
+        request: featureEvent,
+        dependencies: [loadAuthorization],
+    },
+    {
+        request: unfeatureEvent,
+        dependencies: [loadAuthorization],
     },
 ];
 

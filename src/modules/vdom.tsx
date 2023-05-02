@@ -158,7 +158,7 @@ const isNodeTypeTag = (vNode: VNodeType): vNode is TagVNodeType => {
 
 const isNodeTypeSimple = (vNode: VNodeType): vNode is SimpleVNodeType => {
     return (
-        typeof vNode === "string" || typeof vNode === "boolean" || typeof vNode === "undefined" || typeof vNode === null
+        typeof vNode === "string" || typeof vNode === "boolean" || typeof vNode === "undefined" || vNode === null
     );
 };
 
@@ -242,6 +242,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
         if (isNodeTypeComponent(vNode)) {
             vNode._instance.willDestroy();
         }
+
         const nextNode = createDOMNode(nextVNode);
         node.replaceWith(nextNode);
         return nextNode;
@@ -348,6 +349,7 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
             //if ((nextVChildren[i] as ComponentVNodeType).tagName.toLowerCase() === "hoveredimg")
             convertComponentToTag(nextVChildren[i] as ComponentVNodeType);
         }
+
         parent.appendChild(createDOMNode(nextVChildren[i]));
     }
 

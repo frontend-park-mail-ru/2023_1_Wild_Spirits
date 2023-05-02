@@ -443,3 +443,23 @@
 .pointy {
     cursor: pointer;
 }
+
+.stroke-svg-icon {
+    & svg * {
+        stroke: black;
+    }
+
+    &:hover svg * {
+        stroke: var(--main-selected-color);
+    }
+}
+
+.fill-svg-icon {
+    & svg * {
+        fill: black;
+    }
+    
+    &:hover svg * {
+        fill: var(--main-selected-color);
+    }
+}

@@ -8,6 +8,7 @@ import { create } from "handlebars";
 
 interface TUserLightDataType extends TUserLight {
     friends?: TFriend[];
+    organizer_id?: number
 }
 
 type FriendState = {
@@ -16,21 +17,25 @@ type FriendState = {
     img: string;
 }
 
+export interface CurrentProfileState {
+    id: number;
+    name: string;
+    img: string;
+    email?: string;
+    city_name?: string;
+    is_friend?: boolean;
+
+    phone?: string;
+    website?: string;
+
+    friendsPreview?: FriendState[];
+    friends?: FriendState[];
+}
+
 interface UserState {
     authorizedLoadStatus: LoadStatus.Type;
     data?: TUserLightDataType;
-    currentProfile?: {
-        id: number;
-        name: string;
-        img: string;
-        email?: string;
-        city_name?: string;
-        is_friend?: boolean;
-
-        friendsPreview?: FriendState[];
-
-        friends?: FriendState[];
-    };
+    currentProfile?: CurrentProfileState;
 }
 
 const userInitialState: UserState = {
@@ -38,6 +43,12 @@ const userInitialState: UserState = {
     data: undefined,
     currentProfile: undefined,
 };
+
+interface TOrganizer extends TUser {
+    organizer_id?: number,
+    phone?: string,
+    website?: string
+}
 
 const userSlice = createSlice({
     name: "user",
@@ -51,7 +62,7 @@ const userSlice = createSlice({
             state.authorizedLoadStatus = LoadStatus.ERROR;
             return state;
         },
-        setData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
+        setUserData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
             state.authorizedLoadStatus = LoadStatus.DONE;
             state.data = action.payload;
             return state;
@@ -59,7 +70,7 @@ const userSlice = createSlice({
         addToFriends: (state: UserState) => {
             const currentProfile = state.currentProfile;
             if (currentProfile && state.data) {
-                state.data?.friends?.push({
+                state.data.friends?.push({
                     id: currentProfile.id,
                     name: currentProfile.name,
                     img: currentProfile.img
@@ -68,6 +79,19 @@ const userSlice = createSlice({
                     state.currentProfile.is_friend = true;
                 }
             }
+
+            return state;
+        },
+        removeFromFriends: (state: UserState) => {
+            const currentProfile = state.currentProfile;
+            if (currentProfile && state.data && state.data.friends) {
+                state.data.friends = state.data.friends.filter(user => user.id !== currentProfile.id);
+            }
+
+            if (state.currentProfile) {
+                state.currentProfile.is_friend = false;
+            }
+
             return state;
         },
         logout: (state: UserState) => {
@@ -76,14 +100,13 @@ const userSlice = createSlice({
         },
         setCurrentProfile: (
             state: UserState,
-            action: PayloadAction<{ id: number; profile: { user: TUser; friends?: TFriend[] | undefined } }>
+            action: PayloadAction<{ id: number; profile: { user: TOrganizer, friends?: TFriend[] | undefined } }>
         ) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
-                const friends = action.payload.profile.friends || state.currentProfile?.friendsPreview;
+                const friends = action.payload.profile.friends;
 
                 state.currentProfile = {
-                    ...state.currentProfile,
                     ...profile,
                     friendsPreview: friends,
                     id: action.payload.id,
@@ -122,11 +145,27 @@ export const kickUnauthorized = (userState: UserState) => {
     return false;
 };
 
+export const mineProfile = (userState: UserState) => {
+    if (userState.data === undefined) {
+        return false;
+    }
+    if (userState.currentProfile === undefined) {
+        return false;
+    }
+
+    return userState.data.id === userState.currentProfile.id;
+}
+
+export const isOrganizer = (userState: UserState) => {
+    return userState.currentProfile?.phone !== undefined;
+}
+
 export const {
     authorizedLoadStart,
     authorizedLoadError,
-    setData,
+    setUserData,
     addToFriends,
+    removeFromFriends,
     logout,
     setCurrentProfile,
     setCurrentProfileFriends,

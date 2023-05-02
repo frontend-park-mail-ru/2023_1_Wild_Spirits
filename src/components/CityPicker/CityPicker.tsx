@@ -6,6 +6,9 @@ import "./styles.scss";
 import { selectCity } from "flux/slices/headerSlice";
 import { close } from "flux/slices/modalWindowSlice";
 
+import { requestManager } from "requests";
+import { loadEvents } from "requests/events";
+
 export class CityPicker extends Component<{}, {query: string}> {
     constructor() {
         super({});
@@ -42,7 +45,7 @@ export class CityPicker extends Component<{}, {query: string}> {
                 <div className="city-picker__content">
                     {
                         cities.map(city=>(
-                            <button onClick={()=>store.dispatch(selectCity({city: city}), close())} className="city-picker__item">{city}</button>)
+                            <button onClick={()=>{store.dispatch(selectCity({city: city}), close()); requestManager.request(loadEvents)}} className="city-picker__item">{city}</button>)
                         )
                     }
                 </div>

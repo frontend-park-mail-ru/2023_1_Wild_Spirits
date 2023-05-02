@@ -3,12 +3,13 @@ import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser"
 import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError } from "flux/slices/userSlice";
+import { setUserData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError, removeFromFriends } from "flux/slices/userSlice";
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 import { App } from "components/App";
 import { addToFriends } from "flux/slices/userSlice";
+import { router } from "modules/router";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
@@ -22,10 +23,9 @@ export const loadAuthorization = (resolveRequest: TRequestResolver) => {
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-
-                store.dispatch(setData(json.body.user), close());
+                store.dispatch(setUserData(json.body.user), close());
             } else {
-                store.dispatch(setData(undefined));
+                store.dispatch(setUserData(undefined));
             }
             resolveRequest();
         })
@@ -96,6 +96,19 @@ export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
             resolveRequest(user_id);
         });
 
+export const deleteFriend = (resolveRequest: TRequestResolver, user_id: number) =>
+    ajax
+        .delete({
+            url: `/friends/${user_id}`,
+            credentials: true,
+        })
+        .then(({ status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(removeFromFriends());
+            }
+            resolveRequest(user_id);
+        });
+
 type TWarningMsgCallack = (warning: string | undefined, errors: {[key: string]: string} | undefined) => void;
 
 export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, warningMsg: TWarningMsgCallack) => {
@@ -109,7 +122,7 @@ export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, 
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
-                    store.dispatch(setData(json.body.user), close());
+                    store.dispatch(setUserData(json.body.user), close());
                 }
             } else {
                 warningMsg(json.errorMsg, json.errors);
@@ -137,7 +150,7 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setData(json.body.user), close());
+                store.dispatch(setUserData(json.body.user), close());
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
@@ -147,6 +160,23 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
             console.log("catch:", error);
         });
 };
+
+export const registerOrganizer = (resolveRequest: TRequestResolver, formData: FormData) => {
+    ajax.post({
+        url: "/organizers",
+        credentials: true,
+        body: {
+            name: store.state.user.data!.name,
+            phone: formData.get("phone"),
+            website: formData.get("website")
+        },
+    })
+        .then(({json, response, status}) => {
+            router.go("/createevent")
+            store.dispatch(close());
+            resolveRequest();
+        })
+}
 
 export const logoutUser = (resolveRequest: TRequestResolver) =>
     ajax

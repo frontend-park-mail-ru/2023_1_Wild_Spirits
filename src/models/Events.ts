@@ -30,6 +30,10 @@ export interface TEventBase {
     description: string;
     img: string;
     dates: TEventDates;
+    likes: number;
+    liked: boolean;
+    reminded: boolean;
+    is_mine: boolean;
 }
 
 export interface TEventMap extends TEventBase {
@@ -108,6 +112,10 @@ export const eventsLightDataToCardProps = (events: TEventLight[]): EventCardProp
             dates,
             places,
             org: event.org,
+            likes: event.likes,
+            liked: event.liked,
+            is_mine: event.is_mine,
+            reminded: event.reminded
         };
     });
 };

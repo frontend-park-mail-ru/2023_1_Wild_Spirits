@@ -1,4 +1,6 @@
 .button-base {
+    appearance: none;
+    background-color: transparent;
     border-radius: 10px;
     font-size: 20px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -28,6 +30,7 @@
 .button {
     @extend .button-base;
     @include button-hover($input-el-color, $disabled-input-el-color);
+    text-align: center;
     padding: 10px;
 }
 
@@ -66,31 +69,20 @@
     margin-bottom: 40px;
 }
 
-.button-outline {
-    @extend .button-base;
-    display: inline-flex;
+@mixin button-outline ($color) {
+    border: 1px solid $color;
+    background-color: white;
+    color: $color;
 
-    &-like {
-        border: #ff0000 solid 1px;
-        &:hover {
-            border-color: $input-el-color;
-        }
-    }
-
-    &-other {
-        border: $input-el-color solid 1px;
-        &:hover {
-            border-color: $main-selected-color;
-        }
+    &:hover {
+        background-color: $color;
+        color: white;
     }
 }
 
 .button-danger {
     @extend .button-base;
-    @include button-hover(#e92424, white);
+    @include button-outline(#eb4848);
 
-    background: #e92424;
-    color: #ffffff;
-    border: 1px solid #e92424;
     padding: 10px;
 }

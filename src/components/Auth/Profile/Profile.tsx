@@ -2,15 +2,15 @@
 
 import { VDOM, Component, patchVDOM } from "modules/vdom";
 
-import { createTable } from "components/Common/CreateTable";
+import { createTable, filterTableContents, TableContents } from "components/Common/CreateTable";
 import { store } from "flux";
-import { setData, setCurrentProfile, kickUnauthorized } from "flux/slices/userSlice";
+import { setUserData, setCurrentProfile, kickUnauthorized, isOrganizer, CurrentProfileState } from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
 
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
-import { addFriend, loadFriends, loadProfile } from "requests/user";
+import { addFriend, deleteFriend, loadFriends, loadProfile } from "requests/user";
 import { router } from "modules/router";
 import { toWebP } from "modules/imgConverter";
 import "./styles.scss";
@@ -19,18 +19,20 @@ import { ResponseErrorDefault } from "responses/ResponseBase";
 import { requestManager } from "requests";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
+import { mineProfile } from "flux/slices/userSlice";
+
 /**
  * Profile component
  * @class
  * @extends Component
  */
-export class Profile extends Component<{ id: number }, { editing: boolean }> {
+export class Profile extends Component<{ id: number }, { editing: boolean, tempAvatarUrl: string | undefined }> {
     #tempAvatarUrl: string | undefined;
     #errorMsg: string = "";
 
     constructor(props: { id: number }) {
         super(props);
-        this.state = { editing: false };
+        this.state = { editing: false, tempAvatarUrl: undefined };
 
         this.setEditing = this.setEditing.bind(this);
         this.unsetEditing = this.unsetEditing.bind(this);
@@ -59,40 +61,29 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
         }
 
         const image = inputFiles[0];
-        this.#tempAvatarUrl = URL.createObjectURL(image);
-
-        // this.setState({ editing: false });
+        this.setState({...this.state, tempAvatarUrl: URL.createObjectURL(image)});
     };
-
-    getProfileId(): number | undefined {
-        const url = router.getNextUrl();
-        if (url === undefined) {
-            const user_data = store.state.user.data;
-            return user_data !== undefined ? user_data.id : undefined;
-        }
-        return parseInt(url.slice(1));
-    }
 
     loadProfile() {
         requestManager.request(loadProfile, this.props.id);
     }
 
     #addFriend = () => {
-        const id = this.getProfileId();
+        requestManager.request(addFriend, this.props.id);
+    }
 
-        if (id !== undefined) {
-            requestManager.request(addFriend, id);
-        }
-    };
+    #deleteFriend = () => {
+        requestManager.request(deleteFriend, this.props.id);
+    }
 
     setEditing(e: Event) {
         e.preventDefault();
-        this.setState({ editing: true });
+        this.setState({ ...this.state, editing: true });
     }
 
     unsetEditing(e: Event) {
         e.preventDefault();
-        this.setState({ editing: false });
+        this.setState({ editing: false, tempAvatarUrl: undefined });
     }
 
     submitForm = (event: SubmitEvent) => {
@@ -138,11 +129,34 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             body: formData,
         }).then(({ json, response, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(
-                    setData({ ...json.body.user }),
-                    setCurrentProfile({ profile: json.body, id: store.state.user.data!.id })
-                );
-                this.setState({ editing: false });
+                if (!store.state.user.data || !store.state.user.currentProfile) {
+                    return;
+                }
+
+                let userData = {
+                    id: store.state.user.data.id,
+                    name: formData.get('name') as string,
+                    city_name: json.body.user.city_name,
+                    img: json.body.user.img,
+                }
+
+                let currentProfileData = {
+                    id: store.state.user.currentProfile.id,
+                    profile: {
+                        user: {
+                            id: store.state.user.currentProfile.id,
+                            city_name: json.body.user.city_name,
+                            name: formData.get('name') as string,
+                            img: json.body.user.img,
+                            phone: formData.get('phone') as string,
+                            email: formData.get('email') as string,
+                            website: formData.get('website') as string || undefined,
+                        }
+                    }
+                }
+
+                store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
+
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
@@ -151,6 +165,8 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             }
         });
         ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
+
+        this.setState({ editing: false, tempAvatarUrl: undefined });
     }
 
     render(): JSX.Element {
@@ -158,23 +174,25 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             return <span></span>;
         }
 
-        const getTable = (profile_data: {
-            id: number;
-            name: string;
-            img: string;
-            email?: string | undefined;
-            city_name?: string;
-        }) => {
+        const getTable = (profile_data: CurrentProfileState) => {
             if (this.state.editing) {
                 const cities = getCitiesNames(store.state.header);
                 const city = store.state.user.currentProfile?.city_name;
 
+                type FieldType = {title: string, name: string, value: string};
+                const renderField = ({title, name, value}: FieldType) => {
+                    return [
+                            <div className="table__cell grey">{title}</div>,
+                            <div className="table__cell">
+                                <input className="form-control" name={name} type="text" value={value} />
+                            </div>
+                        ]
+                }
+
                 return (
                     <div className="table">
-                        <div className="table__cell grey">Имя</div>
-                        <div className="table__cell">
-                            <input className="form-control" name="name" type="text" value={profile_data.name} />
-                        </div>
+                        {renderField({title: "Имя", name: "name", value: profile_data.name})}
+                        {profile_data.email && renderField({title: "Почта", name: "email", value: profile_data.email})}
 
                         <div className="table__cell grey">Город</div>
                         <div className="table__cell">
@@ -186,14 +204,36 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                                 </select>
                             </div>
                         </div>
+
+                        {profile_data.phone && renderField({title: "Телефон", name: "phone", value: profile_data.phone})}
+                        {profile_data.phone && renderField({title: "Сайт", name: "website", value: profile_data.website || ""})}
+
                     </div>
                 );
             }
-            const rows = createTable({
-                Имя: profile_data.name,
-                Почта: profile_data.email ? profile_data.email : "не указана",
-                Город: profile_data.city_name ? profile_data.city_name : "Москва",
-            });
+
+            const rows = (() => {
+                let tableContents: TableContents = {
+                    Имя: profile_data.name,
+                    Почта: undefined,
+                    Город: profile_data.city_name ? profile_data.city_name : "Москва",
+                    Телефон: undefined,
+                    Сайт: undefined,
+                }
+
+                if (mineProfile(store.state.user)) {
+                    tableContents["Почта"] = profile_data.email || "не указана";
+                } else {
+                    tableContents["Почта"] = "не указана";
+                }
+
+                if (isOrganizer(store.state.user)) {
+                    tableContents["Телефон"] = profile_data.phone;
+                    tableContents["Сайт"] = profile_data.website;
+                }
+
+                return createTable(filterTableContents(tableContents));
+            })();
 
             let cells = [];
 
@@ -216,7 +256,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             return <div>Такого пользователя не существует</div>;
         }
 
-        const avatar = getUploadsImg(store.state.user.currentProfile!.img);
+        const avatar = this.state.tempAvatarUrl || getUploadsImg(store.state.user.currentProfile!.img);
         const table = getTable(profile_data);
 
         const profileBtn = () => {
@@ -251,7 +291,14 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
             const isFriend = store.state.user.currentProfile?.is_friend;
 
             if (isFriend) {
-                return <span>Вы дружите</span>;
+                return (
+                    <input
+                        type="button"
+                        onClick={() => this.#deleteFriend()}
+                        className="button-danger"
+                        value="Удалить из друзей"
+                    ></input>
+                )
             }
 
             return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;
@@ -262,6 +309,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean }> {
                 <form
                     id="edit-profile-form"
                     onSubmit={(e) => this.submitForm(toSubmitEvent(e))}
+                    onChange={(e) => this.#formChanged(toEvent(e))}
                     className="profile-description"
                 >
                     <div className="profile-description__img-container">

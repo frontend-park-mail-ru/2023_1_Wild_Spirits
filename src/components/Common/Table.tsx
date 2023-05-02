@@ -2,8 +2,10 @@
 
 import { VDOM, Component } from "modules/vdom";
 
+export type TableProp = { title: string; value: string }
+
 export interface TabelProps {
-    data: { title: string; value: string }[];
+    data: TableProp[];
 }
 /**
  * Event list component

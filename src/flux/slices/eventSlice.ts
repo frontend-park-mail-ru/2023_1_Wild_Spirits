@@ -148,6 +148,78 @@ const eventsSlice = createSlice({
             state.processing = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+        likeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && !state.cards.data[id].liked) {
+                    state.cards.data[id].likes++;
+                    state.cards.data[id].liked = true;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                !state.selectedEvent.event.liked) {
+                    state.selectedEvent.event.likes++;
+                    state.selectedEvent.event.liked = true;
+                }
+
+            return state;
+        },
+        dislikeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && state.cards.data[id].liked) {
+                    state.cards.data[id].likes--;
+                    state.cards.data[id].liked = false;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                state.selectedEvent.event.liked) {
+                    state.selectedEvent.event.likes--;
+                    state.selectedEvent.event.liked = false;
+                }
+
+            return state;
+        },
+        featureEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && !state.cards.data[id].reminded) {
+                    state.cards.data[id].reminded = true;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                !state.selectedEvent.event.reminded) {
+                    state.selectedEvent.event.reminded = true;
+                }
+
+            return state;
+        },
+        unfeatureEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+
+                if (state.cards.data[id] && !state.cards.data[id].reminded) {
+                    state.cards.data[id].reminded = false;
+                }
+            }
+
+            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+                action.payload.eventId === state.selectedEvent.event.id &&
+                !state.selectedEvent.event.reminded) {
+                    state.selectedEvent.event.reminded = false;
+                }
+
+            return state;
+        },
     },
 });
 
@@ -166,5 +238,9 @@ export const {
     setMapEvents,
     toggleEventProcessingTag,
     setEventProcessingLoadError,
+    likeEvent,
+    dislikeEvent,
+    featureEvent,
+    unfeatureEvent,
 } = eventsSlice.actions;
 export default eventsSlice;
