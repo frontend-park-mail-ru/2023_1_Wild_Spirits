@@ -110,11 +110,11 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadEventProcessingEdit,
-        dependencies: [loadAuthorization, loadTags, loadPlaces],
+        dependencies: [loadAuthorization, loadTags, loadPlaces, loadCategories],
     },
     {
         request: loadEventProcessingCreate,
-        dependencies: [loadAuthorization, loadTags, loadPlaces],
+        dependencies: [loadAuthorization, loadTags, loadPlaces, loadCategories],
     },
     {
         request: loadEventPage,

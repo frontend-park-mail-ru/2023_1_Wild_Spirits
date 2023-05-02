@@ -1,27 +1,26 @@
 import { VDOM, Component } from "modules/vdom";
 
-import { store } from "flux";
 import { requestManager } from "requests";
 import { registerOrganizer } from "requests/user";
 
-import "./styles.scss"
-import { InputField } from "components/Events/EventProcessing/FormFields";
+import "./styles.scss";
 import { toSubmitEvent } from "modules/CastEvents";
+import { InputField } from "components/Form/FormBase";
 
-type OrganizerModalErrors = {phone?: string, website?: string};
+type OrganizerModalErrors = { phone?: string; website?: string };
 
-export class OrganizerModal extends Component<any, {errors: OrganizerModalErrors}> {
+export class OrganizerModal extends Component<any, { errors: OrganizerModalErrors }> {
     constructor() {
         super({});
-        this.state = {errors: {}}
+        this.state = { errors: {} };
     }
 
     validateFormData(formData: FormData): OrganizerModalErrors {
         let errors: OrganizerModalErrors = {};
 
-        const phone = formData.get("phone") as string
+        const phone = formData.get("phone") as string;
         if (phone.length === 0) {
-            errors.phone = "Телефон не указан"
+            errors.phone = "Телефон не указан";
         }
 
         return errors;
@@ -43,12 +42,12 @@ export class OrganizerModal extends Component<any, {errors: OrganizerModalErrors
         const errors = this.validateFormData(formData);
 
         if (Object.entries(errors).length !== 0) {
-            this.setState({errors});
+            this.setState({ errors });
             return;
         }
 
         for (const el of formData) {
-            console.log(el)
+            console.log(el);
         }
 
         requestManager.request(registerOrganizer, formData);
@@ -63,8 +62,7 @@ export class OrganizerModal extends Component<any, {errors: OrganizerModalErrors
                 </div>
 
                 <form className="auth__form" onSubmit={(e) => this.#handleSubmit(toSubmitEvent(e))}>
-
-                    <InputField 
+                    <InputField
                         prefix="organizer"
                         fieldName="phone"
                         type="text"
@@ -74,8 +72,7 @@ export class OrganizerModal extends Component<any, {errors: OrganizerModalErrors
                         errorMsg={this.state.errors["phone"]}
                     />
 
-
-                    <InputField 
+                    <InputField
                         prefix="organizer"
                         fieldName="website"
                         type="text"
@@ -89,6 +86,6 @@ export class OrganizerModal extends Component<any, {errors: OrganizerModalErrors
                     </div>
                 </form>
             </div>
-        )
+        );
     }
-};
+}

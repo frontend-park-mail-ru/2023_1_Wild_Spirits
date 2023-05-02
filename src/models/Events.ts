@@ -34,6 +34,7 @@ export interface TEventBase {
     liked: boolean;
     reminded: boolean;
     is_mine: boolean;
+    categories: string[] | null;
 }
 
 export interface TEventMap extends TEventBase {
@@ -71,6 +72,7 @@ export interface EventProcessingForm {
     id: number;
     name: string;
     description: string;
+    category: string;
     dateStart?: string;
     dateEnd?: string;
     timeStart?: string;

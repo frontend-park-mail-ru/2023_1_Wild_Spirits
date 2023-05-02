@@ -87,6 +87,7 @@ const eventsSlice = createSlice({
         },
         setEventProcessingFormData: (state: EventsState, action: PayloadAction<EventProcessingPayload>) => {
             const { event, places, tags, processingState } = action.payload;
+            console.log("categories", event.categories);
             const placeId = places && places.length > 0 ? places[0].id : -1;
             state.processing = {
                 loadStatus: LoadStatus.DONE,
@@ -100,6 +101,7 @@ const eventsSlice = createSlice({
                     timeStart: event.dates.timeStart,
                     timeEnd: event.dates.timeEnd,
                     place: placeId,
+                    category: event.categories && event.categories.length > 0 ? event.categories[0] : "",
                     img: getUploadsImg(event.img),
                 },
                 tags: tags,

@@ -110,7 +110,7 @@ export const loadFeaturedEvents = (resolveRequest: TRequestResolver, userId: num
     ajax.get<ResponseEventsLight>({
         url: `/users/${userId}/reminded`,
         urlProps: getLoadEventFilterProps(),
-        credentials: true
+        credentials: true,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
@@ -124,16 +124,16 @@ export const loadFeaturedEvents = (resolveRequest: TRequestResolver, userId: num
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
-}
+};
 
 export const loadEventsFromOrganizer = (resolveRequest: TRequestResolver, organizerId: number) => {
     ajax.get<ResponseEventsLight>({
         url: `/organizers/${organizerId}/events`,
-        credentials: true
+        credentials: true,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                const events = json.body.events.map(event => ({...event, reminded: true}))
+                const events = json.body.events.map((event) => ({ ...event, reminded: true }));
                 store.dispatch(setEventsCards(json.body.events));
             } else {
                 store.dispatch(setEventProcessingLoadError());
@@ -144,7 +144,7 @@ export const loadEventsFromOrganizer = (resolveRequest: TRequestResolver, organi
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
-}
+};
 
 export const loadProfileEvents = (resolveRequest: TRequestResolver, userId: number) => {
     if (isOrganizer(store.state.user)) {
@@ -154,7 +154,7 @@ export const loadProfileEvents = (resolveRequest: TRequestResolver, userId: numb
         const userId = store.state.user.currentProfile!.id;
         loadFeaturedEvents(resolveRequest, userId);
     }
-}
+};
 
 /**
  * fill itself with events from server
@@ -354,6 +354,7 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
                 likes: 0,
                 reminded: false,
                 is_mine: false,
+                categories: [""],
             },
             processingState: EventProcessingType.CREATE,
             tags: getTags([]),
