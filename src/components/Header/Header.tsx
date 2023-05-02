@@ -96,11 +96,11 @@ export class Header extends Component<any> {
             }
 
             return [
-                <a className="link" onClick={() => store.dispatch.bind(store)(openLogin())}>
+                <a className="link" onClick={() => store.dispatch(openLogin())}>
                     Вход
                 </a>,
                 "/",
-                <a className="link" onClick={() => store.dispatch.bind(store)(openRegister())}>
+                <a className="link" onClick={() => store.dispatch(openRegister())}>
                     Регистрация
                 </a>,
             ];
@@ -136,7 +136,9 @@ export class Header extends Component<any> {
                     <div className="header__city-selector">
                         <button
                             className="header__city-selector__button"
-                            onClick={() => {store.dispatch(openCitySelector())}}
+                            onClick={() => {
+                                store.dispatch(openCitySelector());
+                            }}
                         >
                             <img src="/assets/img/geo-icon.svg"></img>
                             <span>{selectedCityName}</span>

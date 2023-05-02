@@ -49,8 +49,21 @@
     font-size: 24px;
     padding: 15px 20px 5px 0;
     border-bottom: 1px solid black;
+}
 
-    padding-bottom: 5px;
+.table__cell-input {
+    display: flex;
+    align-self: flex-end;
+    border-bottom: 1px solid black;
+}
+
+.table__input {
+    padding: 5px 10px 0;
+    margin: auto 20px 3px -12px;
+    font-size: 24px;
+
+    font-family: "Roboto";
+    font-weight: normal;
 }
 
 .delimiter__content {
@@ -458,7 +471,7 @@
     & svg * {
         fill: black;
     }
-    
+
     &:hover svg * {
         fill: var(--main-selected-color);
     }

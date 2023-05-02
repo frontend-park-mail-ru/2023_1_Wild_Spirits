@@ -4,7 +4,13 @@ import { VDOM, Component, patchVDOM } from "modules/vdom";
 
 import { createTable, filterTableContents, TableContents } from "components/Common/CreateTable";
 import { store } from "flux";
-import { setUserData, setCurrentProfile, kickUnauthorized, isOrganizer, CurrentProfileState } from "flux/slices/userSlice";
+import {
+    setUserData,
+    setCurrentProfile,
+    kickUnauthorized,
+    isOrganizer,
+    CurrentProfileState,
+} from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
 
@@ -26,7 +32,7 @@ import { mineProfile } from "flux/slices/userSlice";
  * @class
  * @extends Component
  */
-export class Profile extends Component<{ id: number }, { editing: boolean, tempAvatarUrl: string | undefined }> {
+export class Profile extends Component<{ id: number }, { editing: boolean; tempAvatarUrl: string | undefined }> {
     #tempAvatarUrl: string | undefined;
     #errorMsg: string = "";
 
@@ -61,7 +67,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
         }
 
         const image = inputFiles[0];
-        this.setState({...this.state, tempAvatarUrl: URL.createObjectURL(image)});
+        this.setState({ ...this.state, tempAvatarUrl: URL.createObjectURL(image) });
     };
 
     loadProfile() {
@@ -70,11 +76,11 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
 
     #addFriend = () => {
         requestManager.request(addFriend, this.props.id);
-    }
+    };
 
     #deleteFriend = () => {
         requestManager.request(deleteFriend, this.props.id);
-    }
+    };
 
     setEditing(e: Event) {
         e.preventDefault();
@@ -135,10 +141,10 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
 
                 let userData = {
                     id: store.state.user.data.id,
-                    name: formData.get('name') as string,
+                    name: formData.get("name") as string,
                     city_name: json.body.user.city_name,
                     img: json.body.user.img,
-                }
+                };
 
                 let currentProfileData = {
                     id: store.state.user.currentProfile.id,
@@ -146,17 +152,16 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                         user: {
                             id: store.state.user.currentProfile.id,
                             city_name: json.body.user.city_name,
-                            name: formData.get('name') as string,
+                            name: formData.get("name") as string,
                             img: json.body.user.img,
-                            phone: formData.get('phone') as string,
-                            email: formData.get('email') as string,
-                            website: formData.get('website') as string || undefined,
-                        }
-                    }
-                }
+                            phone: formData.get("phone") as string,
+                            email: formData.get("email") as string,
+                            website: (formData.get("website") as string) || undefined,
+                        },
+                    },
+                };
 
                 store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
-
             } else if (response.status === 409) {
                 let errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
@@ -179,20 +184,21 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                 const cities = getCitiesNames(store.state.header);
                 const city = store.state.user.currentProfile?.city_name;
 
-                type FieldType = {title: string, name: string, value: string};
-                const renderField = ({title, name, value}: FieldType) => {
+                type FieldType = { title: string; name: string; value: string };
+                const renderField = ({ title, name, value }: FieldType) => {
                     return [
-                            <div className="table__cell grey">{title}</div>,
-                            <div className="table__cell">
-                                <input className="form-control" name={name} type="text" value={value} />
-                            </div>
-                        ]
-                }
+                        <div className="table__cell grey">{title}</div>,
+                        <div className="table__cell-input">
+                            <input className="table__input" name={name} type="text" value={value} />
+                        </div>,
+                    ];
+                };
 
                 return (
                     <div className="table">
-                        {renderField({title: "Имя", name: "name", value: profile_data.name})}
-                        {profile_data.email && renderField({title: "Почта", name: "email", value: profile_data.email})}
+                        {renderField({ title: "Имя", name: "name", value: profile_data.name })}
+                        {profile_data.email &&
+                            renderField({ title: "Почта", name: "email", value: profile_data.email })}
 
                         <div className="table__cell grey">Город</div>
                         <div className="table__cell">
@@ -205,9 +211,10 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                             </div>
                         </div>
 
-                        {profile_data.phone && renderField({title: "Телефон", name: "phone", value: profile_data.phone})}
-                        {profile_data.phone && renderField({title: "Сайт", name: "website", value: profile_data.website || ""})}
-
+                        {profile_data.phone &&
+                            renderField({ title: "Телефон", name: "phone", value: profile_data.phone })}
+                        {profile_data.phone &&
+                            renderField({ title: "Сайт", name: "website", value: profile_data.website || "" })}
                     </div>
                 );
             }
@@ -219,7 +226,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                     Город: profile_data.city_name ? profile_data.city_name : "Москва",
                     Телефон: undefined,
                     Сайт: undefined,
-                }
+                };
 
                 if (mineProfile(store.state.user)) {
                     tableContents["Почта"] = profile_data.email || "не указана";
@@ -298,7 +305,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean, tempA
                         className="button-danger"
                         value="Удалить из друзей"
                     ></input>
-                )
+                );
             }
 
             return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;

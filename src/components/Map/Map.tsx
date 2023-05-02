@@ -4,7 +4,7 @@ import { VDOM, Component, createDOMNode, JSXToVNode } from "modules/vdom";
 import "./styles.scss";
 import * as ymaps from "yandex-maps";
 import { store } from "flux";
-import { loadEnventsMap, loadEvents } from "requests/events";
+import { loadEnventsMap } from "requests/events";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { MapEventCard } from "components/Events/EventCard/MapEventCard";
@@ -43,7 +43,6 @@ export class Map extends Component<any, MapState> {
     }
 
     didMount() {
-        console.error("TestMap didMount");
         this.createMap();
     }
 
@@ -55,7 +54,6 @@ export class Map extends Component<any, MapState> {
     }
 
     handleMouseDown() {
-        console.log("mouseDOWN");
         this.isMapMouseDown = true;
         if (this.timer) {
             clearTimeout(this.timer);
@@ -71,7 +69,6 @@ export class Map extends Component<any, MapState> {
     }
 
     handleMouseUp() {
-        console.log("mouseUP");
         if (this.isMapMouseDown) {
             this.timer = setTimeout(this.loadGeoEvents, 1000);
             this.isMapMouseDown = false;
@@ -115,7 +112,6 @@ export class Map extends Component<any, MapState> {
             });
             this.setState({ map: ymap });
             const coords = ymap.getBounds();
-            console.log(coords);
             requestManager.request(loadEnventsMap, coords[0][1], coords[1][1], coords[0][0], coords[1][0]);
         };
 

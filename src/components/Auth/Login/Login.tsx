@@ -55,7 +55,7 @@ export class Login extends Component {
                     </div>
 
                     <div className="submit-group">
-                        <a className="link-button" onClick={() => store.dispatch.bind(store)(openRegister())}>
+                        <a className="link-button" onClick={() => store.dispatch(openRegister())}>
                             Регистрация
                         </a>
                         <input type="submit" value="Вход" className="button" />
