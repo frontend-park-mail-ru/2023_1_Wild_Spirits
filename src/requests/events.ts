@@ -18,6 +18,7 @@ import { EventProcessingType } from "models/Events";
 
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
+import { isOrganizer } from "flux/slices/userSlice";
 
 const getLoadEventFilterProps = (): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -121,6 +122,36 @@ export const loadFeaturedEvents = (resolveRequest: TRequestResolver, userId: num
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
+}
+
+export const loadEventsFromOrganizer = (resolveRequest: TRequestResolver, organizerId: number) => {
+    ajax.get<ResponseEventsLight>({
+        url: `/organizers/${organizerId}/events`,
+        credentials: true
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                const events = json.body.events.map(event => ({...event, reminded: true}))
+                store.dispatch(setEventsCards(json.body.events));
+            } else {
+                store.dispatch(setEventProcessingLoadError());
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            store.dispatch(setEventProcessingLoadError());
+            resolveRequest();
+        });
+}
+
+export const loadProfileEvents = (resolveRequest: TRequestResolver, userId: number) => {
+    if (isOrganizer(store.state.user)) {
+        const organizerId = 6;
+        loadEventsFromOrganizer(resolveRequest, organizerId);
+    } else {
+        const userId = store.state.user.currentProfile!.id;
+        loadFeaturedEvents(resolveRequest, userId);
+    }
 }
 
 /**

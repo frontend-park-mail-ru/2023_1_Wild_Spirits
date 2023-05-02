@@ -28,7 +28,7 @@ export class EventList extends Component<EventListProps, {}> {
         super(props);
     }
 
-    didCreate() {
+    loadEvents() {
         store.dispatch(setEventsCardsLoadStart());
 
         if (this.props.requestArgs) {
@@ -36,6 +36,14 @@ export class EventList extends Component<EventListProps, {}> {
         } else {
             requestManager.request(this.props.request);
         }
+    }
+
+    didCreate() {
+        this.loadEvents();
+    }
+
+    didUpdate() {
+        this.loadEvents();
     }
 
     render() {

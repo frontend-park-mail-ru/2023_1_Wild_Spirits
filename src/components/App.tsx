@@ -12,10 +12,10 @@ import { Tags } from "./Tags/Tags";
 import { EventCreateButton } from "./Events/EventCreateButton/EventCreateButton";
 
 import { router } from "modules/router";
-import { loadEvents, loadFeaturedEvents, loadLikedEvents } from "requests/events";
+import { loadEvents, loadEventsFromOrganizer, loadFeaturedEvents, loadLikedEvents, loadProfileEvents } from "requests/events";
 
 import { ModalWindowName, openOrganizerModal } from "flux/slices/modalWindowSlice";
-import { isAuthorized } from "flux/slices/userSlice";
+import { isAuthorized, isOrganizer } from "flux/slices/userSlice";
 
 import { loadAuthorization, loadFriends } from "requests/user";
 import { requestManager } from "requests/index";
@@ -73,6 +73,18 @@ export class App extends Component<any> {
             );
         };
 
+        const Delimiter = (props: {content: string}) => {
+            return (
+                <div className="delimiter">
+                    <hr/>
+                    <div className="delimiter__content">
+                        {props.content}
+                    </div>
+                    <hr/>
+                </div>
+            )
+        }
+
         const modalWindowShown = store.state.modalWindow.name !== ModalWindowName.NONE;
 
         return (
@@ -91,7 +103,10 @@ export class App extends Component<any> {
                                 return (
                                     <div>
                                         <Profile id={profileId} />
-                                        <EventList request={loadFeaturedEvents} requestArgs={[profileId]}/>
+                                        {
+                                            isOrganizer(store.state.user) ? <Delimiter content="Созданные мероприятия"/> : <Delimiter content="Мероприятия данного организатора"/>
+                                        }
+                                        <EventList request={loadProfileEvents} requestArgs={[profileId]}/>
                                     </div>
                                 );
                             })()}

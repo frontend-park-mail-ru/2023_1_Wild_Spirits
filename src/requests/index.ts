@@ -13,6 +13,8 @@ import {
     loadFeaturedEvents,
     featureEvent,
     unfeatureEvent,
+    loadEventsFromOrganizer,
+    loadProfileEvents,
 } from "./events";
 import {
     addFriend,
@@ -67,6 +69,14 @@ const requests: SetupRequestsType[] = [
     {
         request: loadFeaturedEvents,
         dependencies: [loadAuthorization, loadCities],
+    },
+    {
+        request: loadEventsFromOrganizer,
+        dependencies: [loadAuthorization, loadProfile, loadCities],
+    },
+    {
+        request: loadProfileEvents,
+        dependencies: [loadAuthorization, loadProfile, loadCities],
     },
     {
         request: loadProfile,
