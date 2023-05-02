@@ -31,6 +31,7 @@ import { Map } from "./Map/Map";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 import { SVGInline } from "./Common/SVGInline";
+import { OrgEvents } from "./Events/OrgEvents/OrgEvents";
 
 /**
  * @classdesc Main app component
@@ -104,7 +105,7 @@ export class App extends Component<any> {
                                     <div>
                                         <Profile id={profileId} />
                                         {
-                                            isOrganizer(store.state.user) ? <Delimiter content="Созданные мероприятия"/> : <Delimiter content="Мероприятия данного организатора"/>
+                                            isOrganizer(store.state.user) ? <Delimiter content="Мероприятия данного организатора"/> : <Delimiter content="Запланированные мероприятия"/>
                                         }
                                         <EventList request={loadProfileEvents} requestArgs={[profileId]}/>
                                     </div>
@@ -115,6 +116,8 @@ export class App extends Component<any> {
                         {url === "/map" && <Map />}
                     </div>
                     <div className="sidebar">
+                        {url === "/events" && <OrgEvents />}
+
                         {url === "/profile" && <FriendListCard />}
                         {(url === "/" || url === "/profile") && <EventCreateButton />}
                         {url === "/" && <GoMapBtn />}

@@ -27,6 +27,7 @@ export interface CurrentProfileState {
 
     phone?: string;
     website?: string;
+    org_id?: number;
 
     friendsPreview?: FriendState[];
     friends?: FriendState[];

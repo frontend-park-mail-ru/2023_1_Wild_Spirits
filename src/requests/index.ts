@@ -15,6 +15,8 @@ import {
     unfeatureEvent,
     loadEventsFromOrganizer,
     loadProfileEvents,
+    loadEventPageOrgEvents,
+    loadProfileOrgEvents,
 } from "./events";
 import {
     addFriend,
@@ -145,6 +147,14 @@ const requests: SetupRequestsType[] = [
     {
         request: unfeatureEvent,
         dependencies: [loadAuthorization],
+    },
+    {
+        request: loadEventPageOrgEvents,
+        dependencies: [loadEventPage],
+    },
+    {
+        request: loadProfileOrgEvents,
+        dependencies: [loadProfile],
     },
 ];
 

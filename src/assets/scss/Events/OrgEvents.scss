@@ -1,0 +1,27 @@
+.org-events-list-title {
+    border: #26a69a solid 2px;
+    padding: 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 32px;
+}
+
+.org-events-list__card-block {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+// .org-events-list__card {
+//     @extend .card-base;
+//     min-width: 240px;
+//     max-width: 240px;
+
+//     display: flex;
+//     flex-direction: column;
+// }
+
+.org-events-list__card-title {
+    margin-bottom: 10px;
+}
