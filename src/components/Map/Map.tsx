@@ -32,7 +32,7 @@ export class Map extends Component<any, MapState> {
         this.state = { map: undefined };
 
         this.addMarker = this.addMarker.bind(this);
-        this.printMarker = this.printMarker.bind(this);
+        this.loadGeoEvents = this.loadGeoEvents.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
     }
@@ -62,35 +62,28 @@ export class Map extends Component<any, MapState> {
         }
     }
 
-    handleMouseUp() {
-        console.log("mouseUP");
-        if (this.isMapMouseDown && this.state.map) {
-            const coords = this.state.map.getBounds();
-            this.timer = setTimeout(
-                () => requestManager.request(loadEnventsMap, coords[0][1], coords[1][1], coords[0][0], coords[1][0]),
-                1000
-            );
-            this.isMapMouseDown = false;
-        }
-    }
-
-    printMarker() {
-        console.log(this.timer);
+    loadGeoEvents() {
         if (!this.state.map) {
             return;
         }
+        const coords = this.state.map.getBounds();
+        requestManager.request(loadEnventsMap, coords[0][1], coords[1][1], coords[0][0], coords[1][0]);
+    }
 
-        console.log("getCenter", this.state.map.getCenter());
-        console.log("getBounds", this.state.map.getBounds());
+    handleMouseUp() {
+        console.log("mouseUP");
+        if (this.isMapMouseDown) {
+            this.timer = setTimeout(this.loadGeoEvents, 1000);
+            this.isMapMouseDown = false;
+        }
     }
 
     addMarker() {
         const { mapEvents } = store.state.events;
         if (this.state.map) {
-            // const cardsProps = EventsLightDataToCardProps(cards.data);
             this.state.map.geoObjects.removeAll();
             for (const event of mapEvents) {
-                const testCard = (
+                const card = (
                     createDOMNode(
                         JSXToVNode(
                             <div>
@@ -106,7 +99,7 @@ export class Map extends Component<any, MapState> {
                 ).innerHTML;
 
                 const placemark = new ymaps.Placemark([event.coords.lat, event.coords.lon], {
-                    hintContent: testCard,
+                    hintContent: card,
                 });
                 placemark.events.add("click", () => router.go(`/events/${event.id}`));
                 this.state.map.geoObjects.add(placemark);
@@ -139,8 +132,6 @@ export class Map extends Component<any, MapState> {
                     {...{ stopPatch: true }}
                     onMouseDown={this.handleMouseDown}
                 ></div>
-                <input type="button" onClick={this.addMarker} value="AddMarker" />
-                <input type="button" onClick={this.printMarker} value="PrintMarker" />
             </div>
         );
     }
