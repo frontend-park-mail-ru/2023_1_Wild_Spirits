@@ -2,13 +2,15 @@ import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 import { TTag } from "models/Tag";
 
-export interface TagsState {
-    tags: {
-        [key: string]: {
-            id: number;
-            selected: boolean;
-        };
+export type StateTagsType = {
+    [key: string]: {
+        id: number;
+        selected: boolean;
     };
+};
+
+export interface TagsState {
+    tags: StateTagsType | null;
 }
 
 const initialState: TagsState = { tags: {} };
@@ -23,6 +25,10 @@ const tagsSlice = createSlice({
             return state;
         },
         toggleTag: (state: TagsState, action: PayloadAction<{ tag: string }>) => {
+            if (state.tags === null) {
+                return state;
+            }
+
             const tag = action.payload.tag;
             if (state.tags[tag] === undefined) {
                 return state;
@@ -35,6 +41,9 @@ const tagsSlice = createSlice({
 });
 
 export const getSelectedTags = (state: TagsState): string[] => {
+    if (state.tags === null) {
+        return [];
+    }
     return Object.entries(state.tags)
         .filter(([_, { selected }]) => selected)
         .map(([tag, _]) => tag);

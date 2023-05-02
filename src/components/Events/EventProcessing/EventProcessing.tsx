@@ -91,7 +91,9 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
         const target = event.target as HTMLInputElement;
 
-        store.dispatch(setEventProcessingFormDataField({ field: fieldName as EventProcessingFormKey, value: target.value }));
+        store.dispatch(
+            setEventProcessingFormDataField({ field: fieldName as EventProcessingFormKey, value: target.value })
+        );
     }
 
     handleChangeImg(event: Event) {
@@ -149,7 +151,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
         formData.set(
             "tags",
-            Object.entries(processing.tags.tags)
+            Object.entries(processing.tags)
                 .filter(([_, value]) => value.selected)
                 .map(([key, _]) => key)
                 .join(",")
@@ -223,7 +225,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const { formData, errors } = store.state.events.processing as EventProcessingData;
 
         return {
-            prefix: 'event-processing',
+            prefix: "event-processing",
             fieldName,
             title,
             type,
@@ -299,7 +301,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
                     <div className="event-processing__tags">
                         <Tags
-                            tagsState={processing.tags}
+                            tagsState={{ tags: processing.tags }}
                             toggleTag={({ tag }: ToggleTagFuncProps) => {
                                 store.dispatch(toggleEventProcessingTag(tag));
                             }}

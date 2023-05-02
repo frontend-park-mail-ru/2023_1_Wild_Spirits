@@ -11,7 +11,7 @@ import {
 } from "models/Events";
 import { TEventLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
-import { TagsState } from "./tagsSlice";
+import { StateTagsType, TagsState } from "./tagsSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
 import { EventMap } from "yandex-maps";
@@ -20,7 +20,7 @@ interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
     event: TEvent;
     places?: TEventPlace[];
-    tags: TagsState;
+    tags: StateTagsType;
 }
 
 export type EventProcessingErrorsType = { [key in keyof EventProcessingForm | "default"]?: string };
@@ -28,7 +28,7 @@ export type EventProcessingErrorsType = { [key in keyof EventProcessingForm | "d
 export interface EventProcessingData {
     processingState: EventProcessingType.Type;
     formData: EventProcessingForm;
-    tags: TagsState;
+    tags: StateTagsType;
     errors: EventProcessingErrorsType;
     tempFileUrl?: string;
 }
@@ -136,9 +136,9 @@ const eventsSlice = createSlice({
         },
         toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
-                const tag = state.processing.tags.tags[action.payload];
+                const tag = state.processing.tags[action.payload];
                 if (tag !== undefined) {
-                    state.processing.tags.tags[action.payload].selected = !tag.selected;
+                    state.processing.tags[action.payload].selected = !tag.selected;
                     // state.processing.errors = {};
                 }
             }
@@ -148,9 +148,9 @@ const eventsSlice = createSlice({
             state.processing = { loadStatus: LoadStatus.ERROR };
             return state;
         },
-        likeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+        likeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
 
                 if (state.cards.data[id] && !state.cards.data[id].liked) {
                     state.cards.data[id].likes++;
@@ -158,18 +158,20 @@ const eventsSlice = createSlice({
                 }
             }
 
-            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+            if (
+                state.selectedEvent.loadStatus === LoadStatus.DONE &&
                 action.payload.eventId === state.selectedEvent.event.id &&
-                !state.selectedEvent.event.liked) {
-                    state.selectedEvent.event.likes++;
-                    state.selectedEvent.event.liked = true;
-                }
+                !state.selectedEvent.event.liked
+            ) {
+                state.selectedEvent.event.likes++;
+                state.selectedEvent.event.liked = true;
+            }
 
             return state;
         },
-        dislikeEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+        dislikeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
 
                 if (state.cards.data[id] && state.cards.data[id].liked) {
                     state.cards.data[id].likes--;
@@ -177,46 +179,52 @@ const eventsSlice = createSlice({
                 }
             }
 
-            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+            if (
+                state.selectedEvent.loadStatus === LoadStatus.DONE &&
                 action.payload.eventId === state.selectedEvent.event.id &&
-                state.selectedEvent.event.liked) {
-                    state.selectedEvent.event.likes--;
-                    state.selectedEvent.event.liked = false;
-                }
+                state.selectedEvent.event.liked
+            ) {
+                state.selectedEvent.event.likes--;
+                state.selectedEvent.event.liked = false;
+            }
 
             return state;
         },
-        featureEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+        featureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
 
                 if (state.cards.data[id] && !state.cards.data[id].reminded) {
                     state.cards.data[id].reminded = true;
                 }
             }
 
-            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+            if (
+                state.selectedEvent.loadStatus === LoadStatus.DONE &&
                 action.payload.eventId === state.selectedEvent.event.id &&
-                !state.selectedEvent.event.reminded) {
-                    state.selectedEvent.event.reminded = true;
-                }
+                !state.selectedEvent.event.reminded
+            ) {
+                state.selectedEvent.event.reminded = true;
+            }
 
             return state;
         },
-        unfeatureEvent: (state: EventsState, action: PayloadAction<{eventId: number}>) => {
+        unfeatureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
+                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
 
                 if (state.cards.data[id] && !state.cards.data[id].reminded) {
                     state.cards.data[id].reminded = false;
                 }
             }
 
-            if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
+            if (
+                state.selectedEvent.loadStatus === LoadStatus.DONE &&
                 action.payload.eventId === state.selectedEvent.event.id &&
-                !state.selectedEvent.event.reminded) {
-                    state.selectedEvent.event.reminded = false;
-                }
+                !state.selectedEvent.event.reminded
+            ) {
+                state.selectedEvent.event.reminded = false;
+            }
 
             return state;
         },
