@@ -137,6 +137,7 @@ export const loadPlannedEvents = (resolveRequest: TRequestResolver, userId: numb
 export const loadOrgEvents = (resolveRequest: TRequestResolver, orgId: number) => {
     ajax.get<ResponseEventsLight>({
         url: `/organizers/${orgId}/events`,
+        credentials: true,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
@@ -151,16 +152,6 @@ export const loadOrgEvents = (resolveRequest: TRequestResolver, orgId: number) =
             resolveRequest();
         });
 };
-
-// export const loadProfileEvents = (resolveRequest: TRequestResolver) => {
-//     if (isOrganizer(store.state.user)) {
-//         const organizerId = store.state.user.currentProfile!.org_id!;
-//         loadOrgEvents(resolveRequest, organizerId);
-//     } else {
-//         const userId = store.state.user.currentProfile!.id;
-//         loadPlannedEvents(resolveRequest, userId);
-//     }
-// }
 
 interface LoadEventProps {
     eventId: number;
