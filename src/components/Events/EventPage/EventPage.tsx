@@ -5,7 +5,7 @@ import { router } from "modules/router";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
-import { dislikeEvent, likeEvent, loadEventPage } from "requests/events";
+import { dislikeEvent, likeEvent, loadEventPage, featureEvent, unfeatureEvent } from "requests/events";
 import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
@@ -39,6 +39,14 @@ export class EventPage extends Component {
             requestManager.request(likeEvent, event.id);
         } else {
             requestManager.request(dislikeEvent, event.id);
+        }
+    }
+
+    toggleFeatured(event: TEvent) {
+        if (!event.reminded) {
+            requestManager.request(featureEvent, event.id);
+        } else {
+            requestManager.request(unfeatureEvent, event.id);
         }
     }
 
@@ -118,7 +126,8 @@ export class EventPage extends Component {
                             <SVGInline className="event-page__button-icon stroke-svg-icon" src="/assets/img/page/edit-icon.svg" alt="edit" />
                         </Link>
                     ) : (
-                        <button className={`event-page__button-outline event-page__button${event.reminded  ? " filled" : ""}`}>
+                        <button className={`event-page__button-outline event-page__button${event.reminded  ? " filled" : ""}`}
+                                onClick={() => {this.toggleFeatured(event)}}>
                             <SVGInline 
                                 className="event-page__button-icon stroke-svg-icon"
                                 src="/assets/img/save-icon.svg" 
