@@ -11,10 +11,9 @@ import {
 } from "models/Events";
 import { TEventLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
-import { StateTagsType, TagsState } from "./tagsSlice";
+import { StateTagsType } from "./tagsSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
-import { EventMap } from "yandex-maps";
 
 interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
@@ -38,6 +37,7 @@ interface EventsState {
     selectedEvent: LoadStatus.DataDoneOrNotDone<SelectedEventData>;
     processing: LoadStatus.DataDoneOrNotDone<EventProcessingData>;
     mapEvents: TEventMap[];
+    orgEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
 }
 
 const initialState: EventsState = {
@@ -45,6 +45,7 @@ const initialState: EventsState = {
     selectedEvent: { loadStatus: LoadStatus.NONE },
     processing: { loadStatus: LoadStatus.NONE },
     mapEvents: [],
+    orgEvents: { loadStatus: LoadStatus.NONE },
 };
 
 interface FormField<T, K extends keyof T> {
@@ -228,6 +229,18 @@ const eventsSlice = createSlice({
 
             return state;
         },
+        setOrgEventsLoadStart: (state: EventsState) => {
+            state.orgEvents = { loadStatus: LoadStatus.LOADING };
+            return state;
+        },
+        setOrgEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            state.orgEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
+            return state;
+        },
+        setOrgEventsLoadError: (state: EventsState) => {
+            state.orgEvents = { loadStatus: LoadStatus.ERROR };
+            return state;
+        },
     },
 });
 
@@ -250,5 +263,8 @@ export const {
     dislikeEvent,
     featureEvent,
     unfeatureEvent,
+    setOrgEventsLoadStart,
+    setOrgEvents,
+    setOrgEventsLoadError,
 } = eventsSlice.actions;
 export default eventsSlice;

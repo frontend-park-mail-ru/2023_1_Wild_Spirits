@@ -31,6 +31,7 @@ import { Map } from "./Map/Map";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
 import { SVGInline } from "./Common/SVGInline";
+import { OrgEvents } from "./Events/OrgEvents/OrgEvents";
 
 /**
  * @classdesc Main app component
@@ -100,6 +101,8 @@ export class App extends Component<any> {
                         {url === "/map" && <Map />}
                     </div>
                     <div className="sidebar">
+                        {url === "/events" && <OrgEvents />}
+
                         {url === "/profile" && <FriendListCard />}
                         {(url === "/" || url === "/profile") && <EventCreateButton />}
                         {url === "/" && <GoMapBtn />}

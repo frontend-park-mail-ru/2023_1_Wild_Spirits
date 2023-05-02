@@ -11,6 +11,8 @@ import {
     setSelectedEvent,
     setSelectedEventLoadError,
     setMapEvents,
+    setOrgEvents,
+    setOrgEventsLoadError,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -18,6 +20,7 @@ import { EventProcessingType } from "models/Events";
 
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
+import { LoadStatus } from "./LoadStatus";
 
 const getLoadEventFilterProps = (): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -329,4 +332,42 @@ export const loadEnventsMap = (
         .catch((error) => {
             resolveRequest(left, right, bottom, top);
         });
+};
+
+const loadOrgEvents = (resolveRequest: TRequestResolver, orgId: number) => {
+    ajax.get<ResponseEventsLight>({
+        url: `/organizers/${orgId}/events`,
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setOrgEvents(json.body.events));
+            } else {
+                store.dispatch(setOrgEventsLoadError());
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            store.dispatch(setOrgEventsLoadError());
+            resolveRequest();
+        });
+};
+
+export const loadEventPageOrgEvents = (resolveRequest: TRequestResolver) => {
+    if (store.state.events.selectedEvent.loadStatus !== LoadStatus.DONE) {
+        store.dispatch(setOrgEventsLoadError());
+        resolveRequest();
+        return;
+    }
+
+    loadOrgEvents(resolveRequest, store.state.events.selectedEvent.organizer.id);
+};
+
+export const loadProfileOrgEvents = (resolveRequest: TRequestResolver) => {
+    if (store.state.user.currentProfile === undefined) {
+        store.dispatch(setOrgEventsLoadError());
+        resolveRequest();
+        return;
+    }
+
+    loadOrgEvents(resolveRequest, store.state.user.currentProfile.id);
 };
