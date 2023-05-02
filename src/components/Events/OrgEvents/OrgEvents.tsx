@@ -1,7 +1,10 @@
 /** @module Components */
 
+import { Link } from "components/Common/Link";
 import { store } from "flux";
 import { setOrgEventsLoadStart } from "flux/slices/eventSlice";
+import { fixEventDates } from "models/Events";
+import { getUploadsImg } from "modules/getUploadsImg";
 import { VDOM, Component } from "modules/vdom";
 import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
@@ -27,10 +30,30 @@ export class OrgEvents extends Component {
         }
 
         return (
-            <div className="event-list">
-                {/* {cardsProps.map((props) => (
-                    <EventCard {...props} />
-                ))} */}
+            <div className="org-events-list">
+                <div className="org-events-list-title">От того же организатора</div>
+
+                <div className="org-events-list__card-block">
+                    {orgEvents.data.map((event) => (
+                        <div className="card event-card">
+                            <Link id={`event_${event.id}`} className="event-card__content" href={`/events/${event.id}`}>
+                                <div className="card__img-block">
+                                    <img className="card__img" src={getUploadsImg(event.img)} alt={event.name} />
+                                </div>
+                                <div className="card__body event-card__body">
+                                    <div className="card__title org-events-list__card-title">{event.name}</div>
+                                    {fixEventDates(event.dates).map((item) => (
+                                        <div>{item}</div>
+                                    ))}
+                                    <hr className="card__hr" />
+                                    {event.places.map((item) => (
+                                        <div>{item}</div>
+                                    ))}
+                                </div>
+                            </Link>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }
