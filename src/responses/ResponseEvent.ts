@@ -1,6 +1,6 @@
 import { TEvent, TEventLight, TEventMap, TEventPlace } from "models/Events";
 import { ResponseBody, ResponseBodyOrError } from "./ResponseBase";
-import { TOrganizer } from "models/Organizer";
+import { TOrganizer } from "flux/slices/userSlice";
 
 interface IResponseEventsLight {
     events: TEventLight[];

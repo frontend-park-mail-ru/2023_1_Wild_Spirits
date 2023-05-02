@@ -1,6 +1,6 @@
 import { getUploadsImg } from "modules/getUploadsImg";
-import { TOrganizer } from "./Organizer";
 import { EventCardProps } from "components/Events/EventCard/EventCard";
+import { TOrganizer } from "flux/slices/userSlice";
 
 const SLICE_SIZE = 160;
 
@@ -115,7 +115,7 @@ export const eventsLightDataToCardProps = (events: TEventLight[]): EventCardProp
             likes: event.likes,
             liked: event.liked,
             is_mine: event.is_mine,
-            reminded: event.reminded
+            reminded: event.reminded,
         };
     });
 };

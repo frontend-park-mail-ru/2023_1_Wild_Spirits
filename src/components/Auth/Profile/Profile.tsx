@@ -10,6 +10,7 @@ import {
     kickUnauthorized,
     isOrganizer,
     CurrentProfileState,
+    TOrganizer,
 } from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
@@ -26,6 +27,7 @@ import { requestManager } from "requests";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
 import { mineProfile } from "flux/slices/userSlice";
+import { TFriend, TUserLight } from "models/User";
 
 /**
  * Profile component
@@ -139,27 +141,29 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                     return;
                 }
 
-                let userData = {
+                let userData: TUserLight = {
                     id: store.state.user.data.id,
                     name: formData.get("name") as string,
+                    email: formData.get("email") as string,
                     city_name: json.body.user.city_name,
                     img: json.body.user.img,
                 };
 
-                let currentProfileData = {
-                    id: store.state.user.currentProfile.id,
-                    profile: {
-                        user: {
-                            id: store.state.user.currentProfile.id,
-                            city_name: json.body.user.city_name,
-                            name: formData.get("name") as string,
-                            img: json.body.user.img,
-                            phone: formData.get("phone") as string,
-                            email: formData.get("email") as string,
-                            website: (formData.get("website") as string) || undefined,
+                let currentProfileData: { id: number; profile: { user: TOrganizer; friends?: TFriend[] | undefined } } =
+                    {
+                        id: store.state.user.currentProfile.id,
+                        profile: {
+                            user: {
+                                id: store.state.user.currentProfile.id,
+                                city_name: json.body.user.city_name,
+                                name: formData.get("name") as string,
+                                img: json.body.user.img,
+                                phone: formData.get("phone") as string,
+                                email: formData.get("email") as string,
+                                website: (formData.get("website") as string) || undefined,
+                            },
                         },
-                    },
-                };
+                    };
 
                 store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
             } else if (response.status === 409) {

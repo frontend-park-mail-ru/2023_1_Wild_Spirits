@@ -4,18 +4,17 @@ import { LoadStatus } from "requests/LoadStatus";
 
 import { router } from "modules/router";
 import { PayloadAction } from "flux/action";
-import { create } from "handlebars";
 
-interface TUserLightDataType extends TUserLight {
+export interface TUserLightDataType extends TUserLight {
     friends?: TFriend[];
-    organizer_id?: number
+    organizer_id?: number;
 }
 
 type FriendState = {
     id: number;
     name: string;
     img: string;
-}
+};
 
 export interface CurrentProfileState {
     id: number;
@@ -45,10 +44,10 @@ const userInitialState: UserState = {
     currentProfile: undefined,
 };
 
-interface TOrganizer extends TUser {
-    organizer_id?: number,
-    phone?: string,
-    website?: string
+export interface TOrganizer extends TUser {
+    organizer_id?: number;
+    phone: string;
+    website?: string;
 }
 
 const userSlice = createSlice({
@@ -74,7 +73,8 @@ const userSlice = createSlice({
                 state.data.friends?.push({
                     id: currentProfile.id,
                     name: currentProfile.name,
-                    img: currentProfile.img
+                    img: currentProfile.img,
+                    email: "",
                 });
                 if (state.currentProfile) {
                     state.currentProfile.is_friend = true;
@@ -86,7 +86,7 @@ const userSlice = createSlice({
         removeFromFriends: (state: UserState) => {
             const currentProfile = state.currentProfile;
             if (currentProfile && state.data && state.data.friends) {
-                state.data.friends = state.data.friends.filter(user => user.id !== currentProfile.id);
+                state.data.friends = state.data.friends.filter((user) => user.id !== currentProfile.id);
             }
 
             if (state.currentProfile) {
@@ -101,7 +101,7 @@ const userSlice = createSlice({
         },
         setCurrentProfile: (
             state: UserState,
-            action: PayloadAction<{ id: number; profile: { user: TOrganizer, friends?: TFriend[] | undefined } }>
+            action: PayloadAction<{ id: number; profile: { user: TOrganizer; friends?: TFriend[] | undefined } }>
         ) => {
             if (action.payload) {
                 const profile = action.payload.profile.user;
@@ -126,9 +126,15 @@ const userSlice = createSlice({
             return state;
         },
         setFriendsPreview: (state: UserState, action) => {
-            state.currentProfile = {  id: 0, name: "", img: "", ...state.currentProfile, friendsPreview: action.payload }
+            state.currentProfile = {
+                id: 0,
+                name: "",
+                img: "",
+                ...state.currentProfile,
+                friendsPreview: action.payload,
+            };
             return state;
-        }
+        },
     },
 });
 
@@ -155,11 +161,11 @@ export const mineProfile = (userState: UserState) => {
     }
 
     return userState.data.id === userState.currentProfile.id;
-}
+};
 
 export const isOrganizer = (userState: UserState) => {
     return userState.currentProfile?.phone !== undefined;
-}
+};
 
 export const {
     authorizedLoadStart,
