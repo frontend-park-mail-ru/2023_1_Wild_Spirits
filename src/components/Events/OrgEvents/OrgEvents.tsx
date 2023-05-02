@@ -18,41 +18,47 @@ export class OrgEvents extends Component {
     }
 
     render() {
-        const { orgEvents } = store.state.events;
+        const { orgEvents, selectedEvent } = store.state.events;
 
         if (orgEvents.loadStatus === LoadStatus.ERROR) {
             return <div> Error </div>;
         }
 
-        if (orgEvents.loadStatus !== LoadStatus.DONE) {
+        if (orgEvents.loadStatus !== LoadStatus.DONE || selectedEvent.loadStatus !== LoadStatus.DONE) {
             return <div> LOADING </div>;
             // return <EventListLoading size={6} />;
         }
-
+        selectedEvent.event.id;
         return (
             <div className="org-events-list">
                 <div className="org-events-list-title">От того же организатора</div>
 
                 <div className="org-events-list__card-block">
-                    {orgEvents.data.map((event) => (
-                        <div className="card event-card">
-                            <Link id={`event_${event.id}`} className="event-card__content" href={`/events/${event.id}`}>
-                                <div className="card__img-block">
-                                    <img className="card__img" src={getUploadsImg(event.img)} alt={event.name} />
-                                </div>
-                                <div className="card__body event-card__body">
-                                    <div className="card__title org-events-list__card-title">{event.name}</div>
-                                    {fixEventDates(event.dates).map((item) => (
-                                        <div>{item}</div>
-                                    ))}
-                                    <hr className="card__hr" />
-                                    {event.places.map((item) => (
-                                        <div>{item}</div>
-                                    ))}
-                                </div>
-                            </Link>
-                        </div>
-                    ))}
+                    {orgEvents.data.map((event) =>
+                        selectedEvent.event.id === event.id ? undefined : (
+                            <div className="card event-card">
+                                <Link
+                                    id={`event_${event.id}`}
+                                    className="event-card__content"
+                                    href={`/events/${event.id}`}
+                                >
+                                    <div className="card__img-block">
+                                        <img className="card__img" src={getUploadsImg(event.img)} alt={event.name} />
+                                    </div>
+                                    <div className="card__body event-card__body">
+                                        <div className="card__title org-events-list__card-title">{event.name}</div>
+                                        {fixEventDates(event.dates).map((item) => (
+                                            <div>{item}</div>
+                                        ))}
+                                        <hr className="card__hr" />
+                                        {event.places.map((item) => (
+                                            <div>{item}</div>
+                                        ))}
+                                    </div>
+                                </Link>
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
         );
