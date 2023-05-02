@@ -32,12 +32,18 @@ export interface EventProcessingData {
     tempFileUrl?: string;
 }
 
-interface EventsState {
+export interface EventsStateCards {
     cards: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+    likedEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+    plannedEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+    subbedEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+    orgEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+}
+
+export interface EventsState extends EventsStateCards {
     selectedEvent: LoadStatus.DataDoneOrNotDone<SelectedEventData>;
     processing: LoadStatus.DataDoneOrNotDone<EventProcessingData>;
     mapEvents: TEventMap[];
-    orgEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
 }
 
 const initialState: EventsState = {
@@ -46,6 +52,9 @@ const initialState: EventsState = {
     processing: { loadStatus: LoadStatus.NONE },
     mapEvents: [],
     orgEvents: { loadStatus: LoadStatus.NONE },
+    likedEvents: { loadStatus: LoadStatus.NONE },
+    plannedEvents: { loadStatus: LoadStatus.NONE },
+    subbedEvents: { loadStatus: LoadStatus.NONE },
 };
 
 interface FormField<T, K extends keyof T> {
@@ -150,13 +159,28 @@ const eventsSlice = createSlice({
             return state;
         },
         likeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
-            if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
+            let likedEvent: TEventLight | undefined = undefined;
+            const like = (subSlice: keyof EventsStateCards) => {
+                let subState = state[subSlice];
+                if (subState.loadStatus === LoadStatus.DONE) {
+                    const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
-                if (state.cards.data[id] && !state.cards.data[id].liked) {
-                    state.cards.data[id].likes++;
-                    state.cards.data[id].liked = true;
+                    if (subState.data[id] && !subState.data[id].liked) {
+                        if (likedEvent === undefined) {
+                            likedEvent = subState.data[id];
+                        }
+
+                        subState.data[id].likes++;
+                        subState.data[id].liked = true;
+                    }
                 }
+            }
+
+            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
+            subSlices.forEach(subSlice => like(subSlice));
+
+            if (state.likedEvents.loadStatus === LoadStatus.DONE && likedEvent !== undefined) {
+                state.likedEvents.data.push(likedEvent)
             }
 
             if (
@@ -171,13 +195,23 @@ const eventsSlice = createSlice({
             return state;
         },
         dislikeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
-            if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
+            const dislike = (subSlice: keyof EventsStateCards) => {
+                let subState = state[subSlice];
+                if (subState.loadStatus === LoadStatus.DONE) {
+                    const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
-                if (state.cards.data[id] && state.cards.data[id].liked) {
-                    state.cards.data[id].likes--;
-                    state.cards.data[id].liked = false;
+                    if (subState.data[id] && subState.data[id].liked) {
+                        subState.data[id].likes--;
+                        subState.data[id].liked = false;
+                    }
                 }
+            }
+
+            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
+            subSlices.forEach(subSlice => dislike(subSlice));
+
+            if (state.likedEvents.loadStatus === LoadStatus.DONE) {
+                state.likedEvents.data = state.likedEvents.data.filter(event => event.id !== action.payload.eventId);
             }
 
             if (
@@ -192,12 +226,26 @@ const eventsSlice = createSlice({
             return state;
         },
         featureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
-            if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
+            let featuredEvent: TEventLight | undefined = undefined;
+            const feature = (subSlice: keyof EventsStateCards) => {
+                let subState = state[subSlice];
+                if (subState.loadStatus === LoadStatus.DONE) {
+                    const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
-                if (state.cards.data[id] && !state.cards.data[id].reminded) {
-                    state.cards.data[id].reminded = true;
+                    if (subState.data[id] && !subState.data[id].reminded) {
+                        if (featuredEvent === undefined) {
+                            featuredEvent = subState.data[id];
+                        }
+                        subState.data[id].reminded = true;
+                    }
                 }
+            }
+
+            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
+            subSlices.forEach(subSlice => feature(subSlice));
+
+            if (state.plannedEvents.loadStatus === LoadStatus.DONE && featuredEvent !== undefined) {
+                state.plannedEvents.data.push(featuredEvent);
             }
 
             if (
@@ -211,12 +259,22 @@ const eventsSlice = createSlice({
             return state;
         },
         unfeatureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
-            if (state.cards.loadStatus === LoadStatus.DONE) {
-                const id = state.cards.data.findIndex((event) => event.id === action.payload.eventId);
+            const unfeature = (subSlice: keyof EventsStateCards) => {
+                let subState = state[subSlice];
+                if (subState.loadStatus === LoadStatus.DONE) {
+                    const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
-                if (state.cards.data[id] && state.cards.data[id].reminded) {
-                    state.cards.data[id].reminded = false;
+                    if (subState.data[id] && subState.data[id].reminded) {
+                        subState.data[id].reminded = false;
+                    }
                 }
+            }
+
+            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
+            subSlices.forEach(subSlice => unfeature(subSlice));
+
+            if (state.plannedEvents.loadStatus === LoadStatus.DONE) {
+                state.plannedEvents.data = state.plannedEvents.data.filter(event => event.id !== action.payload.eventId);
             }
 
             if (
@@ -241,8 +299,50 @@ const eventsSlice = createSlice({
             state.orgEvents = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+
+        setLikedEventsLoadStart: (state: EventsState) => {
+            state.likedEvents = { loadStatus: LoadStatus.LOADING };
+            return state;
+        },
+        setLikedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            state.likedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
+            return state;
+        },
+        setLikedEventsLoadError: (state: EventsState) => {
+            state.likedEvents = { loadStatus: LoadStatus.ERROR };
+            return state;
+        },
+
+        setPlannedEventsLoadStart: (state: EventsState) => {
+            state.plannedEvents = { loadStatus: LoadStatus.LOADING };
+            return state;
+        },
+        setPlannedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
+            return state;
+        },
+        setPlannedEventsLoadError: (state: EventsState) => {
+            state.plannedEvents = { loadStatus: LoadStatus.ERROR };
+            return state;
+        },
+
+        setSubbedEventsLoadStart: (state: EventsState) => {
+            state.plannedEvents = { loadStatus: LoadStatus.LOADING };
+            return state;
+        },
+        setSubbedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
+            return state;
+        },
+        setSubbedEventsLoadError: (state: EventsState) => {
+            state.plannedEvents = { loadStatus: LoadStatus.ERROR };
+            return state;
+        },
     },
 });
+
+export const hasEvents = (events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>) => events.loadStatus === LoadStatus.DONE && events.data.length > 0;
+export const hasNotLoaded = (events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>) => events.loadStatus === LoadStatus.NONE;
 
 export const {
     setEventsCardsLoadStart,
@@ -263,8 +363,21 @@ export const {
     dislikeEvent,
     featureEvent,
     unfeatureEvent,
+    
     setOrgEventsLoadStart,
     setOrgEvents,
     setOrgEventsLoadError,
+
+    setLikedEventsLoadStart,
+    setLikedEvents,
+    setLikedEventsLoadError,
+
+    setPlannedEventsLoadStart,
+    setPlannedEvents,
+    setPlannedEventsLoadError,
+
+    setSubbedEventsLoadStart,
+    setSubbedEvents,
+    setSubbedEventsLoadError,
 } = eventsSlice.actions;
 export default eventsSlice;

@@ -13,6 +13,10 @@ import {
     setMapEvents,
     setOrgEvents,
     setOrgEventsLoadError,
+    setLikedEvents,
+    setLikedEventsLoadError,
+    setPlannedEvents,
+    setPlannedEventsLoadError,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -22,6 +26,7 @@ import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSli
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
 import { isOrganizer } from "flux/slices/userSlice";
 import { LoadStatus } from "./LoadStatus";
+import { requestManager } from "requests";
 
 const getLoadEventFilterProps = (): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -78,7 +83,7 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
-};
+}
 
 /**
  * fill itself with events from server that current user liked
@@ -91,22 +96,22 @@ export const loadLikedEvents = (resolveRequest: TRequestResolver, userId: number
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(setEventsCards(json.body.events));
+                store.dispatch(setLikedEvents(json.body.events));
             } else {
-                store.dispatch(setEventProcessingLoadError());
+                store.dispatch(setLikedEventsLoadError());
             }
             resolveRequest();
         })
         .catch(() => {
-            store.dispatch(setEventProcessingLoadError());
+            store.dispatch(setLikedEventsLoadError());
             resolveRequest();
         });
-};
+}
 
 /**
- * fill itself with events from server that current user liked
+ * fill itself with events from server that current user planned to visit
  */
-export const loadFeaturedEvents = (resolveRequest: TRequestResolver, userId: number) => {
+export const loadPlannedEvents = (resolveRequest: TRequestResolver, userId: number) => {
     ajax.get<ResponseEventsLight>({
         url: `/users/${userId}/reminded`,
         urlProps: getLoadEventFilterProps(),
@@ -114,71 +119,48 @@ export const loadFeaturedEvents = (resolveRequest: TRequestResolver, userId: num
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(setEventsCards(json.body.events));
+                store.dispatch(setPlannedEvents(json.body.events));
             } else {
-                store.dispatch(setEventProcessingLoadError());
+                store.dispatch(setPlannedEventsLoadError());
             }
             resolveRequest();
         })
         .catch(() => {
-            store.dispatch(setEventProcessingLoadError());
+            store.dispatch(setPlannedEventsLoadError());
             resolveRequest();
         });
-}
-
-export const loadEventsFromOrganizer = (resolveRequest: TRequestResolver, organizerId: number) => {
-    ajax.get<ResponseEventsLight>({
-        url: `/organizers/${organizerId}/events`,
-        credentials: true
-    })
-        .then(({ json, status }) => {
-            if (status === AjaxResultStatus.SUCCESS) {
-                const events = json.body.events.map(event => ({...event, reminded: true}))
-                store.dispatch(setEventsCards(json.body.events));
-            } else {
-                store.dispatch(setEventProcessingLoadError());
-            }
-            resolveRequest();
-        })
-        .catch(() => {
-            store.dispatch(setEventProcessingLoadError());
-            resolveRequest();
-        });
-}
-
-export const loadProfileEvents = (resolveRequest: TRequestResolver, userId: number) => {
-    if (isOrganizer(store.state.user)) {
-        const organizerId = store.state.user.currentProfile!.org_id!;
-        loadEventsFromOrganizer(resolveRequest, organizerId);
-    } else {
-        const userId = store.state.user.currentProfile!.id;
-        loadFeaturedEvents(resolveRequest, userId);
-    }
 }
 
 /**
- * fill itself with events from server
+ * fill itself with events from server that current user created
  */
-export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
+export const loadOrgEvents = (resolveRequest: TRequestResolver, orgId: number) => {
     ajax.get<ResponseEventsLight>({
-        url: "/events",
-        // url: `/users/${userId}/liked`,
-        urlProps: getLoadEventFilterProps(),
-        credentials: true,
+        url: `/organizers/${orgId}/events`,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(setEventsCards(json.body.events));
+                store.dispatch(setOrgEvents(json.body.events));
             } else {
-                store.dispatch(setEventProcessingLoadError());
+                store.dispatch(setOrgEventsLoadError());
             }
             resolveRequest();
         })
         .catch(() => {
-            store.dispatch(setEventProcessingLoadError());
+            store.dispatch(setOrgEventsLoadError());
             resolveRequest();
         });
 };
+
+// export const loadProfileEvents = (resolveRequest: TRequestResolver) => {
+//     if (isOrganizer(store.state.user)) {
+//         const organizerId = store.state.user.currentProfile!.org_id!;
+//         loadOrgEvents(resolveRequest, organizerId);
+//     } else {
+//         const userId = store.state.user.currentProfile!.id;
+//         loadPlannedEvents(resolveRequest, userId);
+//     }
+// }
 
 interface LoadEventProps {
     eventId: number;
@@ -386,24 +368,6 @@ export const loadEnventsMap = (
         });
 };
 
-const loadOrgEvents = (resolveRequest: TRequestResolver, orgId: number) => {
-    ajax.get<ResponseEventsLight>({
-        url: `/organizers/${orgId}/events`,
-    })
-        .then(({ json, status }) => {
-            if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(setOrgEvents(json.body.events));
-            } else {
-                store.dispatch(setOrgEventsLoadError());
-            }
-            resolveRequest();
-        })
-        .catch(() => {
-            store.dispatch(setOrgEventsLoadError());
-            resolveRequest();
-        });
-};
-
 export const loadEventPageOrgEvents = (resolveRequest: TRequestResolver) => {
     if (store.state.events.selectedEvent.loadStatus !== LoadStatus.DONE) {
         store.dispatch(setOrgEventsLoadError());
@@ -415,11 +379,11 @@ export const loadEventPageOrgEvents = (resolveRequest: TRequestResolver) => {
 };
 
 export const loadProfileOrgEvents = (resolveRequest: TRequestResolver) => {
-    if (store.state.user.currentProfile === undefined) {
+    if (store.state.user.currentProfile === undefined || store.state.user.currentProfile.org_id === undefined) {
         store.dispatch(setOrgEventsLoadError());
         resolveRequest();
         return;
     }
 
-    loadOrgEvents(resolveRequest, store.state.user.currentProfile.id);
+    loadOrgEvents(resolveRequest, store.state.user.currentProfile.org_id);
 };

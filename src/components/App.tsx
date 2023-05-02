@@ -12,7 +12,7 @@ import { Tags } from "./Tags/Tags";
 import { EventCreateButton } from "./Events/EventCreateButton/EventCreateButton";
 
 import { router } from "modules/router";
-import { loadEvents, loadEventsFromOrganizer, loadFeaturedEvents, loadLikedEvents, loadProfileEvents } from "requests/events";
+import { loadEvents, loadPlannedEvents, loadLikedEvents, loadOrgEvents, loadProfileOrgEvents } from "requests/events";
 
 import { ModalWindowName, openOrganizerModal } from "flux/slices/modalWindowSlice";
 import { isAuthorized, isOrganizer } from "flux/slices/userSlice";
@@ -30,8 +30,12 @@ import { Loading } from "./Common/Loading";
 import { Map } from "./Map/Map";
 // import { SidebarTags } from "./Tags/SidebarTags";
 
+import { LoadStatus } from "requests/LoadStatus";
+import { TEventLight } from "models/Events";
+
 import { SVGInline } from "./Common/SVGInline";
 import { OrgEvents } from "./Events/OrgEvents/OrgEvents";
+import { EventsState, hasEvents, hasNotLoaded } from "flux/slices/eventSlice";
 
 /**
  * @classdesc Main app component
@@ -86,6 +90,14 @@ export class App extends Component<any> {
             )
         }
 
+        const EventsNotFound = () => {
+            return (
+                <div className="event-list-empty">
+                    <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
+                </div>
+            );
+        }
+
         const modalWindowShown = store.state.modalWindow.name !== ModalWindowName.NONE;
 
         return (
@@ -96,18 +108,25 @@ export class App extends Component<any> {
 
                 <div className="row">
                     <div className="content">
-                        {url === "/" && <EventList request={loadEvents} />}
+                        {url === "/" && <EventList request={loadEvents} events={store.state.events.cards}/>}
                         {url === "/events" && <EventPage />}
                         {url === "/profile" &&
                             (() => {
                                 const profileId = getProfileId();
+
                                 return (
                                     <div>
                                         <Profile id={profileId} />
-                                        {
-                                            isOrganizer(store.state.user) ? <Delimiter content="Мероприятия данного организатора"/> : <Delimiter content="Запланированные мероприятия"/>
-                                        }
-                                        <EventList request={loadProfileEvents} requestArgs={[profileId]}/>
+
+                                        { isOrganizer(store.state.user) && hasEvents(store.state.events.orgEvents) && <Delimiter content="Мероприятия данного организатора"/> }
+                                        { isOrganizer(store.state.user) && <EventList request={loadProfileOrgEvents} requestArgs={[store.state.user.currentProfile!.org_id!]} events={store.state.events.orgEvents}/>}
+
+                                        { hasEvents(store.state.events.plannedEvents) && <Delimiter content="Запланированные мероприятия"/> }
+                                        <EventList request={loadPlannedEvents} requestArgs={[profileId]} events={store.state.events.plannedEvents}/>
+
+                                        { hasEvents(store.state.events.likedEvents) && <Delimiter content="Понравившиеся мероприятия"/> }
+                                        <EventList request={loadLikedEvents} requestArgs={[profileId]} events={store.state.events.likedEvents}/>
+
                                     </div>
                                 );
                             })()}

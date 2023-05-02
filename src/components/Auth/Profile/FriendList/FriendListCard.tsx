@@ -2,7 +2,7 @@
 
 import { VDOM, Component } from "modules/vdom";
 
-import { Link } from "components/Common/Link";
+import { Link, ProfileLink } from "components/Common/Link";
 import { store } from "flux";
 import { openFriendsList } from "flux/slices/modalWindowSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -30,14 +30,10 @@ export class FriendListCard extends Component {
                 return friends.map((friend) => {
                     const href = `/profile/${friend.user_id}`;
                     return (
-                        <div className="friend-list-card__friends-block__block-item">
-                            <Link href={href}>
-                                <img src={friend.avatar} className="friend-list-card__friends-block__avatar" />
-                            </Link>
-                            <a href={href} className="black-link">
-                                {friend.name}
-                            </a>
-                        </div>
+                        <ProfileLink href={href} className="friend-list-card__friends-block__block-item">
+                            <img src={friend.avatar} className="friend-list-card__friends-block__avatar" />
+                            <span className="black-link">{friend.name}</span>
+                        </ProfileLink>
                     );
                 });
             }
