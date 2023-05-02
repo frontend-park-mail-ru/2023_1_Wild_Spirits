@@ -20,7 +20,7 @@ import { logoutUser } from "requests/user";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests/index";
-import { Link } from "components/Common/Link";
+import { Link, ProfileLink } from "components/Common/Link";
 import { CategoriesMenu } from "./CategoriesMenu";
 
 /**
@@ -70,7 +70,7 @@ export class Header extends Component<any> {
             if (userData !== undefined) {
                 return (
                     <div className="profile-link">
-                        <Link
+                        <ProfileLink
                             id="profile-link"
                             className="profile-link__profile-block link"
                             href={`/profile/${userData.id}`}
@@ -83,7 +83,7 @@ export class Header extends Component<any> {
                                 />
                             </div>
                             <div className="profile-link__name-block">{userData.name}</div>
-                        </Link>
+                        </ProfileLink>
                         <div id="profile-link-logout">
                             <img
                                 className="profile-link__logout-img"

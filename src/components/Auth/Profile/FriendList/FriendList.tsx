@@ -2,7 +2,7 @@
 
 import { VDOM, Component } from "modules/vdom";
 
-import { Link } from "components/Common/Link";
+import { ProfileLink } from "components/Common/Link";
 import { requestManager } from "requests";
 import { loadFriends, searchUsers } from "requests/user";
 
@@ -51,7 +51,7 @@ export class FriendList extends Component {
     render(): JSX.Element {
         const renderUser = (user: { user_id: number; name: string; avatar: string }) => {
             return (
-                <Link
+                <ProfileLink
                     className="friend-list__item"
                     href={`/profile/${user.user_id}`}
                     onClick={() => store.dispatch(close())}
@@ -65,7 +65,7 @@ export class FriendList extends Component {
                         </div>
                     </span>
                     <div className="tick-friend-icon-container"></div>
-                </Link>
+                </ProfileLink>
             );
         };
 

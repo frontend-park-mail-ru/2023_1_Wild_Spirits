@@ -12,10 +12,13 @@ import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
 import { TRequest } from "requests/requestTypes";
+import { EventsState } from "flux/slices/eventSlice";
 
 interface EventListProps<PROPS extends any[] = any[]> {
-    request: TRequest<PROPS>,
-    requestArgs?: PROPS
+    // getEvents: (state: EventsState) => LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+    events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+    request: TRequest<PROPS>;
+    requestArgs?: PROPS;
 }
 
 /**
@@ -29,8 +32,6 @@ export class EventList extends Component<EventListProps, {}> {
     }
 
     loadEvents() {
-        store.dispatch(setEventsCardsLoadStart());
-
         if (this.props.requestArgs) {
             requestManager.request(this.props.request, ...this.props.requestArgs);
         } else {
@@ -39,32 +40,29 @@ export class EventList extends Component<EventListProps, {}> {
     }
 
     didCreate() {
+        store.dispatch(setEventsCardsLoadStart());
         this.loadEvents();
     }
 
     didUpdate() {
-        this.loadEvents();
+        // this.loadEvents();
     }
 
     render() {
-        const { cards } = store.state.events;
+        const events = this.props.events;
 
-        if (cards.loadStatus === LoadStatus.ERROR) {
+        if (events.loadStatus === LoadStatus.ERROR) {
             return <div> Error </div>;
         }
 
-        if (cards.loadStatus !== LoadStatus.DONE) {
+        if (events.loadStatus !== LoadStatus.DONE) {
             return <EventListLoading size={6} />;
         }
 
-        const cardsProps: EventCardProps[] = eventsLightDataToCardProps(cards.data);
+        const cardsProps: EventCardProps[] = eventsLightDataToCardProps(events.data);
 
         if (cardsProps.length === 0) {
-            return (
-                <div className="event-list-empty">
-                    <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
-                </div>
-            );
+            return <></>;
         }
 
         return (
