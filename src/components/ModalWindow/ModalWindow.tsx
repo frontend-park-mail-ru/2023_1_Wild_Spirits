@@ -1,15 +1,14 @@
 import { VDOM, Component } from "modules/vdom";
-import ModalWindowTemplate from "templates/ModalWindow/ModalWindow.handlebars";
 
 import { store } from "flux";
 import { ModalWindowName, close } from "flux/slices/modalWindowSlice";
 import "./styles.scss";
-import { router } from "modules/router";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Login } from "components/Auth/Login/Login";
 import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
 import { CityPicker } from "components/CityPicker/CityPicker";
 import { OrganizerModal } from "components/Auth/OrganizerModal/OrganizerModal";
+import { toEvent } from "modules/CastEvents";
 
 /**
  * Modal window component
@@ -25,7 +24,13 @@ export class ModalWindow extends Component {
      * Stops event propagation for modal window not closing at clicking modal form
      * @param {Event} event
      */
-    #stopEventPropagation = (event: Event) => event.stopPropagation();
+    handleInModalMouseDown(event: Event) {
+        event.stopPropagation();
+    }
+
+    handleOutModalMouseDown() {
+        store.dispatch(close());
+    }
 
     render(): JSX.Element {
         const getContent = () => {
@@ -33,24 +38,19 @@ export class ModalWindow extends Component {
                 case ModalWindowName.LOGIN:
                     return <Login />;
                 case ModalWindowName.REGISTER:
-                    return <Registration/>;
+                    return <Registration />;
                 case ModalWindowName.FRIEND_LIST:
-                    return <FriendList/>;
+                    return <FriendList />;
                 case ModalWindowName.CITY_SELECTOR:
-                    return <CityPicker/>;
+                    return <CityPicker />;
                 case ModalWindowName.ORGANIZER:
-                    return <OrganizerModal/>;
+                    return <OrganizerModal />;
             }
         };
 
         return (
-            <div className="modal" onClick={() => store.dispatch.bind(store)(close())}>
-                <div
-                    className="modal__form__container"
-                    onClick={(e) => {
-                        this.#stopEventPropagation(e as unknown as Event);
-                    }}
-                >
+            <div className="modal" onMouseDown={this.handleOutModalMouseDown}>
+                <div className="modal__form__container" onMouseDown={(e) => this.handleInModalMouseDown(toEvent(e))}>
                     {getContent()}
                 </div>
             </div>

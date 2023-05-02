@@ -12,7 +12,7 @@ import { close } from "flux/slices/modalWindowSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
 
-import "./styles.scss"
+import "./styles.scss";
 
 export class FriendList extends Component {
     constructor() {
@@ -49,9 +49,13 @@ export class FriendList extends Component {
     };
 
     render(): JSX.Element {
-        const renderUser = (user: {user_id: number, name: string, avatar: string}) => {
+        const renderUser = (user: { user_id: number; name: string; avatar: string }) => {
             return (
-                <Link className="friend-list__item" href={`/profile/${user.user_id}`} onClick={() => store.dispatch.bind(store)(close())}>
+                <Link
+                    className="friend-list__item"
+                    href={`/profile/${user.user_id}`}
+                    onClick={() => store.dispatch(close())}
+                >
                     <span className="link">
                         <div className="friend-list__item__avatar-block">
                             <img className="friend-list__item__avatar" src={user.avatar} />
@@ -63,56 +67,61 @@ export class FriendList extends Component {
                     <div className="tick-friend-icon-container"></div>
                 </Link>
             );
-        }
+        };
 
         const friends = (() => {
             if (store.state.friendList.friends === null) {
-                return []
+                return [];
             }
 
-            return store.state.friendList.friends
-                        .map(({ id, name, img }) => ({
-                            user_id: id,
-                            name: name,
-                            avatar: getUploadsImg(img),
-                        }))
+            return store.state.friendList.friends.map(({ id, name, img }) => ({
+                user_id: id,
+                name: name,
+                avatar: getUploadsImg(img),
+            }));
         })();
 
-        let filtered_ids = friends.map(friend => friend.user_id)
+        let filtered_ids = friends.map((friend) => friend.user_id);
 
         if (store.state.user.data) {
-            filtered_ids.push(store.state.user.data.id)
+            filtered_ids.push(store.state.user.data.id);
         }
 
         const foundUsers = (() => {
             if (store.state.friendList.foundUsers === null) {
-                return []
+                return [];
             }
 
             return store.state.friendList.foundUsers
-                        .map(({ id, name, img }) => ({
-                            user_id: id,
-                            name: name,
-                            avatar: getUploadsImg(img),
-                        }))
-                        .filter(user => !filtered_ids.includes(user.user_id))
+                .map(({ id, name, img }) => ({
+                    user_id: id,
+                    name: name,
+                    avatar: getUploadsImg(img),
+                }))
+                .filter((user) => !filtered_ids.includes(user.user_id));
         })();
 
-        const UserBlock = ({title, users}: {title: string, users: {user_id: number, name: string, avatar: string}[]}) => {
+        const UserBlock = ({
+            title,
+            users,
+        }: {
+            title: string;
+            users: { user_id: number; name: string; avatar: string }[];
+        }) => {
             return (
                 <div>
-                    {
-                        (users.length > 0) && users.length > 0 && <div>
+                    {users.length > 0 && users.length > 0 && (
+                        <div>
                             <h2>{title}</h2>
                             {users.map(renderUser)}
                         </div>
-                    }
+                    )}
                 </div>
-            )
-        }
+            );
+        };
 
-        const queryEmpty = store.state.friendList.friendSearchQuery !== '';
-        const empty = queryEmpty && friends.length ===0 && foundUsers.length === 0;
+        const queryEmpty = store.state.friendList.friendSearchQuery !== "";
+        const empty = queryEmpty && friends.length === 0 && foundUsers.length === 0;
 
         return (
             <div>
@@ -128,14 +137,14 @@ export class FriendList extends Component {
                     />
                 </div>
 
-                {
-                    empty ? <div>Пользователей с таким именем не найдено</div> : 
-                    
+                {empty ? (
+                    <div>Пользователей с таким именем не найдено</div>
+                ) : (
                     <div className="friend-list">
-                        <UserBlock title="Друзья" users={friends}/>
-                        {queryEmpty && <UserBlock title="Все пользователи" users={foundUsers}/>}
+                        <UserBlock title="Друзья" users={friends} />
+                        {queryEmpty && <UserBlock title="Все пользователи" users={foundUsers} />}
                     </div>
-                }
+                )}
             </div>
         );
     }

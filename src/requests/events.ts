@@ -1,15 +1,16 @@
 import { store } from "flux";
-import { TagsState, getSelectedTags } from "flux/slices/tagsSlice";
+import { StateTagsType, TagsState, getSelectedTags } from "flux/slices/tagsSlice";
 import { getSelectedCityName } from "flux/slices/headerSlice";
 import { getSelectedCategory } from "flux/slices/headerSlice";
 import { AjaxResultStatus, ajax } from "modules/ajax";
-import { ResponseEvent, ResponseEventsLight } from "responses/ResponseEvent";
+import { ResponseEvent, ResponseEventMap, ResponseEventsLight } from "responses/ResponseEvent";
 import {
     setEventProcessingFormData,
     setEventsCards,
     setEventProcessingLoadError,
     setSelectedEvent,
     setSelectedEventLoadError,
+    setMapEvents,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -18,7 +19,7 @@ import { EventProcessingType } from "models/Events";
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
 
-const getLoadEventFilterProps  = (): UrlPropsType => {
+const getLoadEventFilterProps = (): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
 
     const dateToString = (date: Date | undefined) => {
@@ -50,7 +51,7 @@ const getLoadEventFilterProps  = (): UrlPropsType => {
     });
 
     return props;
-}
+};
 
 /**
  * fill itself with events from server
@@ -59,7 +60,7 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
     ajax.get<ResponseEventsLight>({
         url: "/events",
         urlProps: getLoadEventFilterProps(),
-        credentials: true
+        credentials: true,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
@@ -73,7 +74,7 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
-}
+};
 
 /**
  * fill itself with events from server that current user liked
@@ -82,7 +83,7 @@ export const loadLikedEvents = (resolveRequest: TRequestResolver, userId: number
     ajax.get<ResponseEventsLight>({
         url: `/users/${userId}/liked`,
         urlProps: getLoadEventFilterProps(),
-        credentials: true
+        credentials: true,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
@@ -96,7 +97,7 @@ export const loadLikedEvents = (resolveRequest: TRequestResolver, userId: number
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
-}
+};
 
 /**
  * fill itself with events from server that current user liked
@@ -132,7 +133,7 @@ export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
         url: "/events",
         // url: `/users/${userId}/liked`,
         urlProps: getLoadEventFilterProps(),
-        credentials: true
+        credentials: true,
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
@@ -146,7 +147,7 @@ export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
             store.dispatch(setEventProcessingLoadError());
             resolveRequest();
         });
-}
+};
 
 interface LoadEventProps {
     eventId: number;
@@ -156,7 +157,7 @@ interface LoadEventProps {
 }
 
 const loadEvent = ({ eventId, onSuccess, onError, resolveRequest }: LoadEventProps) => {
-    ajax.get<ResponseEvent>({ url: `/events/${eventId}`, credentials: true})
+    ajax.get<ResponseEvent>({ url: `/events/${eventId}`, credentials: true })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 onSuccess(json);
@@ -169,87 +170,87 @@ const loadEvent = ({ eventId, onSuccess, onError, resolveRequest }: LoadEventPro
             onError();
             resolveRequest(eventId);
         });
-}
+};
 
 export const likeEvent = (resolveRequest: TRequestResolver, eventId: number) => {
     ajax.post({
         url: `/events/${eventId}/like`,
-        credentials: true
+        credentials: true,
     })
-        .then(({json, status}) => {
+        .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(like({eventId: eventId}));
+                store.dispatch(like({ eventId: eventId }));
             } else {
-                console.error('cannot like');
+                console.error("cannot like");
             }
 
             resolveRequest(eventId);
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
             resolveRequest(eventId);
-        })
-}
+        });
+};
 
 export const dislikeEvent = (resolveRequest: TRequestResolver, eventId: number) => {
     ajax.delete({
         url: `/events/${eventId}/like`,
-        credentials: true
+        credentials: true,
     })
-        .then(({json, status}) => {
+        .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(dislike({eventId: eventId}))
+                store.dispatch(dislike({ eventId: eventId }));
             } else {
-                console.error('cannot dislike');
+                console.error("cannot dislike");
             }
 
             resolveRequest(eventId);
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
             resolveRequest(eventId);
-        })
-}
+        });
+};
 
 export const featureEvent = (resolveRequest: TRequestResolver, eventId: number) => {
     ajax.post({
         url: `/events/${eventId}/remind`,
-        credentials: true
+        credentials: true,
     })
-        .then(({json, status}) => {
+        .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(feature({eventId: eventId}));
+                store.dispatch(feature({ eventId: eventId }));
             } else {
-                console.error('cannot remind');
+                console.error("cannot remind");
             }
 
             resolveRequest(eventId);
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
             resolveRequest(eventId);
-        })
-}
+        });
+};
 
 export const unfeatureEvent = (resolveRequest: TRequestResolver, eventId: number) => {
     ajax.delete({
         url: `/events/${eventId}/remind`,
-        credentials: true
+        credentials: true,
     })
-        .then(({json, status}) => {
+        .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(unfeature({eventId: eventId}));
+                store.dispatch(unfeature({ eventId: eventId }));
             } else {
-                console.error('cannot unremind');
+                console.error("cannot unremind");
             }
 
             resolveRequest(eventId);
         })
-        .catch(error => {
+        .catch((error) => {
             console.log(error);
             resolveRequest(eventId);
-        })
-}
+        });
+};
 
 export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number) => {
     loadEvent({
@@ -264,20 +265,22 @@ export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number)
     });
 };
 
-const getTags = (tags: string[] | null): TagsState => {
-    return {
-        tags: Object.fromEntries(
-            Object.entries(store.state.tags.tags).map(([key, value]) => {
-                return [
-                    key,
-                    {
-                        id: value.id,
-                        selected: tags !== null ? tags.includes(key) : false,
-                    },
-                ];
-            })
-        ),
-    };
+const getTags = (tags: string[] | null): StateTagsType => {
+    if (store.state.tags.tags === null) {
+        return {};
+    }
+
+    return Object.fromEntries(
+        Object.entries(store.state.tags.tags).map(([key, value]) => {
+            return [
+                key,
+                {
+                    id: value.id,
+                    selected: tags !== null ? tags.includes(key) : false,
+                },
+            ];
+        })
+    );
 };
 
 export const loadEventProcessingEdit = (resolveRequest: TRequestResolver, eventId: number) => {
@@ -285,7 +288,7 @@ export const loadEventProcessingEdit = (resolveRequest: TRequestResolver, eventI
         eventId,
         onSuccess: (json) => {
             const event = json.body.event;
-            const tags: TagsState = getTags(event.tags);
+            const tags = getTags(event.tags);
             store.dispatch(
                 setEventProcessingFormData({
                     ...json.body,
@@ -327,4 +330,27 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
         })
     );
     resolveRequest();
+};
+
+export const loadEnventsMap = (
+    resolveRequest: TRequestResolver,
+    left: number,
+    right: number,
+    bottom: number,
+    top: number
+) => {
+    ajax.get<ResponseEventMap>({
+        url: `/events/geo`,
+        urlProps: { left: left.toString(), right: right.toString(), bottom: bottom.toString(), top: top.toString() },
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setMapEvents(json.body.events));
+            } else {
+            }
+            resolveRequest(left, right, bottom, top);
+        })
+        .catch((error) => {
+            resolveRequest(left, right, bottom, top);
+        });
 };

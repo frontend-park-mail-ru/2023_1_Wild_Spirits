@@ -2,7 +2,7 @@
 
 import { VDOM, Component } from "modules/vdom";
 import { EventCard, EventCardProps } from "components/Events/EventCard/EventCard";
-import { EventsLightDataToCardProps, TEventLight } from "models/Events";
+import { eventsLightDataToCardProps, TEventLight } from "models/Events";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { loadEvents } from "requests/events";
 import { LoadStatus } from "requests/LoadStatus";
@@ -49,7 +49,7 @@ export class EventList extends Component<EventListProps, {}> {
             return <EventListLoading size={6} />;
         }
 
-        const cardsProps: EventCardProps[] = EventsLightDataToCardProps(cards.data);
+        const cardsProps: EventCardProps[] = eventsLightDataToCardProps(cards.data);
 
         if (cardsProps.length === 0) {
             return (

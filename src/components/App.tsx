@@ -83,36 +83,36 @@ export class App extends Component<any> {
 
                 <div className="row">
                     <div className="content">
-                        {url === "/" && <EventList request={loadEvents}/>}
+                        {url === "/" && <EventList request={loadEvents} />}
                         {url === "/events" && <EventPage />}
-                        {url === "/profile" && 
+                        {url === "/profile" &&
                             (() => {
                                 const profileId = getProfileId();
                                 return (
                                     <div>
-                                        <Profile id={profileId} /> <EventList request={loadFeaturedEvents} requestArgs={[profileId]}/>
+                                        <Profile id={profileId} />
+                                        <EventList request={loadFeaturedEvents} requestArgs={[profileId]}/>
                                     </div>
-                                )
-                            })()
-                        }
+                                );
+                            })()}
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                         {url === "/map" && <Map />}
                     </div>
                     <div className="sidebar">
-                        {url === "/" && [
-                            <EventCreateButton />,
-                            <GoMapBtn />,
-                            <Calendar />,
+                        {url === "/profile" && <FriendListCard />}
+                        {(url === "/" || url === "/profile") && <EventCreateButton />}
+                        {url === "/" && <GoMapBtn />}
+                        {(url === "/" || url === "/profile") && <Calendar />}
+                        {url === "/" && (
                             <Tags
                                 tagsState={store.state.tags}
                                 toggleTag={(tag) => {
                                     store.dispatch(toggleTag(tag));
                                     requestManager.request(loadEvents);
                                 }}
-                            />,
-                        ]}
-                        {url === "/profile" && [<FriendListCard />, <EventCreateButton />, <Calendar />]}
+                            />
+                        )}
                     </div>
                 </div>
                 {modalWindowShown && <ModalWindow />}

@@ -14,6 +14,8 @@ export class Store<TState> {
         this.#state = state;
         this.#reducers = reducers;
         this.#callbacks = [];
+
+        this.dispatch = this.dispatch.bind(this);
     }
 
     subscribe(callback: () => void) {

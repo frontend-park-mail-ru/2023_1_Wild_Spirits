@@ -1,7 +1,19 @@
 import { configureRequestManager } from "./requestManager";
 
 import { loadCategories, loadCities } from "./header";
-import { loadEventProcessingEdit, loadEventProcessingCreate, loadEvents, loadEventPage, likeEvent, dislikeEvent, loadLikedEvents, featureEvent, unfeatureEvent, loadFeaturedEvents } from "./events";
+import {
+    loadEventProcessingEdit,
+    loadEventProcessingCreate,
+    loadEvents,
+    loadEventPage,
+    loadEnventsMap,
+    likeEvent,
+    dislikeEvent,
+    loadLikedEvents,
+    loadFeaturedEvents,
+    featureEvent,
+    unfeatureEvent,
+} from "./events";
 import {
     addFriend,
     loadAuthorization,
@@ -12,7 +24,7 @@ import {
     registerUser,
     searchUsers,
     registerOrganizer,
-    deleteFriend
+    deleteFriend,
 } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
@@ -101,6 +113,10 @@ const requests: SetupRequestsType[] = [
         dependencies: [],
     },
     {
+        request: loadEnventsMap,
+        dependencies: [],
+    },
+    {
         request: deleteFriend,
         dependencies: [],
     },
@@ -110,7 +126,7 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: dislikeEvent,
-        dependencies: [loadAuthorization]
+        dependencies: [loadAuthorization],
     },
     {
         request: featureEvent,
@@ -120,6 +136,6 @@ const requests: SetupRequestsType[] = [
         request: unfeatureEvent,
         dependencies: [loadAuthorization],
     },
-]
+];
 
 export let requestManager = configureRequestManager(requests);
