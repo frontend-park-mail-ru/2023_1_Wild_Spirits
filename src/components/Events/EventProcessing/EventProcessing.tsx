@@ -106,8 +106,8 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
     }
 
-    handleChangePlace(placeId: number) {
-        store.dispatch(setEventProcessingFormDataField({ field: "place", value: placeId }));
+    handleChangePlace(place: string) {
+        store.dispatch(setEventProcessingFormDataField({ field: "place", value: place }));
     }
 
     handleChangeCategory(category: string) {
@@ -134,11 +134,10 @@ export class EventProcessing extends Component<EventProcessingProps> {
             ? (errors.description = "Нет подробного описания")
             : formData.set("description", processing.formData.description);
 
-        if (processing.formData.place === -1) {
+        if (processing.formData.place === "") {
             errors.place = "Не выбрано место";
         } else {
-            const place = store.state.places.places.data.find((value) => value.id === processing.formData.place);
-            place ? formData.set("place", place.name) : (errors.place = "Место не найдено, попробуйте выбрать другое");
+            formData.set("place", processing.formData.place);
         }
 
         if (processing.formData.category !== "") {
@@ -350,13 +349,13 @@ export class EventProcessing extends Component<EventProcessingProps> {
                             className="form-control"
                             id="event-processing-place"
                             placeholder="Выберите место проведения..."
-                            onChange={(e) => this.handleChangePlace(parseInt(e.target.value))}
+                            onChange={(e) => this.handleChangePlace(e.target.value)}
                         >
-                            <option selected={formData.place === -1} disabled value={-1}>
+                            <option selected={formData.place === ""} disabled value={""}>
                                 Выберите место проведения...
                             </option>
                             {places.map((place) => (
-                                <option selected={formData.place === place.id} value={place.id}>
+                                <option selected={formData.place === place.name} value={place.name}>
                                     {place.name}
                                 </option>
                             ))}

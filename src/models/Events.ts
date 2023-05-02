@@ -77,7 +77,7 @@ export interface EventProcessingForm {
     dateEnd?: string;
     timeStart?: string;
     timeEnd?: string;
-    place: number;
+    place: string;
     img: string;
 }
 
