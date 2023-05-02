@@ -208,7 +208,7 @@ export const featureEvent = (resolveRequest: TRequestResolver, eventId: number) 
 }
 
 export const unfeatureEvent = (resolveRequest: TRequestResolver, eventId: number) => {
-    ajax.post({
+    ajax.delete({
         url: `/events/${eventId}/remind`,
         credentials: true
     })

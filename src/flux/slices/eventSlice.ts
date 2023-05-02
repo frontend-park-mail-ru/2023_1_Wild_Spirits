@@ -193,14 +193,14 @@ const eventsSlice = createSlice({
             if (state.cards.loadStatus === LoadStatus.DONE) {
                 const id = state.cards.data.findIndex(event => event.id === action.payload.eventId);
 
-                if (state.cards.data[id] && !state.cards.data[id].reminded) {
+                if (state.cards.data[id] && state.cards.data[id].reminded) {
                     state.cards.data[id].reminded = false;
                 }
             }
 
             if (state.selectedEvent.loadStatus === LoadStatus.DONE &&
                 action.payload.eventId === state.selectedEvent.event.id &&
-                !state.selectedEvent.event.reminded) {
+                state.selectedEvent.event.reminded) {
                     state.selectedEvent.event.reminded = false;
                 }
 
