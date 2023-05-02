@@ -10,6 +10,7 @@ import {
     likeEvent,
     dislikeEvent,
     loadLikedEvents,
+    loadFeaturedEvents,
     featureEvent,
     unfeatureEvent,
     loadEventPageOrgEvents,
@@ -63,7 +64,11 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadLikedEvents,
-        dependencies: [loadCities],
+        dependencies: [loadAuthorization, loadCities],
+    },
+    {
+        request: loadFeaturedEvents,
+        dependencies: [loadAuthorization, loadCities],
     },
     {
         request: loadProfile,

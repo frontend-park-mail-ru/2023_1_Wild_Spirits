@@ -58,7 +58,8 @@ export class OrganizerModal extends Component<any, {errors: OrganizerModalErrors
         return (
             <div className="organizer-modal">
                 <div className="organizer-modal__header">
-                    Создавать мероприятия могут только организаторы.<br/>Чтобы стать организатором, заполните следующие поля:
+                    <span>Создавать мероприятия могут только организаторы.</span>
+                    <span>Чтобы стать организатором, заполните следующие поля:</span>
                 </div>
 
                 <form className="auth__form" onSubmit={(e) => this.#handleSubmit(toSubmitEvent(e))}>

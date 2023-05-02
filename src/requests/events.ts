@@ -103,6 +103,30 @@ export const loadLikedEvents = (resolveRequest: TRequestResolver, userId: number
 };
 
 /**
+ * fill itself with events from server that current user liked
+ */
+export const loadFeaturedEvents = (resolveRequest: TRequestResolver, userId: number) => {
+    ajax.get<ResponseEventsLight>({
+        url: `/users/${userId}/reminded`,
+        urlProps: getLoadEventFilterProps(),
+        credentials: true
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                const events = json.body.events.map(event => ({...event, reminded: true}))
+                store.dispatch(setEventsCards(events));
+            } else {
+                store.dispatch(setEventProcessingLoadError());
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            store.dispatch(setEventProcessingLoadError());
+            resolveRequest();
+        });
+}
+
+/**
  * fill itself with events from server
  */
 export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {

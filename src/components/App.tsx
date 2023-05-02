@@ -12,7 +12,7 @@ import { Tags } from "./Tags/Tags";
 import { EventCreateButton } from "./Events/EventCreateButton/EventCreateButton";
 
 import { router } from "modules/router";
-import { loadEvents, loadLikedEvents } from "requests/events";
+import { loadEvents, loadFeaturedEvents, loadLikedEvents } from "requests/events";
 
 import { ModalWindowName, openOrganizerModal } from "flux/slices/modalWindowSlice";
 import { isAuthorized } from "flux/slices/userSlice";
@@ -92,7 +92,7 @@ export class App extends Component<any> {
                                 return (
                                     <div>
                                         <Profile id={profileId} />
-                                        <EventList request={loadLikedEvents} requestArgs={[profileId]} />
+                                        <EventList request={loadFeaturedEvents} requestArgs={[profileId]}/>
                                     </div>
                                 );
                             })()}
