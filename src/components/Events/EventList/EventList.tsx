@@ -9,12 +9,16 @@ import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
 import { TRequest } from "requests/requestTypes";
+import { EventCreateButton } from "../EventCreateButton/EventCreateButton";
+import { isAuthorized } from "flux/slices/userSlice";
+import { Tags } from "components/Tags/Tags";
+import { Calendar } from "components/Calendar/Calendar";
+import { toggleTag } from "flux/slices/tagsSlice";
+import { Link } from "components/Common/Link";
 
-interface EventListProps<PROPS extends any[] = any[]> {
-    // getEvents: (state: EventsState) => LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
+export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
-    request: TRequest<PROPS>;
-    requestArgs?: PROPS;
+    request: TRequest;
 }
 
 /**
@@ -22,26 +26,18 @@ interface EventListProps<PROPS extends any[] = any[]> {
  * @class
  * @extends Component
  */
-export class EventList extends Component<EventListProps, {}> {
+export class EventList extends Component<EventListProps> {
     constructor(props: EventListProps) {
         super(props);
     }
 
     loadEvents() {
-        if (this.props.requestArgs) {
-            requestManager.request(this.props.request, ...this.props.requestArgs);
-        } else {
-            requestManager.request(this.props.request);
-        }
+        requestManager.request(this.props.request);
     }
 
     didCreate() {
         store.dispatch(setEventsCardsLoadStart());
         this.loadEvents();
-    }
-
-    didUpdate() {
-        // this.loadEvents();
     }
 
     render() {

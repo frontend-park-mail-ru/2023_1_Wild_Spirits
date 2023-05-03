@@ -1,3 +1,8 @@
+.org-events-list {
+    display: flex;
+    flex-direction: column;
+}
+
 .org-events-list-title {
     border: #26a69a solid 2px;
     padding: 10px;

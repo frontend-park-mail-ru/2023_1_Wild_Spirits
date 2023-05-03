@@ -15,6 +15,7 @@ import { Loading } from "components/Common/Loading";
 import { EventPageMap } from "./EventPageMap";
 import { SVGInline } from "components/Common/SVGInline";
 import { TEvent } from "models/Events";
+import { OrgEvents } from "../OrgEvents/OrgEvents";
 
 /**
  * Event list component
@@ -72,85 +73,88 @@ export class EventPage extends Component {
         }));
 
         return (
-            <div className="event-page">
-                <div className="event-page__name">{event.name}</div>
-                <div className="event-page__img-block">
-                    <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />
-                </div>
-                <div className="event-page__title">Подробнее о мероприятии</div>
-                <div className="event-page__description">{event.description}</div>
-                <div className="event-page__title">Где?</div>
-                <div className="event-page__where">
-                    {fixedPlaces.map((place) => (
-                        <div>
-                            {place.city}, {place.name}, {place.address}
-                        </div>
-                    ))}
-                </div>
-                <div className="event-page__map">
-                    <EventPageMap points={Object.values(places).map(({ lat, lon }) => ({ lat, lon }))} />
-                </div>
-                <div className="event-page__tags tags-menu">
-                    {(event.tags !== null ? event.tags : []).map((tag) => (
-                        <div className="tag">{tag}</div>
-                    ))}
-                </div>
-                <div className="event-page__more-info">
-                    <Table
-                        data={[
-                            { title: "Организатор", value: organizer.name },
-                            { title: "Номер телефона", value: organizer.phone || "Не указан" },
-                            { title: "Почта", value: organizer.email || "Не указана" },
-                        ]}
-                    />
-                </div>
-                <div className="event-page__button-block">
-                    <div className="event-card__stats-container">
-                        <button
-                            className={`event-page__button-outline-like event-page__button${
-                                event.liked ? " filled" : ""
-                            }`}
-                            onClick={() => {
-                                this.toggleLike(event);
-                            }}
-                        >
-                            <SVGInline
-                                className="event-page__button-icon-like stroke-svg-icon"
-                                src="/assets/img/page/like-icon.svg"
-                                alt="like"
-                            />
-                        </button>
-                        <span>{event.likes.toString()}</span>
+            <div>
+                <div className="event-page">
+                    <div className="event-page__name">{event.name}</div>
+                    <div className="event-page__img-block">
+                        <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />
                     </div>
-                    {/* <div className="event-page__button-outline event-page__button-invite">
+                    <div className="event-page__title">Подробнее о мероприятии</div>
+                    <div className="event-page__description">{event.description}</div>
+                    <div className="event-page__title">Где?</div>
+                    <div className="event-page__where">
+                        {fixedPlaces.map((place) => (
+                            <div>
+                                {place.city}, {place.name}, {place.address}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="event-page__map">
+                        <EventPageMap points={Object.values(places).map(({ lat, lon }) => ({ lat, lon }))} />
+                    </div>
+                    <div className="event-page__tags tags-menu">
+                        {(event.tags !== null ? event.tags : []).map((tag) => (
+                            <div className="tag">{tag}</div>
+                        ))}
+                    </div>
+                    <div className="event-page__more-info">
+                        <Table
+                            data={[
+                                { title: "Организатор", value: organizer.name },
+                                { title: "Номер телефона", value: organizer.phone || "Не указан" },
+                                { title: "Почта", value: organizer.email || "Не указана" },
+                            ]}
+                        />
+                    </div>
+                    <div className="event-page__button-block">
+                        <div className="event-card__stats-container">
+                            <button
+                                className={`event-page__button-outline-like event-page__button${
+                                    event.liked ? " filled" : ""
+                                }`}
+                                onClick={() => {
+                                    this.toggleLike(event);
+                                }}
+                            >
+                                <SVGInline
+                                    className="event-page__button-icon-like stroke-svg-icon"
+                                    src="/assets/img/page/like-icon.svg"
+                                    alt="like"
+                                />
+                            </button>
+                            <span>{event.likes.toString()}</span>
+                        </div>
+                        {/* <div className="event-page__button-outline event-page__button-invite">
                         <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
                         <div className="event-page__button-text"> Пригласить друга </div>
                     </div> */}
-                    {isAuthorized(store.state.user) && event.is_mine ? (
-                        <Link href={`/editevent/${event.id}`} className="event-page__button-outline">
-                            <SVGInline
-                                className="event-page__button-icon stroke-svg-icon"
-                                src="/assets/img/page/edit-icon.svg"
-                                alt="edit"
-                            />
-                        </Link>
-                    ) : (
-                        <button
-                            className={`event-page__button-outline event-page__button${
-                                event.reminded ? " filled" : ""
-                            }`}
-                            onClick={() => {
-                                this.toggleFeatured(event);
-                            }}
-                        >
-                            <SVGInline
-                                className="event-page__button-icon stroke-svg-icon"
-                                src="/assets/img/save-icon.svg"
-                                alt="save"
-                            />
-                        </button>
-                    )}
+                        {isAuthorized(store.state.user) && event.is_mine ? (
+                            <Link href={`/editevent/${event.id}`} className="event-page__button-outline">
+                                <SVGInline
+                                    className="event-page__button-icon stroke-svg-icon"
+                                    src="/assets/img/page/edit-icon.svg"
+                                    alt="edit"
+                                />
+                            </Link>
+                        ) : (
+                            <button
+                                className={`event-page__button-outline event-page__button${
+                                    event.reminded ? " filled" : ""
+                                }`}
+                                onClick={() => {
+                                    this.toggleFeatured(event);
+                                }}
+                            >
+                                <SVGInline
+                                    className="event-page__button-icon stroke-svg-icon"
+                                    src="/assets/img/save-icon.svg"
+                                    alt="save"
+                                />
+                            </button>
+                        )}
+                    </div>
                 </div>
+                <OrgEvents />
             </div>
         );
     }

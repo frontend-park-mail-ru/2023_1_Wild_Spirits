@@ -1,6 +1,6 @@
 /** @module Components */
 
-import { VDOM, Component, patchVDOM } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { createTable, filterTableContents, TableContents } from "components/Common/CreateTable";
 import { store } from "flux";
