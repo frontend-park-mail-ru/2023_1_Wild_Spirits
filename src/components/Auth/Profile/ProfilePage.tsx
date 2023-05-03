@@ -51,11 +51,13 @@ export class ProfilePage extends Component {
                     {hasEvents(store.state.events.likedEvents) && <Delimiter content="Понравившиеся мероприятия" />}
                     <EventList request={loadLikedEvents} events={store.state.events.likedEvents} />
                 </div>
-                <div className="sidebar">
-                    <FriendListCard />
-                    <EventCreateButton />
-                    <Calendar />
-                </div>
+                {!store.state.meta.collapsed.profileCollapsed && (
+                    <div className="sidebar">
+                        <FriendListCard />
+                        <EventCreateButton />
+                        <Calendar />
+                    </div>
+                )}
             </div>
         );
     }

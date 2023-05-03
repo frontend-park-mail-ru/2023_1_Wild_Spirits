@@ -29,6 +29,7 @@ import { ProfilePage } from "./Auth/Profile/ProfilePage";
 import { createCollapsed, setCollapsed } from "flux/slices/metaSlice";
 import { deepEqual } from "modules/objectsManipulation";
 import { EventListPage } from "./Events/EventList/EvenListPage";
+import { loadCategories, loadCities } from "requests/header";
 
 /**
  * @classdesc Main app component
@@ -39,6 +40,9 @@ export class App extends Component {
     didCreate(): void {
         requestManager.request(loadAuthorization);
         requestManager.request(loadTags);
+        requestManager.request(loadCities);
+        requestManager.request(loadCategories);
+
         window.addEventListener("resize", () => {
             const collapsed = createCollapsed();
             if (!deepEqual(collapsed, store.state.meta.collapsed)) {
@@ -65,9 +69,7 @@ export class App extends Component {
 
         return (
             <div className="app">
-                <div className="header">
-                    <Header />
-                </div>
+                <div className="header"></div>
 
                 <div className="content">
                     {url === "/" && <EventListPage />}

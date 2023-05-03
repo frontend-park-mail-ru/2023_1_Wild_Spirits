@@ -1,6 +1,10 @@
 .org-events-list {
     display: flex;
     flex-direction: column;
+    @media screen and (max-width: $event-page-collapse-width) {
+        max-width: 800px;
+        margin: 40px auto;
+    }
 }
 
 .org-events-list-title {
@@ -16,16 +20,13 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    @media screen and (max-width: $event-page-collapse-width) {
+        justify-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
 }
-
-// .org-events-list__card {
-//     @extend .card-base;
-//     min-width: 240px;
-//     max-width: 240px;
-
-//     display: flex;
-//     flex-direction: column;
-// }
 
 .org-events-list__card-title {
     margin-bottom: 10px;

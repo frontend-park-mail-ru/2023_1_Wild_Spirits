@@ -73,8 +73,8 @@ export class EventPage extends Component {
         }));
 
         return (
-            <div>
-                <div className="event-page">
+            <div className="event-page">
+                <div className="event-page__content">
                     <div className="event-page__name">{event.name}</div>
                     <div className="event-page__img-block">
                         <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />
@@ -89,7 +89,7 @@ export class EventPage extends Component {
                             </div>
                         ))}
                     </div>
-                    <div className="event-page__map">
+                    <div className="">
                         <EventPageMap points={Object.values(places).map(({ lat, lon }) => ({ lat, lon }))} />
                     </div>
                     <div className="event-page__tags tags-menu">
@@ -97,15 +97,13 @@ export class EventPage extends Component {
                             <div className="tag">{tag}</div>
                         ))}
                     </div>
-                    <div className="event-page__more-info">
-                        <Table
-                            data={[
-                                { title: "Организатор", value: organizer.name },
-                                { title: "Номер телефона", value: organizer.phone || "Не указан" },
-                                { title: "Почта", value: organizer.email || "Не указана" },
-                            ]}
-                        />
-                    </div>
+                    <Table
+                        data={[
+                            { title: "Организатор", value: organizer.name },
+                            { title: "Номер телефона", value: organizer.phone || "Не указан" },
+                            { title: "Почта", value: organizer.email || "Не указана" },
+                        ]}
+                    />
                     <div className="event-page__button-block">
                         <div className="event-card__stats-container">
                             <button

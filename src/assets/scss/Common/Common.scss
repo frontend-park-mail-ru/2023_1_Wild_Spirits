@@ -30,16 +30,16 @@
     display: flex;
 }
 
+$table-collapse: 500px;
+
 .table {
     display: grid;
     grid-template-columns: 1fr 1fr;
     max-width: 700px;
-}
-
-.table__block {
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
+    @media (max-width: 500px) {
+        margin-top: 10px;
+        grid-template-columns: 1fr;
+    }
 }
 
 .table__cell {
@@ -49,26 +49,59 @@
     font-size: 24px;
     padding: 15px 20px 5px 0;
     border-bottom: 1px solid black;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    @media screen and (max-width: $table-collapse) {
+        padding: 3px 5px;
+        font-size: 20px;
+    }
+}
+
+.table__cell-title {
+    @extend .table__cell;
+    min-width: 100px;
+    word-wrap: break-word;
+    color: grey;
+
+    @media screen and (max-width: $table-collapse) {
+        border-bottom: none;
+        margin-top: 5px;
+    }
 }
 
 .table__cell-input {
     display: flex;
     align-self: flex-end;
     border-bottom: 1px solid black;
+    @media screen and (max-width: $table-collapse) {
+        border-bottom: none;
+        margin: 0;
+    }
 }
 
 .table__input {
     padding: 5px 10px 0;
     margin: auto 20px 3px -12px;
     font-size: 24px;
+    width: 100%;
 
     font-family: "Roboto";
     font-weight: normal;
+    @media screen and (max-width: $table-collapse) {
+        font-size: 20px;
+        padding: 7px;
+        margin: 0;
+    }
 }
 
 .delimiter__content {
     font-size: 40px;
     text-align: center;
+    @media screen and (max-width: 500px) {
+        font-size: 32px;
+    }
 }
 
 .grey {

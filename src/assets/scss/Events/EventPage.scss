@@ -1,9 +1,28 @@
 .event-page {
-    margin: 48px auto 80px;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 48px 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    @media screen and (max-width: $event-page-collapse-width) {
+        flex-direction: column;
+    }
+}
+
+.event-page__content {
+    min-width: 200px;
+    width: 100%;
     max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    @media screen and (max-width: $event-page-collapse-width) {
+        margin: 0 auto;
+    }
 }
 
 .event-page__name {
+    word-wrap: break-word;
     font-size: 32px;
     text-align: center;
 }
@@ -28,6 +47,8 @@
 }
 
 .event-page__description {
+    word-wrap: break-word;
+
     margin-top: 12px;
 }
 
@@ -108,7 +129,7 @@
 }
 
 .event-page__map {
-    width: 95%;
+    width: 100%;
     aspect-ratio: 3/2;
     margin: 10px auto -28px;
 }

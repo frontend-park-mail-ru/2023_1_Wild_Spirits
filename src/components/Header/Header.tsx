@@ -27,16 +27,7 @@ import { CategoriesMenu } from "./CategoriesMenu";
  * @extends Component
  * Component for navbar
  */
-export class Header extends Component<any> {
-    constructor() {
-        super({});
-    }
-
-    didCreate(): void {
-        requestManager.request(loadCities);
-        requestManager.request(loadCategories);
-    }
-
+export class Header extends Component {
     #onLogout = () => {
         requestManager.request(logoutUser);
     };

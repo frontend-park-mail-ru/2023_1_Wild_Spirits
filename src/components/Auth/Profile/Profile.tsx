@@ -189,7 +189,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                 type FieldType = { title: string; name: string; value: string };
                 const renderField = ({ title, name, value }: FieldType) => {
                     return [
-                        <div className="table__cell grey">{title}</div>,
+                        <div className="table__cell-title">{title}</div>,
                         <div className="table__cell-input">
                             <input className="table__input" name={name} type="text" value={value} />
                         </div>,
@@ -202,7 +202,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                         {profile_data.email &&
                             renderField({ title: "Почта", name: "email", value: profile_data.email })}
 
-                        <div className="table__cell grey">Город</div>
+                        <div className="table__cell-title">Город</div>
                         <div className="table__cell">
                             <div className="header__city__selector">
                                 <select name="city_id" value={city} id="profile-city-select">
@@ -247,7 +247,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
             let cells = [];
 
             for (const row of rows) {
-                cells.push(<div className="table__cell grey">{row.title}</div>);
+                cells.push(<div className="table__cell-title">{row.title}</div>);
                 cells.push(<div className="table__cell">{row.value}</div>);
             }
 
