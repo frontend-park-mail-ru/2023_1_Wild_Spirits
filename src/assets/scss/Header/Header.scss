@@ -15,6 +15,11 @@
     width: var(--logo-size);
     height: var(--logo-size);
     padding-top: 0;
+
+    @media screen and (max-width: 900px) {
+        width: 48px;
+        height: 48px;
+    }
 }
 
 .header__head {
@@ -42,6 +47,11 @@
     padding: 0 20px;
 
     align-items: center;
+
+    @media screen and (max-width: 900px) {
+        margin-left: 48px;
+        padding: 0 10px;
+    }
 }
 
 .header__category {

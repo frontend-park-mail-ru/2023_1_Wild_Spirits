@@ -48,15 +48,27 @@ import { EventsState, hasEvents, hasNotLoaded } from "flux/slices/eventSlice";
  * @class
  * @extends Component
  */
-export class App extends Component<any> {
+export class App extends Component<any, { matches: boolean }> {
     constructor() {
         super({});
+        this.state = {
+            matches: window.matchMedia("(max-width:600px)").matches,
+        };
     }
 
     didCreate(): void {
         requestManager.request(loadAuthorization);
         requestManager.request(loadTags);
+        window.addEventListener("resize", () => {
+            this.setState({
+                matches: window.matchMedia("(max-width:600px)").matches,
+            });
+            console.log(window.matchMedia("(max-width:600px)").matches);
+            store.dispatch();
+        });
     }
+
+    willDestroy(): void {}
 
     render(): JSX.Element {
         router.reset();
@@ -103,9 +115,11 @@ export class App extends Component<any> {
 
         return (
             <div className="app">
-                <div className="header">
-                    <Header />
-                </div>
+                {!this.state.matches && (
+                    <div className="header">
+                        <Header />
+                    </div>
+                )}
 
                 <div className="row">
                     <div className="content">
