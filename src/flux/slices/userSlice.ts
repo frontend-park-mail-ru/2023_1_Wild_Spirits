@@ -113,7 +113,6 @@ const userSlice = createSlice({
                     id: action.payload.id,
                 };
             }
-            console.log(state);
             return state;
         },
         setCurrentProfileFriends: (state: UserState, action: PayloadAction<{ friends: TFriend[] }>) => {

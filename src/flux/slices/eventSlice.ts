@@ -99,7 +99,6 @@ const eventsSlice = createSlice({
         },
         setEventProcessingFormData: (state: EventsState, action: PayloadAction<EventProcessingPayload>) => {
             const { event, places, tags, processingState } = action.payload;
-            console.log("categories", event.categories);
             state.processing = {
                 loadStatus: LoadStatus.DONE,
                 processingState,
@@ -215,7 +214,7 @@ const eventsSlice = createSlice({
 
             subSlices.forEach((subSlice) => dislike(subSlice));
 
-            if (state.likedEvents.loadStatus === LoadStatus.DONE) {
+            if (state.likedEvents.loadStatus === LoadStatus.DONE && mineProfile(store.state.user)) {
                 state.likedEvents.data = state.likedEvents.data.filter((event) => event.id !== action.payload.eventId);
             }
 
@@ -280,7 +279,7 @@ const eventsSlice = createSlice({
 
             subSlices.forEach((subSlice) => unfeature(subSlice));
 
-            if (state.plannedEvents.loadStatus === LoadStatus.DONE) {
+            if (state.plannedEvents.loadStatus === LoadStatus.DONE && mineProfile(store.state.user)) {
                 state.plannedEvents.data = state.plannedEvents.data.filter(
                     (event) => event.id !== action.payload.eventId
                 );
@@ -297,12 +296,10 @@ const eventsSlice = createSlice({
             return state;
         },
         setOrgEventsLoadStart: (state: EventsState) => {
-            console.log("setOrgEventsLoadStart");
             state.orgEvents = { loadStatus: LoadStatus.LOADING };
             return state;
         },
         setOrgEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            console.log("setOrgEvents");
             state.orgEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -316,7 +313,6 @@ const eventsSlice = createSlice({
             return state;
         },
         setLikedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            console.log("setLikedEvents");
             state.likedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -330,7 +326,6 @@ const eventsSlice = createSlice({
             return state;
         },
         setPlannedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            console.log("setPlannedEvents");
             state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -344,8 +339,6 @@ const eventsSlice = createSlice({
             return state;
         },
         setSubbedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            console.log("setSubbedEvents");
-
             state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },

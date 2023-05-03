@@ -46,10 +46,6 @@ export class OrganizerModal extends Component<any, { errors: OrganizerModalError
             return;
         }
 
-        for (const el of formData) {
-            console.log(el);
-        }
-
         requestManager.request(registerOrganizer, formData);
     };
 

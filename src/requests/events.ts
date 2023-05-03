@@ -381,16 +381,13 @@ export const loadEventPageOrgEvents = (resolveRequest: TRequestResolver) => {
 };
 
 export const loadProfileOrgEvents = (resolveRequest: TRequestResolver) => {
-    console.error("loadProfileOrgEvents start");
     if (store.state.user.currentProfile === undefined) {
-        console.error("Error");
         store.dispatch(setOrgEventsLoadError());
         resolveRequest();
         return;
     }
     if (store.state.user.currentProfile.org_id === undefined) {
         store.dispatch(setOrgEvents([]));
-        console.error("store.state.user.currentProfile.org_id === undefined");
 
         resolveRequest();
         return;

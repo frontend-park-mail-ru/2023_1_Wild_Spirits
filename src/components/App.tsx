@@ -48,15 +48,8 @@ export class App extends Component<any> {
     }
 
     didCreate(): void {
-        console.error("App Created");
         requestManager.request(loadAuthorization);
         requestManager.request(loadTags);
-
-        // addRouterEvents();
-    }
-
-    willDestroy(): void {
-        console.error("Add Destroy");
     }
 
     render(): JSX.Element {

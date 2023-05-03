@@ -157,9 +157,7 @@ const isNodeTypeTag = (vNode: VNodeType): vNode is TagVNodeType => {
 };
 
 const isNodeTypeSimple = (vNode: VNodeType): vNode is SimpleVNodeType => {
-    return (
-        typeof vNode === "string" || typeof vNode === "boolean" || typeof vNode === "undefined" || vNode === null
-    );
+    return typeof vNode === "string" || typeof vNode === "boolean" || typeof vNode === "undefined" || vNode === null;
 };
 
 export const createDOMNode = (vNode: VNodeType) => {
@@ -203,7 +201,6 @@ const tryPatchComponent = (vNode: VNodeType, nextVNode: VNodeType): boolean => {
         let isPropsChanged = false;
         if (isNodeTypeComponent(vNode)) {
             if (vNode._instance.constructor.name !== nextVNode._instance.constructor.name) {
-                // console.log(vNode._instance.constructor.name, nextVNode._instance.constructor.name);
             } else {
                 isPropsChanged = !deepEqual(vNode._instance.props, nextVNode._instance.props);
                 vNode._instance.props = nextVNode._instance.props;

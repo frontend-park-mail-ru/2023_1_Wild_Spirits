@@ -42,7 +42,6 @@ export const loadAuthorization = (resolveRequest: TRequestResolver) => {
 };
 
 export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
-    console.log("start profile");
     ajax.get<ResponseUserProfile>({
         url: `/users/${id}`,
         credentials: true,
@@ -51,7 +50,6 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
             if (response.ok && json.body) {
                 store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
-            console.log("profile response.ok", id);
 
             resolveRequest(id);
         })

@@ -2,19 +2,33 @@
 
 import { Link } from "components/Common/Link";
 import { store } from "flux";
-import { setOrgEventsLoadStart } from "flux/slices/eventSlice";
+import { setOrgEventsLoadStart, setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { fixEventDates } from "models/Events";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { router } from "modules/router";
 import { VDOM, Component } from "modules/vdom";
 import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
-import { loadEventPageOrgEvents } from "requests/events";
+import { loadEventPage, loadEventPageOrgEvents } from "requests/events";
 
 export class OrgEvents extends Component {
     didCreate() {
         store.dispatch(setOrgEventsLoadStart());
 
         requestManager.request(loadEventPageOrgEvents);
+        this.getEventId = this.getEventId.bind(this);
+        this.loadNewEventPage = this.loadNewEventPage.bind(this);
+    }
+
+    getEventId(): number {
+        const url = router.getNextUrlNotRemove();
+        return parseInt(url.slice(1));
+    }
+
+    loadNewEventPage() {
+        store.dispatch(setSelectedEventLoadStart());
+        const eventId = this.getEventId();
+        requestManager.request(loadEventPage, eventId);
     }
 
     render() {
@@ -41,6 +55,7 @@ export class OrgEvents extends Component {
                                     id={`event_${event.id}`}
                                     className="event-card__content"
                                     href={`/events/${event.id}`}
+                                    onClick={this.loadNewEventPage}
                                 >
                                     <div className="card__img-block">
                                         <img className="card__img" src={getUploadsImg(event.img)} alt={event.name} />

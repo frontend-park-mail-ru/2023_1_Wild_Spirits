@@ -50,13 +50,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
         this.loadProfile();
     }
 
-    willUpdate(): void {
-        //this.loadProfile();
-        console.log("profile will update");
-    }
-
     didUpdate(): void {
-        console.log("profile did update");
         this.loadProfile();
     }
 

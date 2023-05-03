@@ -79,7 +79,9 @@ export class EventProcessing extends Component<EventProcessingProps> {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                store.dispatch(
+                    setEventProcessingErrors({ default: "По каким-то причинам, удалить мероприятие сейчас невозможно" })
+                );
             });
     }
 
@@ -169,7 +171,6 @@ export class EventProcessing extends Component<EventProcessingProps> {
             store.dispatch(setEventProcessingErrors(errors));
             return;
         }
-        for (const i of formData.entries()) console.log(i[0], i[1]);
         return {
             eventId: processing.formData.id,
             formData,
@@ -188,8 +189,6 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const { eventId, formData, tempFileUrl } = result;
 
         const sendForm = (data: FormData) => {
-            for (const i of data) console.log(i);
-
             const isCreate = !this.#isEdit();
             const ajaxMethod = isCreate ? ajax.post.bind(ajax) : ajax.patch.bind(ajax);
             const url: string = "/events" + (!isCreate ? `/${eventId}` : "");
@@ -204,7 +203,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
+                    store.dispatch(setEventProcessingErrors({ default: "Ошибка сервера, попробуйте позже!" }));
                 });
             ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
         };

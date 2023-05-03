@@ -32,11 +32,11 @@ export class Link extends Component<LinkProps> {
     handleClick(event: PointerEvent) {
         event.preventDefault();
 
+        router.go(this.props.href);
+
         if (this.props.onClick) {
             this.props.onClick();
         }
-
-        router.go(this.props.href);
     }
 
     render() {

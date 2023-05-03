@@ -24,7 +24,7 @@ import { TEvent } from "models/Events";
  */
 export class EventPage extends Component {
     getEventId(): number {
-        const url = router.getNextUrl();
+        const url = router.getNextUrlNotRemove();
         return parseInt(url.slice(1));
     }
 

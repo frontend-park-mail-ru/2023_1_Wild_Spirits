@@ -1,5 +1,3 @@
-import { Component } from "components/Component";
-
 type RouterType<T> = Record<string, () => T>;
 
 class Router {
@@ -51,11 +49,6 @@ class Router {
     switchAny<T = any>(routes: RouterType<T>, defaultValue: () => T): T {
         const { result, founded } = this.#searchByUrl(routes);
         return founded ? result : defaultValue();
-    }
-
-    switchComponent(routes: RouterType<Component>): string {
-        const { result, founded } = this.#searchByUrl(routes);
-        return founded ? result.render() : "";
     }
 
     go(url: string) {
