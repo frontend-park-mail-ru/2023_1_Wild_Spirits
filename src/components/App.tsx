@@ -12,7 +12,13 @@ import { Tags } from "./Tags/Tags";
 import { EventCreateButton } from "./Events/EventCreateButton/EventCreateButton";
 
 import { router } from "modules/router";
-import { loadEvents, loadPlannedEvents, loadLikedEvents, loadProfileOrgEvents } from "requests/events";
+import {
+    loadEvents,
+    loadPlannedEvents,
+    loadLikedEvents,
+    loadProfileOrgEvents,
+    loadSubbedEvents,
+} from "requests/events";
 
 import { ModalWindowName, openOrganizerModal } from "flux/slices/modalWindowSlice";
 import { isAuthorized, isOrganizer } from "flux/slices/userSlice";
@@ -108,6 +114,15 @@ export class App extends Component<any> {
                         {url === "/profile" && (
                             <div>
                                 <Profile id={profileId} />
+
+                                {hasEvents(store.state.events.subbedEvents) && (
+                                    <Delimiter content="Мероприятия подписок" />
+                                )}
+                                <EventList
+                                    request={loadSubbedEvents}
+                                    requestArgs={[profileId]}
+                                    events={store.state.events.subbedEvents}
+                                />
 
                                 {isOrganizer(store.state.user) && hasEvents(store.state.events.orgEvents) && (
                                     <Delimiter content="Мероприятия данного организатора" />

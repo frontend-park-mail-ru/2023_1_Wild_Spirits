@@ -335,15 +335,15 @@ const eventsSlice = createSlice({
         },
 
         setSubbedEventsLoadStart: (state: EventsState) => {
-            state.plannedEvents = { loadStatus: LoadStatus.LOADING };
+            state.subbedEvents = { loadStatus: LoadStatus.LOADING };
             return state;
         },
         setSubbedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
+            state.subbedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
         setSubbedEventsLoadError: (state: EventsState) => {
-            state.plannedEvents = { loadStatus: LoadStatus.ERROR };
+            state.subbedEvents = { loadStatus: LoadStatus.ERROR };
             return state;
         },
     },

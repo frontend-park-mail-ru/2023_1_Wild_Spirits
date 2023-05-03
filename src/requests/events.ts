@@ -17,6 +17,8 @@ import {
     setLikedEventsLoadError,
     setPlannedEvents,
     setPlannedEventsLoadError,
+    setSubbedEvents,
+    setSubbedEventsLoadError,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -137,6 +139,34 @@ export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
         })
         .catch(() => {
             store.dispatch(setPlannedEventsLoadError());
+            resolveRequest();
+        });
+};
+
+/**
+ * fill itself with events from server that current user subbed
+ */
+export const loadSubbedEvents = (resolveRequest: TRequestResolver) => {
+    const userId = store.state.user.currentProfile?.id;
+    if (userId === undefined) {
+        return;
+    }
+
+    ajax.get<ResponseEventsLight>({
+        url: `/users/${userId}/subevents`,
+        urlProps: getLoadEventFilterProps(),
+        credentials: true,
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setSubbedEvents(json.body.events !== null ? json.body.events : []));
+            } else {
+                store.dispatch(setSubbedEventsLoadError());
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            store.dispatch(setSubbedEventsLoadError());
             resolveRequest();
         });
 };

@@ -6,8 +6,14 @@ import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { requestManager } from "requests";
-import { loadLikedEvents, loadPlannedEvents, loadProfileOrgEvents } from "requests/events";
+import { loadLikedEvents, loadPlannedEvents, loadProfileOrgEvents, loadSubbedEvents } from "requests/events";
 import { loadProfile } from "requests/user";
+import {
+    setLikedEventsLoadStart,
+    setOrgEventsLoadStart,
+    setPlannedEventsLoadStart,
+    setSubbedEventsLoadStart,
+} from "flux/slices/eventSlice";
 
 interface LinkProps {
     id?: string;
@@ -56,6 +62,13 @@ export class Link extends Component<LinkProps> {
 }
 
 export const loadProfileEvents = () => {
+    store.dispatch(
+        setSubbedEventsLoadStart(),
+        setOrgEventsLoadStart(),
+        setLikedEventsLoadStart(),
+        setPlannedEventsLoadStart()
+    );
+    requestManager.request(loadSubbedEvents);
     requestManager.request(loadProfileOrgEvents);
     requestManager.request(loadLikedEvents);
     requestManager.request(loadPlannedEvents);
