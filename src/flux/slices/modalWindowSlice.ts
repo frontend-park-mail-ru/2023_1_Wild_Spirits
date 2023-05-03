@@ -8,7 +8,13 @@ export namespace ModalWindowName {
     export const CITY_SELECTOR = "city-selector";
     export const ORGANIZER = "organizer";
 
-    export type NameType = typeof NONE | typeof LOGIN | typeof REGISTER | typeof FRIEND_LIST | typeof CITY_SELECTOR | typeof ORGANIZER
+    export type NameType =
+        | typeof NONE
+        | typeof LOGIN
+        | typeof REGISTER
+        | typeof FRIEND_LIST
+        | typeof CITY_SELECTOR
+        | typeof ORGANIZER;
 }
 
 interface ModalWindowState {
@@ -46,10 +52,11 @@ const modalWindowSlice = createSlice({
         openOrganizerModal: (state) => {
             state.name = ModalWindowName.ORGANIZER;
             return state;
-        }
+        },
     },
 });
 
-export const { close, openLogin, openRegister, openFriendsList, openCitySelector, openOrganizerModal } = modalWindowSlice.actions;
+export const { close, openLogin, openRegister, openFriendsList, openCitySelector, openOrganizerModal } =
+    modalWindowSlice.actions;
 
 export default modalWindowSlice;

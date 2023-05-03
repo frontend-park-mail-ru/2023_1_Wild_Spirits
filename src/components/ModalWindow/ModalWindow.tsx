@@ -32,25 +32,16 @@ export class ModalWindow extends Component {
     }
 
     render(): JSX.Element {
-        const getContent = () => {
-            switch (store.state.modalWindow.name) {
-                case ModalWindowName.LOGIN:
-                    return <Login />;
-                case ModalWindowName.REGISTER:
-                    return <Registration />;
-                case ModalWindowName.FRIEND_LIST:
-                    return <FriendList />;
-                case ModalWindowName.CITY_SELECTOR:
-                    return <CityPicker />;
-                case ModalWindowName.ORGANIZER:
-                    return <OrganizerModal />;
-            }
-        };
+        const isTypeOf = (typeName: ModalWindowName.NameType) => store.state.modalWindow.name === typeName;
 
         return (
             <div className="modal" onMouseDown={this.handleOutModalMouseDown}>
                 <div className="modal__form__container" onMouseDown={(e) => this.handleInModalMouseDown(toEvent(e))}>
-                    {getContent()}
+                    {isTypeOf(ModalWindowName.LOGIN) && <Login />}
+                    {isTypeOf(ModalWindowName.REGISTER) && <Registration />}
+                    {isTypeOf(ModalWindowName.FRIEND_LIST) && <FriendList />}
+                    {isTypeOf(ModalWindowName.CITY_SELECTOR) && <CityPicker />}
+                    {isTypeOf(ModalWindowName.ORGANIZER) && <OrganizerModal />}
                 </div>
             </div>
         );

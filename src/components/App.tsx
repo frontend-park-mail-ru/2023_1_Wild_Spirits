@@ -160,7 +160,7 @@ export class App extends Component<any> {
                         {url === "/events" && <OrgEvents />}
 
                         {url === "/profile" && <FriendListCard />}
-                        {(url === "/" || url === "/profile") && <EventCreateButton />}
+                        {(url === "/" || url === "/profile") && isAuthorized(store.state.user) && <EventCreateButton />}
                         {url === "/" && <GoMapBtn />}
                         {(url === "/" || url === "/profile") && <Calendar />}
                         {url === "/" && (
