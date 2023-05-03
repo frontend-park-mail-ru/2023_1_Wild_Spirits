@@ -120,7 +120,7 @@ export class Map extends Component<any, MapState> {
     render() {
         this.addMarker();
         return (
-            <div>
+            <div className="map-page">
                 <div
                     id="map-container"
                     className="map map-container"

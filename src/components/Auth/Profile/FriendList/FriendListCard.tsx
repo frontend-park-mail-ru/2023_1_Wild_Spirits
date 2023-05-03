@@ -42,14 +42,14 @@ export class FriendListCard extends Component {
                 return (
                     <span>
                         У вас пока нет подписок
-                        <Link href="#" className="link" onClick={this.#openFriendsList}>
+                        <Link href="#" className="link friend-list-card__friend-button" onClick={this.#openFriendsList}>
                             найти
                         </Link>
                     </span>
                 );
             }
 
-            return <span>У этого пользователя нет пеодисок</span>;
+            return <span>У этого пользователя нет подписок</span>;
         };
 
         const content = generateContent();

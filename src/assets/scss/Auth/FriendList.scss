@@ -36,6 +36,11 @@
     border-color: var(--link-color);
 }
 
+.friend-list-card__friend-button {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
 .friend-list__item__avatar {
     width: var(--avatar-size);
     height: var(--avatar-size);
