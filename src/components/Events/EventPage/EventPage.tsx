@@ -2,7 +2,6 @@
 
 import { VDOM, Component } from "modules/vdom";
 import { router } from "modules/router";
-import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, loadEventPage, featureEvent, unfeatureEvent } from "requests/events";

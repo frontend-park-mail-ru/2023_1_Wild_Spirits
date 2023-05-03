@@ -1,7 +1,10 @@
 @import "Common/";
 @import "Events/";
-@import "./Auth/styles.scss";
-@import "./Tags/styles.scss";
+@import "Auth/";
+@import "Header/";
+@import "Tags/";
+@import "Map/";
+@import "ModalWindow/";
 
 @font-face {
     font-family: "Roboto";

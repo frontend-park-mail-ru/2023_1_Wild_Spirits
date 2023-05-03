@@ -19,7 +19,6 @@ import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
 import { addFriend, deleteFriend, loadProfile } from "requests/user";
 import { toWebP } from "modules/imgConverter";
-import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { ResponseErrorDefault } from "responses/ResponseBase";
 import { requestManager } from "requests";

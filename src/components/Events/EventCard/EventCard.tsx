@@ -4,7 +4,6 @@ import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { TOrgLight } from "models/Events";
 import { isAuthorized } from "flux/slices/userSlice";
-import "./styles.scss";
 import { Link } from "components/Common/Link";
 import { EventCardMarker } from "./EventCardMarker";
 

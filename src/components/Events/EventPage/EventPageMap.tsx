@@ -1,7 +1,6 @@
 /** @module Components */
 
 import { VDOM, Component } from "modules/vdom";
-import "./styles.scss";
 import * as ymaps from "yandex-maps";
 
 interface EventPageMapProps {

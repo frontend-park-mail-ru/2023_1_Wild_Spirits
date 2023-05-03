@@ -15,7 +15,6 @@ import {
 } from "flux/slices/calendarSlice";
 
 import { store } from "flux";
-import "./styles.scss";
 import { requestManager } from "requests";
 
 /**
@@ -181,13 +180,14 @@ export class Calendar extends Component {
 
                     <div className="calendar__row-border"></div>
 
-                    {
-                        weeks.map(date=> (
-                            <button onClick={(event) => this.#toggleDate(event as unknown as PointerEvent)}
-                                className={`calendar-date current ${date.style}`}>{date.date.toString()}
-                            </button>
-                        ))
-                    }
+                    {weeks.map((date) => (
+                        <button
+                            onClick={(event) => this.#toggleDate(event as unknown as PointerEvent)}
+                            className={`calendar-date current ${date.style}`}
+                        >
+                            {date.date.toString()}
+                        </button>
+                    ))}
                 </div>
             </div>
         );

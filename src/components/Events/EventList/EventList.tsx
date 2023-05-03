@@ -3,16 +3,12 @@
 import { VDOM, Component } from "modules/vdom";
 import { EventCard, EventCardProps } from "components/Events/EventCard/EventCard";
 import { eventsLightDataToCardProps, TEventLight } from "models/Events";
-import { getUploadsImg } from "modules/getUploadsImg";
-import { loadEvents } from "requests/events";
 import { LoadStatus } from "requests/LoadStatus";
-import "./styles.scss";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
 import { TRequest } from "requests/requestTypes";
-import { EventsState } from "flux/slices/eventSlice";
 
 interface EventListProps<PROPS extends any[] = any[]> {
     // getEvents: (state: EventsState) => LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;

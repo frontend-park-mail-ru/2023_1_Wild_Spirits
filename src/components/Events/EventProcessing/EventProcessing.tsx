@@ -5,7 +5,6 @@ import { toWebP } from "modules/imgConverter";
 import { store } from "flux";
 import { kickUnauthorized } from "flux/slices/userSlice";
 import { LoadStatus } from "requests/LoadStatus";
-import "./styles.scss";
 import { EventProcessingForm, EventProcessingType } from "models/Events";
 import {
     EventProcessingData,

@@ -2,7 +2,6 @@ import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { ModalWindowName, close } from "flux/slices/modalWindowSlice";
-import "./styles.scss";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Login } from "components/Auth/Login/Login";
 import { FriendList } from "components/Auth/Profile/FriendList/FriendList";

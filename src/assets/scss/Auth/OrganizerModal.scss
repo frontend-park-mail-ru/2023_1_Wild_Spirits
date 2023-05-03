@@ -1,0 +1,20 @@
+.organizer-modal {
+    display: flex;
+    flex-direction: column;
+}
+
+.organizer-modal__header {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.organizer__form-block {
+    display: flex;
+    flex-direction: column;
+
+    & .form-control {
+        width: auto;
+    }
+}

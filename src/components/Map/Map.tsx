@@ -1,7 +1,6 @@
 /** @module Components */
 
 import { VDOM, Component, createDOMNode, JSXToVNode } from "modules/vdom";
-import "./styles.scss";
 import * as ymaps from "yandex-maps";
 import { store } from "flux";
 import { loadEnventsMap } from "requests/events";

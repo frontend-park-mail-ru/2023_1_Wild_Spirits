@@ -17,7 +17,6 @@ import { loadCategories, loadCities } from "requests/header";
 import { openCitySelector } from "flux/slices/modalWindowSlice";
 
 import { logoutUser } from "requests/user";
-import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests/index";
 import { Link, ProfileLink } from "components/Common/Link";

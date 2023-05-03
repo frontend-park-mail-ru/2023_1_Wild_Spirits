@@ -7,8 +7,6 @@ import { store } from "flux";
 import { openFriendsList } from "flux/slices/modalWindowSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 
-import "./styles.scss";
-
 export class FriendListCard extends Component {
     constructor() {
         super({});

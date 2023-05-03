@@ -3,7 +3,6 @@ import { VDOM, Component } from "modules/vdom";
 import { requestManager } from "requests";
 import { registerOrganizer } from "requests/user";
 
-import "./styles.scss";
 import { toSubmitEvent } from "modules/CastEvents";
 import { InputField } from "components/Form/FormBase";
 
