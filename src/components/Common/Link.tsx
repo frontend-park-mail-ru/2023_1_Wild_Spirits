@@ -7,13 +7,14 @@ import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { requestManager } from "requests";
 import { loadLikedEvents, loadPlannedEvents, loadProfileOrgEvents } from "requests/events";
+import { loadProfile } from "requests/user";
 
 interface LinkProps {
     id?: string;
     href: string;
     className?: string;
     children: JSX.Element[] | JSX.Element | string;
-    onClick?: ()=>void;
+    onClick?: () => void;
 }
 
 /**
@@ -30,7 +31,7 @@ export class Link extends Component<LinkProps> {
 
     handleClick(event: PointerEvent) {
         event.preventDefault();
-        
+
         if (this.props.onClick) {
             this.props.onClick();
         }
@@ -46,31 +47,31 @@ export class Link extends Component<LinkProps> {
                 href={this.props.href}
                 onClick={(e) => this.handleClick(toPointerEvent(e))}
             >
-                {Array.isArray(this.props.children) ? this.props.children.map((child) => child).flat() : this.props.children}
+                {Array.isArray(this.props.children)
+                    ? this.props.children.map((child) => child).flat()
+                    : this.props.children}
             </a>
         );
     }
 }
 
 export const loadProfileEvents = () => {
-    const userId = store.state.user.currentProfile?.id;
-
-    if (userId === undefined) {
-        return;
-    }
-
     requestManager.request(loadProfileOrgEvents);
-    requestManager.request(loadLikedEvents, userId);
-    requestManager.request(loadPlannedEvents, userId);
+    requestManager.request(loadLikedEvents);
+    requestManager.request(loadPlannedEvents);
 };
 
 export const ProfileLink = (props: LinkProps) => {
-    const onClick = () => {props.onClick && props.onClick(); loadProfileEvents()};
+    const onClick = () => {
+        requestManager.removeDone(loadProfile);
+        props.onClick && props.onClick();
+        loadProfileEvents();
+    };
     return (
         <div>
             <Link {...props} onClick={onClick}>
                 {Array.isArray(props.children) ? props.children.map((child) => child) : props.children}
             </Link>
         </div>
-    )
-}
+    );
+};

@@ -2,7 +2,7 @@ interface TUserBase {
     id: number;
     name: string;
     img: string;
-    email: string;
+    email?: string;
 }
 
 export interface TUserLight extends TUserBase {

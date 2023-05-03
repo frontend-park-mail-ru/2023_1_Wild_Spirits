@@ -100,15 +100,21 @@ export class EventPage extends Component {
                     <Table
                         data={[
                             { title: "Организатор", value: organizer.name },
-                            { title: "Номер телефона", value: organizer.phone },
-                            { title: "Почта", value: organizer.email },
+                            { title: "Номер телефона", value: organizer.phone || "Не указан" },
+                            { title: "Почта", value: organizer.email || "Не указана" },
                         ]}
                     />
                 </div>
                 <div className="event-page__button-block">
                     <div className="event-card__stats-container">
-                        <button className={`event-page__button-outline-like event-page__button${event.liked ? " filled" : ""}`}
-                                onClick={() => {this.toggleLike(event)}}>
+                        <button
+                            className={`event-page__button-outline-like event-page__button${
+                                event.liked ? " filled" : ""
+                            }`}
+                            onClick={() => {
+                                this.toggleLike(event);
+                            }}
+                        >
                             <SVGInline
                                 className="event-page__button-icon-like stroke-svg-icon"
                                 src="/assets/img/page/like-icon.svg"
@@ -123,14 +129,24 @@ export class EventPage extends Component {
                     </div> */}
                     {isAuthorized(store.state.user) && event.is_mine ? (
                         <Link href={`/editevent/${event.id}`} className="event-page__button-outline">
-                            <SVGInline className="event-page__button-icon stroke-svg-icon" src="/assets/img/page/edit-icon.svg" alt="edit" />
+                            <SVGInline
+                                className="event-page__button-icon stroke-svg-icon"
+                                src="/assets/img/page/edit-icon.svg"
+                                alt="edit"
+                            />
                         </Link>
                     ) : (
-                        <button className={`event-page__button-outline event-page__button${event.reminded  ? " filled" : ""}`}
-                                onClick={() => {this.toggleFeatured(event)}}>
-                            <SVGInline 
+                        <button
+                            className={`event-page__button-outline event-page__button${
+                                event.reminded ? " filled" : ""
+                            }`}
+                            onClick={() => {
+                                this.toggleFeatured(event);
+                            }}
+                        >
+                            <SVGInline
                                 className="event-page__button-icon stroke-svg-icon"
-                                src="/assets/img/save-icon.svg" 
+                                src="/assets/img/save-icon.svg"
                                 alt="save"
                             />
                         </button>

@@ -7,7 +7,7 @@ import { store } from "flux";
 import { openFriendsList } from "flux/slices/modalWindowSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 
-import "./styles.scss"
+import "./styles.scss";
 
 export class FriendListCard extends Component {
     constructor() {
@@ -43,7 +43,7 @@ export class FriendListCard extends Component {
             if (mine) {
                 return (
                     <span>
-                        У вас пока нет друзей{" "}
+                        У вас пока нет подписок
                         <Link href="#" className="link" onClick={this.#openFriendsList}>
                             найти
                         </Link>
@@ -51,7 +51,7 @@ export class FriendListCard extends Component {
                 );
             }
 
-            return <span>У этого пользователя нет друзей</span>;
+            return <span>У этого пользователя нет пеодисок</span>;
         };
 
         const content = generateContent();
@@ -59,7 +59,7 @@ export class FriendListCard extends Component {
         return (
             <div className="friend-list-card">
                 <Link href="#" onClick={this.#openFriendsList} className="friend-list-card__header link">
-                    Друзья
+                    Подписки
                 </Link>
                 <hr />
                 <div className="friend-list-card__friends-block">{content}</div>

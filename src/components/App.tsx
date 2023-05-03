@@ -12,7 +12,7 @@ import { Tags } from "./Tags/Tags";
 import { EventCreateButton } from "./Events/EventCreateButton/EventCreateButton";
 
 import { router } from "modules/router";
-import { loadEvents, loadPlannedEvents, loadLikedEvents, loadOrgEvents, loadProfileOrgEvents } from "requests/events";
+import { loadEvents, loadPlannedEvents, loadLikedEvents, loadProfileOrgEvents } from "requests/events";
 
 import { ModalWindowName, openOrganizerModal } from "flux/slices/modalWindowSlice";
 import { isAuthorized, isOrganizer } from "flux/slices/userSlice";
@@ -64,7 +64,10 @@ export class App extends Component<any> {
         const url = router.getNextUrl();
 
         const getProfileId = () => {
-            const url = router.getNextUrl();
+            const url = router.getNextUrlNotRemove();
+            if (url === undefined) {
+                return -1;
+            }
             return parseInt(url.slice(1));
         };
 
@@ -78,17 +81,15 @@ export class App extends Component<any> {
             );
         };
 
-        const Delimiter = (props: {content: string}) => {
+        const Delimiter = (props: { content: string }) => {
             return (
                 <div className="delimiter">
-                    <hr/>
-                    <div className="delimiter__content">
-                        {props.content}
-                    </div>
-                    <hr/>
+                    <hr />
+                    <div className="delimiter__content">{props.content}</div>
+                    <hr />
                 </div>
-            )
-        }
+            );
+        };
 
         const EventsNotFound = () => {
             return (
@@ -96,9 +97,10 @@ export class App extends Component<any> {
                     <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
                 </div>
             );
-        }
+        };
 
         const modalWindowShown = store.state.modalWindow.name !== ModalWindowName.NONE;
+        const profileId = getProfileId();
 
         return (
             <div className="app">
@@ -108,28 +110,40 @@ export class App extends Component<any> {
 
                 <div className="row">
                     <div className="content">
-                        {url === "/" && <EventList request={loadEvents} events={store.state.events.cards}/>}
+                        {url === "/" && <EventList request={loadEvents} events={store.state.events.cards} />}
                         {url === "/events" && <EventPage />}
-                        {url === "/profile" &&
-                            (() => {
-                                const profileId = getProfileId();
+                        {url === "/profile" && (
+                            <div>
+                                <Profile id={profileId} />
 
-                                return (
-                                    <div>
-                                        <Profile id={profileId} />
+                                {isOrganizer(store.state.user) && hasEvents(store.state.events.orgEvents) && (
+                                    <Delimiter content="Мероприятия данного организатора" />
+                                )}
+                                <EventList
+                                    request={loadProfileOrgEvents}
+                                    requestArgs={[]}
+                                    events={store.state.events.orgEvents}
+                                />
 
-                                        { isOrganizer(store.state.user) && hasEvents(store.state.events.orgEvents) && <Delimiter content="Мероприятия данного организатора"/> }
-                                        { isOrganizer(store.state.user) && <EventList request={loadProfileOrgEvents} requestArgs={[store.state.user.currentProfile!.org_id!]} events={store.state.events.orgEvents}/>}
+                                {hasEvents(store.state.events.plannedEvents) && (
+                                    <Delimiter content="Запланированные мероприятия" />
+                                )}
+                                <EventList
+                                    request={loadPlannedEvents}
+                                    requestArgs={[profileId]}
+                                    events={store.state.events.plannedEvents}
+                                />
 
-                                        { hasEvents(store.state.events.plannedEvents) && <Delimiter content="Запланированные мероприятия"/> }
-                                        <EventList request={loadPlannedEvents} requestArgs={[profileId]} events={store.state.events.plannedEvents}/>
-
-                                        { hasEvents(store.state.events.likedEvents) && <Delimiter content="Понравившиеся мероприятия"/> }
-                                        <EventList request={loadLikedEvents} requestArgs={[profileId]} events={store.state.events.likedEvents}/>
-
-                                    </div>
-                                );
-                            })()}
+                                {hasEvents(store.state.events.likedEvents) && (
+                                    <Delimiter content="Понравившиеся мероприятия" />
+                                )}
+                                <EventList
+                                    request={loadLikedEvents}
+                                    requestArgs={[profileId]}
+                                    events={store.state.events.likedEvents}
+                                />
+                            </div>
+                        )}
                         {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}
                         {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                         {url === "/map" && <Map />}

@@ -60,15 +60,23 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadEvents,
-        dependencies: [loadAuthorization, loadCities],
+        dependencies: [loadAuthorization, loadCities, loadTags, loadCategories],
     },
     {
         request: loadLikedEvents,
-        dependencies: [loadAuthorization, loadCities],
+        dependencies: [loadProfile, loadCities, loadTags, loadCategories],
     },
     {
         request: loadPlannedEvents,
-        dependencies: [loadAuthorization, loadCities],
+        dependencies: [loadProfile, loadCities, loadTags, loadCategories],
+    },
+    {
+        request: loadEventPageOrgEvents,
+        dependencies: [loadEventPage, loadCities, loadTags, loadCategories],
+    },
+    {
+        request: loadProfileOrgEvents,
+        dependencies: [loadProfile, loadCities, loadTags, loadCategories],
     },
     {
         request: loadProfile,
@@ -137,14 +145,6 @@ const requests: SetupRequestsType[] = [
     {
         request: unfeatureEvent,
         dependencies: [loadAuthorization],
-    },
-    {
-        request: loadEventPageOrgEvents,
-        dependencies: [loadEventPage],
-    },
-    {
-        request: loadProfileOrgEvents,
-        dependencies: [loadProfile],
     },
 ];
 

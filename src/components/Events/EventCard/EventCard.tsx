@@ -2,7 +2,7 @@
 
 import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
-import { TEvent, TOrgLight } from "models/Events";
+import { TOrgLight } from "models/Events";
 import { isAuthorized } from "flux/slices/userSlice";
 import "./styles.scss";
 import { Link } from "components/Common/Link";
@@ -17,7 +17,7 @@ export interface HoveredImgProps {
     src: string;
     alt: string;
     iconClassName: string;
-    onClick?: ()=>void;
+    onClick?: () => void;
 }
 
 export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean }> {
@@ -28,10 +28,7 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
 
     render() {
         return (
-            <div
-                className="flex pointy"
-                onClick={() => this.props.onClick ? this.props.onClick() : ()=>{}}
-            >
+            <div className="flex pointy" onClick={() => (this.props.onClick ? this.props.onClick() : () => {})}>
                 <SVGInline className={this.props.iconClassName} src={this.props.src} alt={this.props.alt} />
             </div>
         );
@@ -61,7 +58,7 @@ export class EventCard extends Component<EventCardProps> {
     constructor(props: EventCardProps) {
         super(props);
     }
-    
+
     toggleLike(eventId: number, liked: boolean) {
         if (!liked) {
             requestManager.request(likeEvent, eventId);
@@ -109,7 +106,7 @@ export class EventCard extends Component<EventCardProps> {
                                 src="/assets/img/card/like-icon.svg"
                                 alt="like"
                                 iconClassName={`stroke-svg-icon${this.props.liked ? " filled" : ""}`}
-                                onClick={()=>this.toggleLike(this.props.id, this.props.liked)}
+                                onClick={() => this.toggleLike(this.props.id, this.props.liked)}
                             />
                             <span>{this.props.likes.toString()}</span>
                         </div>
@@ -139,7 +136,7 @@ export class EventCard extends Component<EventCardProps> {
                                 src="/assets/img/card/save-icon.svg"
                                 alt="edit"
                                 iconClassName={`stroke-svg-icon${this.props.reminded ? " filled" : ""}`}
-                                onClick={()=>this.toggleFeatured(this.props.id, this.props.reminded)}
+                                onClick={() => this.toggleFeatured(this.props.id, this.props.reminded)}
                             />
                         )}
                     </div>

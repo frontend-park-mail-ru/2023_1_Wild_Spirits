@@ -88,7 +88,12 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
 /**
  * fill itself with events from server that current user liked
  */
-export const loadLikedEvents = (resolveRequest: TRequestResolver, userId: number) => {
+export const loadLikedEvents = (resolveRequest: TRequestResolver) => {
+    const userId = store.state.user.currentProfile?.id;
+    if (userId === undefined) {
+        return;
+    }
+
     ajax.get<ResponseEventsLight>({
         url: `/users/${userId}/liked`,
         urlProps: getLoadEventFilterProps(),
@@ -111,7 +116,12 @@ export const loadLikedEvents = (resolveRequest: TRequestResolver, userId: number
 /**
  * fill itself with events from server that current user planned to visit
  */
-export const loadPlannedEvents = (resolveRequest: TRequestResolver, userId: number) => {
+export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
+    const userId = store.state.user.currentProfile?.id;
+    if (userId === undefined) {
+        return;
+    }
+
     ajax.get<ResponseEventsLight>({
         url: `/users/${userId}/reminded`,
         urlProps: getLoadEventFilterProps(),
@@ -371,8 +381,17 @@ export const loadEventPageOrgEvents = (resolveRequest: TRequestResolver) => {
 };
 
 export const loadProfileOrgEvents = (resolveRequest: TRequestResolver) => {
-    if (store.state.user.currentProfile === undefined || store.state.user.currentProfile.org_id === undefined) {
+    console.error("loadProfileOrgEvents start");
+    if (store.state.user.currentProfile === undefined) {
+        console.error("Error");
         store.dispatch(setOrgEventsLoadError());
+        resolveRequest();
+        return;
+    }
+    if (store.state.user.currentProfile.org_id === undefined) {
+        store.dispatch(setOrgEvents([]));
+        console.error("store.state.user.currentProfile.org_id === undefined");
+
         resolveRequest();
         return;
     }

@@ -17,8 +17,7 @@ import { getCitiesNames } from "flux/slices/headerSlice";
 
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
-import { addFriend, deleteFriend, loadFriends, loadProfile } from "requests/user";
-import { router } from "modules/router";
+import { addFriend, deleteFriend, loadProfile } from "requests/user";
 import { toWebP } from "modules/imgConverter";
 import "./styles.scss";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -51,7 +50,13 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
         this.loadProfile();
     }
 
+    willUpdate(): void {
+        //this.loadProfile();
+        console.log("profile will update");
+    }
+
     didUpdate(): void {
+        console.log("profile did update");
         this.loadProfile();
     }
 
@@ -307,12 +312,12 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                         type="button"
                         onClick={() => this.#deleteFriend()}
                         className="button-danger"
-                        value="Удалить из друзей"
+                        value="Отписаться"
                     ></input>
                 );
             }
 
-            return <input onClick={this.#addFriend} className="button" value="Добавить в друзья"></input>;
+            return <input onClick={this.#addFriend} className="button" value="Подписаться"></input>;
         };
 
         return (

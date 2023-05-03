@@ -34,6 +34,10 @@ class Router {
         return result;
     }
 
+    getNextUrlNotRemove() {
+        return this.#locationParts[0];
+    }
+
     #searchByUrl<T>(routes: RouterType<T>): { result: T; founded: true } | { result: undefined; founded: false } {
         for (const url in routes) {
             if (this.#locationParts.at(0) === url) {

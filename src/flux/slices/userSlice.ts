@@ -46,7 +46,7 @@ const userInitialState: UserState = {
 
 export interface TOrganizer extends TUser {
     organizer_id?: number;
-    phone: string;
+    phone?: string;
     website?: string;
 }
 
@@ -113,6 +113,7 @@ const userSlice = createSlice({
                     id: action.payload.id,
                 };
             }
+            console.log(state);
             return state;
         },
         setCurrentProfileFriends: (state: UserState, action: PayloadAction<{ friends: TFriend[] }>) => {
@@ -164,7 +165,7 @@ export const mineProfile = (userState: UserState) => {
 };
 
 export const isOrganizer = (userState: UserState) => {
-    return userState.currentProfile?.phone !== undefined;
+    return userState.currentProfile?.org_id !== undefined;
 };
 
 export const {

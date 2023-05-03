@@ -3,7 +3,14 @@ import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser"
 import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
-import { setUserData, logout, setCurrentProfile, authorizedLoadStart, authorizedLoadError, removeFromFriends } from "flux/slices/userSlice";
+import {
+    setUserData,
+    logout,
+    setCurrentProfile,
+    authorizedLoadStart,
+    authorizedLoadError,
+    removeFromFriends,
+} from "flux/slices/userSlice";
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { close } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
@@ -35,6 +42,7 @@ export const loadAuthorization = (resolveRequest: TRequestResolver) => {
 };
 
 export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
+    console.log("start profile");
     ajax.get<ResponseUserProfile>({
         url: `/users/${id}`,
         credentials: true,
@@ -43,10 +51,13 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
             if (response.ok && json.body) {
                 store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
+            console.log("profile response.ok", id);
+
             resolveRequest(id);
         })
         .catch((error) => {
             console.log("catch:", error);
+            resolveRequest(id);
         });
 };
 
@@ -73,15 +84,15 @@ export const searchUsers = (resolveRequest: TRequestResolver, name: string) => {
     ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
         url: "/users",
         urlProps: {
-            name: name
+            name: name,
         },
-    }).then(({json, response, status}) => {
+    }).then(({ json, response, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
             store.dispatch(setFoundUsers({ users: json.body.users }));
         }
         resolveRequest();
-    })
-}
+    });
+};
 
 export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
     ajax
@@ -109,7 +120,7 @@ export const deleteFriend = (resolveRequest: TRequestResolver, user_id: number) 
             resolveRequest(user_id);
         });
 
-type TWarningMsgCallack = (warning: string | undefined, errors: {[key: string]: string} | undefined) => void;
+type TWarningMsgCallack = (warning: string | undefined, errors: { [key: string]: string } | undefined) => void;
 
 export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, warningMsg: TWarningMsgCallack) => {
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
@@ -168,17 +179,16 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
         body: {
             name: store.state.user.data!.name,
             phone: formData.get("phone"),
-            website: formData.get("website")
+            website: formData.get("website"),
         },
-    })
-        .then(({json, response, status}) => {
-            if (status === AjaxResultStatus.SUCCESS) {
-                router.go("/createevent")
-                store.dispatch(close());
-            }
-            resolveRequest();
-        })
-}
+    }).then(({ json, response, status }) => {
+        if (status === AjaxResultStatus.SUCCESS) {
+            router.go("/createevent");
+            store.dispatch(close());
+        }
+        resolveRequest();
+    });
+};
 
 export const logoutUser = (resolveRequest: TRequestResolver) =>
     ajax

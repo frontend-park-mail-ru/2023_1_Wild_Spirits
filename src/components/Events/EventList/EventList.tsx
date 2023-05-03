@@ -56,13 +56,17 @@ export class EventList extends Component<EventListProps, {}> {
         }
 
         if (events.loadStatus !== LoadStatus.DONE) {
-            return <EventListLoading size={6} />;
+            return (
+                <div>
+                    <EventListLoading size={6} />
+                </div>
+            );
         }
 
         const cardsProps: EventCardProps[] = eventsLightDataToCardProps(events.data);
 
         if (cardsProps.length === 0) {
-            return <></>;
+            return <div></div>;
         }
 
         return (

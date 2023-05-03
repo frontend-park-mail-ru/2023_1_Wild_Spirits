@@ -126,7 +126,7 @@ export class FriendList extends Component {
         return (
             <div>
                 <div className="friend-list__header">
-                    <h2 className="friend-list__title">Друзья</h2>
+                    <h2 className="friend-list__title">Подписки</h2>
 
                     <input
                         type="text"
@@ -141,7 +141,7 @@ export class FriendList extends Component {
                     <div>Пользователей с таким именем не найдено</div>
                 ) : (
                     <div className="friend-list">
-                        <UserBlock title="Друзья" users={friends} />
+                        <UserBlock title="Подписки" users={friends} />
                         {queryEmpty && <UserBlock title="Все пользователи" users={foundUsers} />}
                     </div>
                 )}

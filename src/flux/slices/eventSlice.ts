@@ -14,6 +14,8 @@ import { LoadStatus } from "requests/LoadStatus";
 import { StateTagsType } from "./tagsSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
+import { store } from "flux";
+import { mineProfile } from "./userSlice";
 
 interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
@@ -39,6 +41,7 @@ export interface EventsStateCards {
     subbedEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     orgEvents: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
 }
+const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"];
 
 export interface EventsState extends EventsStateCards {
     selectedEvent: LoadStatus.DataDoneOrNotDone<SelectedEventData>;
@@ -175,13 +178,15 @@ const eventsSlice = createSlice({
                         subState.data[id].liked = true;
                     }
                 }
-            }
+            };
+            subSlices.forEach((subSlice) => like(subSlice));
 
-            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
-            subSlices.forEach(subSlice => like(subSlice));
-
-            if (state.likedEvents.loadStatus === LoadStatus.DONE && likedEvent !== undefined) {
-                state.likedEvents.data.push(likedEvent)
+            if (
+                state.likedEvents.loadStatus === LoadStatus.DONE &&
+                likedEvent !== undefined &&
+                mineProfile(store.state.user)
+            ) {
+                state.likedEvents.data.push(likedEvent);
             }
 
             if (
@@ -206,13 +211,12 @@ const eventsSlice = createSlice({
                         subState.data[id].liked = false;
                     }
                 }
-            }
+            };
 
-            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
-            subSlices.forEach(subSlice => dislike(subSlice));
+            subSlices.forEach((subSlice) => dislike(subSlice));
 
             if (state.likedEvents.loadStatus === LoadStatus.DONE) {
-                state.likedEvents.data = state.likedEvents.data.filter(event => event.id !== action.payload.eventId);
+                state.likedEvents.data = state.likedEvents.data.filter((event) => event.id !== action.payload.eventId);
             }
 
             if (
@@ -240,12 +244,15 @@ const eventsSlice = createSlice({
                         subState.data[id].reminded = true;
                     }
                 }
-            }
+            };
 
-            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
-            subSlices.forEach(subSlice => feature(subSlice));
+            subSlices.forEach((subSlice) => feature(subSlice));
 
-            if (state.plannedEvents.loadStatus === LoadStatus.DONE && featuredEvent !== undefined) {
+            if (
+                state.plannedEvents.loadStatus === LoadStatus.DONE &&
+                featuredEvent !== undefined &&
+                mineProfile(store.state.user)
+            ) {
                 state.plannedEvents.data.push(featuredEvent);
             }
 
@@ -269,13 +276,14 @@ const eventsSlice = createSlice({
                         subState.data[id].reminded = false;
                     }
                 }
-            }
+            };
 
-            const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"]
-            subSlices.forEach(subSlice => unfeature(subSlice));
+            subSlices.forEach((subSlice) => unfeature(subSlice));
 
             if (state.plannedEvents.loadStatus === LoadStatus.DONE) {
-                state.plannedEvents.data = state.plannedEvents.data.filter(event => event.id !== action.payload.eventId);
+                state.plannedEvents.data = state.plannedEvents.data.filter(
+                    (event) => event.id !== action.payload.eventId
+                );
             }
 
             if (
@@ -289,10 +297,12 @@ const eventsSlice = createSlice({
             return state;
         },
         setOrgEventsLoadStart: (state: EventsState) => {
+            console.log("setOrgEventsLoadStart");
             state.orgEvents = { loadStatus: LoadStatus.LOADING };
             return state;
         },
         setOrgEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            console.log("setOrgEvents");
             state.orgEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -306,6 +316,7 @@ const eventsSlice = createSlice({
             return state;
         },
         setLikedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            console.log("setLikedEvents");
             state.likedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -319,6 +330,7 @@ const eventsSlice = createSlice({
             return state;
         },
         setPlannedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            console.log("setPlannedEvents");
             state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -332,6 +344,8 @@ const eventsSlice = createSlice({
             return state;
         },
         setSubbedEvents: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            console.log("setSubbedEvents");
+
             state.plannedEvents = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
@@ -342,8 +356,10 @@ const eventsSlice = createSlice({
     },
 });
 
-export const hasEvents = (events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>) => events.loadStatus === LoadStatus.DONE && events.data.length > 0;
-export const hasNotLoaded = (events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>) => events.loadStatus === LoadStatus.NONE;
+export const hasEvents = (events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>) =>
+    events.loadStatus === LoadStatus.DONE && events.data.length > 0;
+export const hasNotLoaded = (events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>) =>
+    events.loadStatus === LoadStatus.NONE;
 
 export const {
     setEventsCardsLoadStart,
@@ -364,7 +380,7 @@ export const {
     dislikeEvent,
     featureEvent,
     unfeatureEvent,
-    
+
     setOrgEventsLoadStart,
     setOrgEvents,
     setOrgEventsLoadError,

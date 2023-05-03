@@ -53,6 +53,12 @@ class RequestManager {
         };
     }
 
+    removeDone<T extends TRequest | string>(request: T) {
+        const name = typeof request === "string" ? request : request.name;
+
+        this.#doneRequests.delete(name);
+    }
+
     #removeRunning(name: string) {
         for (const req of this.#runningRequests) {
             if (req.name === name) {
