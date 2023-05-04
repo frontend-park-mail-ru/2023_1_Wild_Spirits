@@ -8,10 +8,6 @@ import { openFriendsList } from "flux/slices/modalWindowSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 
 export class FriendListCard extends Component {
-    constructor() {
-        super({});
-    }
-
     #openFriendsList() {
         store.dispatch(openFriendsList());
     }
@@ -56,11 +52,15 @@ export class FriendListCard extends Component {
 
         return (
             <div className="friend-list-card">
-                <Link href="#" onClick={this.#openFriendsList} className="friend-list-card__header link">
+                <Link href="#" onClick={this.#openFriendsList} className="friend-list-card__header link flex">
                     Подписки
                 </Link>
-                <hr />
-                <div className="friend-list-card__friends-block">{content}</div>
+                {!store.state.meta.collapsed.profileCollapsed && (
+                    <div>
+                        <hr />
+                        <div className="friend-list-card__friends-block">{content}</div>
+                    </div>
+                )}
             </div>
         );
     }
