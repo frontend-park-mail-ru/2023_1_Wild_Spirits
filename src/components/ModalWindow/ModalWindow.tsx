@@ -9,14 +9,18 @@ import { CityPicker } from "components/CityPicker/CityPicker";
 import { OrganizerModal } from "components/Auth/OrganizerModal/OrganizerModal";
 import { toEvent } from "modules/CastEvents";
 
+type ModalWindowProps = {
+    children?: JSX.Element[] | JSX.Element | string;
+}
+
 /**
  * Modal window component
  * @class
  * @extends Component
  */
-export class ModalWindow extends Component {
-    constructor() {
-        super({});
+export class ModalWindow extends Component<ModalWindowProps, {}> {
+    constructor(props: ModalWindowProps) {
+        super(props);
     }
 
     /**
@@ -42,6 +46,10 @@ export class ModalWindow extends Component {
                     {isTypeOf(ModalWindowName.FRIEND_LIST) && <FriendList />}
                     {isTypeOf(ModalWindowName.CITY_SELECTOR) && <CityPicker />}
                     {isTypeOf(ModalWindowName.ORGANIZER) && <OrganizerModal />}
+
+                    {Array.isArray(this.props.children)
+                        ? this.props.children.map((child) => child).flat()
+                        : this.props.children}
                 </div>
             </div>
         );

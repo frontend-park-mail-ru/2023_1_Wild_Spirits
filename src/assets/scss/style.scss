@@ -6,6 +6,7 @@
 @import "Map/";
 @import "ModalWindow/";
 @import "SideMenu/";
+@import "Calendar/";
 
 @font-face {
     font-family: "Roboto";
@@ -36,4 +37,9 @@ body {
     font-weight: normal;
 
     cursor: default;
+}
+
+button {
+    font-family: "Roboto";
+    font-weight: normal;
 }

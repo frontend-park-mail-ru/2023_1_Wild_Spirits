@@ -32,6 +32,7 @@ import { EventListPage } from "./Events/EventList/EvenListPage";
 import { loadCategories, loadCities } from "requests/header";
 import { SVGInline } from "./Common/SVGInline";
 import { SideMenu } from "./SideMenu/SideMenu";
+import { CalendarModal } from "./Calendar/CalendarModal";
 
 /**
  * @classdesc Main app component
@@ -85,6 +86,8 @@ export class App extends Component {
                 </div>
                 {modalWindowShown && <ModalWindow />}
                 {store.state.sideMenu.isOpen && <SideMenu/>}
+
+                {store.state.meta.calendarModalShown && <CalendarModal/>}
             </div>
         );
     }

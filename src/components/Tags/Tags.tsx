@@ -13,6 +13,7 @@ export type ToggleTagFuncProps = { tag: string };
 type ToggleTagFunc = (props: ToggleTagFuncProps) => void;
 
 interface TagsProps {
+    classPrefix?: string;
     tagsState: TagsState;
     toggleTag?: ToggleTagFunc;
 }
@@ -29,12 +30,13 @@ export class Tags extends Component<TagsProps> {
     };
 
     render() {
+        const prefix = this.props.classPrefix ? this.props.classPrefix + "-" : "";  
         return (
-            <div className="tags-menu">
+            <div className={`${prefix}tags-menu`}>
                 {Object.entries(this.props.tagsState.tags ? this.props.tagsState.tags : {}).map(
                     ([name, { selected }]) => (
                         <div
-                            className={`${this.props.toggleTag ? "tag-selectable" : "tag"} ${selected ? "active" : ""}`}
+                            className={`${prefix}${this.props.toggleTag ? "tag-selectable" : "tag"} ${selected ? "active" : ""}`}
                             onClick={() => this.handleClick(name)}
                         >
                             {name}

@@ -141,11 +141,6 @@ export class Calendar extends Component {
         const days = range(firstDate, lastDate).map(generateDate);
 
         return days;
-
-        // const rows = Math.ceil(days.length / 7);
-        // const weeks = range(0, rows).map((row) => days.slice(row * 7, (row + 1) * 7));
-
-        // return weeks;
     };
 
     render() {

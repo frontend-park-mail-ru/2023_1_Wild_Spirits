@@ -4,12 +4,14 @@ interface SideMenuState {
     isOpen: boolean;
     categoriesOpen: boolean;
     citiesOpen: boolean;
+    tagsOpen: boolean;
 }
 
 const friendListInitialState: SideMenuState = {
     isOpen: false,
     categoriesOpen: false,
-    citiesOpen: false
+    citiesOpen: false,
+    tagsOpen: false,
 }
 
 const sideMenuSlice = createSlice({
@@ -39,6 +41,14 @@ const sideMenuSlice = createSlice({
         closeSideMenuCities: (state: SideMenuState) => {
             state.citiesOpen = false;
             return state;
+        },
+        openSideMenuTags: (state: SideMenuState) => {
+            state.tagsOpen = true;
+            return state;
+        },
+        closeSideMenuTags: (state: SideMenuState) => {
+            state.tagsOpen = false;
+            return state;
         }
     }
 })
@@ -50,5 +60,7 @@ export const {
     closeSideMenuCategories ,
     openSideMenuCities,
     closeSideMenuCities,
+    openSideMenuTags,
+    closeSideMenuTags,
 } = sideMenuSlice.actions;
 export default sideMenuSlice

@@ -22,6 +22,7 @@ import { requestManager } from "requests/index";
 import { Link, ProfileLink } from "components/Common/Link";
 import { CategoriesMenu } from "./CategoriesMenu";
 import { openSideMenu } from "flux/slices/sideMenuSlice";
+import { openCalendarModal } from "flux/slices/metaSlice";
 
 /**
  * @class
@@ -156,7 +157,10 @@ export class Header extends Component {
                                         <img src="/assets/img/search-icon.svg" className="header__mobile-icon"/>
                                     </button>
                                 }
-                                <button className="header__mobile-button">
+                                <button 
+                                    className="header__mobile-button"
+                                    onClick={()=>store.dispatch(openCalendarModal())}
+                                >
                                     <img src="/assets/img/calendar-icon.svg" className="header__mobile-icon"/>
                                 </button>
                                 <button

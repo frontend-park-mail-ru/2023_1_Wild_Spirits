@@ -2,12 +2,17 @@ import { VDOM, Component } from "modules/vdom";
 
 import { SVGInline } from "components/Common/SVGInline";
 import { store } from "flux";
-import { closeSideMenuCategories, openSideMenuCategories, closeSideMenu, closeSideMenuCities, openSideMenuCities } from "flux/slices/sideMenuSlice";
+import { closeSideMenuCategories, openSideMenuCategories, closeSideMenu, closeSideMenuCities, openSideMenuCities, closeSideMenuTags, openSideMenuTags } from "flux/slices/sideMenuSlice";
 import { TCity, clearCategory, getSelectedCategory, getSelectedCityName, selectCategory, selectCity } from "flux/slices/headerSlice";
 import { TCategory } from "models/Category";
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
+import { logoutUser } from "requests/user";
 import { ProfileLink } from "components/Common/Link";
+
+import { Tags } from "components/Tags/Tags";
+import { toggleTag } from "flux/slices/tagsSlice";
+import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
 
 export class SideMenu extends Component {
 
@@ -24,6 +29,14 @@ export class SideMenu extends Component {
             store.dispatch(closeSideMenuCities());
         } else {
             store.dispatch(openSideMenuCities());
+        }
+    }
+
+    toggleTags() {
+        if (store.state.sideMenu.tagsOpen) {
+            store.dispatch(closeSideMenuTags());
+        } else {
+            store.dispatch(openSideMenuTags());
         }
     }
 
@@ -65,7 +78,6 @@ export class SideMenu extends Component {
         const createCategoryTab = (category: TCategory) => {
             const selectedCategory = getSelectedCategory(store.state.header)
             const selected = selectedCategory !== undefined && selectedCategory.id === category.id;
-            console.log(selectedCategory, selected)
             return (
                 <button
                     className={"sidemenu__tab__item" + (selected ? " selected" : "")}
@@ -120,13 +132,24 @@ export class SideMenu extends Component {
 
                     <div className="sidemenu__tab__button">
                         {
-                            store.state.user.data !== undefined && <ProfileLink
+                            store.state.user.data !== undefined
+                            ? <ProfileLink
                                 href={`/profile/${store.state.user.data?.id}`}
                                 className="sidemenu__link"
                                 onClick={()=>store.dispatch(closeSideMenu())}
                             >
                                 Профиль
                             </ProfileLink>
+
+                            : [
+                                <a className="link" onClick={() => store.dispatch(openLogin())}>
+                                    Вход
+                                </a>,
+                                "/",
+                                <a className="link" onClick={() => store.dispatch(openRegister())}>
+                                    Регистрация
+                                </a>,
+                            ]
                             }
                     </div>
 
@@ -145,7 +168,33 @@ export class SideMenu extends Component {
                     >
                         {cities}
                     </SideMenuTab>
+
+                    <SideMenuTab
+                        name="Теги"
+                        open={store.state.sideMenu.tagsOpen}
+                        toggleFunc={this.toggleTags}
+                    >
+                        <Tags
+                            tagsState={store.state.tags}
+                            classPrefix="mobile"
+                            toggleTag={(tag) => {
+                                store.dispatch(toggleTag(tag));
+                                requestManager.request(loadEvents);
+                            }}
+                        />
+                    </SideMenuTab>
                 </div>
+
+                {
+                    store.state.user.data !== undefined &&
+                    <div className="sidemenu__footer">
+                        <div id="profile-link-logout"
+                            onClick={()=>requestManager.request(logoutUser)}
+                        >
+                            <span className="danger">Выйти</span>
+                        </div>
+                    </div>
+                }
             </div>
         )
     }

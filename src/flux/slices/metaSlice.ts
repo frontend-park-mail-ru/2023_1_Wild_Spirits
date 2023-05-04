@@ -25,10 +25,12 @@ const initialCollapsed = createCollapsed();
 
 interface MetaState {
     collapsed: CollapsedMeta;
+    calendarModalShown: boolean;
 }
 
 const initialState: MetaState = {
     collapsed: initialCollapsed,
+    calendarModalShown: false
 };
 
 const metaSlice = createSlice({
@@ -40,9 +42,17 @@ const metaSlice = createSlice({
             console.log(state.collapsed);
             return state;
         },
+        openCalendarModal: (state: MetaState) => {
+            state.calendarModalShown = true;
+            return state;
+        },
+        closeCalendarModal: (state: MetaState) => {
+            state.calendarModalShown = false;
+            return state;
+        },
     },
 });
 
-export const { setCollapsed } = metaSlice.actions;
+export const { setCollapsed, openCalendarModal, closeCalendarModal } = metaSlice.actions;
 
 export default metaSlice;

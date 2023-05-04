@@ -38,3 +38,27 @@
         }
     }
 }
+
+.mobile-tags-menu {
+    @extend .tags-menu;
+    margin: 0;
+}
+
+.mobile-tag {
+    @extend .tag;
+
+    font-size: 16px;
+
+    padding: 5px 10px;
+    
+    word-break: keep-all;
+}
+
+.mobile-tag-selectable {
+    @extend .mobile-tag;
+
+    &.active {
+        background-color: var(--input-el-color);
+        border-color: var(--input-el-color);
+    }
+}
