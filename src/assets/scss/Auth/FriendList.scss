@@ -1,6 +1,10 @@
 .friend-list-card {
     --avatar-size: 65px;
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .friend-list-card__header {

@@ -34,8 +34,15 @@ export class ProfilePage extends Component {
 
         return (
             <div className="row">
-                <div>
+                <div className="profile-page__content">
                     <Profile id={profileId} />
+
+                    {store.state.meta.collapsed.profileCollapsed && (
+                        <div className="profile-page__sidebar">
+                            <FriendListCard />
+                            <EventCreateButton />
+                        </div>
+                    )}
 
                     {hasEvents(store.state.events.subbedEvents) && <Delimiter content="Мероприятия подписок" />}
                     <EventList request={loadSubbedEvents} events={store.state.events.subbedEvents} />
@@ -52,7 +59,7 @@ export class ProfilePage extends Component {
                     <EventList request={loadLikedEvents} events={store.state.events.likedEvents} />
                 </div>
                 {!store.state.meta.collapsed.profileCollapsed && (
-                    <div className="sidebar">
+                    <div className="profile-page__sidebar">
                         <FriendListCard />
                         <EventCreateButton />
                         <Calendar />

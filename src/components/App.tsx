@@ -69,7 +69,7 @@ export class App extends Component {
 
         return (
             <div className="app">
-                <div className="header"></div>
+                <div className="header">{!store.state.meta.collapsed.headerCollapsed && <Header />}</div>
 
                 <div className="content">
                     {url === "/" && <EventListPage />}

@@ -4,13 +4,14 @@ import { createSlice } from "flux/slice";
 const isCollapsed = (width: number) => window.matchMedia(`(max-width:${width}px)`).matches;
 
 type ChangeMetaOnResizeType = { [key: string]: () => boolean };
-type CollapsedMeta = { [key in keyof ChangeMetaOnResizeType]: boolean };
 
 export const changeMetaOnResize: ChangeMetaOnResizeType = {
     headerCollapsed: () => isCollapsed(850),
     profileCollapsed: () => isCollapsed(1250),
     eventPageCollapsed: () => isCollapsed(1100),
 };
+
+type CollapsedMeta = { [key in keyof typeof changeMetaOnResize]: boolean };
 
 export const createCollapsed = () =>
     Object.fromEntries(
