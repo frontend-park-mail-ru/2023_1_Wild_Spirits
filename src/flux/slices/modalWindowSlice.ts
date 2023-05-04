@@ -7,6 +7,8 @@ export namespace ModalWindowName {
     export const FRIEND_LIST = "friend-list";
     export const CITY_SELECTOR = "city-selector";
     export const ORGANIZER = "organizer";
+    export const CALENDAR = "calendar";
+    export const SEARCH = "search";
 
     export type NameType =
         | typeof NONE
@@ -14,7 +16,8 @@ export namespace ModalWindowName {
         | typeof REGISTER
         | typeof FRIEND_LIST
         | typeof CITY_SELECTOR
-        | typeof ORGANIZER;
+        | typeof ORGANIZER
+        | typeof CALENDAR
 }
 
 interface ModalWindowState {
@@ -29,7 +32,7 @@ const modalWindowSlice = createSlice({
     name: "modalWindow",
     initialState: initialState,
     reducers: {
-        close: (state: ModalWindowState) => {
+        closeModal: (state: ModalWindowState) => {
             state.name = ModalWindowName.NONE;
             return state;
         },
@@ -53,10 +56,22 @@ const modalWindowSlice = createSlice({
             state.name = ModalWindowName.ORGANIZER;
             return state;
         },
+        openCalendarModal: (state) => {
+            state.name = ModalWindowName.CALENDAR;
+            return state;
+        }
     },
 });
 
-export const { close, openLogin, openRegister, openFriendsList, openCitySelector, openOrganizerModal } =
+export const { 
+                closeModal, 
+                openLogin, 
+                openRegister, 
+                openFriendsList, 
+                openCitySelector, 
+                openOrganizerModal, 
+                openCalendarModal,
+            } =
     modalWindowSlice.actions;
 
 export default modalWindowSlice;

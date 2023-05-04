@@ -7,7 +7,7 @@ import { requestManager } from "requests";
 import { loadFriends, searchUsers } from "requests/user";
 
 import { store } from "flux";
-import { close } from "flux/slices/modalWindowSlice";
+import { closeModal } from "flux/slices/modalWindowSlice";
 
 import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
@@ -18,7 +18,7 @@ const renderUser = (user: { user_id: number; name: string; avatar: string }) => 
         <ProfileLink
             className="friend-list__link"
             href={`/profile/${user.user_id}`}
-            onClick={() => store.dispatch(close())}
+            onClick={() => store.dispatch(closeModal())}
         >
             <span className="friend-list__item">
                 <div className="friend-list__item__avatar-block">

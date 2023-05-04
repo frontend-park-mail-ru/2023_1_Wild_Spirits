@@ -1,15 +1,36 @@
 .event-list {
     display: flex;
-    flex-grow: 1;
+    width: 60%;
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 40px;
 
     gap: 40px;
+
+    @media screen and (max-width: 850px) {
+        width: 100%;
+    }
+}
+
+.event-list-loading {
+    display: flex;
+
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.event-list-loading-block {
+    width: 60%;
+    margin-top: 40px;
+
+    @media screen and (max-width: 850px) {
+        width: 100%;
+    }
 }
 
 .event-list-empty {
-    margin-top: 80px;
+    margin-top: 40px;
     text-align: center;
 }
 

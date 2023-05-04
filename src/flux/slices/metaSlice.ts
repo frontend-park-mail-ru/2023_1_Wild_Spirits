@@ -25,12 +25,12 @@ const initialCollapsed = createCollapsed();
 
 interface MetaState {
     collapsed: CollapsedMeta;
-    calendarModalShown: boolean;
+    mobileSearch: boolean;
 }
 
 const initialState: MetaState = {
     collapsed: initialCollapsed,
-    calendarModalShown: false
+    mobileSearch: false
 };
 
 const metaSlice = createSlice({
@@ -39,20 +39,19 @@ const metaSlice = createSlice({
     reducers: {
         setCollapsed: (state: MetaState, action: PayloadAction<CollapsedMeta>) => {
             state.collapsed = action.payload;
-            console.log(state.collapsed);
             return state;
         },
-        openCalendarModal: (state: MetaState) => {
-            state.calendarModalShown = true;
+        openMobileSearch: (state: MetaState) => {
+            state.mobileSearch = true;
             return state;
         },
-        closeCalendarModal: (state: MetaState) => {
-            state.calendarModalShown = false;
+        closeMobileSearch: (state: MetaState) => {
+            state.mobileSearch = false;
             return state;
-        },
+        }
     },
 });
 
-export const { setCollapsed, openCalendarModal, closeCalendarModal } = metaSlice.actions;
+export const { setCollapsed, openMobileSearch, closeMobileSearch } = metaSlice.actions;
 
 export default metaSlice;

@@ -3,7 +3,7 @@
 import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
-import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
+import { openCalendarModal, openLogin, openRegister } from "flux/slices/modalWindowSlice";
 import {
     selectCity,
     selectCategory,
@@ -22,7 +22,8 @@ import { requestManager } from "requests/index";
 import { Link, ProfileLink } from "components/Common/Link";
 import { CategoriesMenu } from "./CategoriesMenu";
 import { openSideMenu } from "flux/slices/sideMenuSlice";
-import { openCalendarModal } from "flux/slices/metaSlice";
+import { closeMobileSearch, openMobileSearch } from "flux/slices/metaSlice";
+import { HeaderSearch } from "./HeaderSearch";
 
 /**
  * @class
@@ -44,16 +45,9 @@ export class Header extends Component {
         requestManager.request(loadEvents);
     };
 
-    #search = (event: Event) => {
-        const searchInput = event.target as HTMLInputElement;
-
-        if (!searchInput) {
-            return;
-        }
-
-        store.dispatch(setSearchQuery(searchInput.value));
-        requestManager.request(loadEvents);
-    };
+    #searchExpand = () => {
+        store.dispatch(openMobileSearch());
+    }
 
     render() {
         const getProfileLink = () => {
@@ -121,28 +115,23 @@ export class Header extends Component {
         return (
             <div className="header">
                 <div className="header__logo">
-                    <img src="/assets/img/logo-full.svg" alt="logo" />
+                    <Link href="/" className="black-link">
+                        <img src="/assets/img/logo-full.svg" alt="logo"/>
+                    </Link>
                 </div>
 
                 <div className="header__top__line">
-                    <div className="header__head">
-                        <Link href="/" className="js-router-link black-link">
-                            Event Radar
-                        </Link>
-                    </div>
+                    
+                    {
+                        !store.state.meta.mobileSearch && <div className="header__head">
+                            <Link href="/" className="black-link">
+                                Event Radar
+                            </Link>
+                        </div>
+                    }
 
                     {
-                        !store.state.meta.collapsed.searchCollapsed && 
-                        <div className="header__search-container">
-                                <input
-                                    type="text"
-                                    size={1}
-                                    onChange={(e) => this.#search(e as unknown as Event)}
-                                    placeholder="Поиск"
-                                    value={store.state.header.searchQuery}
-                                    className="search"
-                                />
-                            </div>
+                        (!store.state.meta.collapsed.searchCollapsed || store.state.meta.mobileSearch) && <HeaderSearch/>
                     }
 
                     { !store.state.meta.collapsed.headerCollapsed && <CityPickerButton/> }
@@ -153,7 +142,11 @@ export class Header extends Component {
                             <div className="flex">
                                 {
                                     store.state.meta.collapsed.searchCollapsed &&
-                                    <button className="header__mobile-button">
+                                    !store.state.meta.mobileSearch &&
+                                    <button
+                                        className="header__mobile-button"
+                                        onClick={()=>this.#searchExpand()}
+                                    >
                                         <img src="/assets/img/search-icon.svg" className="header__mobile-icon"/>
                                     </button>
                                 }

@@ -88,7 +88,7 @@ export class Calendar extends Component {
         const lastMonthDate = new Date(year, month + 1, 0);
 
         const firstDate = 2 - firstMonthDay;
-        let lastDate = lastMonthDate.getDate() + (7 - lastMonthDate.getDay());
+        const lastDate = firstDate + 41;
 
         const checkSelection = (date: Date): { isSelected: boolean; isInner: boolean } => {
             const startDate = store.state.calendar.startDate;

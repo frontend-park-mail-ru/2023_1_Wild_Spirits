@@ -1,7 +1,7 @@
 import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
-import { ModalWindowName, close } from "flux/slices/modalWindowSlice";
+import { ModalWindowName, closeModal } from "flux/slices/modalWindowSlice";
 import { Registration } from "components/Auth/Registration/Registration";
 import { Login } from "components/Auth/Login/Login";
 import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
@@ -9,8 +9,8 @@ import { CityPicker } from "components/CityPicker/CityPicker";
 import { OrganizerModal } from "components/Auth/OrganizerModal/OrganizerModal";
 import { toEvent } from "modules/CastEvents";
 
-type ModalWindowProps = {
-    children?: JSX.Element[] | JSX.Element | string;
+interface ModalWindowProps {
+    children?: JSX.Element | JSX.Element[];
 }
 
 /**
@@ -18,7 +18,7 @@ type ModalWindowProps = {
  * @class
  * @extends Component
  */
-export class ModalWindow extends Component<ModalWindowProps, {}> {
+export class ModalWindow extends Component<ModalWindowProps> {
     constructor(props: ModalWindowProps) {
         super(props);
     }
@@ -32,25 +32,15 @@ export class ModalWindow extends Component<ModalWindowProps, {}> {
     }
 
     handleOutModalMouseDown() {
-        store.dispatch(close());
+        store.dispatch(closeModal());
     }
 
     render(): JSX.Element {
-        const isTypeOf = (typeName: ModalWindowName.NameType) => store.state.modalWindow.name === typeName;
-
         return (
             <div className="modal" onMouseDown={this.handleOutModalMouseDown}>
-                <div className="modal__form__container" onMouseDown={(e) => this.handleInModalMouseDown(toEvent(e))}>
-                    {isTypeOf(ModalWindowName.LOGIN) && <Login />}
-                    {isTypeOf(ModalWindowName.REGISTER) && <Registration />}
-                    {isTypeOf(ModalWindowName.FRIEND_LIST) && <FriendList />}
-                    {isTypeOf(ModalWindowName.CITY_SELECTOR) && <CityPicker />}
-                    {isTypeOf(ModalWindowName.ORGANIZER) && <OrganizerModal />}
-
-                    {Array.isArray(this.props.children)
-                        ? this.props.children.map((child) => child).flat()
-                        : this.props.children}
-                </div>
+                {Array.isArray(this.props.children)
+                    ? this.props.children.map((child) => child).flat()
+                    : this.props.children}
             </div>
         );
     }

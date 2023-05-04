@@ -3,7 +3,7 @@ import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 
 import { selectCity } from "flux/slices/headerSlice";
-import { close } from "flux/slices/modalWindowSlice";
+import { closeModal } from "flux/slices/modalWindowSlice";
 
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
@@ -46,7 +46,7 @@ export class CityPicker extends Component<{}, { query: string }> {
                     {cities.map((city) => (
                         <button
                             onClick={() => {
-                                store.dispatch(selectCity({ city: city }), close());
+                                store.dispatch(selectCity({ city: city }), closeModal());
                                 requestManager.request(loadEvents);
                             }}
                             className="city-picker__item"

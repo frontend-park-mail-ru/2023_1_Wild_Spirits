@@ -12,7 +12,7 @@ import {
     removeFromFriends,
 } from "flux/slices/userSlice";
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
-import { close } from "flux/slices/modalWindowSlice";
+import { closeModal } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 import { App } from "components/App";
 import { addToFriends } from "flux/slices/userSlice";
@@ -30,7 +30,7 @@ export const loadAuthorization = (resolveRequest: TRequestResolver) => {
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setUserData(json.body.user), close());
+                store.dispatch(setUserData(json.body.user), closeModal());
             } else {
                 store.dispatch(setUserData(undefined));
             }
@@ -131,7 +131,7 @@ export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, 
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
-                    store.dispatch(setUserData(json.body.user), close());
+                    store.dispatch(setUserData(json.body.user), closeModal());
                 }
             } else {
                 warningMsg(json.errorMsg, json.errors);
@@ -159,7 +159,7 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setUserData(json.body.user), close());
+                store.dispatch(setUserData(json.body.user), closeModal());
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
@@ -182,7 +182,7 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
     }).then(({ json, response, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
             router.go("/createevent");
-            store.dispatch(close());
+            store.dispatch(closeModal());
         }
         resolveRequest();
     });
