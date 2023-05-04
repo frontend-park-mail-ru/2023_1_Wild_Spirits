@@ -24,7 +24,7 @@ export class EventListPage extends Component {
     render() {
         return (
             <div className="row">
-                <EventList request={loadEvents} events={store.state.events.cards} />
+                <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true} />
                 {!store.state.meta.collapsed.headerCollapsed && (
                     <div className="event-list-page__sidebar">
                         {isAuthorized(store.state.user) && <EventCreateButton />}

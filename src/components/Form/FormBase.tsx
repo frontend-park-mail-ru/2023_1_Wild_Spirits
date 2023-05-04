@@ -75,6 +75,7 @@ export const InputField = <T,>({
                 value={value}
                 min={min}
                 onInput={changeHandler ? (e) => changeHandler(toEvent(e), fieldName) : undefined}
+                size={1}
             />
         </FormFieldBase>
     );

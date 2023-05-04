@@ -9,16 +9,11 @@ import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
 import { TRequest } from "requests/requestTypes";
-import { EventCreateButton } from "../EventCreateButton/EventCreateButton";
-import { isAuthorized } from "flux/slices/userSlice";
-import { Tags } from "components/Tags/Tags";
-import { Calendar } from "components/Calendar/Calendar";
-import { toggleTag } from "flux/slices/tagsSlice";
-import { Link } from "components/Common/Link";
 
 export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     request: TRequest;
+    showEmptyMessage?: boolean;
 }
 
 /**
@@ -57,7 +52,7 @@ export class EventList extends Component<EventListProps> {
 
         const cardsProps: EventCardProps[] = eventsLightDataToCardProps(events.data);
 
-        if (cardsProps.length === 0) {
+        if (cardsProps.length === 0 && this.props.showEmptyMessage) {
             return (
                 <div className="event-list-empty">
                     <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>

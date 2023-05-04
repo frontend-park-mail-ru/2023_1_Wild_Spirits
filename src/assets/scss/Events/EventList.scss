@@ -30,8 +30,13 @@
 }
 
 .event-list-empty {
+    width: 60%;
     margin-top: 40px;
     text-align: center;
+
+    @media screen and (max-width: 850px) {
+        width: 100%;
+    }
 }
 
 .event-list-empty__text {
