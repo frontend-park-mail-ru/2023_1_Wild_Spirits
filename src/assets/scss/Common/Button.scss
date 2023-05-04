@@ -86,3 +86,9 @@
 
     padding: 10px;
 }
+
+.header__mobile-button {
+    @extend .button-base;
+    border: none;
+    box-shadow: none;
+}

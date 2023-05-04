@@ -30,6 +30,8 @@ import { createCollapsed, setCollapsed } from "flux/slices/metaSlice";
 import { deepEqual } from "modules/objectsManipulation";
 import { EventListPage } from "./Events/EventList/EvenListPage";
 import { loadCategories, loadCities } from "requests/header";
+import { SVGInline } from "./Common/SVGInline";
+import { SideMenu } from "./SideMenu/SideMenu";
 
 /**
  * @classdesc Main app component
@@ -69,7 +71,9 @@ export class App extends Component {
 
         return (
             <div className="app">
-                <div className="header"></div>
+                <div className="header">
+                    <Header/>
+                </div>
 
                 <div className="content">
                     {url === "/" && <EventListPage />}
@@ -80,6 +84,7 @@ export class App extends Component {
                     {url === "/map" && <Map />}
                 </div>
                 {modalWindowShown && <ModalWindow />}
+                {store.state.sideMenu.isOpen && <SideMenu/>}
             </div>
         );
     }

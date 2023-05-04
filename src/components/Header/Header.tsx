@@ -21,6 +21,7 @@ import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests/index";
 import { Link, ProfileLink } from "components/Common/Link";
 import { CategoriesMenu } from "./CategoriesMenu";
+import { openSideMenu } from "flux/slices/sideMenuSlice";
 
 /**
  * @class
@@ -96,6 +97,22 @@ export class Header extends Component {
             ];
         };
 
+        const CityPickerButton = () => {
+            return (
+                <div className="header__city-selector">
+                <button
+                    className="header__city-selector__button"
+                    onClick={() => {
+                        store.dispatch(openCitySelector());
+                    }}
+                >
+                    <img src="/assets/img/geo-icon.svg"></img>
+                    <span>{selectedCityName}</span>
+                </button>
+            </div>
+            )
+        }
+
         const cities = getCitiesNames(store.state.header).map((cityName) => <option>{cityName}</option>);
 
         const selectedCityName = getSelectedCityName(store.state.header);
@@ -113,33 +130,47 @@ export class Header extends Component {
                         </Link>
                     </div>
 
-                    <div className="header__search-container">
-                        <input
-                            type="text"
-                            onChange={(e) => this.#search(e as unknown as Event)}
-                            placeholder="Поиск"
-                            value={store.state.header.searchQuery}
-                            className="search"
-                        />
-                    </div>
+                    {
+                        !store.state.meta.collapsed.searchCollapsed && 
+                        <div className="header__search-container">
+                                <input
+                                    type="text"
+                                    size={1}
+                                    onChange={(e) => this.#search(e as unknown as Event)}
+                                    placeholder="Поиск"
+                                    value={store.state.header.searchQuery}
+                                    className="search"
+                                />
+                            </div>
+                    }
 
-                    <div className="header__city-selector">
-                        <button
-                            className="header__city-selector__button"
-                            onClick={() => {
-                                store.dispatch(openCitySelector());
-                            }}
-                        >
-                            <img src="/assets/img/geo-icon.svg"></img>
-                            <span>{selectedCityName}</span>
-                        </button>
-                        {/* <select onChange={(e) => this.#selectCity(e as unknown as Event)}>{cities}</select> */}
-                    </div>
+                    { !store.state.meta.collapsed.headerCollapsed && <CityPickerButton/> }
 
-                    <div className="profile-link">{getProfileLink()}</div>
+                    {
+                        store.state.meta.collapsed.headerCollapsed
+                        ?   
+                            <div className="flex">
+                                {
+                                    store.state.meta.collapsed.searchCollapsed &&
+                                    <button className="header__mobile-button">
+                                        <img src="/assets/img/search-icon.svg" className="header__mobile-icon"/>
+                                    </button>
+                                }
+                                <button className="header__mobile-button">
+                                    <img src="/assets/img/calendar-icon.svg" className="header__mobile-icon"/>
+                                </button>
+                                <button
+                                    className="header__mobile-button"
+                                    onClick={()=>store.dispatch(openSideMenu())}
+                                >
+                                    <img src="/assets/img/burger-menu-icon.svg" className="header__mobile-icon"/>
+                                </button>
+                            </div>
+                        :   <div className="profile-link">{getProfileLink()}</div>
+                    }
                 </div>
 
-                <CategoriesMenu />
+                { !store.state.meta.collapsed.headerCollapsed && <CategoriesMenu /> }
             </div>
         );
     }

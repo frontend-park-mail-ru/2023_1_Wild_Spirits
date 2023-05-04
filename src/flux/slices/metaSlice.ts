@@ -7,6 +7,7 @@ type ChangeMetaOnResizeType = { [key: string]: () => boolean };
 type CollapsedMeta = { [key in keyof ChangeMetaOnResizeType]: boolean };
 
 export const changeMetaOnResize: ChangeMetaOnResizeType = {
+    searchCollapsed: () => isCollapsed(500),
     headerCollapsed: () => isCollapsed(850),
     profileCollapsed: () => isCollapsed(1250),
     eventPageCollapsed: () => isCollapsed(1100),
