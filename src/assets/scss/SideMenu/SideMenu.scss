@@ -3,13 +3,26 @@
 
     background-color: white;
 
-    width: 70vw;
+    width: 250px;
     height: 100vh;
 
     box-shadow: -10px 0px 10px rgba(0, 0, 0, 0.25);
 
     top: 0;
     right: 0;
+
+    animation-name: slidein;
+    animation-duration: 0.5s;
+}
+
+@keyframes slidein {
+    from {
+        right: -250px;
+    }
+
+    to {
+        right: 0;
+    }
 }
 
 .sidemenu__header {
@@ -24,6 +37,7 @@
 .sidemenu__content {
     height: calc(100vh - 52px);
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidemenu__tab {
@@ -80,10 +94,6 @@
     background-color: transparent;
 
     &.selected {
-        color: var(--main-selected-color);
-    }
-
-    &:hover {
         color: var(--main-selected-color);
     }
 }

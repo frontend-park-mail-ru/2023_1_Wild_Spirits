@@ -64,7 +64,8 @@ export class SideMenu extends Component {
 
         const createCategoryTab = (category: TCategory) => {
             const selectedCategory = getSelectedCategory(store.state.header)
-            const selected = selectedCategory && selectedCategory.id === category.id;
+            const selected = selectedCategory !== undefined && selectedCategory.id === category.id;
+            console.log(selectedCategory, selected)
             return (
                 <button
                     className={"sidemenu__tab__item" + (selected ? " selected" : "")}
