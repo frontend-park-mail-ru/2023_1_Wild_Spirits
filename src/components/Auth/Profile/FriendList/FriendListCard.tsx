@@ -56,7 +56,7 @@ export class FriendListCard extends Component {
                     Подписки
                 </Link>
                 {!store.state.meta.collapsed.profileCollapsed && (
-                    <div>
+                    <div className="friend-list-card__friends-block-collapsed">
                         <hr />
                         <div className="friend-list-card__friends-block">{content}</div>
                     </div>

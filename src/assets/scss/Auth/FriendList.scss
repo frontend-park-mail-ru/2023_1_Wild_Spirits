@@ -26,6 +26,10 @@
     text-align: center;
 }
 
+.friend-list-card__friends-block-collapsed {
+    width: 100%;
+}
+
 .friend-list-card__friends-block__avatar {
     width: var(--avatar-size);
     height: var(--avatar-size);
@@ -61,6 +65,7 @@
 
     max-height: 50vh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .friend-list__title {
@@ -70,13 +75,17 @@
 }
 
 .friend-list__item {
+    width: 100%;
+}
+
+.friend-list__link {
     display: flex;
     align-items: center;
     justify-content: space-between;
     border: 1px solid var(--main-selected-color);
     border-radius: 10px;
-    padding: 5px;
-    min-width: 300px;
+    padding: 5px 10px;
+    word-wrap: break-word;
 }
 
 .friend-list__item__avatar-block {
@@ -87,6 +96,9 @@
 
 .friend-list__item__friend-name {
     font-size: 20px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tick-friend-icon-container * {

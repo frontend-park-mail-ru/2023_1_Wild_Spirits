@@ -11,14 +11,6 @@
     flex: 60%;
 }
 
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 40px;
-    max-width: 380px;
-}
-
 @media screen and (max-width: 800px) {
     .row {
         display: block;
@@ -93,6 +85,10 @@ $table-collapse: 500px;
         padding: 7px;
         margin: 0;
     }
+}
+
+.delimiter {
+    width: calc(100% - 20px);
 }
 
 .delimiter__content {

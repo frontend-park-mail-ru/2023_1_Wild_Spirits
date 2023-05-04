@@ -15,12 +15,14 @@
     background-color: rgba(90, 90, 90, 0.5);
 }
 
-.modal__form__container {    
+.modal__form__container {
     padding: 40px 80px 70px 80px;
 
     border-radius: 35px;
 
     min-width: 250px;
+    width: 100%;
+    max-width: 99vw;
 
     transform: translateY(max(-25%, -5vh));
 
