@@ -7,7 +7,7 @@ export interface EventListLoadingProps {
 
 export const EventListLoading = ({ size }: EventListLoadingProps) => {
     return (
-        <div className="event-list">
+        <div className="event-list-loading">
             {Array.from(Array(size)).map(() => (
                 <div className="card event-card-loading">
                     <Loading size="xl" />

@@ -32,6 +32,7 @@ import { EventListPage } from "./Events/EventList/EvenListPage";
 import { loadCategories, loadCities } from "requests/header";
 import { SVGInline } from "./Common/SVGInline";
 import { SideMenu } from "./SideMenu/SideMenu";
+import { MainModalWindow } from "./ModalWindow/MainModalWindow";
 
 /**
  * @classdesc Main app component
@@ -59,20 +60,12 @@ export class App extends Component {
         router.reset();
         const url = router.getNextUrl();
 
-        const EventsNotFound = () => {
-            return (
-                <div className="event-list-empty">
-                    <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
-                </div>
-            );
-        };
-
         const modalWindowShown = store.state.modalWindow.name !== ModalWindowName.NONE;
 
         return (
             <div className="app">
                 <div className="header">
-                    <Header/>
+                    <Header />
                 </div>
 
                 <div className="content">
@@ -83,8 +76,8 @@ export class App extends Component {
                     {url === "/editevent" && <EventProcessing type={EventProcessingType.EDIT} />}
                     {url === "/map" && <Map />}
                 </div>
-                {modalWindowShown && <ModalWindow />}
-                {store.state.sideMenu.isOpen && <SideMenu/>}
+                {modalWindowShown && <MainModalWindow />}
+                {store.state.sideMenu.isOpen && <SideMenu />}
             </div>
         );
     }

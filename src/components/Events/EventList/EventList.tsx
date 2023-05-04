@@ -49,7 +49,7 @@ export class EventList extends Component<EventListProps> {
 
         if (events.loadStatus !== LoadStatus.DONE) {
             return (
-                <div>
+                <div className="event-list-loading-block">
                     <EventListLoading size={6} />
                 </div>
             );
@@ -58,7 +58,11 @@ export class EventList extends Component<EventListProps> {
         const cardsProps: EventCardProps[] = eventsLightDataToCardProps(events.data);
 
         if (cardsProps.length === 0) {
-            return <div></div>;
+            return (
+                <div className="event-list-empty">
+                    <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
+                </div>
+            );
         }
 
         return (

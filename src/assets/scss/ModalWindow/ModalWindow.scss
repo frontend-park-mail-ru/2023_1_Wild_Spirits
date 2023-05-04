@@ -15,16 +15,41 @@
     background-color: rgba(90, 90, 90, 0.5);
 }
 
+.modal__close-button {
+    position: absolute;
+    display: flex;
+    right: 40px;
+    @media screen and (max-width: 500px) {
+        right: 20px;
+    }
+    @media screen and (max-width: 400px) {
+        right: 10px;
+    }
+}
+
+// .modal__close-img {
+
+// }
+
 .modal__form__container {
-    padding: 40px 80px 70px 80px;
+    position: relative;
+    padding: 40px 80px 70px;
 
     border-radius: 35px;
 
     min-width: 250px;
-    width: 100%;
-    max-width: 99vw;
+    max-width: 650px;
 
     transform: translateY(max(-25%, -5vh));
 
     background-color: white;
+    @media screen and (max-width: 500px) {
+        transform: none;
+
+        padding: 20px 40px 35px;
+    }
+    @media screen and (max-width: 400px) {
+        transform: none;
+        padding: 10px 20px 35px;
+    }
 }
