@@ -25,19 +25,21 @@ export class EventListPage extends Component {
         return (
             <div className="row">
                 <EventList request={loadEvents} events={store.state.events.cards} />
-                <div className="sidebar">
-                    {isAuthorized(store.state.user) && <EventCreateButton />}
-                    <GoMapBtn />
-                    <Calendar />
+                {!store.state.meta.collapsed.headerCollapsed && (
+                    <div className="event-list-page__sidebar">
+                        {isAuthorized(store.state.user) && <EventCreateButton />}
+                        <GoMapBtn />
+                        <Calendar />
 
-                    <Tags
-                        tagsState={store.state.tags}
-                        toggleTag={(tag) => {
-                            store.dispatch(toggleTag(tag));
-                            requestManager.request(loadEvents);
-                        }}
-                    />
-                </div>
+                        <Tags
+                            tagsState={store.state.tags}
+                            toggleTag={(tag) => {
+                                store.dispatch(toggleTag(tag));
+                                requestManager.request(loadEvents);
+                            }}
+                        />
+                    </div>
+                )}
             </div>
         );
     }

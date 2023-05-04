@@ -11,12 +11,40 @@ import { close } from "flux/slices/modalWindowSlice";
 
 import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
+import { toEvent } from "modules/CastEvents";
+
+const renderUser = (user: { user_id: number; name: string; avatar: string }) => {
+    return (
+        <ProfileLink
+            className="friend-list__link"
+            href={`/profile/${user.user_id}`}
+            onClick={() => store.dispatch(close())}
+        >
+            <span className="friend-list__item">
+                <div className="friend-list__item__avatar-block">
+                    <img className="friend-list__item__avatar" src={user.avatar} />
+                    <div className="friend-list__item__description">
+                        <span className="friend-list__item__friend-name">{user.name}</span>
+                    </div>
+                </div>
+            </span>
+        </ProfileLink>
+    );
+};
+const UserBlock = ({ title, users }: { title: string; users: { user_id: number; name: string; avatar: string }[] }) => {
+    return (
+        <div>
+            {users.length > 0 && users.length > 0 && (
+                <div>
+                    <h2>{title}</h2>
+                    {users.map(renderUser)}
+                </div>
+            )}
+        </div>
+    );
+};
 
 export class FriendList extends Component {
-    constructor() {
-        super({});
-    }
-
     didCreate() {
         const id = store.state.user.currentProfile?.id;
 
@@ -47,26 +75,6 @@ export class FriendList extends Component {
     };
 
     render(): JSX.Element {
-        const renderUser = (user: { user_id: number; name: string; avatar: string }) => {
-            return (
-                <ProfileLink
-                    className="friend-list__item"
-                    href={`/profile/${user.user_id}`}
-                    onClick={() => store.dispatch(close())}
-                >
-                    <span className="link">
-                        <div className="friend-list__item__avatar-block">
-                            <img className="friend-list__item__avatar" src={user.avatar} />
-                            <div className="friend-list__item__description">
-                                <span className="friend-list__item__friend-name">{user.name}</span>
-                            </div>
-                        </div>
-                    </span>
-                    <div className="tick-friend-icon-container"></div>
-                </ProfileLink>
-            );
-        };
-
         const friends = (() => {
             if (store.state.friendList.friends === null) {
                 return [];
@@ -99,25 +107,6 @@ export class FriendList extends Component {
                 .filter((user) => !filtered_ids.includes(user.user_id));
         })();
 
-        const UserBlock = ({
-            title,
-            users,
-        }: {
-            title: string;
-            users: { user_id: number; name: string; avatar: string }[];
-        }) => {
-            return (
-                <div>
-                    {users.length > 0 && users.length > 0 && (
-                        <div>
-                            <h2>{title}</h2>
-                            {users.map(renderUser)}
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
         const queryEmpty = store.state.friendList.friendSearchQuery !== "";
         const empty = queryEmpty && friends.length === 0 && foundUsers.length === 0;
 
@@ -128,7 +117,7 @@ export class FriendList extends Component {
 
                     <input
                         type="text"
-                        onChange={(e) => this.#reload(e as unknown as Event)}
+                        onChange={(e) => this.#reload(toEvent(e))}
                         className="search friend-search"
                         placeholder="Поиск"
                         value={store.state.friendList.friendSearchQuery}
