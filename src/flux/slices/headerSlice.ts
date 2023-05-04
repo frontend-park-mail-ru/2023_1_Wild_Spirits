@@ -4,7 +4,7 @@ import { PayloadAction } from "flux/action";
 import { LoadStatus } from "requests/LoadStatus";
 import { TCategory } from "models/Category";
 
-type TCity = {
+export type TCity = {
     id: number;
     name: string;
 };

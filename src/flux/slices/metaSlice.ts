@@ -6,6 +6,7 @@ const isCollapsed = (width: number) => window.matchMedia(`(max-width:${width}px)
 type ChangeMetaOnResizeType = { [key: string]: () => boolean };
 
 export const changeMetaOnResize: ChangeMetaOnResizeType = {
+    searchCollapsed: () => isCollapsed(500),
     headerCollapsed: () => isCollapsed(850),
     profileCollapsed: () => isCollapsed(1250),
     eventPageCollapsed: () => isCollapsed(1100),

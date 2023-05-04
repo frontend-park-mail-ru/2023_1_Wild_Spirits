@@ -23,15 +23,9 @@
 }
 
 .header__head {
-    // font-size: 24px;
-
-    font-size: clamp(24px, 3vw, 48px);
+    font-size: clamp(32px, 3vw, 48px);
 
     font-weight: lighter;
-
-    // @media screen and (min-width: 1100px) {
-    //     font-size: 48px;
-    // }
 }
 
 .header__menu {
@@ -45,6 +39,8 @@
     justify-content: space-between;
     margin-left: 100px;
     padding: 0 20px;
+
+    min-height: 48px;
 
     align-items: center;
 
@@ -145,8 +141,9 @@ select > option {
 
 .header__search-container {
     flex-grow: 1;
-    max-width: 30%;
-    min-width: 200px;
+    margin: 0 10px 0 10px;
+    // max-width: 30%;
+    // min-width: 200px;
 
     display: flex;
 }
@@ -162,4 +159,8 @@ select > option {
     flex-grow: 1;
 
     background: calc(100% - 9px) url("/assets/img/search-icon.svg") no-repeat;
+}
+
+.header__mobile-icon {
+    height: 25px;
 }
