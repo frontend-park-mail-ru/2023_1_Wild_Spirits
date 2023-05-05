@@ -13,7 +13,7 @@ import { loadEvents } from "requests/events";
 const GoMapBtn = () => {
     return (
         <div className="full-button-link-container">
-            <Link href="/map" className="full-button-link js-router-link">
+            <Link href="/map" className="full-button-link">
                 Поиск по карте
             </Link>
         </div>

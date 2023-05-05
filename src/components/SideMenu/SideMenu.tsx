@@ -8,7 +8,7 @@ import { TCategory } from "models/Category";
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
 import { logoutUser } from "requests/user";
-import { ProfileLink } from "components/Common/Link";
+import { ProfileLink, Link } from "components/Common/Link";
 
 import { Tags } from "components/Tags/Tags";
 import { toggleTag } from "flux/slices/tagsSlice";
@@ -183,6 +183,12 @@ export class SideMenu extends Component {
                             }}
                         />
                     </SideMenuTab>
+
+                    <div className="sidemenu__tab__button">
+                        <Link href="/map" className="sidemenu__link">
+                            Поиск по карте
+                        </Link>
+                    </div>
                 </div>
 
                 {
