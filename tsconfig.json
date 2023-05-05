@@ -6,7 +6,8 @@
         "strict": true,
         "isolatedModules": true,
         "baseUrl": "./src",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "jsx": "preserve"
     },
     "include": ["./src/**/*"]
 }

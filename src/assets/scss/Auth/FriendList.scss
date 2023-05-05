@@ -1,0 +1,112 @@
+.friend-list-card {
+    --avatar-size: 65px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.friend-list-card__header {
+    font-size: 40px;
+    color: var(--link-color);
+}
+
+.friend-list-card__friends-block {
+    display: flex;
+    justify-content: flex-start;
+    gap: 30px;
+}
+
+.friend-list-card__friends-block__block-item {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+
+    text-align: center;
+}
+
+.friend-list-card__friends-block-collapsed {
+    width: 100%;
+}
+
+.friend-list-card__friends-block__avatar {
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+
+    object-fit: cover;
+
+    border: 3px solid transparent;
+    border-radius: 50%;
+}
+
+.friend-list-card__friends-block__avatar:hover {
+    border-color: var(--link-color);
+}
+
+.friend-list-card__friend-button {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.friend-list__item__avatar {
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+    border-radius: 50%;
+
+    object-fit: cover;
+}
+
+.friend-list {
+    --avatar-size: 70px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    max-height: 50vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.friend-list__title {
+    font-size: 40px;
+    font-weight: 400;
+    margin-bottom: 10px;
+}
+
+.friend-list__item {
+    width: 100%;
+}
+
+.friend-list__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--main-selected-color);
+    border-radius: 10px;
+    padding: 5px 10px;
+    word-wrap: break-word;
+}
+
+.friend-list__item__avatar-block {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.friend-list__item__friend-name {
+    font-size: 20px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tick-friend-icon-container * {
+    stroke: var(--main-selected-color);
+}
+
+.friend-list__header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}

@@ -6,15 +6,66 @@
 .form-control {
     padding: 10px;
     font-size: 18px;
-    width: 100%;
     border: #969696 solid 1px;
     border-radius: 6px;
+
+    &-error {
+        @extend .form-control;
+        border-color: red;
+    }
 }
 
 .form-label {
     margin: 16px 0 4px 8px;
 }
 
+.form-label-required {
+    @extend .form-label;
+
+    &:before {
+        color: red;
+        content: "* ";
+    }
+}
+
+.form-required-title {
+    font-size: 18px;
+}
+
 .form-submit {
     margin: 20px auto 0 auto;
+}
+
+.form-error {
+    color: red;
+    font-weight: bold;
+    margin-top: 8px;
+
+    &:after {
+        content: " ";
+    }
+}
+
+.form-label-img-editable {
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:before {
+        content: "";
+        background-image: url("/assets/img/form/edit-icon-hover.svg");
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        background-image: url("/assets/img/form/edit-icon.svg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        display: flex;
+        width: 40%;
+        height: 40%;
+    }
 }

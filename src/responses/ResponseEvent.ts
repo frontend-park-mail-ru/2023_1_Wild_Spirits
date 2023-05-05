@@ -1,5 +1,6 @@
-import { TEvent, TEventLight, TEventOrganizer, TEventPlace } from "models/Events";
+import { TEvent, TEventLight, TEventMap, TEventPlace } from "models/Events";
 import { ResponseBody } from "./ResponseBase";
+import { TOrganizer } from "flux/slices/userSlice";
 
 interface IResponseEventsLight {
     events: TEventLight[];
@@ -8,9 +9,13 @@ interface IResponseEventsLight {
 interface IResponseEvent {
     event: TEvent;
     places: TEventPlace[];
-    organizer: TEventOrganizer;
+    organizer: TOrganizer;
 }
 
-export interface ResponseEventsLight extends ResponseBody<IResponseEventsLight> {}
+interface IResponseEventMap {
+    events: TEventMap[];
+}
 
-export interface ResponseEvent extends ResponseBody<IResponseEvent> {}
+export type ResponseEventsLight = ResponseBody<IResponseEventsLight>;
+export type ResponseEvent = ResponseBody<IResponseEvent>;
+export type ResponseEventMap = ResponseBody<IResponseEventMap>;

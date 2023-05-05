@@ -1,13 +1,16 @@
-@import "./Common/Colors.scss";
-@import "./Common/Button.scss";
-@import "./Common/Form.scss";
-@import "./Common/Card.scss";
-@import "./Common/Link.scss";
-@import "./Common/ProfileLink.scss";
+@import "Common/";
+@import "Events/";
+@import "Auth/";
+@import "Header/";
+@import "Tags/";
+@import "Map/";
+@import "ModalWindow/";
+@import "SideMenu/";
+@import "Calendar/";
 
 @font-face {
     font-family: "Roboto";
-    src: url("/src/assets/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
+    src: url("/assets/fonts/Roboto/Roboto-Regular.ttf") format("truetype");
 
     font-weight: normal;
     font-style: normal;
@@ -15,7 +18,7 @@
 
 @font-face {
     font-family: "Roboto";
-    src: url("/src/assets/fonts/Roboto/Roboto-Thin.ttf") format("truetype");
+    src: url("/assets/fonts/Roboto/Roboto-Thin.ttf") format("truetype");
 
     font-weight: 300;
     font-style: normal;
@@ -26,6 +29,7 @@
     --link-color: #008666;
     --input-el-color: #42c3ca;
     --disabled-input-el-color: #9ed8db;
+    --hovering-el-color: rgb(231, 231, 231);
 }
 
 body {
@@ -33,4 +37,9 @@ body {
     font-weight: normal;
 
     cursor: default;
+}
+
+button {
+    font-family: "Roboto";
+    font-weight: normal;
 }

@@ -11,7 +11,7 @@ const __dirname = path.dirname(filename);
 export const createConf = (env, argv) => {
     let config = {
         entry: {
-            app: "./src/index.ts",
+            app: "./src/index.tsx",
         },
         output: {
             filename: "[name].js",
@@ -21,7 +21,7 @@ export const createConf = (env, argv) => {
         module: {
             rules: [
                 {
-                    test: /\.(ts|js)$/,
+                    test: /\.(ts|js|tsx|jsx)$/,
                     exclude: /node_modules/,
                     loader: "babel-loader",
                 },
@@ -39,6 +39,7 @@ export const createConf = (env, argv) => {
                         {
                             loader: "css-loader",
                             options: {
+                                url: false,
                                 modules: {
                                     mode: "local",
                                     auto: true,
@@ -65,6 +66,7 @@ export const createConf = (env, argv) => {
                     options: {
                         outputPath: "assets",
                         name: "[name].[ext]",
+                        publicPath: "/",
                     },
                 },
                 {
@@ -72,6 +74,7 @@ export const createConf = (env, argv) => {
                     loader: "handlebars-loader",
                     options: {
                         helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
+                        partialDirs: [path.resolve(__dirname, "./src/templates")],
                     },
                 },
             ],
@@ -100,12 +103,15 @@ export const createConf = (env, argv) => {
             }),
         ],
         resolve: {
-            extensions: [".js", ".ts", "css", "img"],
+            extensions: [".js", ".ts", ".jsx", ".tsx", "css", "img"],
             modules: [__dirname + "/src", "node_modules"],
             alias: {
                 handlebars: "handlebars/dist/handlebars.js",
                 "@style": path.resolve(__dirname, "./src/assets/scss/style.scss"),
             },
+        },
+        externals: {
+            "yandex-maps": "ymaps",
         },
         mode: argv.mode,
         devServer: {

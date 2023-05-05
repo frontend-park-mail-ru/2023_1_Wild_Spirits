@@ -5,6 +5,6 @@ interface IResponseUser<T> {
     user: T;
 }
 
-export interface ResponseUserLight extends ResponseBody<IResponseUser<TUserLight>> {}
-export interface ResponseUserProfile extends ResponseBody<IResponseUser<TUser>> {}
-export interface ResponseUserEdit extends ResponseBody<IResponseUser<TUser>> {}
+export type ResponseUserLight = ResponseBody<IResponseUser<TUserLight>>;
+export type ResponseUserProfile = ResponseBody<IResponseUser<TUser>>;
+export type ResponseUserEdit = ResponseBody<IResponseUser<TUser>>;

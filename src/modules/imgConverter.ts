@@ -1,5 +1,5 @@
 export const toWebP = (imageUrl: string, callback: (imageBlob: Blob) => void) => {
-    let image = new Image();
+    const image = new Image();
     image.src = imageUrl;
 
     image.onload = () => {

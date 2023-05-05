@@ -1,16 +1,15 @@
-import { Component } from "components/Component";
-
 type RouterType<T> = Record<string, () => T>;
 
 class Router {
-    #prevUrl: string = "";
-    #nowUrl: string = "";
+    #prevUrl: string;
+    #nowUrl: string;
     #locationParts: string[] = [];
     #searchParams: URLSearchParams | undefined;
     callbacks: (() => void)[] = [];
 
     constructor() {
         this.#parseLocation();
+        this.#prevUrl = "";
         this.#nowUrl = "";
         window.addEventListener("popstate", this.#onPopState.bind(this));
     }
@@ -30,8 +29,12 @@ class Router {
     }
 
     getNextUrl() {
-        const result = this.#locationParts.splice(0)[0];
+        const result = this.#locationParts.splice(0, 1)[0];
         return result;
+    }
+
+    getNextUrlNotRemove() {
+        return this.#locationParts[0];
     }
 
     #searchByUrl<T>(routes: RouterType<T>): { result: T; founded: true } | { result: undefined; founded: false } {
@@ -47,11 +50,6 @@ class Router {
     switchAny<T = any>(routes: RouterType<T>, defaultValue: () => T): T {
         const { result, founded } = this.#searchByUrl(routes);
         return founded ? result : defaultValue();
-    }
-
-    switchComponent(routes: RouterType<Component>): string {
-        const { result, founded } = this.#searchByUrl(routes);
-        return founded ? result.render() : "";
     }
 
     go(url: string) {
@@ -83,24 +81,4 @@ class Router {
     }
 }
 
-export let router = new Router();
-
-const getLinks = () => document.querySelectorAll(".js-router-link");
-
-function linkEvent(event: Event) {
-    event.preventDefault();
-    const currentTarget = event.currentTarget as HTMLLinkElement;
-    router.go(currentTarget.href);
-}
-
-export const addRouterEvents = () => {
-    getLinks().forEach((link) => {
-        link.addEventListener("click", linkEvent);
-    });
-};
-
-export const removeRouterEvents = () => {
-    getLinks().forEach((link) => {
-        link.removeEventListener("click", linkEvent);
-    });
-};
+export const router = new Router();

@@ -3,7 +3,8 @@
   "target": "ES6",
   "dependencies": {
     "debug": "^4.3.4",
-    "handlebars": "^4.7.7"
+    "handlebars": "^4.7.7",
+    "url-loader": "^4.1.1"
   },
   "browserslist": [
     ">0.2%",
@@ -15,17 +16,24 @@
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
-    "deploy": "serve -s ./dist -p 8080"
+    "deploy": "serve -s ./dist -p 8080",
+    "lint": "eslint . --ext .tsx,.ts"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.3",
+    "@babel/plugin-syntax-jsx": "^7.21.4",
+    "@babel/plugin-transform-react-jsx": "^7.21.0",
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-typescript": "^7.21.0",
+    "@types/react-dom": "^18.0.11",
+    "@types/yandex-maps": "^2.1.29",
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
     "babel-loader": "^9.1.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.3",
-    "eslint": "^8.35.0",
+    "eslint": "^8.39.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
     "handlebars-loader": "^1.7.3",

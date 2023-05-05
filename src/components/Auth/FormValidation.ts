@@ -14,7 +14,7 @@ export const validateForm = (form: HTMLFormElement): boolean => {
                     return "почта должна содержать символ '@'";
                 }
 
-                value = value.split('@')[1];
+                value = value.split("@")[1];
 
                 if (!value.includes(".")) {
                     return "почта должна содержать символ '.'";
@@ -50,7 +50,7 @@ export const validateForm = (form: HTMLFormElement): boolean => {
     const password = formData.get("password");
     const passwordConfirmation = formData.get("passwordConfirmation");
 
-    if ((passwordConfirmation !== null) && (password !== passwordConfirmation)) {
+    if (passwordConfirmation !== null && password !== passwordConfirmation) {
         const warningEl = form.querySelector("input[name=passwordConfirmation] + .warning");
         if (warningEl) {
             warningEl.textContent = "пароли не совпадают";
@@ -61,18 +61,40 @@ export const validateForm = (form: HTMLFormElement): boolean => {
     return isValid;
 };
 
-export const warningMsg = (message: string | undefined): void => {
+export const warningMsg = (message: string | undefined, errors: { [key: string]: string } | undefined): void => {
     let warning: string;
     if (message === undefined) {
         warning = "неизвестная ошибка сервера";
     } else {
-        const errorMessages: {[key: string]: string} = {
+        const errorMessages: { [key: string]: string } = {
             "User with such username/email already exists": "Такой пользователь уже зарегистрирован",
             "User not authorized": "Неверный логин или пароль",
-            "Wrong credentials": "Неверный логин или пароль"
+            "Wrong credentials": "Неверный логин или пароль",
         };
-    
-        warning = errorMessages[message] || message;
+
+        if (message !== "Request data validation failure") {
+            warning = errorMessages[message] || message;
+        } else {
+            warning = "";
+        }
+    }
+
+    if (errors !== undefined) {
+        const errorSynonyms: { [key: string]: string } = {
+            username: "nickname",
+            pass: "password",
+        };
+
+        for (const [field, msg] of Object.entries(errors)) {
+            const fieldName = errorSynonyms[field];
+            if (!fieldName) {
+                continue;
+            }
+            const warningEl = document.querySelector(`input[name=${fieldName}] + .warning`);
+            if (warningEl) {
+                warningEl.textContent = msg;
+            }
+        }
     }
 
     const warningEl = document.getElementById("common-warning");
@@ -80,4 +102,4 @@ export const warningMsg = (message: string | undefined): void => {
     if (warningEl) {
         warningEl.innerText = warning;
     }
-}
+};

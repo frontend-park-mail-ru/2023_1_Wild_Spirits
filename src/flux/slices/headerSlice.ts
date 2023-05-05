@@ -1,15 +1,18 @@
 import { createSlice } from "flux/slice";
 
-import { Action } from "flux/action";
+import { PayloadAction } from "flux/action";
+import { LoadStatus } from "requests/LoadStatus";
+import { TCategory } from "models/Category";
 
-type TCity = {
-    id: number,
-    name: string
-}
+export type TCity = {
+    id: number;
+    name: string;
+};
 
 interface HeaderState {
-    categories: string[];
+    categories: TCategory[];
     selectedCategoryId: number | undefined;
+    citiesLoadStatus: LoadStatus.Type;
     cities: TCity[];
     selectedCityId: number | undefined;
     searchQuery: string | undefined;
@@ -18,81 +21,72 @@ interface HeaderState {
 const initialState: HeaderState = {
     categories: [],
     selectedCategoryId: undefined,
+    citiesLoadStatus: LoadStatus.NONE,
     cities: [],
     selectedCityId: 1,
-    searchQuery: undefined
+    searchQuery: undefined,
 };
 
 const headerSlice = createSlice({
     name: "header",
     initialState: initialState,
     reducers: {
-        setCities: (state, action) => {
+        setCities: (state: HeaderState, action: PayloadAction<{ cities: TCity[] }>) => {
             state.cities = action.payload.cities;
+            state.citiesLoadStatus = LoadStatus.DONE;
             return state;
         },
-        setCategories: (state, action) => {
-            state.categories = action.payload.categories.map((category: {id: number, name: string}) => category.name);
+        setCategories: (state: HeaderState, action: PayloadAction<TCategory[]>) => {
+            state.categories = action.payload;
             return state;
         },
-        selectCity: (state, action: Action<{city: number | string | TCity}>) => {
+        selectCity: (state: HeaderState, action: PayloadAction<{ city: number | string | TCity | undefined }>) => {
             const city = action.payload?.city;
             if (typeof city == "number") {
                 state.selectedCityId = city;
-            } else if (typeof city == "string"){
-                state.selectedCityId = state.cities.find(el => el.name === city)?.id || 1;
+            } else if (typeof city == "string") {
+                state.selectedCityId = state.cities.find((el) => el.name === city)?.id || 1;
             } else {
                 state.selectedCityId = city?.id || 1;
             }
             return state;
         },
-        selectCategory: (state, action) => {
-            const category = action.payload.category;
-            if (typeof category == "number") {
-                state.selectedCategoryId = category;
+        selectCategory: (state: HeaderState, action: PayloadAction<number | string>) => {
+            if (typeof action.payload == "number") {
+                state.selectedCategoryId = action.payload;
             } else {
-                state.selectedCategoryId = state.cities.findIndex((el)=>el===category);
+                state.selectedCategoryId = state.categories.findIndex((el) => el.id === action.payload);
             }
             return state;
         },
-        clearCategory: (state) => {
+        clearCategory: (state: HeaderState) => {
             state.selectedCategoryId = undefined;
             return state;
         },
-        setSearchQuery: (state, action: Action<string>) => {
+        setSearchQuery: (state: HeaderState, action: PayloadAction<string>) => {
             state.searchQuery = action.payload;
             return state;
         },
-        clearSearchQuery: (state) => {
+        clearSearchQuery: (state: HeaderState) => {
             state.searchQuery = undefined;
             return state;
-        }
-    }
+        },
+    },
 });
 
 export const getSelectedCityName = (state: HeaderState): string | undefined => {
-    return state.cities.find(city => city.id === state.selectedCityId)?.name;
-}
+    return state.cities.find((city) => city.id === state.selectedCityId)?.name;
+};
 
 export const getCitiesNames = (state: HeaderState): string[] => {
-    return state.cities.map(city => city.name);
-}
+    return state.cities.map((city) => city.name);
+};
 
-export const getSelectedCategory = (state: HeaderState): string | undefined => {
-    if (state.selectedCategoryId !== undefined) {
-        return state.categories[state.selectedCategoryId];
-    }
+export const getSelectedCategory = (state: HeaderState): TCategory | undefined => {
+    return state.categories.find((el) => el.id === state.selectedCategoryId);
+};
 
-    return undefined;
-}
+export const { setCities, setCategories, selectCity, selectCategory, clearCategory, setSearchQuery, clearSearchQuery } =
+    headerSlice.actions;
 
-export const { setCities,
-               setCategories, 
-               selectCity, 
-               selectCategory, 
-               clearCategory, 
-               setSearchQuery, 
-               clearSearchQuery 
-            } = headerSlice.actions;
-            
 export default headerSlice;

@@ -1,0 +1,92 @@
+@import "/src/assets/scss/Common/Card.scss";
+
+.event-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.event-card__content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    text-decoration: none;
+    color: black;
+}
+
+.event-card__body {
+    flex-grow: 1;
+}
+
+.event-card__marked {
+    display: flex;
+}
+
+.event-card__marked-content-block {
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.event-card__marked-content {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+.event-card__marked-text {
+    display: flex;
+}
+
+.event-card__logo-block {
+    width: 32px;
+    margin-right: 5px;
+}
+
+.event-card__logo {
+    display: flex;
+    margin: auto;
+}
+
+.event-card__footer {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+
+    margin: 0 calc(var(--lm-card-border-body-margin) + 5px) var(--lm-card-border-body-margin);
+}
+
+.event-card__button-block {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20%;
+    width: 100%;
+}
+
+.event-card__stats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.event-card__button-link {
+    margin: 0 auto;
+}
+
+.event-card-loading {
+    @extend .event-card;
+    height: 500px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.stroke-svg-icon.filled {
+    svg * {
+        stroke: var(--main-selected-color);
+        fill: var(--main-selected-color);
+        fill-opacity: 1;
+    }
+
+    border-color: var(--main-selected-color);
+}

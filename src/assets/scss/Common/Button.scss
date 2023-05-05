@@ -1,29 +1,37 @@
 .button-base {
+    appearance: none;
+    background-color: transparent;
     border-radius: 10px;
     font-size: 20px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     cursor: pointer;
 }
 
-.button {
-    @extend .button-base;
-    background: $input-el-color;
-    color: #ffffff;
-    border: $input-el-color solid 1px;
-    padding: 10px;
+@mixin button-hover ($color, $disabled-color) {
+    background: $color;
+    color: white;
+    border: $color solid 1px;
+
     &:hover {
         background: #ffffff;
-        color: $input-el-color;
+        color: $color;
     }
     &:disabled {
-        background: $disabled-input-el-color;
-        border-color: $disabled-input-el-color;
+        background: $disabled-color;
+        border-color: $disabled-color;
         color: white;
         cursor: not-allowed;
     }
     &:disabled:hover {
-        background: $disabled-input-el-color;
+        background: $disabled-color;
     }
+}
+
+.button {
+    @extend .button-base;
+    @include button-hover($input-el-color, $disabled-input-el-color);
+    text-align: center;
+    padding: 10px;
 }
 
 .link-button {
@@ -40,33 +48,47 @@
     }
 }
 
-.button-outline {
+.full-button-link {
     @extend .button-base;
-    display: inline-flex;
+    @include button-hover($main-selected-color, white);
 
-    &-like {
-        border: #ff0000 solid 1px;
-        &:hover {
-            border-color: $input-el-color;
-        }
-    }
+    text-decoration: none;
+    text-align: center;
+    width: 100%;
+    font-size: 28px;
+    border-radius: 20px;
+    padding: 10px;
+}
 
-    &-other {
-        border: $input-el-color solid 1px;
-        &:hover {
-            border-color: $main-selected-color;
-        }
+.full-button-link-container {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+
+    margin-bottom: 40px;
+}
+
+@mixin button-outline ($color) {
+    border: 1px solid $color;
+    background-color: white;
+    color: $color;
+
+    &:hover {
+        background-color: $color;
+        color: white;
     }
 }
 
 .button-danger {
     @extend .button-base;
-    background: #e92424;
-    color: #ffffff;
-    border: 1px solid $input-el-color;
-    padding: 10px;
+    @include button-outline(#eb4848);
 
-    &:hover {
-        background: #ff7a7a;
-    }
+    padding: 10px;
+}
+
+.header__mobile-button {
+    @extend .button-base;
+    border: none;
+    box-shadow: none;
 }

@@ -1,0 +1,36 @@
+.city-picker__header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px 0 10px 0;
+}
+
+.city-picker__header__title {
+    margin: 0;
+}
+
+.city-picker__content {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.city-picker__item {
+    appearance: none;
+    background-color: white;
+    border: none;
+
+    width: 100%;
+    text-align: start;
+
+    padding: 15px 5px 15px 5px;
+
+    font-size: 16px;
+
+    &:hover {
+        background-color: var(--hovering-el-color);
+    }
+}

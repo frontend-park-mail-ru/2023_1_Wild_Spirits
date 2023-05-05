@@ -7,6 +7,10 @@ import headerSlice from "./slices/headerSlice";
 import tagsSlice from "./slices/tagsSlice";
 import calendarSlice from "./slices/calendarSlice";
 import eventsSlice from "./slices/eventSlice";
+import friendsListSlice from "./slices/friendsListSlice";
+import placesSlice from "./slices/placesSlice";
+import metaSlice from "./slices/metaSlice";
+import sideMenuSlice from "./slices/sideMenuSlice";
 
 export type SlicesMapObject<S = any> = {
     [K in keyof S]: Slice<S[K]>;
@@ -27,11 +31,15 @@ const configureStore = <S>(slices: SlicesMapObject<S>): Store<S> => {
     );
 };
 
-export let store = configureStore({
+export const store = configureStore({
+    meta: metaSlice,
     user: userSlice,
     modalWindow: modalWindowSlice,
     header: headerSlice,
     tags: tagsSlice,
+    places: placesSlice,
     calendar: calendarSlice,
-    events: eventsSlice
+    events: eventsSlice,
+    friendList: friendsListSlice,
+    sideMenu: sideMenuSlice,
 });
