@@ -1,7 +1,6 @@
 /** @module Components */
 
 import { VDOM, Component } from "modules/vdom";
-import { router } from "modules/router";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, loadEventPage, featureEvent, unfeatureEvent } from "requests/events";
@@ -16,6 +15,7 @@ import { EventPageMap } from "./EventPageMap";
 import { SVGInline } from "components/Common/SVGInline";
 import { TEvent } from "models/Events";
 import { OrgEvents } from "../OrgEvents/OrgEvents";
+import { router } from "modules/router";
 
 /**
  * Event list component
@@ -127,13 +127,16 @@ export class EventPage extends Component {
                         <div className="event-page__button-text"> Пригласить друга </div>
                     </div> */}
                         {isAuthorized(store.state.user) && event.is_mine ? (
-                            <Link href={`/editevent/${event.id}`} className="event-page__button-outline">
+                            <button
+                                className="event-page__button-outline event-page__button"
+                                onClick={() => router.go(`/editevent/${event.id}`)}
+                            >
                                 <SVGInline
                                     className="event-page__button-icon stroke-svg-icon"
                                     src="/assets/img/page/edit-icon.svg"
                                     alt="edit"
                                 />
-                            </Link>
+                            </button>
                         ) : (
                             <button
                                 className={`event-page__button-outline event-page__button${

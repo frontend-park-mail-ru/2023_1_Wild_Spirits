@@ -85,9 +85,9 @@
 .stroke-svg-icon.filled {
     svg * {
         stroke: var(--main-selected-color);
-        fill: var(--main-selected-color); 
+        fill: var(--main-selected-color);
         fill-opacity: 1;
     }
-    
+
     border-color: var(--main-selected-color);
 }
