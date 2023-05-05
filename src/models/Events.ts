@@ -49,7 +49,6 @@ export interface TOrgLight {
 export interface TEventLight extends TEventBase {
     places: string[];
     org: TOrgLight;
-    //places: TEventPlace[];
 }
 
 export interface TEvent extends TEventBase {
@@ -103,7 +102,6 @@ export const eventsLightDataToCardProps = (events: TEventLight[]): EventCardProp
     return events.map((event: TEventLight) => {
         const dates: string[] = fixEventDates(event.dates);
 
-        // const places: string[] = event.places.map((place) => place.name);
         const places = event.places;
         return {
             id: event.id,
