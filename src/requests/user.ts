@@ -1,5 +1,5 @@
 import { AjaxResultStatus, ajax } from "modules/ajax";
-import { ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser";
+import { ResponseUserEdit, ResponseUserLight, ResponseUserProfile } from "responses/ResponsesUser";
 import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
@@ -10,12 +10,14 @@ import {
     authorizedLoadStart,
     authorizedLoadError,
     removeFromFriends,
+    TOrganizer,
 } from "flux/slices/userSlice";
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { closeModal } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 import { addToFriends } from "flux/slices/userSlice";
 import { router } from "modules/router";
+import { TFriend, TUserLight } from "models/User";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
@@ -55,6 +57,57 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
         .catch(() => {
             resolveRequest();
         });
+};
+
+export const patchProfile = (resolveRequest: TRequestResolver, userId: number, formData: FormData) => {
+    ajax.removeHeaders("Content-Type");
+    ajax.patch<ResponseUserEdit, ResponseErrorDefault>({
+        url: `/users/${userId}`,
+        credentials: true,
+        body: formData,
+    }).then(({ json, response, status }) => {
+        if (status === AjaxResultStatus.SUCCESS) {
+            if (!store.state.user.data || !store.state.user.currentProfile) {
+                return;
+            }
+
+            const userData: TUserLight = {
+                id: store.state.user.data.id,
+                name: formData.get("name") as string,
+                email: formData.get("email") as string,
+                city_name: json.body.user.city_name,
+                img: json.body.user.img,
+            };
+
+            const currentProfileData: {
+                id: number;
+                profile: { user: TOrganizer; friends?: TFriend[] | undefined };
+            } = {
+                id: store.state.user.currentProfile.id,
+                profile: {
+                    user: {
+                        id: store.state.user.currentProfile.id,
+                        city_name: json.body.user.city_name,
+                        name: formData.get("name") as string,
+                        img: json.body.user.img,
+                        phone: formData.get("phone") as string,
+                        email: formData.get("email") as string,
+                        website: (formData.get("website") as string) || undefined,
+                    },
+                },
+            };
+
+            store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
+            resolveRequest();
+        } else if (response.status === 409) {
+            const errorMsgElement = document.getElementById("profile-description-error-message");
+            if (errorMsgElement) {
+                errorMsgElement.textContent = json.errorMsg || null;
+            }
+            resolveRequest();
+        }
+    });
+    ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
 };
 
 export const loadFriends = (resolveRequest: TRequestResolver, user_id: number, search?: string) => {
@@ -171,7 +224,12 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
         });
 };
 
-export const registerOrganizer = (resolveRequest: TRequestResolver, formData: FormData) => {
+type ErrorMsgType = {
+    errorMsg: string,
+    errors: {[key: string]: string}
+}
+
+export const registerOrganizer = (resolveRequest: TRequestResolver, formData: FormData, setErrors: (errors: ErrorMsgType)=>void) => {
     ajax.post({
         url: "/organizers",
         credentials: true,
@@ -181,10 +239,12 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
             website: formData.get("website"),
         },
     })
-        .then(({ status }) => {
+        .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 router.go("/createevent");
                 store.dispatch(closeModal());
+            } else {
+                setErrors({errorMsg: json.errorMsg, errors: json.errors});
             }
             resolveRequest();
         })

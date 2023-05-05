@@ -28,6 +28,7 @@ import {
     searchUsers,
     registerOrganizer,
     deleteFriend,
+    patchProfile,
 } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
@@ -151,6 +152,10 @@ const requests: SetupRequestsType[] = [
         request: unfeatureEvent,
         dependencies: [loadAuthorization],
     },
+    {
+        request: patchProfile,
+        dependencies: [loadAuthorization],
+    }
 ];
 
 export const requestManager = configureRequestManager(requests);

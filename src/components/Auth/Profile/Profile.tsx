@@ -17,7 +17,7 @@ import { getCitiesNames } from "flux/slices/headerSlice";
 
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { ResponseUserEdit } from "responses/ResponsesUser";
-import { addFriend, deleteFriend, loadProfile } from "requests/user";
+import { addFriend, deleteFriend, loadProfile, patchProfile } from "requests/user";
 import { toWebP } from "modules/imgConverter";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { ResponseErrorDefault } from "responses/ResponseBase";
@@ -129,52 +129,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
     };
 
     #sendForm(user_id: number, formData: FormData) {
-        ajax.removeHeaders("Content-Type");
-        ajax.patch<ResponseUserEdit, ResponseErrorDefault>({
-            url: `/users/${user_id}`,
-            credentials: true,
-            body: formData,
-        }).then(({ json, response, status }) => {
-            if (status === AjaxResultStatus.SUCCESS) {
-                if (!store.state.user.data || !store.state.user.currentProfile) {
-                    return;
-                }
-
-                const userData: TUserLight = {
-                    id: store.state.user.data.id,
-                    name: formData.get("name") as string,
-                    email: formData.get("email") as string,
-                    city_name: json.body.user.city_name,
-                    img: json.body.user.img,
-                };
-
-                const currentProfileData: {
-                    id: number;
-                    profile: { user: TOrganizer; friends?: TFriend[] | undefined };
-                } = {
-                    id: store.state.user.currentProfile.id,
-                    profile: {
-                        user: {
-                            id: store.state.user.currentProfile.id,
-                            city_name: json.body.user.city_name,
-                            name: formData.get("name") as string,
-                            img: json.body.user.img,
-                            phone: formData.get("phone") as string,
-                            email: formData.get("email") as string,
-                            website: (formData.get("website") as string) || undefined,
-                        },
-                    },
-                };
-
-                store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
-            } else if (response.status === 409) {
-                const errorMsgElement = document.getElementById("profile-description-error-message");
-                if (errorMsgElement) {
-                    errorMsgElement.textContent = json.errorMsg || null;
-                }
-            }
-        });
-        ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
+        requestManager.request(patchProfile, user_id, formData);
 
         this.setState({ editing: false, tempAvatarUrl: undefined });
     }
