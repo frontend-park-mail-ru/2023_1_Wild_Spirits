@@ -1,11 +1,10 @@
 import { createSlice } from "flux/slice";
-import { create } from "handlebars";
 
 type FriendState = {
     id: number;
     name: string;
     img: string;
-}
+};
 
 interface FriendListState {
     friendSearchQuery: string;
@@ -16,8 +15,8 @@ interface FriendListState {
 const friendListInitialState: FriendListState = {
     friendSearchQuery: "",
     friends: [],
-    foundUsers: []
-}
+    foundUsers: [],
+};
 
 const friendListSlice = createSlice({
     name: "friendListSlice",
@@ -39,8 +38,8 @@ const friendListSlice = createSlice({
             state.friendSearchQuery = "";
             return state;
         },
-    }
-})
+    },
+});
 
 export const { setFriends, setFoundUsers, setFriendSearchQuery, clearFriendSearchQuery } = friendListSlice.actions;
-export default friendListSlice
+export default friendListSlice;

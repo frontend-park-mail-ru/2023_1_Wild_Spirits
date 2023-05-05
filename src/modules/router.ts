@@ -1,14 +1,15 @@
 type RouterType<T> = Record<string, () => T>;
 
 class Router {
-    #prevUrl: string = "";
-    #nowUrl: string = "";
+    #prevUrl: string;
+    #nowUrl: string;
     #locationParts: string[] = [];
     #searchParams: URLSearchParams | undefined;
     callbacks: (() => void)[] = [];
 
     constructor() {
         this.#parseLocation();
+        this.#prevUrl = "";
         this.#nowUrl = "";
         window.addEventListener("popstate", this.#onPopState.bind(this));
     }
@@ -80,24 +81,4 @@ class Router {
     }
 }
 
-export let router = new Router();
-
-// const getLinks = () => document.querySelectorAll(".js-router-link");
-
-// function linkEvent(event: Event) {
-//     event.preventDefault();
-//     const currentTarget = event.currentTarget as HTMLLinkElement;
-//     router.go(currentTarget.href);
-// }
-
-// export const addRouterEvents = () => {
-//     getLinks().forEach((link) => {
-//         link.addEventListener("click", linkEvent);
-//     });
-// };
-
-// export const removeRouterEvents = () => {
-//     getLinks().forEach((link) => {
-//         link.removeEventListener("click", linkEvent);
-//     });
-// };
+export const router = new Router();

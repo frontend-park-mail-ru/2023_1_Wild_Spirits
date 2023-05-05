@@ -20,10 +20,8 @@ export const loadCities = (resolveRequest: TRequestResolver) => {
             }
             resolveRequest();
         })
-        .catch((error) => {
-            console.log("catch:", error);
+        .catch(() => {
             resolveRequest();
-            // store.dispatch(setCities({ cities: ["Москва", "Санкт-Петербург", "Нижний Новгород"] }));
         });
 };
 
@@ -37,8 +35,7 @@ export const loadCategories = (resolveRequest: TRequestResolver) => {
             }
             resolveRequest();
         })
-        .catch((error) => {
-            console.log("catch:", error);
-            // store.dispatch(setCategories({ categories: ["Концерты", "Театр", "Кино", "Фестивали", "Выставки"] }));
+        .catch(() => {
+            resolveRequest();
         });
 };

@@ -8,7 +8,7 @@ import { closeModal } from "flux/slices/modalWindowSlice";
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
 
-export class CityPicker extends Component<{}, { query: string }> {
+export class CityPicker extends Component<any, { query: string }> {
     constructor() {
         super({});
 

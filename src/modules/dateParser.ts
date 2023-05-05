@@ -4,7 +4,7 @@ const dateSwap = (date: string | undefined, split: string, join: string): string
     }
 
     try {
-        let splt = date.split(split);
+        const splt = date.split(split);
         [splt[0], splt[2]] = [splt[2], splt[0]];
         return splt.join(join);
     } catch {

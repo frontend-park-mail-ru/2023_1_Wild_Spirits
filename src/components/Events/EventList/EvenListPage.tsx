@@ -1,5 +1,5 @@
 import { VDOM, Component } from "modules/vdom";
-import { EventList, EventListProps } from "./EventList";
+import { EventList } from "./EventList";
 import { isAuthorized } from "flux/slices/userSlice";
 import { store } from "flux";
 import { EventCreateButton } from "../EventCreateButton/EventCreateButton";

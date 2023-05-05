@@ -50,7 +50,9 @@ export class EventPageMap extends Component<EventPageMapProps> {
                     zoom: 15,
                 });
                 this.addMarker(this.#ymap);
-            } catch {}
+            } catch {
+                this.#ymap = undefined;
+            }
         };
 
         ymaps.ready(init);

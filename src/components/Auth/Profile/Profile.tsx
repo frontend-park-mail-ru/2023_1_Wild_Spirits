@@ -34,11 +34,12 @@ import { TFriend, TUserLight } from "models/User";
  */
 export class Profile extends Component<{ id: number }, { editing: boolean; tempAvatarUrl: string | undefined }> {
     #tempAvatarUrl: string | undefined;
-    #errorMsg: string = "";
+    #errorMsg: string;
 
     constructor(props: { id: number }) {
         super(props);
         this.state = { editing: false, tempAvatarUrl: undefined };
+        this.#errorMsg = "";
 
         this.setEditing = this.setEditing.bind(this);
         this.unsetEditing = this.unsetEditing.bind(this);
@@ -54,7 +55,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
     }
 
     #formChanged = (event: Event) => {
-        let input = event.target as HTMLInputElement;
+        const input = event.target as HTMLInputElement;
 
         if (!input || input.getAttribute("type") !== "file") {
             return;
@@ -107,7 +108,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
             return;
         }
 
-        let formData = new FormData(form as HTMLFormElement);
+        const formData = new FormData(form as HTMLFormElement);
         const city_id = store.state.header.cities.find((city) => city.name === formData.get("city_id"));
 
         if (!city_id) {
@@ -139,7 +140,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                     return;
                 }
 
-                let userData: TUserLight = {
+                const userData: TUserLight = {
                     id: store.state.user.data.id,
                     name: formData.get("name") as string,
                     email: formData.get("email") as string,
@@ -147,25 +148,27 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                     img: json.body.user.img,
                 };
 
-                let currentProfileData: { id: number; profile: { user: TOrganizer; friends?: TFriend[] | undefined } } =
-                    {
-                        id: store.state.user.currentProfile.id,
-                        profile: {
-                            user: {
-                                id: store.state.user.currentProfile.id,
-                                city_name: json.body.user.city_name,
-                                name: formData.get("name") as string,
-                                img: json.body.user.img,
-                                phone: formData.get("phone") as string,
-                                email: formData.get("email") as string,
-                                website: (formData.get("website") as string) || undefined,
-                            },
+                const currentProfileData: {
+                    id: number;
+                    profile: { user: TOrganizer; friends?: TFriend[] | undefined };
+                } = {
+                    id: store.state.user.currentProfile.id,
+                    profile: {
+                        user: {
+                            id: store.state.user.currentProfile.id,
+                            city_name: json.body.user.city_name,
+                            name: formData.get("name") as string,
+                            img: json.body.user.img,
+                            phone: formData.get("phone") as string,
+                            email: formData.get("email") as string,
+                            website: (formData.get("website") as string) || undefined,
                         },
-                    };
+                    },
+                };
 
                 store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
             } else if (response.status === 409) {
-                let errorMsgElement = document.getElementById("profile-description-error-message");
+                const errorMsgElement = document.getElementById("profile-description-error-message");
                 if (errorMsgElement) {
                     errorMsgElement.textContent = json.errorMsg || null;
                 }
@@ -222,7 +225,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
             }
 
             const rows = (() => {
-                let tableContents: TableContents = {
+                const tableContents: TableContents = {
                     Имя: profile_data.name,
                     Почта: undefined,
                     Город: profile_data.city_name ? profile_data.city_name : "Москва",
@@ -244,7 +247,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                 return createTable(filterTableContents(tableContents));
             })();
 
-            let cells = [];
+            const cells = [];
 
             for (const row of rows) {
                 cells.push(<div className="table__cell-title">{row.title}</div>);

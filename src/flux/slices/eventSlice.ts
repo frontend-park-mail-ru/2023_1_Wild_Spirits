@@ -152,7 +152,6 @@ const eventsSlice = createSlice({
                 const tag = state.processing.tags[action.payload];
                 if (tag !== undefined) {
                     state.processing.tags[action.payload].selected = !tag.selected;
-                    // state.processing.errors = {};
                 }
             }
             return state;
@@ -164,7 +163,7 @@ const eventsSlice = createSlice({
         likeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             let likedEvent: TEventLight | undefined = undefined;
             const like = (subSlice: keyof EventsStateCards) => {
-                let subState = state[subSlice];
+                const subState = state[subSlice];
                 if (subState.loadStatus === LoadStatus.DONE) {
                     const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
@@ -201,7 +200,7 @@ const eventsSlice = createSlice({
         },
         dislikeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             const dislike = (subSlice: keyof EventsStateCards) => {
-                let subState = state[subSlice];
+                const subState = state[subSlice];
                 if (subState.loadStatus === LoadStatus.DONE) {
                     const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
@@ -232,7 +231,7 @@ const eventsSlice = createSlice({
         featureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             let featuredEvent: TEventLight | undefined = undefined;
             const feature = (subSlice: keyof EventsStateCards) => {
-                let subState = state[subSlice];
+                const subState = state[subSlice];
                 if (subState.loadStatus === LoadStatus.DONE) {
                     const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 
@@ -267,7 +266,7 @@ const eventsSlice = createSlice({
         },
         unfeatureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             const unfeature = (subSlice: keyof EventsStateCards) => {
-                let subState = state[subSlice];
+                const subState = state[subSlice];
                 if (subState.loadStatus === LoadStatus.DONE) {
                     const id = subState.data.findIndex((event) => event.id === action.payload.eventId);
 

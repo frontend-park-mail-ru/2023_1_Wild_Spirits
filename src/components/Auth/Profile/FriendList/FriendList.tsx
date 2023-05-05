@@ -87,7 +87,7 @@ export class FriendList extends Component {
             }));
         })();
 
-        let filtered_ids = friends.map((friend) => friend.user_id);
+        const filtered_ids = friends.map((friend) => friend.user_id);
 
         if (store.state.user.data) {
             filtered_ids.push(store.state.user.data.id);

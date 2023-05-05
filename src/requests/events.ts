@@ -1,5 +1,5 @@
 import { store } from "flux";
-import { StateTagsType, TagsState, getSelectedTags } from "flux/slices/tagsSlice";
+import { StateTagsType, getSelectedTags } from "flux/slices/tagsSlice";
 import { getSelectedCityName } from "flux/slices/headerSlice";
 import { getSelectedCategory } from "flux/slices/headerSlice";
 import { AjaxResultStatus, ajax } from "modules/ajax";
@@ -26,9 +26,7 @@ import { EventProcessingType } from "models/Events";
 
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
-import { isOrganizer } from "flux/slices/userSlice";
 import { LoadStatus } from "./LoadStatus";
-import { requestManager } from "requests";
 
 const getLoadEventFilterProps = (): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -208,11 +206,11 @@ const loadEvent = ({ eventId, onSuccess, onError, resolveRequest }: LoadEventPro
             } else {
                 onError();
             }
-            resolveRequest(eventId);
+            resolveRequest();
         })
-        .catch((error) => {
+        .catch(() => {
             onError();
-            resolveRequest(eventId);
+            resolveRequest();
         });
 };
 
@@ -221,18 +219,14 @@ export const likeEvent = (resolveRequest: TRequestResolver, eventId: number) => 
         url: `/events/${eventId}/like`,
         credentials: true,
     })
-        .then(({ json, status }) => {
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(like({ eventId: eventId }));
-            } else {
-                console.error("cannot like");
             }
-
-            resolveRequest(eventId);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log(error);
-            resolveRequest(eventId);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -241,18 +235,14 @@ export const dislikeEvent = (resolveRequest: TRequestResolver, eventId: number) 
         url: `/events/${eventId}/like`,
         credentials: true,
     })
-        .then(({ json, status }) => {
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(dislike({ eventId: eventId }));
-            } else {
-                console.error("cannot dislike");
             }
-
-            resolveRequest(eventId);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log(error);
-            resolveRequest(eventId);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -261,18 +251,14 @@ export const featureEvent = (resolveRequest: TRequestResolver, eventId: number) 
         url: `/events/${eventId}/remind`,
         credentials: true,
     })
-        .then(({ json, status }) => {
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(feature({ eventId: eventId }));
-            } else {
-                console.error("cannot remind");
             }
-
-            resolveRequest(eventId);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log(error);
-            resolveRequest(eventId);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -281,18 +267,14 @@ export const unfeatureEvent = (resolveRequest: TRequestResolver, eventId: number
         url: `/events/${eventId}/remind`,
         credentials: true,
     })
-        .then(({ json, status }) => {
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(unfeature({ eventId: eventId }));
-            } else {
-                console.error("cannot unremind");
             }
-
-            resolveRequest(eventId);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log(error);
-            resolveRequest(eventId);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -391,12 +373,11 @@ export const loadEnventsMap = (
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(setMapEvents(json.body.events));
-            } else {
             }
-            resolveRequest(left, right, bottom, top);
+            resolveRequest();
         })
-        .catch((error) => {
-            resolveRequest(left, right, bottom, top);
+        .catch(() => {
+            resolveRequest();
         });
 };
 

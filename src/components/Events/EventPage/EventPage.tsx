@@ -9,7 +9,6 @@ import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
 import { Table } from "components/Common/Table";
 import { isAuthorized } from "flux/slices/userSlice";
-import { Link } from "components/Common/Link";
 import { Loading } from "components/Common/Loading";
 import { EventPageMap } from "./EventPageMap";
 import { SVGInline } from "components/Common/SVGInline";

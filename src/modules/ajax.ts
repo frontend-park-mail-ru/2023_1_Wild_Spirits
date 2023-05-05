@@ -11,11 +11,6 @@ interface AjaxProps {
     credentials?: boolean;
 }
 
-interface AjaxResult<T> {
-    json: T;
-    response: Response;
-}
-
 export namespace AjaxResultStatus {
     export const SUCCESS = "SUCCESS";
     export const ERROR = "ERROR";
@@ -171,4 +166,4 @@ class Ajax {
     }
 }
 
-export let ajax = new Ajax();
+export const ajax = new Ajax();

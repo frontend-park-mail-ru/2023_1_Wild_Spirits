@@ -4,16 +4,8 @@ import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { openCalendarModal, openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import {
-    selectCity,
-    selectCategory,
-    getSelectedCityName,
-    getCitiesNames,
-    clearCategory,
-    setSearchQuery,
-} from "flux/slices/headerSlice";
+import { selectCity, getSelectedCityName } from "flux/slices/headerSlice";
 import { loadEvents } from "requests/events";
-import { loadCategories, loadCities } from "requests/header";
 import { openCitySelector } from "flux/slices/modalWindowSlice";
 
 import { logoutUser } from "requests/user";
@@ -22,7 +14,7 @@ import { requestManager } from "requests/index";
 import { Link, ProfileLink } from "components/Common/Link";
 import { CategoriesMenu } from "./CategoriesMenu";
 import { openSideMenu } from "flux/slices/sideMenuSlice";
-import { closeMobileSearch, openMobileSearch } from "flux/slices/metaSlice";
+import { openMobileSearch } from "flux/slices/metaSlice";
 import { HeaderSearch } from "./HeaderSearch";
 
 /**
@@ -47,7 +39,7 @@ export class Header extends Component {
 
     #searchExpand = () => {
         store.dispatch(openMobileSearch());
-    }
+    };
 
     render() {
         const getProfileLink = () => {
@@ -95,20 +87,18 @@ export class Header extends Component {
         const CityPickerButton = () => {
             return (
                 <div className="header__city-selector">
-                <button
-                    className="header__city-selector__button"
-                    onClick={() => {
-                        store.dispatch(openCitySelector());
-                    }}
-                >
-                    <img src="/assets/img/geo-icon.svg"></img>
-                    <span>{selectedCityName}</span>
-                </button>
-            </div>
-            )
-        }
-
-        const cities = getCitiesNames(store.state.header).map((cityName) => <option>{cityName}</option>);
+                    <button
+                        className="header__city-selector__button"
+                        onClick={() => {
+                            store.dispatch(openCitySelector());
+                        }}
+                    >
+                        <img src="/assets/img/geo-icon.svg"></img>
+                        <span>{selectedCityName}</span>
+                    </button>
+                </div>
+            );
+        };
 
         const selectedCityName = getSelectedCityName(store.state.header);
 
@@ -116,58 +106,46 @@ export class Header extends Component {
             <div className="header">
                 <div className="header__logo">
                     <Link href="/" className="black-link">
-                        <img src="/assets/img/logo-full.svg" alt="logo"/>
+                        <img src="/assets/img/logo-full.svg" alt="logo" />
                     </Link>
                 </div>
 
                 <div className="header__top__line">
-                    
-                    {
-                        !store.state.meta.mobileSearch && <div className="header__head">
+                    {!store.state.meta.mobileSearch && (
+                        <div className="header__head">
                             <Link href="/" className="black-link">
                                 Event Radar
                             </Link>
                         </div>
-                    }
+                    )}
 
-                    {
-                        (!store.state.meta.collapsed.searchCollapsed || store.state.meta.mobileSearch) && <HeaderSearch/>
-                    }
+                    {(!store.state.meta.collapsed.searchCollapsed || store.state.meta.mobileSearch) && <HeaderSearch />}
 
-                    { !store.state.meta.collapsed.headerCollapsed && <CityPickerButton/> }
+                    {!store.state.meta.collapsed.headerCollapsed && <CityPickerButton />}
 
-                    {
-                        store.state.meta.collapsed.headerCollapsed
-                        ?   
-                            <div className="flex">
-                                {
-                                    store.state.meta.collapsed.searchCollapsed &&
-                                    !store.state.meta.mobileSearch &&
-                                    <button
-                                        className="header__mobile-button"
-                                        onClick={()=>this.#searchExpand()}
-                                    >
-                                        <img src="/assets/img/search-icon.svg" className="header__mobile-icon"/>
-                                    </button>
-                                }
-                                <button 
-                                    className="header__mobile-button"
-                                    onClick={()=>store.dispatch(openCalendarModal())}
-                                >
-                                    <img src="/assets/img/calendar-icon.svg" className="header__mobile-icon"/>
+                    {store.state.meta.collapsed.headerCollapsed ? (
+                        <div className="flex">
+                            {store.state.meta.collapsed.searchCollapsed && !store.state.meta.mobileSearch && (
+                                <button className="header__mobile-button" onClick={() => this.#searchExpand()}>
+                                    <img src="/assets/img/search-icon.svg" className="header__mobile-icon" />
                                 </button>
-                                <button
-                                    className="header__mobile-button"
-                                    onClick={()=>store.dispatch(openSideMenu())}
-                                >
-                                    <img src="/assets/img/burger-menu-icon.svg" className="header__mobile-icon"/>
-                                </button>
-                            </div>
-                        :   <div className="profile-link">{getProfileLink()}</div>
-                    }
+                            )}
+                            <button
+                                className="header__mobile-button"
+                                onClick={() => store.dispatch(openCalendarModal())}
+                            >
+                                <img src="/assets/img/calendar-icon.svg" className="header__mobile-icon" />
+                            </button>
+                            <button className="header__mobile-button" onClick={() => store.dispatch(openSideMenu())}>
+                                <img src="/assets/img/burger-menu-icon.svg" className="header__mobile-icon" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="profile-link">{getProfileLink()}</div>
+                    )}
                 </div>
 
-                { !store.state.meta.collapsed.headerCollapsed && <CategoriesMenu /> }
+                {!store.state.meta.collapsed.headerCollapsed && <CategoriesMenu />}
             </div>
         );
     }

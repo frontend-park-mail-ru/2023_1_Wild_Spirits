@@ -14,7 +14,6 @@ import {
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { closeModal } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
-import { App } from "components/App";
 import { addToFriends } from "flux/slices/userSlice";
 import { router } from "modules/router";
 
@@ -36,7 +35,7 @@ export const loadAuthorization = (resolveRequest: TRequestResolver) => {
             }
             resolveRequest();
         })
-        .catch((error) => {
+        .catch(() => {
             store.dispatch(authorizedLoadError());
         });
 };
@@ -51,11 +50,10 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
                 store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
             }
 
-            resolveRequest(id);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log("catch:", error);
-            resolveRequest(id);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -69,12 +67,11 @@ export const loadFriends = (resolveRequest: TRequestResolver, user_id: number, s
     ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
         url: `/users/${user_id}/friends`,
         urlProps: urlProps,
-    }).then(({ json, response, status }) => {
+    }).then(({ json, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
-            // store.dispatch(setCurrentProfileFriends({ friends: json.body.users }));
             store.dispatch(setFriends({ friends: json.body.users }));
         }
-        resolveRequest(user_id, search);
+        resolveRequest();
     });
 };
 
@@ -84,12 +81,16 @@ export const searchUsers = (resolveRequest: TRequestResolver, name: string) => {
         urlProps: {
             name: name,
         },
-    }).then(({ json, response, status }) => {
-        if (status === AjaxResultStatus.SUCCESS) {
-            store.dispatch(setFoundUsers({ users: json.body.users }));
-        }
-        resolveRequest();
-    });
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setFoundUsers({ users: json.body.users }));
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            resolveRequest();
+        });
 };
 
 export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
@@ -102,7 +103,7 @@ export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(addToFriends());
             }
-            resolveRequest(user_id);
+            resolveRequest();
         });
 
 export const deleteFriend = (resolveRequest: TRequestResolver, user_id: number) =>
@@ -115,7 +116,7 @@ export const deleteFriend = (resolveRequest: TRequestResolver, user_id: number) 
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(removeFromFriends());
             }
-            resolveRequest(user_id);
+            resolveRequest();
         });
 
 type TWarningMsgCallack = (warning: string | undefined, errors: { [key: string]: string } | undefined) => void;
@@ -136,10 +137,10 @@ export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, 
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
-            resolveRequest(formData, warningMsg);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log("catch:", error);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -163,10 +164,10 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
-            resolveRequest(formData, warningMsg);
+            resolveRequest();
         })
-        .catch((error) => {
-            console.log("catch:", error);
+        .catch(() => {
+            resolveRequest();
         });
 };
 
@@ -175,17 +176,21 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
         url: "/organizers",
         credentials: true,
         body: {
-            name: store.state.user.data!.name,
+            name: store.state.user.data?.name || "",
             phone: formData.get("phone"),
             website: formData.get("website"),
         },
-    }).then(({ json, response, status }) => {
-        if (status === AjaxResultStatus.SUCCESS) {
-            router.go("/createevent");
-            store.dispatch(closeModal());
-        }
-        resolveRequest();
-    });
+    })
+        .then(({ status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                router.go("/createevent");
+                store.dispatch(closeModal());
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            resolveRequest();
+        });
 };
 
 export const logoutUser = (resolveRequest: TRequestResolver) =>
@@ -201,6 +206,6 @@ export const logoutUser = (resolveRequest: TRequestResolver) =>
             }
             resolveRequest();
         })
-        .catch((error) => {
-            console.log("catch:", error);
+        .catch(() => {
+            resolveRequest();
         });

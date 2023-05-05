@@ -15,7 +15,7 @@ export const loadPlaces = (resolveRequest: TRequestResolver) => {
             }
             resolveRequest();
         })
-        .catch((error) => {
+        .catch(() => {
             store.dispatch(setPlacesLoadError());
             resolveRequest();
         });

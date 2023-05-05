@@ -1,8 +1,6 @@
 import { Action, PayloadAction } from "./action";
 import { TReducer } from "./store";
 
-type ActionsType = { [key: string]: (payload?: any) => Action };
-
 type CaseReducer<TState, TAction extends Action = Action> = (state: TState, action: TAction) => TState;
 
 type SliceCaseReducers<TState> = {

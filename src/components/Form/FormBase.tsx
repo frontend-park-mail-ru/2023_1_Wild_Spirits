@@ -23,7 +23,7 @@ export interface InputFieldProps<T> extends BaseTextProps<T> {
     type: InputFieldType;
 }
 
-export interface TextareaFieldProps<T> extends BaseTextProps<T> {}
+export type TextareaFieldProps<T> = BaseTextProps<T>;
 
 export interface FormFieldBaseProps<T> extends FormLabelProps<T> {
     children: JSX.Element;

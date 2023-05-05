@@ -27,7 +27,7 @@ export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean 
 
     render() {
         return (
-            <div className="flex pointy" onClick={() => (this.props.onClick ? this.props.onClick() : () => {})}>
+            <div className="flex pointy" onClick={() => this.props.onClick && this.props.onClick()}>
                 <SVGInline className={this.props.iconClassName} src={this.props.src} alt={this.props.alt} />
             </div>
         );

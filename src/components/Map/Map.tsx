@@ -15,8 +15,6 @@ interface MapState {
     map: ymaps.Map | undefined;
 }
 
-const randFloat = (min: number, max: number) => Math.random() * (max - min) + min;
-
 /**
  * Event list component
  * @class
@@ -24,12 +22,12 @@ const randFloat = (min: number, max: number) => Math.random() * (max - min) + mi
  */
 export class Map extends Component<any, MapState> {
     timer: NodeJS.Timeout | undefined = undefined;
-    isMapMouseDown: boolean = false;
+    isMapMouseDown: boolean;
 
     constructor() {
         super({});
         this.state = { map: undefined };
-
+        this.isMapMouseDown = false;
         this.addMarker = this.addMarker.bind(this);
         this.loadGeoEvents = this.loadGeoEvents.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -105,7 +103,7 @@ export class Map extends Component<any, MapState> {
 
     createMap() {
         const init = () => {
-            let ymap = new ymaps.Map("map-container", {
+            const ymap = new ymaps.Map("map-container", {
                 center: [55.76, 37.64],
                 zoom: 7,
             });

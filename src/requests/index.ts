@@ -153,4 +153,4 @@ const requests: SetupRequestsType[] = [
     },
 ];
 
-export let requestManager = configureRequestManager(requests);
+export const requestManager = configureRequestManager(requests);

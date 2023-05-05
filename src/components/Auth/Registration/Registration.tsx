@@ -2,7 +2,6 @@
 
 import { VDOM, Component } from "modules/vdom";
 import { validateForm, warningMsg } from "components/Auth/FormValidation";
-import RegistrationTemplate from "templates/Auth/Registration/Registration.handlebars";
 
 import { store } from "flux";
 import { openLogin } from "flux/slices/modalWindowSlice";

@@ -8,17 +8,20 @@ export class EventCreateButton extends Component {
         const isOrganizer = store.state.user.data?.organizer_id !== undefined;
         return (
             <div className="full-button-link-container">
-                {
-                    isOrganizer
-                    ? <Link href="/createevent" className="full-button-link js-router-link" onClick={() => {}}>
-                          Создать мероприятие
-                      </Link>
-                    : <input className="full-button-link" 
-                        onClick={() => {store.dispatch(openOrganizerModal())}}
+                {isOrganizer ? (
+                    <Link href="/createevent" className="full-button-link js-router-link">
+                        Создать мероприятие
+                    </Link>
+                ) : (
+                    <input
+                        className="full-button-link"
+                        onClick={() => {
+                            store.dispatch(openOrganizerModal());
+                        }}
                         value="Создать мероприятие"
-                />
-                }
+                    />
+                )}
             </div>
-        )
+        );
     }
 }

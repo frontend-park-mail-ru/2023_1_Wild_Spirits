@@ -6,22 +6,22 @@ type resolverT = (value: string | PromiseLike<string>) => void;
 type rejectT = (reason?: any) => void;
 
 class SVGLoader {
-    images: {[key: string]: {status: LoadStatus.Type, data: string | undefined}}
-    subscribers: {[key: string]: {resolve: resolverT, reject: rejectT}[]}
+    images: { [key: string]: { status: LoadStatus.Type; data: string | undefined } };
+    subscribers: { [key: string]: { resolve: resolverT; reject: rejectT }[] };
     constructor() {
-        this.images = {}
-        this.subscribers = {}
+        this.images = {};
+        this.subscribers = {};
     }
 
     async addImage(url: string): Promise<string> {
-        this.images[url] = {status: LoadStatus.LOADING, data: undefined};
-        const response = await fetch(url)
+        this.images[url] = { status: LoadStatus.LOADING, data: undefined };
+        const response = await fetch(url);
         const data = await response.text();
-        this.images[url].data = data
+        this.images[url].data = data;
         this.images[url].status = LoadStatus.DONE;
 
         if (this.subscribers[url] !== undefined) {
-            this.subscribers[url].forEach(({resolve, reject}) => resolve(data));
+            this.subscribers[url].forEach(({ resolve }) => resolve(data));
             this.subscribers[url] = [];
         }
         return data;
@@ -35,17 +35,17 @@ class SVGLoader {
         if (this.images[url].status === LoadStatus.LOADING) {
             return new Promise<string>((resolve, reject) => {
                 if (this.subscribers[url]) {
-                    this.subscribers[url].push({resolve, reject});
+                    this.subscribers[url].push({ resolve, reject });
                 } else {
-                    this.subscribers[url] = [{resolve, reject}];
+                    this.subscribers[url] = [{ resolve, reject }];
                 }
-            })
+            });
         }
 
         return this.images[url].data!;
     }
 }
 
-let svgLoader = new SVGLoader();
+const svgLoader = new SVGLoader();
 
-export {svgLoader};
+export { svgLoader };

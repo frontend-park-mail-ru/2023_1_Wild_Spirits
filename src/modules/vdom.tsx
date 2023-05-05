@@ -6,8 +6,6 @@ type PropsType = { [key: string]: PropType };
 
 type ChildType = VNodeType | string | undefined | null | boolean;
 
-// type FunctionComponent = (props: PropsType, children: ChildType[]) => VNodeType;
-
 type TagNameFuncType<TProps> = (props: TProps, ...children: ChildType[]) => VNodeType;
 type ComponentConstructor<T extends Component<TProps>, TProps> = new (props: TProps, ...children: ChildType[]) => T;
 type TagNameType<T extends Component<TProps>, TProps> =
@@ -23,8 +21,6 @@ type SimpleVNodeType = string | undefined | null | boolean;
 export type VNodeType = SimpleVNodeType | TagVNodeType | ComponentVNodeType;
 
 export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO Create custom type
-
-let stateQueue: (() => void)[] = [];
 
 let didMountInstaces: Component[] = [];
 
@@ -126,11 +122,7 @@ export namespace VDOM {
                 return result;
             } catch {
                 const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
-                const jsx = JSXToVNode(instance.render());
-                // if (Array.isArray(jsx)) {
-                //     (jsx as any)._instance = instance;
-                //     return jsx;
-                // }
+
                 let vnode: ComponentVNodeType = { tagName: tagName.name, props, children, _instance: instance };
                 return vnode;
             }
@@ -150,10 +142,6 @@ export namespace VDOM {
 
 const isNodeTypeComponent = (vNode: VNodeType): vNode is ComponentVNodeType => {
     return !isNodeTypeSimple(vNode) && vNode.hasOwnProperty(InstanceFieldName);
-};
-
-const isNodeTypeTag = (vNode: VNodeType): vNode is TagVNodeType => {
-    return !isNodeTypeSimple(vNode) && !vNode.hasOwnProperty(InstanceFieldName);
 };
 
 const isNodeTypeSimple = (vNode: VNodeType): vNode is SimpleVNodeType => {
@@ -200,8 +188,7 @@ const tryPatchComponent = (vNode: VNodeType, nextVNode: VNodeType): boolean => {
     if (isNodeTypeComponent(nextVNode)) {
         let isPropsChanged = false;
         if (isNodeTypeComponent(vNode)) {
-            if (vNode._instance.constructor.name !== nextVNode._instance.constructor.name) {
-            } else {
+            if (vNode._instance.constructor.name === nextVNode._instance.constructor.name) {
                 isPropsChanged = !deepEqual(vNode._instance.props, nextVNode._instance.props);
                 vNode._instance.props = nextVNode._instance.props;
                 nextVNode._instance = vNode._instance;
@@ -343,17 +330,11 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
 
     for (let i = vChildren.length; i < nextVChildren.length; i++) {
         if (isNodeTypeComponent(nextVChildren[i])) {
-            //if ((nextVChildren[i] as ComponentVNodeType).tagName.toLowerCase() === "hoveredimg")
             convertComponentToTag(nextVChildren[i] as ComponentVNodeType);
         }
 
         parent.appendChild(createDOMNode(nextVChildren[i]));
     }
-
-    // nextVChildren.slice(vChildren.length).forEach((vChild, i) => {
-    //     vChildren.length + i;
-    //     parent.appendChild(createDOMNode(vChild));
-    // });
 
     const curChildLenght = parent.childNodes.length;
 

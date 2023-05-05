@@ -1,13 +1,7 @@
 import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
-import { ModalWindowName, closeModal } from "flux/slices/modalWindowSlice";
-import { Registration } from "components/Auth/Registration/Registration";
-import { Login } from "components/Auth/Login/Login";
-import { FriendList } from "components/Auth/Profile/FriendList/FriendList";
-import { CityPicker } from "components/CityPicker/CityPicker";
-import { OrganizerModal } from "components/Auth/OrganizerModal/OrganizerModal";
-import { toEvent } from "modules/CastEvents";
+import { closeModal } from "flux/slices/modalWindowSlice";
 
 interface ModalWindowProps {
     children?: JSX.Element | JSX.Element[];

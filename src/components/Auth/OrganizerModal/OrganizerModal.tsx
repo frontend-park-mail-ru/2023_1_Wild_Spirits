@@ -15,7 +15,7 @@ export class OrganizerModal extends Component<any, { errors: OrganizerModalError
     }
 
     validateFormData(formData: FormData): OrganizerModalErrors {
-        let errors: OrganizerModalErrors = {};
+        const errors: OrganizerModalErrors = {};
 
         const phone = formData.get("phone") as string;
         if (phone.length === 0) {

@@ -83,7 +83,7 @@ export interface EventProcessingForm {
 
 export const fixEventDates = (dates: TEventDates): string[] => {
     const { dateStart, dateEnd, timeStart, timeEnd } = dates;
-    let result: string[] = [];
+    const result: string[] = [];
     if (dateStart) {
         result.push("Начало: " + dateStart);
     }
@@ -101,7 +101,7 @@ export const fixEventDates = (dates: TEventDates): string[] => {
 
 export const eventsLightDataToCardProps = (events: TEventLight[]): EventCardProps[] => {
     return events.map((event: TEventLight) => {
-        let dates: string[] = fixEventDates(event.dates);
+        const dates: string[] = fixEventDates(event.dates);
 
         // const places: string[] = event.places.map((place) => place.name);
         const places = event.places;

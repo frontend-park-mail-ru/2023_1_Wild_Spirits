@@ -1,2 +1,4 @@
 compiled/
 **/handlebars.runtime.min-v4.7.7.js
+node_modules/
+dist/

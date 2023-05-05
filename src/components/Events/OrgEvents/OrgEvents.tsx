@@ -40,7 +40,7 @@ export class OrgEvents extends Component {
 
         if (orgEvents.loadStatus !== LoadStatus.DONE || selectedEvent.loadStatus !== LoadStatus.DONE) {
             return <div> LOADING </div>;
-            // return <EventListLoading size={6} />;
+            // TODO return <EventListLoading size={6} />;
         }
         selectedEvent.event.id;
         return (

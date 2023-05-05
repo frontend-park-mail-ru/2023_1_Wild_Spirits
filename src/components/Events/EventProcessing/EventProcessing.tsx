@@ -77,7 +77,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                     router.go("/");
                 }
             })
-            .catch((error) => {
+            .catch(() => {
                 store.dispatch(
                     setEventProcessingErrors({ default: "По каким-то причинам, удалить мероприятие сейчас невозможно" })
                 );
@@ -121,15 +121,11 @@ export class EventProcessing extends Component<EventProcessingProps> {
             return;
         }
         const formData = new FormData();
-        let errors: EventProcessingErrorsType = {};
+        const errors: EventProcessingErrorsType = {};
 
         processing.formData.name === ""
             ? (errors.name = "Забыли указать название")
             : formData.set("name", processing.formData.name);
-
-        // processing.formData.teaser === ""
-        //     ? (errors.teaser = "Нет краткого описания")
-        //     : formData.set("teaser", processing.formData.teaser);
 
         processing.formData.description === ""
             ? (errors.description = "Нет подробного описания")
@@ -175,7 +171,6 @@ export class EventProcessing extends Component<EventProcessingProps> {
             formData,
             tempFileUrl: processing.tempFileUrl,
         };
-        // return new FormData();
     }
 
     handleSubmit(event: SubmitEvent) {
@@ -201,7 +196,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                         store.dispatch(setEventProcessingErrors({ default: json.errorMsg }));
                     }
                 })
-                .catch((error) => {
+                .catch(() => {
                     store.dispatch(setEventProcessingErrors({ default: "Ошибка сервера, попробуйте позже!" }));
                 });
             ajax.addHeaders({ "Content-Type": "application/json; charset=UTF-8" });
@@ -221,7 +216,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
         fieldName: keyof EventProcessingForm,
         title: string,
         type: InputFieldType,
-        required: boolean = false,
+        required = false,
         min?: string
     ) {
         const { formData, errors } = store.state.events.processing as EventProcessingData;

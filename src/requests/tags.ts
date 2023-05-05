@@ -18,6 +18,6 @@ export const loadTags = (resolveRequest: TRequestResolver) =>
             }
             resolveRequest();
         })
-        .catch((error) => {
-            console.log(error);
+        .catch(() => {
+            resolveRequest();
         });

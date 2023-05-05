@@ -114,8 +114,6 @@ select {
 
     cursor: pointer;
 
-    // background: left url("/assets/img/position_icon.png") no-repeat;
-
     outline: none;
 }
 
@@ -152,8 +150,6 @@ select > option {
 .header__search-container {
     flex-grow: 1;
     margin: 0 10px 0 10px;
-    // max-width: 30%;
-    // min-width: 200px;
 
     display: flex;
 }

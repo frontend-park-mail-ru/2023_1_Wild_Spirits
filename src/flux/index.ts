@@ -31,7 +31,7 @@ const configureStore = <S>(slices: SlicesMapObject<S>): Store<S> => {
     );
 };
 
-export let store = configureStore({
+export const store = configureStore({
     meta: metaSlice,
     user: userSlice,
     modalWindow: modalWindowSlice,
@@ -41,5 +41,5 @@ export let store = configureStore({
     calendar: calendarSlice,
     events: eventsSlice,
     friendList: friendsListSlice,
-    sideMenu: sideMenuSlice
+    sideMenu: sideMenuSlice,
 });

@@ -23,17 +23,17 @@ class RequestManager {
     }
 
     checkForCircularDependencies() {
-        let nodes = Object.entries(this.#requests).map(([name, { callback, dependencies }]) => ({
+        const nodes = Object.entries(this.#requests).map(([name, { dependencies }]) => ({
             name,
             dependencies: new Set(dependencies),
         }));
 
-        const startNodes = nodes.filter(({ name, dependencies }) => dependencies.size === 0);
+        const startNodes = nodes.filter(({ dependencies }) => dependencies.size === 0);
 
-        let S = new Set<string>(startNodes.map((node) => node.name));
+        const S = new Set<string>(startNodes.map((node) => node.name));
 
         for (const n of S) {
-            for (let node of nodes) {
+            for (const node of nodes) {
                 node.dependencies.delete(n);
                 if (node.dependencies.size === 0) {
                     S.add(node.name);
@@ -75,7 +75,7 @@ class RequestManager {
         }
     }
 
-    resolveRequest(name: string, args: any[]) {
+    resolveRequest(name: string) {
         this.#doneRequests.add(name);
         this.#removeRunning(name);
         this.#removeAwaiting(name);
@@ -105,7 +105,6 @@ class RequestManager {
     }
 
     request<T extends TRequest | string>(request: T, ...args: Parameters<OmitFirstArg<T>>) {
-        //        const name = typeof request === 'function' ? request.name : request;
         const name = typeof request === "string" ? request : request.name;
 
         this.#doneRequests.delete(name);
@@ -114,10 +113,6 @@ class RequestManager {
 
         this.#requests[name].dependencies.forEach((dependencyName) => {
             if (!this.#doneRequests.has(dependencyName)) {
-                // const awaitingRequestsNames = Array.from(this.#awaitingRequests).map((request) => request.name);
-                // if (!awaitingRequestsNames.includes(dependencyName)) {
-                //     this.request(dependencyName);
-                // }
                 dependencyCnt++;
             }
         });
@@ -137,11 +132,11 @@ class RequestManager {
 }
 
 export const configureRequestManager = (requests: { request: TRequest; dependencies: TRequest[] }[]) => {
-    let requestManager = new RequestManager();
+    const requestManager = new RequestManager();
     requests.forEach(({ request, dependencies }) => {
         const name = request.name;
-        const resolver = (args: any[]) => {
-            requestManager.resolveRequest(name, args);
+        const resolver = () => {
+            requestManager.resolveRequest(name);
         };
         const callback = (...args: any[]) => {
             request(resolver, ...args);
