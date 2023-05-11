@@ -7,11 +7,10 @@
     "url-loader": "^4.1.1"
   },
   "browserslist": [
-    ">0.2%",
-    "not dead",
-    "last 1 versions",
-    "not ie <= 11",
-    "not op_mini all"
+    ">0.3%", 
+    "iOS >= 11.1", 
+    "last 2 versions", 
+    "not dead"
   ],
   "scripts": {
     "dev": "webpack-dev-server --mode development",
