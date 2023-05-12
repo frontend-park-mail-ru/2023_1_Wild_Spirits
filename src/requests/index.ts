@@ -16,6 +16,7 @@ import {
     loadEventPageOrgEvents,
     loadProfileOrgEvents,
     loadSubbedEvents,
+    loadInfinityEvents,
 } from "./events";
 import {
     addFriend,
@@ -63,6 +64,10 @@ const requests: SetupRequestsType[] = [
     {
         request: loadEvents,
         dependencies: [loadAuthorization, loadCities, loadTags, loadCategories],
+    },
+    {
+        request: loadInfinityEvents,
+        dependencies: [loadEvents, loadAuthorization, loadCities, loadTags, loadCategories],
     },
     {
         request: loadLikedEvents,
@@ -155,7 +160,7 @@ const requests: SetupRequestsType[] = [
     {
         request: patchProfile,
         dependencies: [loadAuthorization],
-    }
+    },
 ];
 
 export const requestManager = configureRequestManager(requests);

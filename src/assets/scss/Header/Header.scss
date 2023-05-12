@@ -165,6 +165,9 @@ select > option {
     background-color: transparent;
     box-shadow: none;
     flex-grow: 1;
+    margin: 0 auto;
+
+    max-width: 400px;
 
     background: calc(100% - 9px) url("/assets/img/search-icon.svg") no-repeat;
 }

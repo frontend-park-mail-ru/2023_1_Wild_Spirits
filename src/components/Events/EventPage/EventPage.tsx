@@ -80,6 +80,18 @@ export class EventPage extends Component {
                     </div>
                     <div className="event-page__title">Подробнее о мероприятии</div>
                     <div className="event-page__description">{event.description}</div>
+                    <div className="event-page__title">Когда</div>
+                    <div>
+                        {event.dates.dateStart && <div>Начало: {event.dates.dateStart}</div>}
+                        {event.dates.dateEnd && <div>Конец: {event.dates.dateEnd}</div>}
+                        {(event.dates.timeStart || event.dates.timeEnd) && (
+                            <div>
+                                {event.dates.timeStart}
+                                {event.dates.timeStart && event.dates.timeEnd && " - "}
+                                {event.dates.timeEnd}
+                            </div>
+                        )}
+                    </div>
                     <div className="event-page__title">Где?</div>
                     <div className="event-page__where">
                         {fixedPlaces.map((place) => (
@@ -101,6 +113,7 @@ export class EventPage extends Component {
                             { title: "Организатор", value: organizer.name },
                             { title: "Номер телефона", value: organizer.phone || "Не указан" },
                             { title: "Почта", value: organizer.email || "Не указана" },
+                            { title: "Сайт", value: organizer.website || "Не указан" },
                         ]}
                     />
                     <div className="event-page__button-block">

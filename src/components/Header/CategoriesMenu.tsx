@@ -21,7 +21,7 @@ export const CategoriesMenu = () => {
         return (
             <div className="header__bottom-line">
                 {Array.from(Array(5)).map(() => (
-                    <div className="header__category-fake-item"> </div>
+                    <div className="header__category-fake-item"> </div> // eslint-disable-line
                 ))}
             </div>
         );

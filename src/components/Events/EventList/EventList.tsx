@@ -14,6 +14,7 @@ export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     request: TRequest;
     showEmptyMessage?: boolean;
+    children?: JSX.Element[] | JSX.Element | string | false;
 }
 
 /**
@@ -65,6 +66,9 @@ export class EventList extends Component<EventListProps> {
                 {cardsProps.map((props) => (
                     <EventCard {...props} />
                 ))}
+                {Array.isArray(this.props.children)
+                    ? this.props.children.map((child) => child).flat()
+                    : this.props.children}
             </div>
         );
     }

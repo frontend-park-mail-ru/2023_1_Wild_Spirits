@@ -8,7 +8,10 @@ import { Tags } from "components/Tags/Tags";
 import { toggleTag } from "flux/slices/tagsSlice";
 import { requestManager } from "requests";
 import { Link } from "components/Common/Link";
-import { loadEvents } from "requests/events";
+import { loadEvents, loadInfinityEvents } from "requests/events";
+import { resetEventsCards, setEventsInfinityLoadStart } from "flux/slices/eventSlice";
+import { LoadStatus } from "requests/LoadStatus";
+import { EventListLoading } from "./EventListLoading";
 
 const GoMapBtn = () => {
     return (
@@ -21,10 +24,47 @@ const GoMapBtn = () => {
 };
 
 export class EventListPage extends Component {
+    didCreate() {
+        window.addEventListener("scroll", this.loadEventOnEnd);
+    }
+
+    willDestroy() {
+        window.removeEventListener("scroll", this.loadEventOnEnd);
+        store.dispatch(resetEventsCards());
+    }
+
+    loadEventOnEnd() {
+        const block = document.getElementById("event-list-page");
+        if (!block) {
+            return;
+        }
+
+        const y = window.scrollY + window.innerHeight;
+
+        if (!(y >= block.offsetHeight - 200)) {
+            return;
+        }
+        console.log("scrolled");
+        const { isEnd, status, pageNumber } = store.state.events.cardsInfinity;
+        if (isEnd || status === LoadStatus.LOADING || status === LoadStatus.ERROR) {
+            return;
+        }
+        console.log("start new Loading");
+
+        store.dispatch(setEventsInfinityLoadStart());
+        requestManager.request(loadInfinityEvents, pageNumber + 1);
+    }
+
     render() {
+        const { isEnd, status } = store.state.events.cardsInfinity;
         return (
-            <div className="row">
-                <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true} />
+            <div id="event-list-page" className="row">
+                <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true}>
+                    {status === LoadStatus.LOADING && <EventListLoading size={6} />}
+                    {/* status === LoadStatus.ERROR &&  */}
+                    {/* isEnd && */}
+                </EventList>
+
                 {!store.state.meta.collapsed.headerCollapsed && (
                     <div className="event-list-page__sidebar">
                         {isAuthorized(store.state.user) && <EventCreateButton />}

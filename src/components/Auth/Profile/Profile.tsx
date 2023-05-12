@@ -4,28 +4,17 @@ import { VDOM, Component } from "modules/vdom";
 
 import { createTable, filterTableContents, TableContents } from "components/Common/CreateTable";
 import { store } from "flux";
-import {
-    setUserData,
-    setCurrentProfile,
-    kickUnauthorized,
-    isOrganizer,
-    CurrentProfileState,
-    TOrganizer,
-} from "flux/slices/userSlice";
+import { kickUnauthorized, isOrganizer, CurrentProfileState } from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
 
-import { AjaxResultStatus, ajax } from "modules/ajax";
-import { ResponseUserEdit } from "responses/ResponsesUser";
 import { addFriend, deleteFriend, loadProfile, patchProfile } from "requests/user";
 import { toWebP } from "modules/imgConverter";
 import { getUploadsImg } from "modules/getUploadsImg";
-import { ResponseErrorDefault } from "responses/ResponseBase";
 import { requestManager } from "requests";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
 import { mineProfile } from "flux/slices/userSlice";
-import { TFriend, TUserLight } from "models/User";
 
 /**
  * Profile component

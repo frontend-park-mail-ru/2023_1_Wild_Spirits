@@ -38,8 +38,12 @@ export namespace AjaxMethod {
 }
 /** class representing an asynchronous request. */
 class Ajax {
-    #host: string = "";
+    #host: string;
     #headers: HeadersType = {};
+
+    constructor() {
+        this.#host = "";
+    }
 
     /**
      * host address

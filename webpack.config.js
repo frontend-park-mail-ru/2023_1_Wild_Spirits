@@ -121,6 +121,7 @@ export const createConf = (env, argv) => {
             port: 8080,
             historyApiFallback: true,
         },
+        target: ["browserslist"],
     };
 
     if (argv.mode === "development") {

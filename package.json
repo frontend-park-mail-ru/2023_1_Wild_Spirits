@@ -6,12 +6,20 @@
     "handlebars": "^4.7.7",
     "url-loader": "^4.1.1"
   },
-  "browserslist": [
+  "browserslist": 
+  {
+    "production": [
     ">0.3%", 
     "iOS >= 11.1", 
     "last 2 versions", 
     "not dead"
   ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
