@@ -25,6 +25,7 @@ import { loadCategories, loadCities } from "requests/header";
 import { SideMenu } from "./SideMenu/SideMenu";
 import { CalendarModal } from "./Calendar/CalendarModal";
 import { MainModalWindow } from "./ModalWindow/MainModalWindow";
+import { createWebSocket, loadInvites } from "requests/invites";
 
 /**
  * @classdesc Main app component
@@ -37,6 +38,8 @@ export class App extends Component {
         requestManager.request(loadTags);
         requestManager.request(loadCities);
         requestManager.request(loadCategories);
+        requestManager.request(loadInvites);
+        requestManager.request(createWebSocket);
 
         window.addEventListener("resize", () => {
             const collapsed = createCollapsed();
