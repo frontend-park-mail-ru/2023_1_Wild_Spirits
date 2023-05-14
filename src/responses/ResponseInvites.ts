@@ -6,3 +6,5 @@ interface IResponseInvites {
 }
 
 export type ResponseInvites = ResponseBody<IResponseInvites>;
+
+export type WSResponseInvite = ResponseBody<{ invite: TInvite }>;

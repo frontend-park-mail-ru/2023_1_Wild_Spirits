@@ -1,9 +1,10 @@
+import { VDOM, Component } from "modules/vdom";
 import { Loading } from "components/Common/Loading";
 import { store } from "flux";
-import { VDOM, Component } from "modules/vdom";
 import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
 import { inviteUserToEvent } from "requests/notifications";
+import { Invite } from "./Invite";
 
 export class NotificationModal extends Component {
     render() {
@@ -25,11 +26,16 @@ export class NotificationModal extends Component {
                             <Loading />
                         </div>
                     )}
-                    {invites.loadStatus === LoadStatus.DONE && invites.data.length === 0 ? (
-                        <div>Здесь пусто</div>
-                    ) : (
-                        <div> Какие то приглашения </div>
-                    )}
+                    {invites.loadStatus === LoadStatus.DONE &&
+                        (invites.data.length === 0 ? (
+                            <div>Здесь пусто</div>
+                        ) : (
+                            <div>
+                                {invites.data.map((invite) => (
+                                    <Invite invite={invite} />
+                                ))}
+                            </div>
+                        ))}
                 </div>
                 <hr />
                 <div>

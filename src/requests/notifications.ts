@@ -2,8 +2,8 @@ import { store } from "flux";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
 import config from "config";
-import { setInvites, setInvitesLoadError } from "flux/slices/notificationSlice";
-import { ResponseInvites } from "responses/ResponseInvites";
+import { addInvite, setInvites, setInvitesLoadError } from "flux/slices/notificationSlice";
+import { ResponseInvites, WSResponseInvite } from "responses/ResponseInvites";
 
 export const loadInvites = (resolveRequest: TRequestResolver) => {
     ajax.get<ResponseInvites>({
@@ -62,7 +62,9 @@ export const createWebSocket = (resolveRequest: TRequestResolver) => {
         });
 
         ws.addEventListener("message", ({ data }) => {
-            console.log("MESSAGE", data);
+            console.log("MESSAGE", JSON.parse(data));
+            const result = JSON.parse(data) as WSResponseInvite;
+            store.dispatch(addInvite(result.body.invite));
         });
 
         resolveRequest();

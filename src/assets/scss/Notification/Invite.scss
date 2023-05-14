@@ -1,0 +1,37 @@
+.invite-card {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.invite-card__event {
+    max-width: 320px;
+    min-width: 60%;
+}
+
+.invite-card__event-img-block {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+}
+
+.invite-card__event-img {
+    width: 100%;
+    height: 100%;
+}
+
+.invite-card__user {
+    text-align: center;
+    align-self: center;
+}
+
+.invite-card__user-img-block {
+    display: flex;
+}
+
+.invite-card__user-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}

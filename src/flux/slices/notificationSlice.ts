@@ -25,6 +25,12 @@ const notificationSlice = createSlice({
             state.invites = { loadStatus: LoadStatus.DONE, data: action.payload };
             return state;
         },
+        addInvite: (state: NotificationState, action: PayloadAction<TInvite>) => {
+            if (state.invites.loadStatus === LoadStatus.DONE) {
+                state.invites.data.push(action.payload);
+            }
+            return state;
+        },
         setInvitesLoadError: (state: NotificationState) => {
             state.invites = { loadStatus: LoadStatus.ERROR };
             return state;
@@ -32,5 +38,5 @@ const notificationSlice = createSlice({
     },
 });
 
-export const { setInvitesLoadStart, setInvites, setInvitesLoadError } = notificationSlice.actions;
+export const { setInvitesLoadStart, setInvites, addInvite, setInvitesLoadError } = notificationSlice.actions;
 export default notificationSlice;
