@@ -23,7 +23,7 @@ export const loadInvites = (resolveRequest: TRequestResolver) => {
 
 export const createWebSocket = (resolveRequest: TRequestResolver) => {
     setTimeout(() => {
-        const ws = new WebSocket(config.WEBSOCKET);
+        const ws = new WebSocket(config.WEBSOCKET + `?x-csrf-token=${ajax.getHeaders("x-csrf-token")}`);
         ws.addEventListener("open", () => {
             console.log("OPENED");
         });

@@ -61,6 +61,10 @@ class Ajax {
         this.#headers = { ...this.#headers, ...values };
     }
 
+    getHeaders(key: string): string | undefined {
+        return this.#headers[key];
+    }
+
     /**
      * Removes header by its name
      * @param {string} key - name of the header to be removed
