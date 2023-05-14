@@ -7,32 +7,9 @@ import { isAuthorized } from "flux/slices/userSlice";
 import { Link } from "components/Common/Link";
 import { EventCardMarker } from "./EventCardMarker";
 
-import { SVGInline } from "components/Common/SVGInline";
-
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, featureEvent, unfeatureEvent } from "requests/events";
-
-export interface HoveredImgProps {
-    src: string;
-    alt: string;
-    iconClassName: string;
-    onClick?: () => void;
-}
-
-export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean }> {
-    constructor(props: HoveredImgProps) {
-        super(props);
-        this.state = { isHovered: false };
-    }
-
-    render() {
-        return (
-            <div className="flex pointy" onClick={() => this.props.onClick && this.props.onClick()}>
-                <SVGInline className={this.props.iconClassName} src={this.props.src} alt={this.props.alt} />
-            </div>
-        );
-    }
-}
+import { HoveredImg } from "components/Common/HoveredImg";
 
 export interface EventCardProps {
     id: number;

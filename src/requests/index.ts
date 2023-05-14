@@ -34,7 +34,7 @@ import {
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
 import { loadPlaces } from "./places";
-import { createWebSocket, loadInvites } from "./invites";
+import { createWebSocket, loadInvites } from "./notifications";
 
 interface SetupRequestsType {
     request: TRequest;
@@ -168,7 +168,7 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: createWebSocket,
-        dependencies: [loadAuthorization],
+        dependencies: [loadAuthorization, loadInvites],
     },
 ];
 

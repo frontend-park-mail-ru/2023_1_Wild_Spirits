@@ -3,7 +3,7 @@
 import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
-import { openCalendarModal, openLogin, openRegister } from "flux/slices/modalWindowSlice";
+import { openCalendarModal, openLogin, openNotificationModal, openRegister } from "flux/slices/modalWindowSlice";
 
 import { logoutUser } from "requests/user";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -19,6 +19,7 @@ import { clearTags } from "flux/slices/tagsSlice";
 import { clearFinishDate, clearStartDate } from "flux/slices/calendarSlice";
 import { loadEvents } from "requests/events";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
+import { HoveredImg } from "components/Common/HoveredImg";
 
 /**
  * @class
@@ -37,6 +38,12 @@ export class Header extends Component {
             if (userData !== undefined) {
                 return (
                     <div className="profile-link">
+                        <HoveredImg
+                            alt=""
+                            src="/assets/img/notification-icon.svg"
+                            iconClassName="notification-icon"
+                            onClick={() => store.dispatch(openNotificationModal())}
+                        />
                         <ProfileLink
                             id="profile-link"
                             className="profile-link__profile-block link"

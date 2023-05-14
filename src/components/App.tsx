@@ -25,7 +25,7 @@ import { loadCategories, loadCities } from "requests/header";
 import { SideMenu } from "./SideMenu/SideMenu";
 import { CalendarModal } from "./Calendar/CalendarModal";
 import { MainModalWindow } from "./ModalWindow/MainModalWindow";
-import { createWebSocket, loadInvites } from "requests/invites";
+import { createWebSocket, loadInvites } from "requests/notifications";
 
 /**
  * @classdesc Main app component
