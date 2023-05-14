@@ -9,15 +9,28 @@ export interface NotificationState {
 }
 
 const initialState: NotificationState = {
-    invites: { loadStatus: LoadStatus.NONE },
-    reminder: { loadStatus: LoadStatus.NONE },
+    invites: { loadStatus: LoadStatus.LOADING },
+    reminder: { loadStatus: LoadStatus.LOADING },
 };
 
 const notificationSlice = createSlice({
-    name: "tags",
+    name: "notification",
     initialState: initialState,
-    reducers: {},
+    reducers: {
+        setInvitesLoadStart: (state: NotificationState) => {
+            state.invites = { loadStatus: LoadStatus.LOADING };
+            return state;
+        },
+        setInvites: (state: NotificationState, action: PayloadAction<TInvite[]>) => {
+            state.invites = { loadStatus: LoadStatus.DONE, data: action.payload };
+            return state;
+        },
+        setInvitesLoadError: (state: NotificationState) => {
+            state.invites = { loadStatus: LoadStatus.ERROR };
+            return state;
+        },
+    },
 });
 
-// export const {  } = notificationSlice.actions;
+export const { setInvitesLoadStart, setInvites, setInvitesLoadError } = notificationSlice.actions;
 export default notificationSlice;

@@ -2,6 +2,7 @@ import { store } from "flux";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
 import config from "config";
+import { setInvites, setInvitesLoadError } from "flux/slices/notificationSlice";
 
 export const loadInvites = (resolveRequest: TRequestResolver) => {
     ajax.get({
@@ -11,14 +12,17 @@ export const loadInvites = (resolveRequest: TRequestResolver) => {
         .then(({ json, status }) => {
             console.log(status, json);
             if (status === AjaxResultStatus.SUCCESS) {
-                store;
+                console.error("/invites", json);
+                store.dispatch(setInvites([]));
             } else {
-                store;
+                console.error("/invites Error", json);
+                store.dispatch(setInvitesLoadError());
             }
             resolveRequest();
         })
-        .catch(() => {
-            store;
+        .catch((ERROR) => {
+            console.error("/invites ERROR", ERROR);
+            store.dispatch(setInvitesLoadError());
             resolveRequest();
         });
 };
