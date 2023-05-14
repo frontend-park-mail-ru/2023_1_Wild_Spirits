@@ -1,7 +1,9 @@
 import { Loading } from "components/Common/Loading";
 import { store } from "flux";
 import { VDOM, Component } from "modules/vdom";
+import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
+import { inviteUserToEvent } from "requests/notifications";
 
 export class NotificationModal extends Component {
     render() {
@@ -9,6 +11,13 @@ export class NotificationModal extends Component {
         return (
             <div>
                 <div className="modal__title">Уведомления</div>
+                <input
+                    type="button"
+                    value="Test invite"
+                    onClick={() => {
+                        requestManager.request(inviteUserToEvent, 6, 2);
+                    }}
+                />
                 <div>
                     <div className="notification-modal__subtitle">Приглашения</div>
                     {invites.loadStatus === LoadStatus.LOADING && (
