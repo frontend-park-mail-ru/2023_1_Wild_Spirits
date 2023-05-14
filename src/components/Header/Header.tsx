@@ -4,9 +4,6 @@ import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { openCalendarModal, openLogin, openRegister } from "flux/slices/modalWindowSlice";
-import { selectCity, getSelectedCityName } from "flux/slices/headerSlice";
-import { loadEvents } from "requests/events";
-import { openCitySelector } from "flux/slices/modalWindowSlice";
 
 import { logoutUser } from "requests/user";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -16,6 +13,12 @@ import { CategoriesMenu } from "./CategoriesMenu";
 import { openSideMenu } from "flux/slices/sideMenuSlice";
 import { openMobileSearch } from "flux/slices/metaSlice";
 import { HeaderSearch } from "./HeaderSearch";
+import { CityPickerButton } from "./CityPickerButton";
+import { clearCategory, clearSearchQuery } from "flux/slices/headerSlice";
+import { clearTags } from "flux/slices/tagsSlice";
+import { clearFinishDate, clearStartDate } from "flux/slices/calendarSlice";
+import { loadEvents } from "requests/events";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
 /**
  * @class
@@ -23,20 +26,6 @@ import { HeaderSearch } from "./HeaderSearch";
  * Component for navbar
  */
 export class Header extends Component {
-    #onLogout = () => {
-        requestManager.request(logoutUser);
-    };
-
-    /**
-     * handles city selection
-     * @param {Event} event
-     */
-    #selectCity = (event: Event) => {
-        const target = event.target as HTMLInputElement;
-        store.dispatch(selectCity({ city: target.value }));
-        requestManager.request(loadEvents);
-    };
-
     #searchExpand = () => {
         store.dispatch(openMobileSearch());
     };
@@ -66,7 +55,7 @@ export class Header extends Component {
                             <img
                                 className="profile-link__logout-img"
                                 src="/assets/img/logout.png"
-                                onClick={this.#onLogout}
+                                onClick={() => requestManager.request(logoutUser)}
                             />
                         </div>
                     </div>
@@ -84,28 +73,22 @@ export class Header extends Component {
             ];
         };
 
-        const CityPickerButton = () => {
-            return (
-                <div className="header__city-selector">
-                    <button
-                        className="header__city-selector__button"
-                        onClick={() => {
-                            store.dispatch(openCitySelector());
-                        }}
-                    >
-                        <img src="/assets/img/geo-icon.svg"></img>
-                        <span>{selectedCityName}</span>
-                    </button>
-                </div>
+        const clearFilters = () => {
+            store.dispatch(
+                clearCategory(),
+                clearSearchQuery(),
+                clearTags(),
+                clearStartDate(),
+                clearFinishDate(),
+                setEventsCardsLoadStart()
             );
+            requestManager.request(loadEvents);
         };
-
-        const selectedCityName = getSelectedCityName(store.state.header);
 
         return (
             <div className="header">
                 <div className="header__logo">
-                    <Link href="/" className="black-link">
+                    <Link href="/" className="black-link" onClick={clearFilters}>
                         <img src="/assets/img/logo-full.svg" alt="logo" />
                     </Link>
                 </div>
@@ -113,7 +96,7 @@ export class Header extends Component {
                 <div className="header__top__line">
                     {!store.state.meta.mobileSearch && (
                         <div className="header__head">
-                            <Link href="/" className="black-link">
+                            <Link href="/" className="black-link" onClick={clearFilters}>
                                 Event Radar
                             </Link>
                         </div>

@@ -75,7 +75,7 @@
 
 .event-card-loading {
     @extend .event-card;
-    height: 500px;
+    min-height: 500px;
 
     align-items: center;
     justify-content: center;

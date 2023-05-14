@@ -10,11 +10,13 @@ import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
 import { TRequest } from "requests/requestTypes";
 
+type ChildType = JSX.Element | string | false;
+
 export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     request: TRequest;
     showEmptyMessage?: boolean;
-    children?: JSX.Element[] | JSX.Element | string | false;
+    children?: ChildType[] | ChildType;
 }
 
 /**

@@ -7,6 +7,7 @@ import { closeModal } from "flux/slices/modalWindowSlice";
 
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
 export class CityPicker extends Component<any, { query: string }> {
     constructor() {
@@ -46,7 +47,7 @@ export class CityPicker extends Component<any, { query: string }> {
                     {cities.map((city) => (
                         <button
                             onClick={() => {
-                                store.dispatch(selectCity({ city: city }), closeModal());
+                                store.dispatch(selectCity({ city: city }), closeModal(), setEventsCardsLoadStart());
                                 requestManager.request(loadEvents);
                             }}
                             className="city-picker__item"

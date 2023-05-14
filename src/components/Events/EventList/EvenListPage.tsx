@@ -9,9 +9,9 @@ import { toggleTag } from "flux/slices/tagsSlice";
 import { requestManager } from "requests";
 import { Link } from "components/Common/Link";
 import { loadEvents, loadInfinityEvents } from "requests/events";
-import { resetEventsCards, setEventsInfinityLoadStart } from "flux/slices/eventSlice";
+import { resetEventsCards, setEventsCardsLoadStart, setEventsInfinityLoadStart } from "flux/slices/eventSlice";
 import { LoadStatus } from "requests/LoadStatus";
-import { EventListLoading } from "./EventListLoading";
+import { Loading } from "components/Common/Loading";
 
 const GoMapBtn = () => {
     return (
@@ -60,9 +60,17 @@ export class EventListPage extends Component {
         return (
             <div id="event-list-page" className="row">
                 <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true}>
-                    {status === LoadStatus.LOADING && <EventListLoading size={6} />}
-                    {/* status === LoadStatus.ERROR &&  */}
-                    {/* isEnd && */}
+                    {isEnd ? (
+                        <div> По данному запросу больше чиего нет </div>
+                    ) : status === LoadStatus.LOADING ? (
+                        Array.from(Array(6)).map(() => (
+                            <div className="card event-card-loading">
+                                <Loading size="xl" />
+                            </div>
+                        ))
+                    ) : (
+                        status === LoadStatus.ERROR && <div>Error</div>
+                    )}
                 </EventList>
 
                 {!store.state.meta.collapsed.headerCollapsed && (
@@ -74,7 +82,7 @@ export class EventListPage extends Component {
                         <Tags
                             tagsState={store.state.tags}
                             toggleTag={(tag) => {
-                                store.dispatch(toggleTag(tag));
+                                store.dispatch(toggleTag(tag), setEventsCardsLoadStart());
                                 requestManager.request(loadEvents);
                             }}
                         />
