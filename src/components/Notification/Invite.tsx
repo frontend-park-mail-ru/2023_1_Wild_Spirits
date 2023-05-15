@@ -1,6 +1,7 @@
 import { VDOM, Component } from "modules/vdom";
 import { TInvite } from "models/Notification";
 import { getUploadsImg } from "modules/getUploadsImg";
+import { FriendLink } from "components/Auth/Profile/FriendList/FriendLink";
 
 export interface InviteProps {
     invite: TInvite;
@@ -25,14 +26,11 @@ export class Invite extends Component<InviteProps> {
                     </div>
                 </div>
                 <div className="invite-card__user">
-                    <div className="invite-card__user-img-block">
-                        <img
-                            src={getUploadsImg(this.props.invite.userImg)}
-                            alt="User"
-                            className="invite-card__user-img"
-                        />
-                    </div>
-                    <div>{this.props.invite.userName}</div>
+                    <FriendLink
+                        avatar={getUploadsImg(this.props.invite.userImg)}
+                        userId={this.props.invite.userId}
+                        name={this.props.invite.userName}
+                    />
                 </div>
             </div>
         );

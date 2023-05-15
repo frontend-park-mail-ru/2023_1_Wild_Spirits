@@ -2,47 +2,15 @@
 
 import { VDOM, Component } from "modules/vdom";
 
-import { ProfileLink } from "components/Common/Link";
 import { requestManager } from "requests";
 import { loadFriends, searchUsers } from "requests/user";
 
 import { store } from "flux";
-import { closeModal } from "flux/slices/modalWindowSlice";
 
 import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
 import { toEvent } from "modules/CastEvents";
-
-const renderUser = (user: { user_id: number; name: string; avatar: string }) => {
-    return (
-        <ProfileLink
-            className="friend-list__link"
-            href={`/profile/${user.user_id}`}
-            onClick={() => store.dispatch(closeModal())}
-        >
-            <span className="friend-list__item">
-                <div className="friend-list__item__avatar-block">
-                    <img className="friend-list__item__avatar" src={user.avatar} />
-                    <div className="friend-list__item__description">
-                        <span className="friend-list__item__friend-name">{user.name}</span>
-                    </div>
-                </div>
-            </span>
-        </ProfileLink>
-    );
-};
-const UserBlock = ({ title, users }: { title: string; users: { user_id: number; name: string; avatar: string }[] }) => {
-    return (
-        <div>
-            {users.length > 0 && users.length > 0 && (
-                <div>
-                    <h2>{title}</h2>
-                    {users.map(renderUser)}
-                </div>
-            )}
-        </div>
-    );
-};
+import { FriendsPreviewBlock } from "./FriendPreview";
 
 export class FriendList extends Component {
     didCreate() {
@@ -128,8 +96,8 @@ export class FriendList extends Component {
                     <div>Пользователей с таким именем не найдено</div>
                 ) : (
                     <div className="friend-list">
-                        <UserBlock title="Подписки" users={friends} />
-                        {queryEmpty && <UserBlock title="Все пользователи" users={foundUsers} />}
+                        <FriendsPreviewBlock title="Подписки" users={friends} />
+                        {queryEmpty && <FriendsPreviewBlock title="Все пользователи" users={foundUsers} />}
                     </div>
                 )}
             </div>

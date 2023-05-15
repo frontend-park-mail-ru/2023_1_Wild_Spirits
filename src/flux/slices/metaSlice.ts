@@ -26,11 +26,13 @@ const initialCollapsed = createCollapsed();
 interface MetaState {
     collapsed: CollapsedMeta;
     mobileSearch: boolean;
+    inviteModalEventId: number;
 }
 
 const initialState: MetaState = {
     collapsed: initialCollapsed,
-    mobileSearch: false
+    mobileSearch: false,
+    inviteModalEventId: -1,
 };
 
 const metaSlice = createSlice({
@@ -48,10 +50,14 @@ const metaSlice = createSlice({
         closeMobileSearch: (state: MetaState) => {
             state.mobileSearch = false;
             return state;
-        }
+        },
+        setInviteModalEventId: (state: MetaState, action: PayloadAction<number>) => {
+            state.inviteModalEventId = action.payload;
+            return state;
+        },
     },
 });
 
-export const { setCollapsed, openMobileSearch, closeMobileSearch } = metaSlice.actions;
+export const { setCollapsed, openMobileSearch, closeMobileSearch, setInviteModalEventId } = metaSlice.actions;
 
 export default metaSlice;

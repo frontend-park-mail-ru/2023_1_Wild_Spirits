@@ -10,6 +10,9 @@ import { EventCardMarker } from "./EventCardMarker";
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, featureEvent, unfeatureEvent } from "requests/events";
 import { HoveredImg } from "components/Common/HoveredImg";
+import { openInviteModal, openRegister } from "flux/slices/modalWindowSlice";
+import { loadFriends } from "requests/user";
+import { setInviteModalEventId } from "flux/slices/metaSlice";
 
 export interface EventCardProps {
     id: number;
@@ -33,6 +36,8 @@ export interface EventCardProps {
 export class EventCard extends Component<EventCardProps> {
     constructor(props: EventCardProps) {
         super(props);
+
+        this.openInviteModal = this.openInviteModal.bind(this);
     }
 
     toggleLike(eventId: number, liked: boolean) {
@@ -48,6 +53,15 @@ export class EventCard extends Component<EventCardProps> {
             requestManager.request(featureEvent, eventId);
         } else {
             requestManager.request(unfeatureEvent, eventId);
+        }
+    }
+
+    openInviteModal() {
+        if (store.state.user.data) {
+            requestManager.request(loadFriends, store.state.user.data.id);
+            store.dispatch(openInviteModal(), setInviteModalEventId(this.props.id));
+        } else {
+            store.dispatch(openRegister());
         }
     }
 
@@ -94,11 +108,12 @@ export class EventCard extends Component<EventCardProps> {
                             />
                             <span>0</span>
                         </div> */}
-                        {/* <HoveredImg
+                        <HoveredImg
                             src="/assets/img/card/invite-icon.svg"
                             alt="invite"
-                            iconClassName="event-card__stroke-icon"
-                        /> */}
+                            iconClassName="stroke-svg-icon"
+                            onClick={this.openInviteModal}
+                        />
                         {isAuthorized(store.state.user) && this.props.is_mine ? (
                             <Link href={`/editevent/${this.props.id}`} className="flex">
                                 <HoveredImg

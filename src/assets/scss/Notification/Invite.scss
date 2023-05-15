@@ -35,3 +35,8 @@
     border-radius: 50%;
     object-fit: cover;
 }
+
+.invite-modal {
+    overflow-y: auto;
+    max-height: 480px;
+}

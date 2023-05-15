@@ -1,5 +1,6 @@
+$avatar-size: 65px;
+
 .friend-list-card {
-    --avatar-size: 65px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -31,8 +32,8 @@
 }
 
 .friend-list-card__friends-block__avatar {
-    width: var(--avatar-size);
-    height: var(--avatar-size);
+    width: $avatar-size;
+    height: $avatar-size;
 
     object-fit: cover;
 
@@ -50,15 +51,14 @@
 }
 
 .friend-list__item__avatar {
-    width: var(--avatar-size);
-    height: var(--avatar-size);
+    width: $avatar-size;
+    height: $avatar-size;
     border-radius: 50%;
 
     object-fit: cover;
 }
 
 .friend-list {
-    --avatar-size: 70px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -76,6 +76,9 @@
 
 .friend-list__item {
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .friend-list__link {
@@ -86,6 +89,11 @@
     border-radius: 10px;
     padding: 5px 10px;
     word-wrap: break-word;
+}
+
+.friend-list__link-invite-block {
+    align-self: center;
+    margin-right: 8px;
 }
 
 .friend-list__item__avatar-block {

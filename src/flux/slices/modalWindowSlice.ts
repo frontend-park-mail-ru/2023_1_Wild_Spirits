@@ -10,6 +10,7 @@ export namespace ModalWindowName {
     export const CALENDAR = "calendar";
     export const SEARCH = "search";
     export const NOTIFICATION = "notification";
+    export const INVITE = "invite";
 
     export type NameType =
         | typeof NONE
@@ -19,7 +20,8 @@ export namespace ModalWindowName {
         | typeof CITY_SELECTOR
         | typeof ORGANIZER
         | typeof CALENDAR
-        | typeof NOTIFICATION;
+        | typeof NOTIFICATION
+        | typeof INVITE;
 }
 
 interface ModalWindowState {
@@ -66,6 +68,10 @@ const modalWindowSlice = createSlice({
             state.name = ModalWindowName.NOTIFICATION;
             return state;
         },
+        openInviteModal: (state: ModalWindowState) => {
+            state.name = ModalWindowName.INVITE;
+            return state;
+        },
     },
 });
 
@@ -78,6 +84,7 @@ export const {
     openOrganizerModal,
     openCalendarModal,
     openNotificationModal,
+    openInviteModal,
 } = modalWindowSlice.actions;
 
 export default modalWindowSlice;
