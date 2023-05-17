@@ -15,6 +15,7 @@ import { requestManager } from "requests";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
 import { mineProfile } from "flux/slices/userSlice";
+import { router } from "modules/router";
 
 /**
  * Profile component
