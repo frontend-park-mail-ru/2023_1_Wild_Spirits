@@ -76,9 +76,11 @@ export const loadProfileEvents = () => {
 
 export const ProfileLink = (props: LinkProps) => {
     const onClick = () => {
-        requestManager.removeDone(loadProfile);
-        props.onClick && props.onClick();
-        loadProfileEvents();
+        if (router.isUrlChanged()) {
+            requestManager.removeDone(loadProfile);
+            props.onClick && props.onClick();
+            loadProfileEvents();
+        }
     };
     return (
         <div>

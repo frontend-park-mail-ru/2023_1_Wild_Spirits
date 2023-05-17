@@ -29,6 +29,7 @@ import { Tags } from "components/Tags/Tags";
 import { toggleTag } from "flux/slices/tagsSlice";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
+import { NotfificationButton } from "components/Notification/NotificationButton";
 
 export class SideMenu extends Component {
     toggleCategories() {
@@ -134,6 +135,9 @@ export class SideMenu extends Component {
         return (
             <div className="sidemenu">
                 <div className="sidemenu__header">
+                    <div>
+                        <NotfificationButton/>
+                    </div>
                     <button className="header__mobile-button" onClick={() => store.dispatch(closeSideMenu())}>
                         <img src="/assets/img/close-icon.svg" />
                     </button>

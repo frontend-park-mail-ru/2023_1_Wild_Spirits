@@ -165,6 +165,19 @@ export class EventPage extends Component {
                                 />
                             </button>
                         )}
+
+                        <a  href={`https://vk.com/share.php?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
+                            target="_blank"
+                            className="event-page__link-icon"
+                        >
+                            {/* Поделиться ВКонтакте */}
+                            <img src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg" width="60px"></img>
+                            {/* <SVGInline
+                                src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg"
+                                alt="Поделиться ВКонтакте"
+
+                            /> */}
+                        </a>
                     </div>
                 </div>
                 <OrgEvents />

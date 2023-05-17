@@ -20,6 +20,7 @@ import { clearFinishDate, clearStartDate } from "flux/slices/calendarSlice";
 import { loadEvents } from "requests/events";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { HoveredImg } from "components/Common/HoveredImg";
+import { NotfificationButton } from "components/Notification/NotificationButton";
 
 /**
  * @class
@@ -38,12 +39,9 @@ export class Header extends Component {
             if (userData !== undefined) {
                 return (
                     <div className="profile-link">
-                        <HoveredImg
-                            alt=""
-                            src="/assets/img/notification-icon.svg"
-                            iconClassName="notification-icon"
-                            onClick={() => store.dispatch(openNotificationModal())}
-                        />
+                        <div className="notification-button-container">
+                            <NotfificationButton/>  
+                        </div>
                         <ProfileLink
                             id="profile-link"
                             className="profile-link__profile-block link"
@@ -131,7 +129,7 @@ export class Header extends Component {
                             </button>
                         </div>
                     ) : (
-                        <div className="profile-link">{getProfileLink()}</div>
+                        getProfileLink()
                     )}
                 </div>
 

@@ -25,6 +25,16 @@ $avatar-size: 65px;
     flex-direction: column;
 
     text-align: center;
+
+    text-decoration: none;
+
+    &:hover .friend-list-card__friends-block__avatar {
+        border-color: var(--link-color);
+    }
+
+    &:hover .black-link {
+        color: $link-color;
+    }
 }
 
 .friend-list-card__friends-block-collapsed {
@@ -39,10 +49,6 @@ $avatar-size: 65px;
 
     border: 3px solid transparent;
     border-radius: 50%;
-}
-
-.friend-list-card__friends-block__avatar:hover {
-    border-color: var(--link-color);
 }
 
 .friend-list-card__friend-button {

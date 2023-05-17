@@ -154,6 +154,7 @@ select > option {
     max-width: 900px;
 
     display: flex;
+    justify-content: center;
 }
 
 .search {
@@ -165,7 +166,7 @@ select > option {
     background-color: transparent;
     box-shadow: none;
     flex-grow: 1;
-    margin: 0 auto;
+    // margin: 0 auto;
 
     max-width: 400px;
 
@@ -174,4 +175,8 @@ select > option {
 
 .header__mobile-icon {
     height: 25px;
+}
+
+.notification-button-container {
+    margin: 0 40px;
 }
