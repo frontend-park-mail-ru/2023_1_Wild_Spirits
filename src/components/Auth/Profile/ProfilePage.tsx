@@ -33,7 +33,7 @@ export class ProfilePage extends Component {
         const profileId = this.getProfileId();
 
         return (
-            <div className="row">
+            <div className="row-old">
                 <div className="profile-page__content">
                     <Profile id={profileId} />
 

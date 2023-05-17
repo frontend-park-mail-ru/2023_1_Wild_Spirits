@@ -16,6 +16,7 @@ export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     request: TRequest;
     showEmptyMessage?: boolean;
+    extraClassName?: string;
     children?: ChildType[] | ChildType;
 }
 
@@ -38,16 +39,20 @@ export class EventList extends Component<EventListProps> {
         this.loadEvents();
     }
 
+    getExtraClassName(): string {
+        return this.props.extraClassName || "";
+    }
+
     render() {
         const events = this.props.events;
 
         if (events.loadStatus === LoadStatus.ERROR) {
-            return <div> Error </div>;
+            return <div className={`event-list-base ${this.getExtraClassName()}`}> Error </div>;
         }
 
         if (events.loadStatus !== LoadStatus.DONE) {
             return (
-                <div className="event-list-loading-block">
+                <div className={`event-list-base ${this.getExtraClassName()}`}>
                     <EventListLoading size={6} />
                 </div>
             );
@@ -57,14 +62,14 @@ export class EventList extends Component<EventListProps> {
 
         if (cardsProps.length === 0 && this.props.showEmptyMessage) {
             return (
-                <div className="event-list-empty">
+                <div className={`event-list-base ${this.getExtraClassName()}`}>
                     <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
                 </div>
             );
         }
 
         return (
-            <div className="event-list">
+            <div className={`event-list ${this.getExtraClassName()}`}>
                 {cardsProps.map((props) => (
                     <EventCard {...props} />
                 ))}

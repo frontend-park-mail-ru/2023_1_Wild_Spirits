@@ -59,9 +59,14 @@ export class EventListPage extends Component {
         const { isEnd, status } = store.state.events.cardsInfinity;
         return (
             <div id="event-list-page" className="row">
-                <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true}>
+                <EventList
+                    request={loadEvents}
+                    events={store.state.events.cards}
+                    showEmptyMessage={true}
+                    extraClassName="col-m-12 col-xxl-8 col-9"
+                >
                     {isEnd ? (
-                        <div> По данному запросу больше чиего нет </div>
+                        <div className="w-100 text-center"> По данному запросу больше ничего нет </div>
                     ) : status === LoadStatus.LOADING ? (
                         Array.from(Array(6)).map(() => (
                             <div className="card event-card-loading">
@@ -74,7 +79,7 @@ export class EventListPage extends Component {
                 </EventList>
 
                 {!store.state.meta.collapsed.headerCollapsed && (
-                    <div className="event-list-page__sidebar">
+                    <div className="col-xxl-4 col-3 sidebar">
                         {isAuthorized(store.state.user) && <EventCreateButton />}
                         <GoMapBtn />
                         <Calendar />

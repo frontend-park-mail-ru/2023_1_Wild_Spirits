@@ -1,0 +1,35 @@
+$grid-size: (
+    xxl: 1550px,
+    xl: 1250px,
+    l: 1000px,
+    m: 850px,
+    s: 600px,
+    xs: 400px,
+);
+
+.row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.col .col-auto {
+    grid-column: auto;
+}
+
+@for $i from 1 through 12 {
+    .col-#{$i} {
+        @media screen and (max-width: 16000px) {
+            grid-column: auto/span $i;
+        }
+    }
+}
+
+@each $name, $size in $grid-size {
+    @for $i from 1 through 12 {
+        .col-#{$name}-#{$i} {
+            @media screen and (max-width: $size) {
+                grid-column: auto/span $i;
+            }
+        }
+    }
+}

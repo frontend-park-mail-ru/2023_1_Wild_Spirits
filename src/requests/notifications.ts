@@ -50,10 +50,6 @@ export const inviteUserToEvent = (resolveRequest: TRequestResolver, userId: numb
 
 export const createWebSocket = (resolveRequest: TRequestResolver) => {
     setTimeout(() => {
-        console.log(ajax.getHeaders("x-csrf-token"));
-        console.log("?x-csrf-token=" + encodeURIComponent(ajax.getHeaders("x-csrf-token") || ""));
-        console.log(encodeURI(`?x-csrf-token=${encodeURIComponent(ajax.getHeaders("x-csrf-token") || "")}`));
-
         const ws = new WebSocket(
             config.WEBSOCKET + `?x-csrf-token=${encodeURIComponent(ajax.getHeaders("x-csrf-token") || "")}`
         );

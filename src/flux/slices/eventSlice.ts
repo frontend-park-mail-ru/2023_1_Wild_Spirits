@@ -96,6 +96,13 @@ const eventsSlice = createSlice({
         },
         addEventsInfinityCards: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
             if (state.cards.loadStatus === LoadStatus.DONE) {
+                if (action.payload.length === 0) {
+                    state.cardsInfinity.isEnd = true;
+                    state.cardsInfinity.status = LoadStatus.DONE;
+
+                    return state;
+                }
+
                 state.cardsInfinity.status = LoadStatus.DONE;
                 state.cardsInfinity.pageNumber++;
 

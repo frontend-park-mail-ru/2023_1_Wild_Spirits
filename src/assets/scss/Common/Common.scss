@@ -2,7 +2,7 @@
     margin: 15px 0;
 }
 
-.row {
+.row-old {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -11,6 +11,12 @@
 
 .content {
     flex: 60%;
+}
+
+.sidebar {
+    min-width: 400px;
+    max-width: 400px;
+    margin: 40px 20px;
 }
 
 .flex {
@@ -142,4 +148,12 @@ $table-collapse: 500px;
 
 .notification-icon {
     margin: 0 40px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
 }
