@@ -172,13 +172,14 @@ export class EventPage extends Component {
                             target="_blank"
                             className="event-page__link-icon"
                         >
-                            {/* Поделиться ВКонтакте */}
                             <img src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg" width="60px"></img>
-                            {/* <SVGInline
-                                src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg"
-                                alt="Поделиться ВКонтакте"
+                        </a>
 
-                            /> */}
+                        <a
+                            href={`https://t.me/share?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
+                            className="event-page__link-icon"
+                        >
+                            <img src="/assets/img/page/tg-logo.svg" width="60px" />
                         </a>
                     </div>
                 </div>
