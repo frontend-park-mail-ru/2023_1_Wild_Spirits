@@ -4,7 +4,7 @@ import { VDOM, Component } from "modules/vdom";
 
 import { createTable, filterTableContents, TableContents } from "components/Common/CreateTable";
 import { store } from "flux";
-import { kickUnauthorized, isOrganizer, CurrentProfileState } from "flux/slices/userSlice";
+import { kickUnauthorized, isOrganizer, CurrentProfileState, isAuthorizedOrNotDone } from "flux/slices/userSlice";
 
 import { getCitiesNames } from "flux/slices/headerSlice";
 
@@ -15,7 +15,8 @@ import { requestManager } from "requests";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 
 import { mineProfile } from "flux/slices/userSlice";
-import { router } from "modules/router";
+import { LoadStatus } from "requests/LoadStatus";
+import { ProfileLoading } from "./ProfileLoading";
 
 /**
  * Profile component
@@ -92,11 +93,11 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
             return;
         }
 
-        const userData = store.state.user.data;
-
-        if (!userData) {
+        const { authorized } = store.state.user;
+        if (!isAuthorizedOrNotDone(authorized)) {
             return;
         }
+        const userData = authorized.data;
 
         const formData = new FormData(form as HTMLFormElement);
         const city_id = store.state.header.cities.find((city) => city.name === formData.get("city_id"));
@@ -202,22 +203,32 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
             return <div className="table">{cells}</div>;
         };
 
-        const user_data = store.state.user.data;
-        if (!user_data) {
-            return <div>Вы не авторизованы</div>;
+        const { authorized } = store.state.user;
+
+        // TODO check load status of authorized and currentProfile
+        if (authorized.loadStatus !== LoadStatus.DONE) {
+            return (
+                <div className="w-100">
+                    <ProfileLoading />
+                </div>
+            );
         }
 
         const profile_data = store.state.user.currentProfile;
 
         if (!profile_data) {
-            return <div>Такого пользователя не существует</div>;
+            return (
+                <div className="w-100">
+                    <ProfileLoading />
+                </div>
+            );
         }
 
-        const avatar = this.state.tempAvatarUrl || getUploadsImg(store.state.user.currentProfile!.img);
+        const avatar = this.state.tempAvatarUrl || getUploadsImg(profile_data.img);
         const table = getTable(profile_data);
 
         const profileBtn = () => {
-            const mine = user_data.id === profile_data.id;
+            const mine = mineProfile(store.state.user);
 
             if (mine) {
                 if (this.state.editing) {
@@ -262,7 +273,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
         };
 
         return (
-            <div>
+            <div className="w-100">
                 <form
                     id="edit-profile-form"
                     onSubmit={(e) => this.submitForm(toSubmitEvent(e))}
@@ -284,7 +295,7 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
                             ></input>
                         )}
                     </div>
-                    <div className="profile-description__description-block">
+                    <div className="profile-description__description-block w-100">
                         <div className="profile-description__table-container">{table}</div>
                         <div className="profile-description__button-block">{profileBtn()}</div>
                     </div>

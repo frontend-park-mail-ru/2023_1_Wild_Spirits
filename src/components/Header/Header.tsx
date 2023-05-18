@@ -3,7 +3,7 @@
 import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
-import { openCalendarModal, openLogin, openNotificationModal, openRegister } from "flux/slices/modalWindowSlice";
+import { openCalendarModal, openLogin, openRegister } from "flux/slices/modalWindowSlice";
 
 import { logoutUser } from "requests/user";
 import { getUploadsImg } from "modules/getUploadsImg";
@@ -19,8 +19,8 @@ import { clearTags } from "flux/slices/tagsSlice";
 import { clearFinishDate, clearStartDate } from "flux/slices/calendarSlice";
 import { loadEvents } from "requests/events";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
-import { HoveredImg } from "components/Common/HoveredImg";
 import { NotfificationButton } from "components/Notification/NotificationButton";
+import { isAuthorizedOrNotDone } from "flux/slices/userSlice";
 
 /**
  * @class
@@ -34,27 +34,27 @@ export class Header extends Component {
 
     render() {
         const getProfileLink = () => {
-            const userData = store.state.user.data;
+            const { authorized } = store.state.user;
 
-            if (userData !== undefined) {
+            if (isAuthorizedOrNotDone(authorized)) {
                 return (
                     <div className="profile-link">
                         <div className="notification-button-container">
-                            <NotfificationButton/>  
+                            <NotfificationButton />
                         </div>
                         <ProfileLink
                             id="profile-link"
                             className="profile-link__profile-block link"
-                            href={`/profile/${userData.id}`}
+                            href={`/profile/${authorized.data.id}`}
                         >
                             <div className="profile-link__img-block">
                                 <img
                                     className="profile-link__img"
-                                    src={getUploadsImg(userData.img)}
+                                    src={getUploadsImg(authorized.data.img)}
                                     alt="ProfileLink"
                                 />
                             </div>
-                            <div className="profile-link__name-block">{userData.name}</div>
+                            <div className="profile-link__name-block">{authorized.data.name}</div>
                         </ProfileLink>
                         <div id="profile-link-logout">
                             <img

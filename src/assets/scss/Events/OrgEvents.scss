@@ -1,8 +1,13 @@
 .org-events-list {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
     @media screen and (max-width: $event-page-collapse-width) {
-        max-width: 800px;
+        max-width: 100%;
         margin: 40px auto;
     }
 }
@@ -13,13 +18,15 @@
     border-radius: 20px;
     text-align: center;
     font-size: 24px;
-    margin-bottom: 32px;
+    margin: 0 auto 20px;
+    width: 90%;
 }
 
 .org-events-list__card-block {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    justify-content: center;
 
     @media screen and (max-width: $event-page-collapse-width) {
         justify-content: center;

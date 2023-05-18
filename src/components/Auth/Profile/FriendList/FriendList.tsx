@@ -11,6 +11,7 @@ import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
 import { toEvent } from "modules/CastEvents";
 import { FriendsPreviewBlock } from "./FriendPreview";
+import { isAuthorizedOrNotDone } from "flux/slices/userSlice";
 
 export class FriendList extends Component {
     didCreate() {
@@ -57,8 +58,9 @@ export class FriendList extends Component {
 
         const filtered_ids = friends.map((friend) => friend.user_id);
 
-        if (store.state.user.data) {
-            filtered_ids.push(store.state.user.data.id);
+        const { authorized } = store.state.user;
+        if (isAuthorizedOrNotDone(authorized)) {
+            filtered_ids.push(authorized.data.id);
         }
 
         const foundUsers = (() => {

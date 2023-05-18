@@ -12,6 +12,7 @@ import { loadEvents, loadInfinityEvents } from "requests/events";
 import { resetEventsCards, setEventsCardsLoadStart, setEventsInfinityLoadStart } from "flux/slices/eventSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import { Loading } from "components/Common/Loading";
+import { CONTENT_CLASS_NAME, SIDEBAR_CLASS_NAME } from "modules/commonClasses";
 
 const GoMapBtn = () => {
     return (
@@ -63,7 +64,7 @@ export class EventListPage extends Component {
                     request={loadEvents}
                     events={store.state.events.cards}
                     showEmptyMessage={true}
-                    extraClassName="col-m-12 col-xxl-8 col-9"
+                    extraClassName={CONTENT_CLASS_NAME}
                 >
                     {isEnd ? (
                         <div className="w-100 text-center"> По данному запросу больше ничего нет </div>
@@ -79,7 +80,7 @@ export class EventListPage extends Component {
                 </EventList>
 
                 {!store.state.meta.collapsed.headerCollapsed && (
-                    <div className="col-xxl-4 col-3 sidebar">
+                    <div className={SIDEBAR_CLASS_NAME}>
                         {isAuthorized(store.state.user) && <EventCreateButton />}
                         <GoMapBtn />
                         <Calendar />

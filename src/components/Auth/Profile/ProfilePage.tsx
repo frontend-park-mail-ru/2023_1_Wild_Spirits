@@ -8,7 +8,7 @@ import { store } from "flux";
 import { loadLikedEvents, loadPlannedEvents, loadProfileOrgEvents, loadSubbedEvents } from "requests/events";
 import { FriendListCard } from "./FriendList/FriendListCard";
 import { EventCreateButton } from "components/Events/EventCreateButton/EventCreateButton";
-import { Calendar } from "components/Calendar/Calendar";
+import { CONTENT_CLASS_NAME, SIDEBAR_CLASS_NAME } from "modules/commonClasses";
 
 const Delimiter = (props: { content: string }) => {
     return (
@@ -33,17 +33,26 @@ export class ProfilePage extends Component {
         const profileId = this.getProfileId();
 
         return (
-            <div className="row-old">
-                <div className="profile-page__content">
-                    <Profile id={profileId} />
+            <div className="row">
+                <div className={`col-xl-12 ${CONTENT_CLASS_NAME}`}>
+                    <div className="profile-page__content">
+                        <Profile id={profileId} />
 
-                    {store.state.meta.collapsed.profileCollapsed && (
-                        <div className="profile-page__sidebar">
-                            <FriendListCard />
-                            <EventCreateButton />
-                        </div>
-                    )}
-
+                        {store.state.meta.collapsed.profileCollapsed && (
+                            <div className="profile-page__extra-block ">
+                                <FriendListCard />
+                                <EventCreateButton />
+                            </div>
+                        )}
+                    </div>
+                </div>
+                {!store.state.meta.collapsed.profileCollapsed && (
+                    <div className={`${SIDEBAR_CLASS_NAME}`}>
+                        <FriendListCard />
+                        <EventCreateButton />
+                    </div>
+                )}
+                <div className="col-12">
                     {hasEvents(store.state.events.subbedEvents) && <Delimiter content="Мероприятия подписок" />}
                     <EventList request={loadSubbedEvents} events={store.state.events.subbedEvents} />
 
@@ -58,13 +67,6 @@ export class ProfilePage extends Component {
                     {hasEvents(store.state.events.likedEvents) && <Delimiter content="Понравившиеся мероприятия" />}
                     <EventList request={loadLikedEvents} events={store.state.events.likedEvents} />
                 </div>
-                {!store.state.meta.collapsed.profileCollapsed && (
-                    <div className="profile-page__sidebar">
-                        <FriendListCard />
-                        <EventCreateButton />
-                        <Calendar />
-                    </div>
-                )}
             </div>
         );
     }

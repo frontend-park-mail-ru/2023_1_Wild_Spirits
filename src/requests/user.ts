@@ -4,13 +4,14 @@ import { ResponseBody, ResponseErrorDefault } from "responses/ResponseBase";
 
 import { store } from "flux";
 import {
-    setUserData,
+    setAuthorizedData,
     logout,
     setCurrentProfile,
     authorizedLoadStart,
     authorizedLoadError,
     removeFromFriends,
     TOrganizer,
+    isAuthorizedOrNotDone,
 } from "flux/slices/userSlice";
 import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { closeModal } from "flux/slices/modalWindowSlice";
@@ -31,9 +32,9 @@ export const loadAuthorization = (resolveRequest: TRequestResolver) => {
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setUserData(json.body.user), closeModal());
+                store.dispatch(setAuthorizedData(json.body.user), closeModal());
             } else {
-                store.dispatch(setUserData(undefined));
+                store.dispatch(setAuthorizedData(undefined));
             }
             resolveRequest();
         })
@@ -67,12 +68,13 @@ export const patchProfile = (resolveRequest: TRequestResolver, userId: number, f
         body: formData,
     }).then(({ json, response, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
-            if (!store.state.user.data || !store.state.user.currentProfile) {
+            const { authorized } = store.state.user;
+            if (!isAuthorizedOrNotDone(authorized) || !store.state.user.currentProfile) {
                 return;
             }
 
             const userData: TUserLight = {
-                id: store.state.user.data.id,
+                id: authorized.data.id,
                 name: formData.get("name") as string,
                 email: formData.get("email") as string,
                 city_name: json.body.user.city_name,
@@ -97,7 +99,7 @@ export const patchProfile = (resolveRequest: TRequestResolver, userId: number, f
                 },
             };
 
-            store.dispatch(setUserData(userData), setCurrentProfile(currentProfileData));
+            store.dispatch(setAuthorizedData(userData), setCurrentProfile(currentProfileData));
             resolveRequest();
         } else if (response.status === 409) {
             const errorMsgElement = document.getElementById("profile-description-error-message");
@@ -185,7 +187,7 @@ export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, 
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
-                    store.dispatch(setUserData(json.body.user), closeModal());
+                    store.dispatch(setAuthorizedData(json.body.user), closeModal());
                 }
             } else {
                 warningMsg(json.errorMsg, json.errors);
@@ -213,7 +215,7 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
                 }
-                store.dispatch(setUserData(json.body.user), closeModal());
+                store.dispatch(setAuthorizedData(json.body.user), closeModal());
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
@@ -225,16 +227,21 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
 };
 
 type ErrorMsgType = {
-    errorMsg: string,
-    errors: {[key: string]: string}
-}
+    errorMsg: string;
+    errors: { [key: string]: string };
+};
 
-export const registerOrganizer = (resolveRequest: TRequestResolver, formData: FormData, setErrors: (errors: ErrorMsgType)=>void) => {
+export const registerOrganizer = (
+    resolveRequest: TRequestResolver,
+    formData: FormData,
+    setErrors: (errors: ErrorMsgType) => void
+) => {
+    const { authorized } = store.state.user;
     ajax.post({
         url: "/organizers",
         credentials: true,
         body: {
-            name: store.state.user.data?.name || "",
+            name: isAuthorizedOrNotDone(authorized) ? authorized.data.name : "",
             phone: formData.get("phone"),
             website: formData.get("website"),
         },
@@ -244,7 +251,7 @@ export const registerOrganizer = (resolveRequest: TRequestResolver, formData: Fo
                 router.go("/createevent");
                 store.dispatch(closeModal());
             } else {
-                setErrors({errorMsg: json.errorMsg, errors: json.errors});
+                setErrors({ errorMsg: json.errorMsg, errors: json.errors });
             }
             resolveRequest();
         })

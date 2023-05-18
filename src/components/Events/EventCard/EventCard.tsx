@@ -3,7 +3,7 @@
 import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { TOrgLight } from "models/Events";
-import { isAuthorized } from "flux/slices/userSlice";
+import { isAuthorized, isAuthorizedOrNotDone } from "flux/slices/userSlice";
 import { Link } from "components/Common/Link";
 import { EventCardMarker } from "./EventCardMarker";
 
@@ -57,8 +57,9 @@ export class EventCard extends Component<EventCardProps> {
     }
 
     openInviteModal() {
-        if (store.state.user.data) {
-            requestManager.request(loadFriends, store.state.user.data.id);
+        const { authorized } = store.state.user;
+        if (isAuthorizedOrNotDone(authorized)) {
+            requestManager.request(loadFriends, authorized.data.id);
             store.dispatch(openInviteModal(), setInviteModalEventId(this.props.id));
         } else {
             store.dispatch(openRegister());
