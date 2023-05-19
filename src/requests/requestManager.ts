@@ -1,4 +1,3 @@
-import { Exception } from "handlebars";
 import { TRequest } from "./requestTypes";
 
 interface RequestProps {
@@ -42,7 +41,7 @@ class RequestManager {
         }
 
         if (nodes.filter((node) => node.dependencies.size > 0).length > 0) {
-            throw new Exception("Circular dependencies in requestManager detected");
+            throw new Error("Circular dependencies in requestManager detected");
         }
     }
 
