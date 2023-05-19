@@ -11,6 +11,7 @@ import { VDOM, Component } from "modules/vdom";
 import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
 import { loadEventPage, loadEventPageOrgEvents } from "requests/events";
+import { EventListLoading } from "../EventList/EventListLoading";
 
 export class OrgEvents extends Component {
     didCreate() {
@@ -34,18 +35,25 @@ export class OrgEvents extends Component {
 
     render() {
         const { orgEvents, selectedEvent } = store.state.events;
+        const blockClassName = `col-xl-12 ${SIDEBAR_FLEX_CLASS_NAME}`;
 
         if (orgEvents.loadStatus === LoadStatus.ERROR) {
             return <div> Error </div>;
         }
 
         if (orgEvents.loadStatus !== LoadStatus.DONE || selectedEvent.loadStatus !== LoadStatus.DONE) {
-            return <div> LOADING </div>;
-            // TODO return <EventListLoading size={6} />;
+            return (
+                <div className={blockClassName}>
+                    <div className="org-events-list">
+                        <div className="org-events-list-title">От того же организатора</div>
+                        <EventListLoading size={2} />
+                    </div>
+                </div>
+            );
         }
         selectedEvent.event.id;
         return (
-            <div className={`col-xl-12 ${SIDEBAR_FLEX_CLASS_NAME}`}>
+            <div className={blockClassName}>
                 <div className="org-events-list">
                     <div className="org-events-list-title">От того же организатора</div>
 

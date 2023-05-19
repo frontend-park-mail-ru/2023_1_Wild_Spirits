@@ -14,7 +14,7 @@ type ChildType = JSX.Element | string | false;
 
 export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
-    request: TRequest;
+    request?: TRequest;
     showEmptyMessage?: boolean;
     extraClassName?: string;
     children?: ChildType[] | ChildType;
@@ -30,13 +30,11 @@ export class EventList extends Component<EventListProps> {
         super(props);
     }
 
-    loadEvents() {
-        requestManager.request(this.props.request);
-    }
-
     didCreate() {
-        store.dispatch(setEventsCardsLoadStart());
-        this.loadEvents();
+        if (this.props.request) {
+            store.dispatch(setEventsCardsLoadStart());
+            requestManager.request(this.props.request);
+        }
     }
 
     getExtraClassName(): string {
