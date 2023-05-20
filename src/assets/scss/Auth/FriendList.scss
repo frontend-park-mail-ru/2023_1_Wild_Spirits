@@ -80,6 +80,12 @@ $avatar-size: 65px;
     margin-bottom: 10px;
 }
 
+.friend-list__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .friend-list__item {
     width: 100%;
     display: flex;
@@ -87,7 +93,7 @@ $avatar-size: 65px;
     justify-content: space-between;
 }
 
-.friend-list__link {
+.friend-list__link-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -95,6 +101,13 @@ $avatar-size: 65px;
     border-radius: 10px;
     padding: 5px 10px;
     word-wrap: break-word;
+}
+
+.friend-list__link {
+    text-decoration: none;
+    &:hover:not(:has(.transparent-svg-button:hover)) .friend-list__item__friend-name {
+        color: var(--main-selected-color)
+    }
 }
 
 .friend-list__link-invite-block {
@@ -113,6 +126,9 @@ $avatar-size: 65px;
 
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
+
+    color: black;
 }
 
 .tick-friend-icon-container * {

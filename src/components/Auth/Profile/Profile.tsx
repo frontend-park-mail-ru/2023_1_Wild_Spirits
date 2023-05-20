@@ -66,7 +66,10 @@ export class Profile extends Component<{ id: number }, { editing: boolean; tempA
     }
 
     #addFriend = () => {
-        requestManager.request(addFriend, this.props.id);
+        const friendState = store.state.user.currentProfile;
+        if (friendState) {
+            requestManager.request(addFriend, friendState);
+        }
     };
 
     #deleteFriend = () => {

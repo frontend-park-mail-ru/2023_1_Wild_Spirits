@@ -22,7 +22,7 @@ export class NotificationModal extends Component {
                         (invites.data.length === 0 ? (
                             <div>Здесь пусто</div>
                         ) : (
-                            <div>
+                            <div className="invite-card-container">
                                 {invites.data.map((invite) => (
                                     <Invite invite={invite} />
                                 ))}
@@ -30,14 +30,14 @@ export class NotificationModal extends Component {
                         ))}
                 </div>
                 <hr />
-                <div>
+                {/* <div>
                     <div className="notification-modal__subtitle">Напоминания</div>
                     {reminder.loadStatus === LoadStatus.LOADING && (
                         <div>
                             <Loading />
                         </div>
                     )}
-                </div>
+                </div> */}
             </div>
         );
     }

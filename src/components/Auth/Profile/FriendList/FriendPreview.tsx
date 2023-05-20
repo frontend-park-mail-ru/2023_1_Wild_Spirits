@@ -2,6 +2,9 @@ import { VDOM } from "modules/vdom";
 import { ProfileLink } from "components/Common/Link";
 import { closeModal } from "flux/slices/modalWindowSlice";
 import { store } from "flux";
+import { SVGInline } from "components/Common/SVGInline";
+import { requestManager } from "requests";
+import { addFriend } from "requests/user";
 
 export interface FriendPreviewNoLinkProps {
     name: string;
@@ -11,6 +14,7 @@ export interface FriendPreviewNoLinkProps {
 
 export interface FriendPreviewProps extends FriendPreviewNoLinkProps {
     user_id: number;
+    is_friend: boolean;
 }
 
 export const FriendPreviewNoLink = ({ name, avatar, children }: FriendPreviewNoLinkProps) => {
@@ -27,15 +31,54 @@ export const FriendPreviewNoLink = ({ name, avatar, children }: FriendPreviewNoL
     );
 };
 
+const SubscribeButton = (props: {user: FriendPreviewProps}) => {
+    const subscribe = () => {
+        const userData = {
+            id: props.user.user_id,
+            name: props.user.name,
+            img: props.user.avatar
+        }
+        requestManager.request(addFriend, userData);
+    };
+    return (
+        <button 
+            onClick={()=>{
+                subscribe();
+            }} 
+            className="transparent-svg-button"
+        >
+            <SVGInline
+                src="/assets/img/add-friend-icon.svg"
+                alt="Подписаться"
+
+            />
+        </button>
+    )
+}
+
 export const FriendPreview = (user: FriendPreviewProps) => {
     return (
-        <ProfileLink
-            className="friend-list__link"
-            href={`/profile/${user.user_id}`}
-            onClick={() => store.dispatch(closeModal())}
-        >
-            <FriendPreviewNoLink avatar={user.avatar} name={user.name} />
-        </ProfileLink>
+        <div className="friend-list__link-container">
+            <ProfileLink
+                className="friend-list__link"
+                href={`/profile/${user.user_id}`}
+                onClick={() => {
+                        store.dispatch(closeModal());
+                    }
+                }
+            >
+                <FriendPreviewNoLink avatar={user.avatar} name={user.name} />
+            </ProfileLink>
+            {
+                user.is_friend
+                ?   <SVGInline
+                        src="/assets/img/tick-friend-icon.svg"
+                        alt="Подписан"
+                    />
+                : <SubscribeButton user={user}/>
+
+            }
+        </div>
     );
 };
 
@@ -44,14 +87,16 @@ export const FriendsPreviewBlock = ({
     users,
 }: {
     title: string;
-    users: { user_id: number; name: string; avatar: string }[];
+    users: { user_id: number; name: string; avatar: string; is_friend: boolean }[];
 }) => {
     return (
         <div>
             {users.length > 0 && (
                 <div>
                     <h2>{title}</h2>
-                    {users.map(FriendPreview)}
+                    <div className="friend-list__list">
+                        {users.map(FriendPreview)}
+                    </div>
                 </div>
             )}
         </div>

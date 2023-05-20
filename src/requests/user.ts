@@ -11,13 +11,16 @@ import {
     authorizedLoadError,
     removeFromFriends,
     TOrganizer,
+    FriendState,
 } from "flux/slices/userSlice";
-import { setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
+import { addToFriendsList, setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { closeModal } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 import { addToFriends } from "flux/slices/userSlice";
 import { router } from "modules/router";
 import { TFriend, TUserLight } from "models/User";
+import { addUploadsUrl, getUploadsImg } from "modules/getUploadsImg";
+import { Profile } from "components/Auth/Profile/Profile";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
@@ -49,7 +52,11 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
     })
         .then(({ json, response }) => {
             if (response.ok && json.body) {
-                store.dispatch(setCurrentProfile({ profile: json.body, id: id }));
+                const profile = {
+                    ...json.body,
+                    friends: addUploadsUrl(json.body.friends) 
+                }
+                store.dispatch(setCurrentProfile({ profile, id: id }));
             }
 
             resolveRequest();
@@ -122,7 +129,7 @@ export const loadFriends = (resolveRequest: TRequestResolver, user_id: number, s
         urlProps: urlProps,
     }).then(({ json, status }) => {
         if (status === AjaxResultStatus.SUCCESS) {
-            store.dispatch(setFriends({ friends: json.body.users }));
+            store.dispatch(setFriends({ friends: addUploadsUrl(json.body.users) }));
         }
         resolveRequest();
     });
@@ -137,7 +144,7 @@ export const searchUsers = (resolveRequest: TRequestResolver, name: string) => {
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(setFoundUsers({ users: json.body.users }));
+                store.dispatch(setFoundUsers({ users: addUploadsUrl(json.body.users) }));
             }
             resolveRequest();
         })
@@ -146,15 +153,15 @@ export const searchUsers = (resolveRequest: TRequestResolver, name: string) => {
         });
 };
 
-export const addFriend = (resolveRequest: TRequestResolver, user_id: number) =>
+export const addFriend = (resolveRequest: TRequestResolver, user: FriendState) =>
     ajax
         .post({
-            url: `/friends/${user_id}`,
+            url: `/friends/${user.id}`,
             credentials: true,
         })
         .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(addToFriends());
+                store.dispatch(addToFriends(user), addToFriendsList(user));
             }
             resolveRequest();
         });

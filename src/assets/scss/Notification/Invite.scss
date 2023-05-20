@@ -1,3 +1,9 @@
+.invite-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .invite-card {
     display: flex;
     width: 100%;
@@ -6,18 +12,30 @@
 }
 
 .invite-card__event {
+    display: flex;
+
     max-width: 320px;
     min-width: 60%;
+
+    height: 100px;
+}
+
+.invite-card__event-name {
+    display: flex;
+    align-items: center;
 }
 
 .invite-card__event-img-block {
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    height: 100%;
 }
 
 .invite-card__event-img {
-    width: 100%;
     height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+
+    border-radius: 20px;
 }
 
 .invite-card__user {

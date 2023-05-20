@@ -14,7 +14,7 @@ export class InviteModal extends Component {
         return store.state.friendList.friends.map(({ id, name, img }) => ({
             user_id: id,
             name: name,
-            avatar: getUploadsImg(img),
+            avatar: img,
         }));
     }
 

@@ -135,9 +135,9 @@ export class EventPage extends Component {
                             <span>{event.likes.toString()}</span>
                         </div>
                         {/* <div className="event-page__button-outline event-page__button-invite">
-                        <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
-                        <div className="event-page__button-text"> Пригласить друга </div>
-                    </div> */}
+                            <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
+                            <div className="event-page__button-text"> Пригласить друга </div>
+                        </div> */}
                         {isAuthorized(store.state.user) && event.is_mine ? (
                             <button
                                 className="event-page__button-outline event-page__button"

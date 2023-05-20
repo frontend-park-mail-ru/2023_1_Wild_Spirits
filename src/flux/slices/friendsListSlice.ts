@@ -1,3 +1,4 @@
+import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
 type FriendState = {
@@ -38,8 +39,18 @@ const friendListSlice = createSlice({
             state.friendSearchQuery = "";
             return state;
         },
+        addToFriendsList: (state: FriendListState, action: PayloadAction<FriendState>) => {
+            state.friends = [...state.friends, action.payload];
+            return state;
+        },
     },
 });
 
-export const { setFriends, setFoundUsers, setFriendSearchQuery, clearFriendSearchQuery } = friendListSlice.actions;
+export const { 
+    setFriends, 
+    setFoundUsers, 
+    setFriendSearchQuery, 
+    clearFriendSearchQuery,
+    addToFriendsList,
+} = friendListSlice.actions;
 export default friendListSlice;

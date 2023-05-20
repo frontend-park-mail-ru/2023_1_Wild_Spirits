@@ -67,15 +67,17 @@ export class Header extends Component {
                 );
             }
 
-            return [
-                <a className="link" onClick={() => store.dispatch(openLogin())}>
-                    Вход
-                </a>,
-                "/",
-                <a className="link" onClick={() => store.dispatch(openRegister())}>
-                    Регистрация
-                </a>,
-            ];
+            return (
+                <div className="profile-link">
+                    <a className="link" onClick={() => store.dispatch(openLogin())}>
+                        Вход
+                    </a>
+                    /
+                    <a className="link" onClick={() => store.dispatch(openRegister())}>
+                        Регистрация
+                    </a>
+                </div>
+            )
         };
 
         const clearFilters = () => {

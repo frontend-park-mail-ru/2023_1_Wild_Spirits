@@ -10,7 +10,7 @@ export interface TUserLightDataType extends TUserLight {
     organizer_id?: number;
 }
 
-type FriendState = {
+export type FriendState = {
     id: number;
     name: string;
     img: string;
@@ -67,17 +67,23 @@ const userSlice = createSlice({
             state.data = action.payload;
             return state;
         },
-        addToFriends: (state: UserState) => {
-            const currentProfile = state.currentProfile;
-            if (currentProfile && state.data) {
+        addToFriends: (state: UserState,  action: PayloadAction<FriendState>) => {
+            const user = action.payload;
+            if (state.data) {
                 state.data.friends?.push({
-                    id: currentProfile.id,
-                    name: currentProfile.name,
-                    img: currentProfile.img,
+                    ...user,
                     email: "",
                 });
-                if (state.currentProfile) {
+                if (state.currentProfile?.id === user.id) {
                     state.currentProfile.is_friend = true;
+                } else if (state.currentProfile?.id === state.data.id) {
+                    if (state.currentProfile.friendsPreview) {
+                        if (state.currentProfile.friendsPreview.length < 4) {
+                            state.currentProfile.friendsPreview = [...state.currentProfile.friendsPreview, user];
+                        }
+                    } else {
+                        state.currentProfile.friendsPreview = [user];
+                    }
                 }
             }
 

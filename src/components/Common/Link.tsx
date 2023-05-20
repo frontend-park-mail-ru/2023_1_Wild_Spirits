@@ -51,7 +51,10 @@ export class Link extends Component<LinkProps> {
                 id={this.props.id}
                 className={this.props.className}
                 href={this.props.href}
-                onClick={(e) => this.handleClick(toPointerEvent(e))}
+                onClick={(e) => {
+                        this.handleClick(toPointerEvent(e));
+                    }
+                }
             >
                 {Array.isArray(this.props.children)
                     ? this.props.children.map((child) => child).flat()
@@ -84,7 +87,7 @@ export const ProfileLink = (props: LinkProps) => {
     };
     return (
         <div>
-            <Link {...props} onClick={onClick}>
+            <Link {...props} onClick={()=>{console.log('profile link'); onClick()}}>
                 {Array.isArray(props.children) ? props.children.map((child) => child) : props.children}
             </Link>
         </div>

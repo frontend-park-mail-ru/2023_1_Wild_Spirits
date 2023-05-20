@@ -92,3 +92,14 @@
     border: none;
     box-shadow: none;
 }
+
+.transparent-svg-button {
+    appearance: none;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+
+    &:hover svg * {
+        stroke: var(--main-selected-color);
+    }
+}

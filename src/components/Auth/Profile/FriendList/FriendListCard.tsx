@@ -5,7 +5,6 @@ import { VDOM, Component } from "modules/vdom";
 import { Link, ProfileLink } from "components/Common/Link";
 import { store } from "flux";
 import { openFriendsList } from "flux/slices/modalWindowSlice";
-import { getUploadsImg } from "modules/getUploadsImg";
 
 export class FriendListCard extends Component {
     #openFriendsList() {
@@ -16,7 +15,7 @@ export class FriendListCard extends Component {
         const friends = store.state.user.currentProfile?.friendsPreview?.map(({ id, name, img }) => ({
             user_id: id,
             name: name,
-            avatar: getUploadsImg(img),
+            avatar: img,
         }));
 
         const generateContent = () => {

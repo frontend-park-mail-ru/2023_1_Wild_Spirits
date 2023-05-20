@@ -7,7 +7,6 @@ import { loadFriends, searchUsers } from "requests/user";
 
 import { store } from "flux";
 
-import { getUploadsImg } from "modules/getUploadsImg";
 import { setFriendSearchQuery } from "flux/slices/friendsListSlice";
 import { toEvent } from "modules/CastEvents";
 import { FriendsPreviewBlock } from "./FriendPreview";
@@ -51,7 +50,8 @@ export class FriendList extends Component {
             return store.state.friendList.friends.map(({ id, name, img }) => ({
                 user_id: id,
                 name: name,
-                avatar: getUploadsImg(img),
+                avatar: img,
+                is_friend: true,
             }));
         })();
 
@@ -70,7 +70,8 @@ export class FriendList extends Component {
                 .map(({ id, name, img }) => ({
                     user_id: id,
                     name: name,
-                    avatar: getUploadsImg(img),
+                    avatar: img,
+                    is_friend: false,
                 }))
                 .filter((user) => !filtered_ids.includes(user.user_id));
         })();
