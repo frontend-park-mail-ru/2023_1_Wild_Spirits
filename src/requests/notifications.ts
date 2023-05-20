@@ -48,6 +48,50 @@ export const inviteUserToEvent = (resolveRequest: TRequestResolver, userId: numb
         });
 };
 
+export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: number, eventId: number) => {
+    console.log('accepted')
+    ajax.post({
+        url: `/invites/accept`,
+        urlProps: {authorId: authorId.toString(), eventId: eventId.toString()},
+        credentials: true
+    })
+        .then(({ json, status}) => {
+            console.log(status, json);
+            if (status === AjaxResultStatus.SUCCESS) {
+
+            } else {
+
+            }
+            resolveRequest();
+        })
+        .catch  ((error) => {
+            console.log("ERROR", error);
+            resolveRequest();
+        });
+};
+
+export const declineInvitation = (resolveRequest: TRequestResolver, authorId: number, eventId: number) => {
+    console.log('accepted')
+    ajax.post({
+        url: `/invites/decline`,
+        urlProps: {authorId: authorId.toString(), eventId: eventId.toString()},
+        credentials: true
+    })
+        .then(({ json, status}) => {
+            console.log(status, json);
+            if (status === AjaxResultStatus.SUCCESS) {
+
+            } else {
+
+            }
+            resolveRequest();
+        })
+        .catch  ((error) => {
+            console.log("ERROR", error);
+            resolveRequest();
+        });
+};
+
 export const createWebSocket = (resolveRequest: TRequestResolver) => {
     setTimeout(() => {
         const ws = new WebSocket(

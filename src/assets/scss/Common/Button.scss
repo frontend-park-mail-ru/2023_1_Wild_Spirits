@@ -82,7 +82,7 @@
 
 .button-danger {
     @extend .button-base;
-    @include button-outline(#eb4848);
+    @include button-outline(var(--danger-color));
 
     padding: 10px;
 }
