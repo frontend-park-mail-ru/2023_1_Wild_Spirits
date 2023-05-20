@@ -57,11 +57,11 @@ export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: num
     })
         .then(({ json, status}) => {
             console.log(status, json);
-            if (status === AjaxResultStatus.SUCCESS) {
+            // if (status === AjaxResultStatus.SUCCESS) {
 
-            } else {
-
-            }
+            // } else {
+                
+            // }
             resolveRequest();
         })
         .catch  ((error) => {
@@ -79,11 +79,11 @@ export const declineInvitation = (resolveRequest: TRequestResolver, authorId: nu
     })
         .then(({ json, status}) => {
             console.log(status, json);
-            if (status === AjaxResultStatus.SUCCESS) {
+            // if (status === AjaxResultStatus.SUCCESS) {
 
-            } else {
+            // } else {
 
-            }
+            // }
             resolveRequest();
         })
         .catch  ((error) => {

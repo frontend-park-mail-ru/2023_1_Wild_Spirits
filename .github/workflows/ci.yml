@@ -17,8 +17,6 @@ jobs:
         run: npm run lint
 
   build:
-    needs: [eslint]
-
     runs-on: ubuntu-latest
     container: node
 
@@ -38,7 +36,7 @@ jobs:
           path: dist
 
   deploy:
-    needs: [build]
+    needs: [eslint, build]
 
     runs-on: ubuntu-latest
     container: amazon/aws-cli
