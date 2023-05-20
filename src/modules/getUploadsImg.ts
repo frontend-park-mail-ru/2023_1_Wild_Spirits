@@ -1,4 +1,4 @@
-import config from "config";
+import config from "@config";
 import { TUserBase } from "models/User";
 
 const fixImgUrl = (url: string): string => {
@@ -15,5 +15,5 @@ export const getUploadsImg = (url: string) => {
 };
 
 export const addUploadsUrl = (users: TUserBase[]) => {
-    return users.map(user => ({...user, img: getUploadsImg(user.img)}));
-}
+    return users.map((user) => ({ ...user, img: getUploadsImg(user.img) }));
+};

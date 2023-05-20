@@ -7,7 +7,10 @@
         "isolatedModules": true,
         "baseUrl": "./src",
         "moduleResolution": "node",
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "paths": {
+            "@config": ["config.default.js"]
+        }
     },
     "include": ["./src/**/*"]
 }
