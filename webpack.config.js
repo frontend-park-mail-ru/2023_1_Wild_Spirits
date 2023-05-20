@@ -99,6 +99,10 @@ export const createConf = (env, argv) => {
             modules: [__dirname + "/src", "node_modules"],
             alias: {
                 "@style": path.resolve(__dirname, "./src/assets/scss/style.scss"),
+                "@config": path.resolve(
+                    __dirname,
+                    argv.mode === "development" ? "./src/config.js" : "./src/config_deploy.js"
+                ),
             },
         },
         externals: {

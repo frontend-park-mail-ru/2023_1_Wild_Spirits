@@ -1,7 +1,7 @@
 import { store } from "flux";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
-import config from "config";
+import config from "@config";
 import { addInvite, setInvites, setInvitesLoadError } from "flux/slices/notificationSlice";
 import { ResponseInvites, WSResponseInvite } from "responses/ResponseInvites";
 

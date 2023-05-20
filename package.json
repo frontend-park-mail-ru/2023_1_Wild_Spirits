@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
+    "builddev": "webpack --mode development",
     "deploy": "serve -s ./dist -p 8080",
     "lint": "eslint . --ext .tsx,.ts"
   },

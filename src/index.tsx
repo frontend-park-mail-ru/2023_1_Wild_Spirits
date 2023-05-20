@@ -1,5 +1,5 @@
 import { ajax } from "modules/ajax";
-import config from "config";
+import config from "@config";
 import "@style";
 
 import { VDOM, createVDOM, patchVDOM } from "./modules/vdom";
