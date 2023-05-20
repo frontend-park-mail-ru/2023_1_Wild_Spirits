@@ -1,5 +1,5 @@
 export default {
     HOST: "/api",
     UPLOADS: "",
-    WEBSOCKET: "/subscribe",
+    WEBSOCKET: "/api/subscribe",
 };
