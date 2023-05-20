@@ -106,13 +106,18 @@ $avatar-size: 65px;
 .friend-list__link {
     text-decoration: none;
     &:hover:not(:has(.transparent-svg-button:hover)) .friend-list__item__friend-name {
-        color: var(--main-selected-color)
+        color: var(--main-selected-color);
     }
 }
 
 .friend-list__link-invite-block {
+    @extend .friend-list__link;
     align-self: center;
     margin-right: 8px;
+
+    &:hover svg * {
+        stroke: var(--main-selected-color);
+    }
 }
 
 .friend-list__item__avatar-block {

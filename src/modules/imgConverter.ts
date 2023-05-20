@@ -7,12 +7,16 @@ export const toWebP = (imageUrl: string, callback: (imageBlob: Blob) => void) =>
         canvas.width = image.naturalWidth;
         canvas.height = image.naturalHeight;
 
-        canvas.getContext("2d")!.drawImage(image, 0, 0);
+        const context = canvas.getContext("2d");
 
-        canvas.toBlob((blob) => {
-            if (blob !== null) {
-                callback(blob);
-            }
-        }, "image/webp");
+        if (context !== null) {
+            context.drawImage(image, 0, 0);
+
+            canvas.toBlob((blob) => {
+                if (blob !== null) {
+                    callback(blob);
+                }
+            }, "image/webp");
+        }
     };
 };
