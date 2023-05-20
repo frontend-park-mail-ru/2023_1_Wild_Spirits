@@ -1,14 +1,21 @@
+import webpack from "webpack";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
-import webpack from "webpack";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+
+import autoprefixer from "autoprefixer";
+import cssnano from "cssnano";
 
 const filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(filename);
 export const createConf = (env, argv) => {
+    const isDev = argv.mode === "development";
+
     let config = {
         entry: {
             app: "./src/index.tsx",
@@ -35,7 +42,7 @@ export const createConf = (env, argv) => {
                     exclude: /node_modules/,
                     use: [
                         {
-                            loader: "style-loader",
+                            loader: isDev ? "style-loader" : MiniCssExtractPlugin.loader,
                         },
                         {
                             loader: "css-loader",
@@ -51,13 +58,33 @@ export const createConf = (env, argv) => {
                             },
                         },
                         {
+                            loader: "postcss-loader",
+                            options: {
+                                sourceMap: true,
+                                postcssOptions: {
+                                    config: false,
+                                    plugins: [
+                                        autoprefixer,
+                                        cssnano({
+                                            preset: [
+                                                "default",
+                                                {
+                                                    discardComments: {
+                                                        removeAll: true,
+                                                    },
+                                                },
+                                            ],
+                                        }),
+                                    ],
+                                },
+                            },
+                        },
+                        {
                             loader: "resolve-url-loader",
                         },
                         {
                             loader: "sass-loader",
-                            options: {
-                                sourceMap: true,
-                            },
+                            options: { sourceMap: true },
                         },
                     ],
                 },
@@ -99,10 +126,7 @@ export const createConf = (env, argv) => {
             modules: [__dirname + "/src", "node_modules"],
             alias: {
                 "@style": path.resolve(__dirname, "./src/assets/scss/style.scss"),
-                "@config": path.resolve(
-                    __dirname,
-                    argv.mode === "development" ? "./src/config.js" : "./src/config_deploy.js"
-                ),
+                "@config": path.resolve(__dirname, isDev ? "./src/config.js" : "./src/config_deploy.js"),
             },
         },
         externals: {
@@ -119,8 +143,10 @@ export const createConf = (env, argv) => {
         target: ["browserslist"],
     };
 
-    if (argv.mode === "development") {
+    if (isDev) {
         config.devtool = "eval-cheap-source-map";
+    } else {
+        config.plugins.push(new MiniCssExtractPlugin());
     }
 
     return config;
