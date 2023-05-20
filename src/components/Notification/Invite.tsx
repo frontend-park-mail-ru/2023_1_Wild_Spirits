@@ -23,6 +23,7 @@ export class Invite extends Component<InviteProps> {
                         avatar={getUploadsImg(this.props.invite.userImg)}
                         userId={this.props.invite.userId}
                         name={this.props.invite.userName}
+                        onClick={()=>{store.dispatch(closeModal()); console.log('close')}}
                     />
                 </div>
                 <Link
@@ -30,8 +31,13 @@ export class Invite extends Component<InviteProps> {
                     href={`/events/${this.props.invite.eventId}`}
                     onClick={()=>store.dispatch(closeModal())}
                 >
-                    <div className="invite-card__event-name">
-                        {this.props.invite.eventName}
+                    <div className="invite-card__event-text">
+                        <div>
+                            {this.props.invite.eventName}
+                        </div>
+                        <div className="invite-card__resolve-block">
+
+                        </div>
                     </div>
                     <div className="invite-card__event-img-block">
                         <img

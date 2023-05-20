@@ -80,10 +80,10 @@ export const loadProfileEvents = () => {
 export const ProfileLink = (props: LinkProps) => {
     const onClick = () => {
         if (router.isUrlChanged()) {
-            requestManager.removeDone(loadProfile);
-            props.onClick && props.onClick();
             loadProfileEvents();
         }
+        requestManager.removeDone(loadProfile);
+        props.onClick && props.onClick();
     };
     return (
         <div>
