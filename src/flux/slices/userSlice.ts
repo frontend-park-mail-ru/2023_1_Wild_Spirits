@@ -145,6 +145,12 @@ const userSlice = createSlice({
             };
             return state;
         },
+        setOrgId: (state: UserState, action: PayloadAction<{orgId: number}>) => {
+            if (state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data) {
+                state.authorized.data.organizer_id = action.payload.orgId;
+            }
+            return state;
+        }
     },
 });
 
@@ -205,6 +211,8 @@ export const {
     setCurrentProfile,
     setCurrentProfileFriends,
     setFriendsPreview,
+
+    setOrgId,
 } = userSlice.actions;
 
 export default userSlice;

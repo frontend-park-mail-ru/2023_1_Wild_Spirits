@@ -13,6 +13,7 @@ import {
     TOrganizer,
     FriendState,
     isAuthorizedOrNotDone,
+    setOrgId,
 } from "flux/slices/userSlice";
 import { addToFriendsList, setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { closeModal } from "flux/slices/modalWindowSlice";
@@ -243,7 +244,7 @@ export const registerOrganizer = (
     setErrors: (errors: ErrorMsgType) => void
 ) => {
     const { authorized } = store.state.user;
-    ajax.post({
+    ajax.post<{body: {org_id: number}}>({
         url: "/organizers",
         credentials: true,
         body: {
@@ -255,7 +256,7 @@ export const registerOrganizer = (
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 router.go("/createevent");
-                store.dispatch(closeModal());
+                store.dispatch(setOrgId({orgId: json.body.org_id}), closeModal());
             } else {
                 setErrors({ errorMsg: json.errorMsg, errors: json.errors });
             }
