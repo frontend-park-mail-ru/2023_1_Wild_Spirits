@@ -1,0 +1,57 @@
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    container: node
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install npm modules
+        run: npm install
+
+      - name: Run eslint
+        run: npm run lint
+
+  build:
+    needs: [eslint]
+
+    runs-on: ubuntu-latest
+    container: node
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install npm modules
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-data
+          path: dist
+
+  deploy:
+    needs: [build]
+
+    runs-on: ubuntu-latest
+    container: amazon/aws-cli
+
+    steps:
+      - name: Download build data
+        uses: actions/download-artifact@v3
+        with:
+          name: build-data
+          path: .
+
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}         
+        run: aws s3 sync dist s3://event_radar_static --endpoint-url http://hb.bizmrg.com
