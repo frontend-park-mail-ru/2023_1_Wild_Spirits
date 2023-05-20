@@ -5,6 +5,8 @@ import { VDOM, Component } from "modules/vdom";
 import { Link, ProfileLink } from "components/Common/Link";
 import { store } from "flux";
 import { openFriendsList } from "flux/slices/modalWindowSlice";
+import { getUploadsImg } from "modules/getUploadsImg";
+import { mineProfile } from "flux/slices/userSlice";
 
 export class FriendListCard extends Component {
     #openFriendsList() {
@@ -31,8 +33,7 @@ export class FriendListCard extends Component {
                 });
             }
 
-            const mine = store.state.user.data?.id === store.state.user.currentProfile?.id;
-
+            const mine = mineProfile(store.state.user);
             if (mine) {
                 return (
                     <span>

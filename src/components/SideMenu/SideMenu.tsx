@@ -30,6 +30,7 @@ import { toggleTag } from "flux/slices/tagsSlice";
 import { openLogin, openRegister } from "flux/slices/modalWindowSlice";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { NotfificationButton } from "components/Notification/NotificationButton";
+import { isAuthorizedOrNotDone } from "flux/slices/userSlice";
 
 export class SideMenu extends Component {
     toggleCategories() {
@@ -129,14 +130,15 @@ export class SideMenu extends Component {
         };
 
         const categories = store.state.header.categories.map(createCategoryTab);
-
         const cities = store.state.header.cities.map(createCityTab);
+        const { authorized } = store.state.user;
+        const isAuthorized = isAuthorizedOrNotDone(authorized);
 
         return (
             <div className="sidemenu">
                 <div className="sidemenu__header">
                     <div>
-                        <NotfificationButton/>
+                        <NotfificationButton />
                     </div>
                     <button className="header__mobile-button" onClick={() => store.dispatch(closeSideMenu())}>
                         <img src="/assets/img/close-icon.svg" />
@@ -144,9 +146,9 @@ export class SideMenu extends Component {
                 </div>
                 <div className="sidemenu__content">
                     <div className="sidemenu__tab__button">
-                        {store.state.user.data !== undefined ? (
+                        {isAuthorized ? (
                             <ProfileLink
-                                href={`/profile/${store.state.user.data?.id}`}
+                                href={`/profile/${authorized.data.id}`}
                                 className="sidemenu__link"
                                 onClick={() => store.dispatch(closeSideMenu())}
                             >
@@ -199,7 +201,7 @@ export class SideMenu extends Component {
                     </div>
                 </div>
 
-                {store.state.user.data !== undefined && (
+                {isAuthorized && (
                     <div className="sidemenu__footer">
                         <div id="profile-link-logout" onClick={() => requestManager.request(logoutUser)}>
                             <span className="danger">Выйти</span>

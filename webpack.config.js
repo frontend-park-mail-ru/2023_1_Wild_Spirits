@@ -32,6 +32,7 @@ export const createConf = (env, argv) => {
                 },
                 {
                     test: /\.s[ac]ss$/i,
+                    exclude: /node_modules/,
                     use: [
                         {
                             loader: "style-loader",
@@ -63,18 +64,11 @@ export const createConf = (env, argv) => {
                 {
                     test: /\.(png|jpe?g|gif|svg)$/,
                     loader: "file-loader",
+                    exclude: /node_modules/,
                     options: {
                         outputPath: "assets",
                         name: "[name].[ext]",
                         publicPath: "/",
-                    },
-                },
-                {
-                    test: /\.handlebars$/,
-                    loader: "handlebars-loader",
-                    options: {
-                        helperDirs: path.resolve(__dirname, "./src/modules/handlebars"),
-                        partialDirs: [path.resolve(__dirname, "./src/templates")],
                     },
                 },
             ],
@@ -98,15 +92,12 @@ export const createConf = (env, argv) => {
             new webpack.SourceMapDevToolPlugin({
                 filename: "[file].map",
             }),
-            new ForkTsCheckerWebpackPlugin({
-                logger: console,
-            }),
+            new ForkTsCheckerWebpackPlugin({}),
         ],
         resolve: {
-            extensions: [".js", ".ts", ".jsx", ".tsx", "css", "img"],
+            extensions: [".js", ".ts", ".jsx", ".tsx", "css", "scss", "img"],
             modules: [__dirname + "/src", "node_modules"],
             alias: {
-                handlebars: "handlebars/dist/handlebars.js",
                 "@style": path.resolve(__dirname, "./src/assets/scss/style.scss"),
             },
         },

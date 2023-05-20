@@ -15,6 +15,7 @@ import { SVGInline } from "components/Common/SVGInline";
 import { TEvent } from "models/Events";
 import { OrgEvents } from "../OrgEvents/OrgEvents";
 import { router } from "modules/router";
+import { CONTENT_CLASS_NAME } from "modules/commonClasses";
 
 /**
  * Event list component
@@ -72,8 +73,8 @@ export class EventPage extends Component {
         }));
 
         return (
-            <div className="event-page">
-                <div className="event-page__content">
+            <div className="event-page row">
+                <div className={`event-page__content ${CONTENT_CLASS_NAME}`}>
                     <div className="event-page__name">{event.name}</div>
                     <div className="event-page__img-block">
                         <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />
@@ -166,7 +167,7 @@ export class EventPage extends Component {
                             </button>
                         )}
 
-                        <a  
+                        <a
                             href={`https://vk.com/share.php?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
                             target="_blank"
                             className="event-page__link-icon"
@@ -178,7 +179,7 @@ export class EventPage extends Component {
                             href={`https://t.me/share?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
                             className="event-page__link-icon"
                         >
-                            <img src="/assets/img/page/tg-logo.svg" width="60px"/>
+                            <img src="/assets/img/page/tg-logo.svg" width="60px" />
                         </a>
                     </div>
                 </div>

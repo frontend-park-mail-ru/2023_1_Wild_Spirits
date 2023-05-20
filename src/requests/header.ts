@@ -6,6 +6,7 @@ import { selectCity, setCities } from "flux/slices/headerSlice";
 import { setCategories } from "flux/slices/headerSlice";
 import { TRequestResolver } from "./requestTypes";
 import { TCategory } from "models/Category";
+import { getAuthorizedCity } from "flux/slices/userSlice";
 
 export const loadCities = (resolveRequest: TRequestResolver) => {
     ajax.get<ResponseBody<{ cities: { id: number; name: string }[] }>>({
@@ -15,7 +16,7 @@ export const loadCities = (resolveRequest: TRequestResolver) => {
             if (response.ok) {
                 store.dispatch(
                     setCities({ cities: json.body.cities }),
-                    selectCity({ city: store.state.user.data?.city_name })
+                    selectCity({ city: getAuthorizedCity(store.state.user) })
                 );
             }
             resolveRequest();

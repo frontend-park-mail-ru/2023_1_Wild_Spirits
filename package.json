@@ -2,18 +2,15 @@
   "type": "module",
   "target": "ES6",
   "dependencies": {
-    "debug": "^4.3.4",
-    "handlebars": "^4.7.7",
     "url-loader": "^4.1.1"
   },
-  "browserslist": 
-  {
+  "browserslist": {
     "production": [
-    ">0.3%", 
-    "iOS >= 11.1", 
-    "last 2 versions", 
-    "not dead"
-  ],
+      ">0.3%",
+      "iOS >= 11.1",
+      "last 2 versions",
+      "not dead"
+    ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
@@ -43,7 +40,6 @@
     "eslint": "^8.39.0",
     "file-loader": "^6.2.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0",
-    "handlebars-loader": "^1.7.3",
     "html-webpack-plugin": "^5.5.0",
     "path": "^0.12.7",
     "resolve-url-loader": "^5.0.0",
