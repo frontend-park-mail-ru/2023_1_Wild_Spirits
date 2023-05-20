@@ -1,9 +1,9 @@
 import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { FriendPreviewNoLink } from "components/Auth/Profile/FriendList/FriendPreview";
-import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
 import { inviteUserToEvent } from "requests/notifications";
+import { SVGInline } from "components/Common/SVGInline";
 
 export class InviteModal extends Component {
     getFriends() {
@@ -29,15 +29,18 @@ export class InviteModal extends Component {
                 <div className="modal__title">Пригласить друга</div>
                 <div className="invite-modal">
                     {users.length > 0 && (
-                        <div>
+                        <div className="invite-modal__list">
                             {users.map((user) => (
                                 <div className="friend-list__link">
                                     <FriendPreviewNoLink {...user}>
                                         <div
-                                            className="friend-list__link-invite-block pointy"
+                                            className="transparent-svg-button friend-list__link-invite-block pointy"
                                             onClick={() => this.handleInvite(user.user_id)}
                                         >
-                                            invite
+                                            <SVGInline
+                                                src="/assets/img/invite-icon.svg"
+                                                alt="invite"
+                                            />
                                         </div>
                                     </FriendPreviewNoLink>
                                 </div>

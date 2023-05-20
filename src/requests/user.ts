@@ -21,7 +21,7 @@ import { TRequestResolver } from "./requestTypes";
 import { addToFriends } from "flux/slices/userSlice";
 import { router } from "modules/router";
 import { TFriend, TUserLight } from "models/User";
-import { addUploadsUrl, getUploadsImg } from "modules/getUploadsImg";
+import { addUploadsUrl } from "modules/getUploadsImg";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());

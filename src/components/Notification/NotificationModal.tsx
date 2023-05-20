@@ -6,7 +6,7 @@ import { Invite } from "./Invite";
 
 export class NotificationModal extends Component {
     render() {
-        const { invites, reminder } = store.state.notification;
+        const { invites } = store.state.notification;
         return (
             <div>
                 <div className="modal__title">Уведомления</div>
