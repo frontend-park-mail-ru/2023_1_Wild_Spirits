@@ -1,6 +1,6 @@
 import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
-import { TInvite, TReminder } from "models/Notification";
+import { TInvite, TInviteUnique, TReminder } from "models/Notification";
 import { LoadStatus } from "requests/LoadStatus";
 
 export interface NotificationState {
@@ -35,8 +35,15 @@ const notificationSlice = createSlice({
             state.invites = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+        removeInvite: (state: NotificationState, action: PayloadAction<TInviteUnique>) => {
+            const inviteUnique = action.payload;
+            if (state.invites.loadStatus === LoadStatus.DONE) {
+                state.invites.data = state.invites.data.filter(invite => invite.eventId !== inviteUnique.eventId || invite.userId !== inviteUnique.userId);
+            }
+            return state;
+        }
     },
 });
 
-export const { setInvitesLoadStart, setInvites, addInvite, setInvitesLoadError } = notificationSlice.actions;
+export const { setInvitesLoadStart, setInvites, addInvite, setInvitesLoadError, removeInvite } = notificationSlice.actions;
 export default notificationSlice;
