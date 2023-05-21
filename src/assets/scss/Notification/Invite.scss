@@ -66,15 +66,22 @@
     object-fit: cover;
 }
 
+.invite-modal-parent {
+    overflow: hidden;
+    height: 100%;
+}
+
 .invite-modal {
     overflow-y: auto;
     max-height: 480px;
+    padding: 10px 0;
 }
 
 .invite-modal__list {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow: hidden;
 }
 
 .accept-icon {

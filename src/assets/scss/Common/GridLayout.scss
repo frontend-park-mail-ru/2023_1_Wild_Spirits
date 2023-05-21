@@ -1,12 +1,3 @@
-$grid-size: (
-    xxl: 1550px,
-    xl: 1250px,
-    l: 1000px,
-    m: 850px,
-    s: 600px,
-    xs: 400px,
-);
-
 .row {
     display: grid;
     grid-template-columns: repeat(12, 1fr);

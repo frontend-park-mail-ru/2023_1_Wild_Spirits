@@ -30,6 +30,7 @@ import { EventProcessingType } from "models/Events";
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
 import { LoadStatus } from "./LoadStatus";
+import { openLogin } from "flux/slices/modalWindowSlice";
 
 const getLoadEventFilterProps = (page = 1): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -246,9 +247,11 @@ export const likeEvent = (resolveRequest: TRequestResolver, eventId: number) => 
         url: `/events/${eventId}/like`,
         credentials: true,
     })
-        .then(({ status }) => {
+        .then(({ status, response }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(like({ eventId: eventId }));
+            } else if (response.status === 401) {
+                store.dispatch(openLogin());
             }
             resolveRequest();
         })
@@ -278,9 +281,11 @@ export const featureEvent = (resolveRequest: TRequestResolver, eventId: number) 
         url: `/events/${eventId}/remind`,
         credentials: true,
     })
-        .then(({ status }) => {
+        .then(({ status, response }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(feature({ eventId: eventId }));
+            } else if (response.status === 401) {
+                store.dispatch(openLogin());
             }
             resolveRequest();
         })

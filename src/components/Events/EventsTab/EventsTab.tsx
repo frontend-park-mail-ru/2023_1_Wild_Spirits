@@ -38,8 +38,8 @@ export class EventsTab extends Component<any, EventsTabState> {
         const items: { [key in ProfileEventsTab.Type]: string } = {
             [ProfileEventsTab.ORG]: "От этого организатора",
             [ProfileEventsTab.OTHER]: "Мероприятия подписок",
-            [ProfileEventsTab.LIKE]: "Запланированные",
-            [ProfileEventsTab.SAVED]: "Понравившиеся",
+            [ProfileEventsTab.LIKE]: "Понравившиеся",
+            [ProfileEventsTab.SAVED]: "Запланированные",
         };
 
         return (

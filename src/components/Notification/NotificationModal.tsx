@@ -8,7 +8,7 @@ export class NotificationModal extends Component {
     render() {
         const { invites } = store.state.notification;
         return (
-            <div>
+            <div className="invite-modal-parent">
                 <div className="modal__title">Уведомления</div>
 
                 <div className="invite-modal">

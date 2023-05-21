@@ -22,6 +22,10 @@ import { addToFriends } from "flux/slices/userSlice";
 import { router } from "modules/router";
 import { TFriend, TUserLight } from "models/User";
 import { addUploadsUrl } from "modules/getUploadsImg";
+import { requestManager } from "requests";
+import { createWebSocket, loadInvites } from "./notifications";
+import { loadEvents } from "./events";
+import { resetEventsCards } from "flux/slices/eventSlice";
 
 export const loadAuthorization = (resolveRequest: TRequestResolver) => {
     store.dispatch(authorizedLoadStart());
@@ -55,8 +59,8 @@ export const loadProfile = (resolveRequest: TRequestResolver, id: number) => {
             if (response.ok && json.body) {
                 const profile = {
                     ...json.body,
-                    friends: addUploadsUrl(json.body.friends) 
-                }
+                    friends: addUploadsUrl(json.body.friends),
+                };
                 store.dispatch(setCurrentProfile({ profile, id: id }));
             }
 
@@ -183,6 +187,17 @@ export const deleteFriend = (resolveRequest: TRequestResolver, user_id: number) 
 
 type TWarningMsgCallack = (warning: string | undefined, errors: { [key: string]: string } | undefined) => void;
 
+const clearEvents = () => {
+    store.dispatch(resetEventsCards());
+    requestManager.request(loadEvents);
+};
+
+const updateUserData = () => {
+    clearEvents();
+    requestManager.request(loadInvites);
+    requestManager.request(createWebSocket);
+};
+
 export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, warningMsg: TWarningMsgCallack) => {
     ajax.post<ResponseUserLight, ResponseErrorDefault>({
         url: "/login",
@@ -196,6 +211,7 @@ export const loginUser = (resolveRequest: TRequestResolver, formData: FormData, 
                     ajax.addHeaders({ "x-csrf-token": csrf });
                     store.dispatch(setAuthorizedData(json.body.user), closeModal());
                 }
+                updateUserData();
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
@@ -221,8 +237,9 @@ export const registerUser = (resolveRequest: TRequestResolver, formData: FormDat
                 const csrf = response.headers.get("x-csrf-token");
                 if (csrf) {
                     ajax.addHeaders({ "x-csrf-token": csrf });
+                    store.dispatch(setAuthorizedData(json.body.user), closeModal());
                 }
-                store.dispatch(setAuthorizedData(json.body.user), closeModal());
+                updateUserData();
             } else {
                 warningMsg(json.errorMsg, json.errors);
             }
@@ -244,7 +261,7 @@ export const registerOrganizer = (
     setErrors: (errors: ErrorMsgType) => void
 ) => {
     const { authorized } = store.state.user;
-    ajax.post<{body: {org_id: number}}>({
+    ajax.post<{ body: { org_id: number } }>({
         url: "/organizers",
         credentials: true,
         body: {
@@ -256,7 +273,7 @@ export const registerOrganizer = (
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 router.go("/createevent");
-                store.dispatch(setOrgId({orgId: json.body.org_id}), closeModal());
+                store.dispatch(setOrgId({ orgId: json.body.org_id }), closeModal());
             } else {
                 setErrors({ errorMsg: json.errorMsg, errors: json.errors });
             }
@@ -277,6 +294,7 @@ export const logoutUser = (resolveRequest: TRequestResolver) =>
             if (status === AjaxResultStatus.SUCCESS) {
                 ajax.removeHeaders("x-csrf-token");
                 store.dispatch(logout());
+                clearEvents();
             }
             resolveRequest();
         })

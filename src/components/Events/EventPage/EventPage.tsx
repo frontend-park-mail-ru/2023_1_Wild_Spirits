@@ -74,7 +74,7 @@ export class EventPage extends Component {
 
         return (
             <div className="event-page row">
-                <div className={`event-page__content ${CONTENT_CLASS_NAME}`}>
+                <div className={`event-page__content ${CONTENT_CLASS_NAME} col-xl-12`}>
                     <div className="event-page__name">{event.name}</div>
                     <div className="event-page__img-block">
                         <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />
@@ -101,7 +101,7 @@ export class EventPage extends Component {
                             </div>
                         ))}
                     </div>
-                    <div className="">
+                    <div className="event-page__map">
                         <EventPageMap points={Object.values(places).map(({ lat, lon }) => ({ lat, lon }))} />
                     </div>
                     <div className="event-page__tags tags-menu">
@@ -177,6 +177,7 @@ export class EventPage extends Component {
 
                         <a
                             href={`https://t.me/share?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
+                            target="_blank"
                             className="event-page__link-icon"
                         >
                             <img src="/assets/img/page/tg-logo.svg" width="60px" />
