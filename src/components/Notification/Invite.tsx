@@ -26,47 +26,49 @@ export class Invite extends Component<InviteProps> {
                         avatar={getUploadsImg(this.props.invite.userImg)}
                         userId={this.props.invite.userId}
                         name={this.props.invite.userName}
-                        onClick={()=>{store.dispatch(closeModal()); console.log('close')}}
+                        onClick={() => store.dispatch(closeModal())}
                     />
                 </div>
-                <div
-                    className="invite-card__event"
-                >
-                    <div className="invite-card__event-text">  
+                <div className="invite-card__event">
+                    <div className="invite-card__event-text">
                         <Link
                             className="link"
                             href={`/events/${this.props.invite.eventId}`}
-                            onClick={()=>store.dispatch(closeModal())}
+                            onClick={() => store.dispatch(closeModal())}
                         >
                             {this.props.invite.eventName}
                         </Link>
                         <div className="invite-card__resolve-block">
-                            <button 
+                            <button
                                 className="transparent-svg-button"
-                                onClick={()=>requestManager.request(acceptInvitation, this.props.invite.userId, this.props.invite.eventId)}
+                                onClick={() =>
+                                    requestManager.request(
+                                        acceptInvitation,
+                                        this.props.invite.userId,
+                                        this.props.invite.eventId
+                                    )
+                                }
                             >
-                                <SVGInline
-                                    className="accept-icon"
-                                    src="/assets/img/tick-icon.svg"
-                                    alt="Принять"
-                                />
+                                <SVGInline className="accept-icon" src="/assets/img/tick-icon.svg" alt="Принять" />
                             </button>
-                            <button 
+                            <button
                                 className="transparent-svg-button"
-                                onClick={()=>requestManager.request(declineInvitation, this.props.invite.userId, this.props.invite.eventId)}
+                                onClick={() =>
+                                    requestManager.request(
+                                        declineInvitation,
+                                        this.props.invite.userId,
+                                        this.props.invite.eventId
+                                    )
+                                }
                             >
-                                <SVGInline
-                                    className="decline-icon"
-                                    src="/assets/img/close-icon.svg"
-                                    alt="Отклонить"
-                                />
+                                <SVGInline className="decline-icon" src="/assets/img/close-icon.svg" alt="Отклонить" />
                             </button>
                         </div>
                     </div>
-                    <Link 
+                    <Link
                         className="invite-card__event-img-block link"
                         href={`/events/${this.props.invite.eventId}`}
-                        onClick={()=>store.dispatch(closeModal())}
+                        onClick={() => store.dispatch(closeModal())}
                     >
                         <img
                             src={getUploadsImg(this.props.invite.eventImg)}

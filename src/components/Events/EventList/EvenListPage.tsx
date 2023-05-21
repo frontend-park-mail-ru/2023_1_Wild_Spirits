@@ -45,12 +45,10 @@ export class EventListPage extends Component {
         if (!(y >= block.offsetHeight - 200)) {
             return;
         }
-        console.log("scrolled");
         const { isEnd, status, pageNumber } = store.state.events.cardsInfinity;
         if (isEnd || status === LoadStatus.LOADING || status === LoadStatus.ERROR) {
             return;
         }
-        console.log("start new Loading");
 
         store.dispatch(setEventsInfinityLoadStart());
         requestManager.request(loadInfinityEvents, pageNumber + 1);

@@ -29,7 +29,6 @@ export class EventsTab extends Component<any, EventsTabState> {
     }
 
     handleChangeTab = (type: ProfileEventsTab.Type) => {
-        console.log(type);
         this.setState({ selectedTab: type });
     };
 

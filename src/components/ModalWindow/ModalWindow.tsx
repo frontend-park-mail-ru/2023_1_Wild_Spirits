@@ -35,7 +35,6 @@ export class ModalWindow extends Component<ModalWindowProps> {
                 className="modal"
                 onMouseDown={this.handleOutModalMouseDown}
                 onScroll={(e) => {
-                    console.log("scroll");
                     e.stopPropagation();
                 }}
             >

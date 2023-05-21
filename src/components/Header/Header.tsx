@@ -77,7 +77,7 @@ export class Header extends Component {
                         Регистрация
                     </a>
                 </div>
-            )
+            );
         };
 
         const clearFilters = () => {
@@ -89,13 +89,17 @@ export class Header extends Component {
                 clearFinishDate(),
                 setEventsCardsLoadStart()
             );
-            requestManager.request(loadEvents);
         };
 
         return (
             <div className="header">
                 <div className="header__logo">
-                    <Link href="/" className="black-link" onClick={clearFilters}>
+                    <Link
+                        href="/"
+                        className="black-link"
+                        onClick={clearFilters}
+                        onUrlNotChange={() => requestManager.request(loadEvents)}
+                    >
                         <img src="/assets/img/logo-full.svg" alt="logo" />
                     </Link>
                 </div>
@@ -103,7 +107,12 @@ export class Header extends Component {
                 <div className="header__top__line">
                     {!store.state.meta.mobileSearch && (
                         <div className="header__head">
-                            <Link href="/" className="black-link" onClick={clearFilters}>
+                            <Link
+                                href="/"
+                                className="black-link"
+                                onClick={clearFilters}
+                                onUrlNotChange={() => requestManager.request(loadEvents)}
+                            >
                                 Event Radar
                             </Link>
                         </div>

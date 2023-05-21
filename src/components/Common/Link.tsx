@@ -21,6 +21,8 @@ interface LinkProps {
     className?: string;
     children: JSX.Element[] | JSX.Element | string;
     onClick?: () => void;
+    onUrlChange?: () => void;
+    onUrlNotChange?: () => void;
 }
 
 /**
@@ -38,6 +40,11 @@ export class Link extends Component<LinkProps> {
     handleClick(event: PointerEvent) {
         event.preventDefault();
 
+        if (location.pathname + location.search !== this.props.href) {
+            this.props.onUrlChange && this.props.onUrlChange();
+        } else {
+            this.props.onUrlNotChange && this.props.onUrlNotChange();
+        }
         router.go(this.props.href);
 
         if (this.props.onClick) {
@@ -52,9 +59,8 @@ export class Link extends Component<LinkProps> {
                 className={this.props.className}
                 href={this.props.href}
                 onClick={(e) => {
-                        this.handleClick(toPointerEvent(e));
-                    }
-                }
+                    this.handleClick(toPointerEvent(e));
+                }}
             >
                 {Array.isArray(this.props.children)
                     ? this.props.children.map((child) => child).flat()
@@ -87,7 +93,7 @@ export const ProfileLink = (props: LinkProps) => {
     };
     return (
         <div>
-            <Link {...props} onClick={()=>{console.log('profile link'); onClick()}}>
+            <Link {...props} onClick={onClick}>
                 {Array.isArray(props.children) ? props.children.map((child) => child) : props.children}
             </Link>
         </div>
