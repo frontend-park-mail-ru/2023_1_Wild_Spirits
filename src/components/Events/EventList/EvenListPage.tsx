@@ -60,25 +60,21 @@ export class EventListPage extends Component {
         const { isEnd, status } = store.state.events.cardsInfinity;
         return (
             <div id="event-list-page" className="row">
-                <EventList
-                    request={loadEvents}
-                    events={store.state.events.cards}
-                    showEmptyMessage={true}
-                    extraClassName={CONTENT_CLASS_NAME}
-                >
-                    {isEnd ? (
-                        <div className="w-100 text-center"> По данному запросу больше ничего нет </div>
-                    ) : status === LoadStatus.LOADING ? (
-                        Array.from(Array(6)).map(() => (
-                            <div className="card event-card-loading">
-                                <Loading size="xl" />
-                            </div>
-                        ))
-                    ) : (
-                        status === LoadStatus.ERROR && <div>Error</div>
-                    )}
-                </EventList>
-
+                <div className={CONTENT_CLASS_NAME}>
+                    <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true}>
+                        {isEnd ? (
+                            <div className="w-100 text-center"> По данному запросу больше ничего нет </div>
+                        ) : status === LoadStatus.LOADING ? (
+                            Array.from(Array(6)).map(() => (
+                                <div className="card event-card-loading">
+                                    <Loading size="xl" />
+                                </div>
+                            ))
+                        ) : (
+                            status === LoadStatus.ERROR && <div>Error</div>
+                        )}
+                    </EventList>
+                </div>
                 {!store.state.meta.collapsed.headerCollapsed && (
                     <div className={SIDEBAR_CLASS_NAME}>
                         {isAuthorized(store.state.user) && <EventCreateButton />}
