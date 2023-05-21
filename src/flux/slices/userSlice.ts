@@ -115,7 +115,8 @@ const userSlice = createSlice({
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends;
 
-                const org_id = profile.org_id || state.currentProfile?.org_id;
+                // const org_id = profile.org_id || state.currentProfile?.org_id;
+                const org_id = profile.org_id;
                 state.currentProfile = {
                     ...profile,
                     org_id,
