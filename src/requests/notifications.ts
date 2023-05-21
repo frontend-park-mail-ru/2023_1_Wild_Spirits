@@ -2,8 +2,9 @@ import { store } from "flux";
 import { AjaxResultStatus, ajax } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
 import config from "@config";
-import { addInvite, setInvites, setInvitesLoadError } from "flux/slices/notificationSlice";
+import { addInvite, removeInvite, setInvites, setInvitesLoadError } from "flux/slices/notificationSlice";
 import { ResponseInvites, WSResponseInvite } from "responses/ResponseInvites";
+import { featureEvent as feature } from "flux/slices/eventSlice";
 
 export const loadInvites = (resolveRequest: TRequestResolver) => {
     ajax.get<ResponseInvites>({
@@ -49,7 +50,6 @@ export const inviteUserToEvent = (resolveRequest: TRequestResolver, userId: numb
 };
 
 export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: number, eventId: number) => {
-    console.log('accepted')
     ajax.post({
         url: `/invites/accept`,
         urlProps: {authorId: authorId.toString(), eventId: eventId.toString()},
@@ -57,11 +57,9 @@ export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: num
     })
         .then(({ json, status}) => {
             console.log(status, json);
-            // if (status === AjaxResultStatus.SUCCESS) {
-
-            // } else {
-                
-            // }
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(removeInvite({userId: authorId, eventId: eventId}), feature({eventId}));
+            }
             resolveRequest();
         })
         .catch  ((error) => {
@@ -71,7 +69,6 @@ export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: num
 };
 
 export const declineInvitation = (resolveRequest: TRequestResolver, authorId: number, eventId: number) => {
-    console.log('accepted')
     ajax.post({
         url: `/invites/decline`,
         urlProps: {authorId: authorId.toString(), eventId: eventId.toString()},
@@ -79,11 +76,9 @@ export const declineInvitation = (resolveRequest: TRequestResolver, authorId: nu
     })
         .then(({ json, status}) => {
             console.log(status, json);
-            // if (status === AjaxResultStatus.SUCCESS) {
-
-            // } else {
-
-            // }
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(removeInvite({userId: authorId, eventId: eventId}));
+            }
             resolveRequest();
         })
         .catch  ((error) => {
