@@ -26,15 +26,18 @@
 }
 
 .event-page__img-block {
-    width: 100%;
+    width: 90%;
+    margin: 16px auto 0;
     display: flex;
     justify-content: center;
-    margin-top: 16px;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
 }
 
 .event-page__img {
-    max-width: 95%;
+    width: 95%;
     border-radius: 16px;
+    object-fit: cover;
 }
 
 .event-page__description {
