@@ -327,6 +327,12 @@ const eventsSlice = createSlice({
 
             return state;
         },
+
+        clearOrgEvents: (state: EventsState) => {
+            console.log("clear org events");
+            state.orgEvents = { loadStatus: LoadStatus.NONE };
+            return state;
+        },
         setOrgEventsLoadStart: (state: EventsState) => {
             state.orgEvents = { loadStatus: LoadStatus.LOADING };
             return state;
@@ -414,6 +420,7 @@ export const {
     featureEvent,
     unfeatureEvent,
 
+    clearOrgEvents,
     setOrgEventsLoadStart,
     setOrgEvents,
     setOrgEventsLoadError,

@@ -341,7 +341,7 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
     const curChildLenght = parent.childNodes.length;
 
     for (let i = nextVChildrenLength; i < curChildLenght; i++) {
-        // TODO destroy(parent.childNodes[nextVChildrenLength]);
+        destroy(parent.childNodes[nextVChildrenLength]);
         parent.removeChild(parent.childNodes[nextVChildrenLength]);
     }
 };
@@ -355,6 +355,27 @@ export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
         node.v = nextVNode;
     }
     return node;
+};
+
+const destroy = (node: DOMNodeType) => {
+    const vnode = node.v;
+
+    if (vnode) {
+        const isComponent = isNodeTypeComponent(vnode);
+
+        if (isComponent) {
+            console.groupCollapsed(`${vnode}: destroy`);
+            vnode._instance.willDestroy();
+        }
+
+        for (const child of node.childNodes) {
+            destroy(child);
+        }
+
+        if (isComponent) {
+            console.groupEnd();
+        }
+    }
 };
 
 const TEXT_NODE_TYPE = 3;

@@ -7,10 +7,15 @@ import { EventCreateButton } from "components/Events/EventCreateButton/EventCrea
 import { CONTENT_CLASS_NAME, SIDEBAR_CLASS_NAME } from "modules/commonClasses";
 import { EventsTab } from "components/Events/EventsTab/EventsTab";
 import { loadProfileEvents } from "components/Common/Link";
+import { clearOrgEvents } from "flux/slices/eventSlice";
 
 export class ProfilePage extends Component {
     didCreate(): void {
         loadProfileEvents();
+    }
+
+    willDestroy(): void {
+        store.dispatch(clearOrgEvents());
     }
 
     getProfileId = () => {
