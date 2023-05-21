@@ -1,5 +1,5 @@
 export default {
     HOST: "/api",
     UPLOADS: "",
-    WEBSOCKET: "/api/subscribe",
+    WEBSOCKET: "ws://event-radar.ru/api/subscribe",
 };
