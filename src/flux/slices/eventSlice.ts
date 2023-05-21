@@ -329,7 +329,6 @@ const eventsSlice = createSlice({
         },
 
         clearOrgEvents: (state: EventsState) => {
-            console.log("clear org events");
             state.orgEvents = { loadStatus: LoadStatus.NONE };
             return state;
         },

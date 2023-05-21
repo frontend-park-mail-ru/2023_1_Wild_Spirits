@@ -364,16 +364,11 @@ const destroy = (node: DOMNodeType) => {
         const isComponent = isNodeTypeComponent(vnode);
 
         if (isComponent) {
-            console.groupCollapsed(`${vnode}: destroy`);
             vnode._instance.willDestroy();
         }
 
         for (const child of node.childNodes) {
             destroy(child);
-        }
-
-        if (isComponent) {
-            console.groupEnd();
         }
     }
 };

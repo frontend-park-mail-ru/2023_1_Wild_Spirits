@@ -12,7 +12,6 @@ export const loadInvites = (resolveRequest: TRequestResolver) => {
         credentials: true,
     })
         .then(({ json, status }) => {
-            console.log(status, json);
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(setInvites(json.body.invites));
             } else {
@@ -27,14 +26,12 @@ export const loadInvites = (resolveRequest: TRequestResolver) => {
 };
 
 export const inviteUserToEvent = (resolveRequest: TRequestResolver, userId: number, eventId: number) => {
-    console.log("inviteUserToEvent start");
     ajax.post({
         url: `/events/${eventId}/invite`,
         urlProps: { invitedId: userId.toString() },
         credentials: true,
     })
-        .then(({ json, status }) => {
-            console.log(status, json);
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 // store.dispatch(setInvites([]));
             } else {
@@ -42,8 +39,7 @@ export const inviteUserToEvent = (resolveRequest: TRequestResolver, userId: numb
             }
             resolveRequest();
         })
-        .catch((error) => {
-            console.log("ERROR", error);
+        .catch(() => {
             // store.dispatch(setInvitesLoadError());
             resolveRequest();
         });
@@ -52,18 +48,16 @@ export const inviteUserToEvent = (resolveRequest: TRequestResolver, userId: numb
 export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: number, eventId: number) => {
     ajax.post({
         url: `/invites/accept`,
-        urlProps: {authorId: authorId.toString(), eventId: eventId.toString()},
-        credentials: true
+        urlProps: { authorId: authorId.toString(), eventId: eventId.toString() },
+        credentials: true,
     })
-        .then(({ json, status}) => {
-            console.log(status, json);
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(removeInvite({userId: authorId, eventId: eventId}), feature({eventId}));
+                store.dispatch(removeInvite({ userId: authorId, eventId: eventId }), feature({ eventId }));
             }
             resolveRequest();
         })
-        .catch  ((error) => {
-            console.log("ERROR", error);
+        .catch(() => {
             resolveRequest();
         });
 };
@@ -71,18 +65,16 @@ export const acceptInvitation = (resolveRequest: TRequestResolver, authorId: num
 export const declineInvitation = (resolveRequest: TRequestResolver, authorId: number, eventId: number) => {
     ajax.post({
         url: `/invites/decline`,
-        urlProps: {authorId: authorId.toString(), eventId: eventId.toString()},
-        credentials: true
+        urlProps: { authorId: authorId.toString(), eventId: eventId.toString() },
+        credentials: true,
     })
-        .then(({ json, status}) => {
-            console.log(status, json);
+        .then(({ status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(removeInvite({userId: authorId, eventId: eventId}));
+                store.dispatch(removeInvite({ userId: authorId, eventId: eventId }));
             }
             resolveRequest();
         })
-        .catch  ((error) => {
-            console.log("ERROR", error);
+        .catch(() => {
             resolveRequest();
         });
 };
@@ -92,12 +84,10 @@ export const createWebSocket = (resolveRequest: TRequestResolver) => {
         const ws = new WebSocket(
             config.WEBSOCKET + `?x-csrf-token=${encodeURIComponent(ajax.getHeaders("x-csrf-token") || "")}`
         );
-        ws.addEventListener("open", () => {
-            console.log("OPENED");
-        });
+        // ws.addEventListener("open", () => {
+        // });
 
         ws.addEventListener("message", ({ data }) => {
-            console.log("MESSAGE", JSON.parse(data));
             const result = JSON.parse(data) as WSResponseInvite;
             store.dispatch(addInvite(result.body.invite));
         });
