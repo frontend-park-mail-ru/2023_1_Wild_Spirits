@@ -1,15 +1,15 @@
-.event-list {
-    display: flex;
-    width: 60%;
-    justify-content: center;
-    flex-wrap: wrap;
+.event-list-base {
     margin-top: 40px;
+    justify-content: center;
+    display: flex;
+}
+
+.event-list {
+    @extend .event-list-base;
+
+    flex-wrap: wrap;
 
     gap: 40px;
-
-    @media screen and (max-width: 850px) {
-        width: 100%;
-    }
 }
 
 .event-list-loading {
@@ -20,27 +20,9 @@
     flex-wrap: wrap;
 }
 
-.event-list-loading-block {
-    width: 60%;
-    margin-top: 40px;
-
-    @media screen and (max-width: 850px) {
-        width: 100%;
-    }
-}
-
-.event-list-empty {
-    width: 60%;
-    margin-top: 40px;
-    text-align: center;
-
-    @media screen and (max-width: 850px) {
-        width: 100%;
-    }
-}
-
 .event-list-empty__text {
     font-size: 24px;
+    display: flex;
 }
 
 .event-list-page__sidebar {

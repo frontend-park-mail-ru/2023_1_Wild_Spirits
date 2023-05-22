@@ -5,7 +5,6 @@ import { registerOrganizer } from "requests/user";
 
 import { toSubmitEvent } from "modules/CastEvents";
 import { InputField } from "components/Form/FormBase";
-import { warningMsg } from "../FormValidation";
 
 type OrganizerModalErrors = { phone?: string; website?: string };
 
@@ -29,8 +28,8 @@ export class OrganizerModal extends Component<any, { errors: OrganizerModalError
         return errors;
     }
 
-    #setErrors(errs: {errorMsg: string, errors: {[key: string]: string}}) {
-        this.setState({errors: errs.errors})
+    #setErrors(errs: { errorMsg: string; errors: { [key: string]: string } }) {
+        this.setState({ errors: errs.errors });
     }
 
     /**
@@ -53,7 +52,7 @@ export class OrganizerModal extends Component<any, { errors: OrganizerModalError
             return;
         }
 
-        requestManager.request(registerOrganizer, formData, (err)=>this.setErrors(err));
+        requestManager.request(registerOrganizer, formData, (err) => this.setErrors(err));
     };
 
     render(): JSX.Element {

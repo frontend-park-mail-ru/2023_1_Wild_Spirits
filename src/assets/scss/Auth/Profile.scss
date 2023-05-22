@@ -16,15 +16,24 @@
     width: 200px;
     height: 250px;
 
+    margin: 0 40px;
+
     object-fit: cover;
+}
+
+.profile-description__img-loading {
+    @extend .profile-description__img;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .profile-description__description-block {
     display: flex;
     flex-direction: column;
 
-    padding-left: 90px;
-    padding-right: 90px;
+    padding-left: 45px;
+    padding-right: 45px;
 
     @media screen and (max-width: $profile-collapse-width) {
         padding-left: 5px;
@@ -45,17 +54,21 @@
     align-items: center;
 }
 
-.profile-page__sidebar {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    margin: 20px 40px -20px 0;
-    max-width: 380px;
-
-    @media screen and (max-width: $profile-friends-collapse-width) {
-        margin: 20px 20px 0;
-    }
+.profile-page__extra-block {
+    margin-top: 20px;
 }
+
+// .profile-page__sidebar {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: flex-start;
+//     margin: 20px 40px -20px 0;
+//     max-width: 380px;
+
+//     @media screen and (max-width: $profile-friends-collapse-width) {
+//         margin: 20px 20px 0;
+//     }
+// }
 
 .profile-description__button-block {
     display: flex;

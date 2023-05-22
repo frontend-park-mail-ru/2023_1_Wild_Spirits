@@ -10,7 +10,7 @@ export interface TUserLightDataType extends TUserLight {
     organizer_id?: number;
 }
 
-type FriendState = {
+export type FriendState = {
     id: number;
     name: string;
     img: string;
@@ -32,15 +32,15 @@ export interface CurrentProfileState {
     friends?: FriendState[];
 }
 
+type AuthorizedWithLoadType = LoadStatus.DataDoneOrNotDone<{ data: TUserLightDataType | undefined }>;
+
 interface UserState {
-    authorizedLoadStatus: LoadStatus.Type;
-    data?: TUserLightDataType;
+    authorized: AuthorizedWithLoadType;
     currentProfile?: CurrentProfileState;
 }
 
 const userInitialState: UserState = {
-    authorizedLoadStatus: LoadStatus.NONE,
-    data: undefined,
+    authorized: { loadStatus: LoadStatus.NONE },
     currentProfile: undefined,
 };
 
@@ -55,38 +55,46 @@ const userSlice = createSlice({
     initialState: userInitialState,
     reducers: {
         authorizedLoadStart: (state: UserState) => {
-            state.authorizedLoadStatus = LoadStatus.LOADING;
+            state.authorized = { loadStatus: LoadStatus.LOADING };
             return state;
         },
         authorizedLoadError: (state: UserState) => {
-            state.authorizedLoadStatus = LoadStatus.ERROR;
+            state.authorized = { loadStatus: LoadStatus.ERROR };
             return state;
         },
-        setUserData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
-            state.authorizedLoadStatus = LoadStatus.DONE;
-            state.data = action.payload;
+        setAuthorizedData: (state: UserState, action: PayloadAction<TUserLightDataType | undefined>) => {
+            state.authorized = {
+                loadStatus: LoadStatus.DONE,
+                data: action.payload,
+            };
             return state;
         },
-        addToFriends: (state: UserState) => {
-            const currentProfile = state.currentProfile;
-            if (currentProfile && state.data) {
-                state.data.friends?.push({
-                    id: currentProfile.id,
-                    name: currentProfile.name,
-                    img: currentProfile.img,
+        addToFriends: (state: UserState,  action: PayloadAction<FriendState>) => {
+            const user = action.payload;
+            if (state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data) {
+                state.authorized.data.friends?.push({
+                    ...user,
                     email: "",
                 });
-                if (state.currentProfile) {
+                if (state.currentProfile?.id === user.id) {
                     state.currentProfile.is_friend = true;
+                } else if (state.currentProfile?.id === state.authorized.data.id) {
+                    if (state.currentProfile.friendsPreview) {
+                        if (state.currentProfile.friendsPreview.length < 4) {
+                            state.currentProfile.friendsPreview = [...state.currentProfile.friendsPreview, user];
+                        }
+                    } else {
+                        state.currentProfile.friendsPreview = [user];
+                    }
                 }
             }
 
             return state;
         },
         removeFromFriends: (state: UserState) => {
-            const currentProfile = state.currentProfile;
-            if (currentProfile && state.data && state.data.friends) {
-                state.data.friends = state.data.friends.filter((user) => user.id !== currentProfile.id);
+            const { currentProfile, authorized } = state;
+            if (currentProfile && isAuthorizedOrNotDone(authorized) && authorized.data.friends) {
+                authorized.data.friends = authorized.data.friends.filter((user) => user.id !== currentProfile.id);
             }
 
             if (state.currentProfile) {
@@ -96,7 +104,7 @@ const userSlice = createSlice({
             return state;
         },
         logout: (state: UserState) => {
-            state.data = undefined;
+            state.authorized = { loadStatus: LoadStatus.DONE, data: undefined };
             return state;
         },
         setCurrentProfile: (
@@ -107,7 +115,8 @@ const userSlice = createSlice({
                 const profile = action.payload.profile.user;
                 const friends = action.payload.profile.friends;
 
-                const org_id = profile.org_id || state.currentProfile?.org_id;
+                // const org_id = profile.org_id || state.currentProfile?.org_id;
+                const org_id = profile.org_id;
                 state.currentProfile = {
                     ...profile,
                     org_id,
@@ -137,16 +146,29 @@ const userSlice = createSlice({
             };
             return state;
         },
+        setOrgId: (state: UserState, action: PayloadAction<{orgId: number}>) => {
+            if (state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data) {
+                state.authorized.data.organizer_id = action.payload.orgId;
+            }
+            return state;
+        }
     },
 });
 
-export const isAuthorized = (state: UserState) =>
-    state.authorizedLoadStatus === LoadStatus.DONE && state.data !== undefined;
+export const isAuthorizedOrNotDone = (
+    authorized: AuthorizedWithLoadType
+): authorized is { loadStatus: typeof LoadStatus.DONE; data: TUserLightDataType } => {
+    return authorized.loadStatus === LoadStatus.DONE && authorized.data !== undefined;
+};
 
-export const kickUnauthorized = (userState: UserState) => {
+export const isAuthorized = (state: UserState): boolean => {
+    return state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data !== undefined;
+};
+
+export const kickUnauthorized = (state: UserState) => {
     if (
-        (userState.authorizedLoadStatus === LoadStatus.DONE || userState.authorizedLoadStatus === LoadStatus.ERROR) &&
-        userState.data === undefined
+        (state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data === undefined) ||
+        state.authorized.loadStatus === LoadStatus.ERROR
     ) {
         router.go("/");
         return true;
@@ -154,31 +176,44 @@ export const kickUnauthorized = (userState: UserState) => {
     return false;
 };
 
-export const mineProfile = (userState: UserState) => {
-    if (userState.data === undefined) {
+export const mineProfile = (state: UserState) => {
+    if (state.authorized.loadStatus !== LoadStatus.DONE) {
         return false;
     }
-    if (userState.currentProfile === undefined) {
+    if (state.authorized.data === undefined || state.currentProfile === undefined) {
         return false;
     }
 
-    return userState.data.id === userState.currentProfile.id;
+    return state.authorized.data.id === state.currentProfile.id;
 };
 
-export const isOrganizer = (userState: UserState) => {
-    return userState.currentProfile?.org_id !== undefined;
+export const isOrganizer = (state: UserState) => {
+    return state.currentProfile?.org_id !== undefined;
+};
+
+export const getAuthorizedCity = (state: UserState): string | undefined => {
+    const { authorized } = state;
+    if (isAuthorizedOrNotDone(authorized)) {
+        authorized.data.city_name;
+    }
+    return undefined;
 };
 
 export const {
     authorizedLoadStart,
+    setAuthorizedData,
     authorizedLoadError,
-    setUserData,
+
     addToFriends,
     removeFromFriends,
+
     logout,
+
     setCurrentProfile,
     setCurrentProfileFriends,
     setFriendsPreview,
+
+    setOrgId,
 } = userSlice.actions;
 
 export default userSlice;

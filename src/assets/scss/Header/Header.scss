@@ -154,6 +154,7 @@ select > option {
     max-width: 900px;
 
     display: flex;
+    justify-content: center;
 }
 
 .search {
@@ -165,10 +166,17 @@ select > option {
     background-color: transparent;
     box-shadow: none;
     flex-grow: 1;
+    // margin: 0 auto;
+
+    max-width: 400px;
 
     background: calc(100% - 9px) url("/assets/img/search-icon.svg") no-repeat;
 }
 
 .header__mobile-icon {
     height: 25px;
+}
+
+.notification-button-container {
+    margin: 0 40px;
 }

@@ -3,36 +3,16 @@
 import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { TOrgLight } from "models/Events";
-import { isAuthorized } from "flux/slices/userSlice";
+import { isAuthorized, isAuthorizedOrNotDone } from "flux/slices/userSlice";
 import { Link } from "components/Common/Link";
 import { EventCardMarker } from "./EventCardMarker";
 
-import { SVGInline } from "components/Common/SVGInline";
-
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, featureEvent, unfeatureEvent } from "requests/events";
-
-export interface HoveredImgProps {
-    src: string;
-    alt: string;
-    iconClassName: string;
-    onClick?: () => void;
-}
-
-export class HoveredImg extends Component<HoveredImgProps, { isHovered: boolean }> {
-    constructor(props: HoveredImgProps) {
-        super(props);
-        this.state = { isHovered: false };
-    }
-
-    render() {
-        return (
-            <div className="flex pointy" onClick={() => this.props.onClick && this.props.onClick()}>
-                <SVGInline className={this.props.iconClassName} src={this.props.src} alt={this.props.alt} />
-            </div>
-        );
-    }
-}
+import { HoveredImg } from "components/Common/HoveredImg";
+import { openInviteModal, openRegister } from "flux/slices/modalWindowSlice";
+import { loadFriends } from "requests/user";
+import { setInviteModalEventId } from "flux/slices/metaSlice";
 
 export interface EventCardProps {
     id: number;
@@ -56,6 +36,8 @@ export interface EventCardProps {
 export class EventCard extends Component<EventCardProps> {
     constructor(props: EventCardProps) {
         super(props);
+
+        this.openInviteModal = this.openInviteModal.bind(this);
     }
 
     toggleLike(eventId: number, liked: boolean) {
@@ -71,6 +53,16 @@ export class EventCard extends Component<EventCardProps> {
             requestManager.request(featureEvent, eventId);
         } else {
             requestManager.request(unfeatureEvent, eventId);
+        }
+    }
+
+    openInviteModal() {
+        const { authorized } = store.state.user;
+        if (isAuthorizedOrNotDone(authorized)) {
+            requestManager.request(loadFriends, authorized.data.id);
+            store.dispatch(openInviteModal(), setInviteModalEventId(this.props.id));
+        } else {
+            store.dispatch(openRegister());
         }
     }
 
@@ -117,11 +109,12 @@ export class EventCard extends Component<EventCardProps> {
                             />
                             <span>0</span>
                         </div> */}
-                        {/* <HoveredImg
+                        <HoveredImg
                             src="/assets/img/card/invite-icon.svg"
                             alt="invite"
-                            iconClassName="event-card__stroke-icon"
-                        /> */}
+                            iconClassName="stroke-svg-icon"
+                            onClick={this.openInviteModal}
+                        />
                         {isAuthorized(store.state.user) && this.props.is_mine ? (
                             <Link href={`/editevent/${this.props.id}`} className="flex">
                                 <HoveredImg

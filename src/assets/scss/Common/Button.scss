@@ -82,7 +82,7 @@
 
 .button-danger {
     @extend .button-base;
-    @include button-outline(#eb4848);
+    @include button-outline(var(--danger-color));
 
     padding: 10px;
 }
@@ -91,4 +91,15 @@
     @extend .button-base;
     border: none;
     box-shadow: none;
+}
+
+.transparent-svg-button {
+    appearance: none;
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+
+    &:hover svg * {
+        stroke: var(--main-selected-color);
+    }
 }

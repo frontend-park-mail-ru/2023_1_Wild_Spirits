@@ -10,10 +10,13 @@ import { store } from "flux";
 import { EventListLoading } from "./EventListLoading";
 import { TRequest } from "requests/requestTypes";
 
+type ChildType = JSX.Element | string | false;
+
 export interface EventListProps {
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
-    request: TRequest;
+    request?: TRequest;
     showEmptyMessage?: boolean;
+    children?: ChildType[] | ChildType;
 }
 
 /**
@@ -26,25 +29,23 @@ export class EventList extends Component<EventListProps> {
         super(props);
     }
 
-    loadEvents() {
-        requestManager.request(this.props.request);
-    }
-
     didCreate() {
-        store.dispatch(setEventsCardsLoadStart());
-        this.loadEvents();
+        if (this.props.request) {
+            store.dispatch(setEventsCardsLoadStart());
+            requestManager.request(this.props.request);
+        }
     }
 
     render() {
         const events = this.props.events;
 
         if (events.loadStatus === LoadStatus.ERROR) {
-            return <div> Error </div>;
+            return <div className="event-list-base"> Error </div>;
         }
 
         if (events.loadStatus !== LoadStatus.DONE) {
             return (
-                <div className="event-list-loading-block">
+                <div className="event-list-base">
                     <EventListLoading size={6} />
                 </div>
             );
@@ -54,7 +55,7 @@ export class EventList extends Component<EventListProps> {
 
         if (cardsProps.length === 0 && this.props.showEmptyMessage) {
             return (
-                <div className="event-list-empty">
+                <div className="event-list-base">
                     <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
                 </div>
             );
@@ -65,6 +66,9 @@ export class EventList extends Component<EventListProps> {
                 {cardsProps.map((props) => (
                     <EventCard {...props} />
                 ))}
+                {Array.isArray(this.props.children)
+                    ? this.props.children.map((child) => child).flat()
+                    : this.props.children}
             </div>
         );
     }

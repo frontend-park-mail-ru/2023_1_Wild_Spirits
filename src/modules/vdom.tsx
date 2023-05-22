@@ -1,6 +1,7 @@
 import { deepEqual } from "modules/objectsManipulation";
 
-type PropType = Function | null | boolean | string | undefined;
+type PropFunctionType = (...args: any[]) => any;
+type PropType = PropFunctionType | null | boolean | string | undefined;
 
 type PropsType = { [key: string]: PropType };
 
@@ -24,6 +25,7 @@ export type DOMNodeType = (HTMLElement | ChildNode) & { v?: VNodeType }; // TODO
 
 let didMountInstaces: Component[] = [];
 
+// eslint-disable-next-line
 export abstract class Component<TProps extends any = any, TState = {}> {
     context: unknown;
     props: TProps;
@@ -48,15 +50,15 @@ export abstract class Component<TProps extends any = any, TState = {}> {
         this.#state = newState;
     }
 
-    didCreate() {}
+    didCreate() {} // eslint-disable-line
 
-    didMount() {}
+    didMount() {} // eslint-disable-line
 
-    willUpdate() {}
+    willUpdate() {} // eslint-disable-line
 
-    didUpdate() {}
+    didUpdate() {} // eslint-disable-line
 
-    willDestroy() {}
+    willDestroy() {} // eslint-disable-line
 
     forceUpdate() {
         patchVDOM();
@@ -123,7 +125,7 @@ export namespace VDOM {
             } catch {
                 const instance = new (tagName as ComponentConstructor<T, TProps>)({ ...props, children });
 
-                let vnode: ComponentVNodeType = { tagName: tagName.name, props, children, _instance: instance };
+                const vnode: ComponentVNodeType = { tagName: tagName.name, props, children, _instance: instance };
                 return vnode;
             }
         }
@@ -141,7 +143,7 @@ export namespace VDOM {
 }
 
 const isNodeTypeComponent = (vNode: VNodeType): vNode is ComponentVNodeType => {
-    return !isNodeTypeSimple(vNode) && vNode.hasOwnProperty(InstanceFieldName);
+    return !isNodeTypeSimple(vNode) && Object.hasOwnProperty.call(vNode, InstanceFieldName);
 };
 
 const isNodeTypeSimple = (vNode: VNodeType): vNode is SimpleVNodeType => {
@@ -285,7 +287,7 @@ const patchProp = (node: DOMNodeType, key: string, value: PropType, nextValue: P
     }
 
     key = convertKey(key);
-    if (((nextValue: PropType): nextValue is Function => key.startsWith("on"))(nextValue)) {
+    if (((nextValue: PropType): nextValue is PropFunctionType => key.startsWith("on"))(nextValue)) {
         const eventName = key.slice(2);
 
         (node as any)[eventName] = nextValue;
@@ -339,7 +341,7 @@ const patchChildren = (parent: DOMNodeType, vChildren: VNodeType[], nextVChildre
     const curChildLenght = parent.childNodes.length;
 
     for (let i = nextVChildrenLength; i < curChildLenght; i++) {
-        // TODO destroy(parent.childNodes[nextVChildrenLength]);
+        destroy(parent.childNodes[nextVChildrenLength]);
         parent.removeChild(parent.childNodes[nextVChildrenLength]);
     }
 };
@@ -353,6 +355,22 @@ export const patch = (nextVNode: VNodeType, node: DOMNodeType) => {
         node.v = nextVNode;
     }
     return node;
+};
+
+const destroy = (node: DOMNodeType) => {
+    const vnode = node.v;
+
+    if (vnode) {
+        const isComponent = isNodeTypeComponent(vnode);
+
+        if (isComponent) {
+            vnode._instance.willDestroy();
+        }
+
+        for (const child of node.childNodes) {
+            destroy(child);
+        }
+    }
 };
 
 const TEXT_NODE_TYPE = 3;

@@ -2,10 +2,12 @@ import { VDOM, Component } from "modules/vdom";
 import { Link } from "components/Common/Link";
 import { store } from "flux";
 import { openOrganizerModal } from "flux/slices/modalWindowSlice";
+import { isAuthorizedOrNotDone } from "flux/slices/userSlice";
 
 export class EventCreateButton extends Component {
     render() {
-        const isOrganizer = store.state.user.data?.organizer_id !== undefined;
+        const { authorized } = store.state.user;
+        const isOrganizer = isAuthorizedOrNotDone(authorized) && authorized.data.organizer_id !== undefined;
         return (
             <div className="full-button-link-container">
                 {isOrganizer ? (

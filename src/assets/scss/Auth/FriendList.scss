@@ -1,5 +1,6 @@
+$avatar-size: 65px;
+
 .friend-list-card {
-    --avatar-size: 65px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
@@ -24,6 +25,16 @@
     flex-direction: column;
 
     text-align: center;
+
+    text-decoration: none;
+
+    &:hover .friend-list-card__friends-block__avatar {
+        border-color: var(--link-color);
+    }
+
+    &:hover .black-link {
+        color: $link-color;
+    }
 }
 
 .friend-list-card__friends-block-collapsed {
@@ -31,17 +42,13 @@
 }
 
 .friend-list-card__friends-block__avatar {
-    width: var(--avatar-size);
-    height: var(--avatar-size);
+    width: $avatar-size;
+    height: $avatar-size;
 
     object-fit: cover;
 
     border: 3px solid transparent;
     border-radius: 50%;
-}
-
-.friend-list-card__friends-block__avatar:hover {
-    border-color: var(--link-color);
 }
 
 .friend-list-card__friend-button {
@@ -50,15 +57,14 @@
 }
 
 .friend-list__item__avatar {
-    width: var(--avatar-size);
-    height: var(--avatar-size);
+    width: $avatar-size;
+    height: $avatar-size;
     border-radius: 50%;
 
     object-fit: cover;
 }
 
 .friend-list {
-    --avatar-size: 70px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -74,11 +80,20 @@
     margin-bottom: 10px;
 }
 
-.friend-list__item {
-    width: 100%;
+.friend-list__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.friend-list__link {
+.friend-list__item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.friend-list__link-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -86,6 +101,23 @@
     border-radius: 10px;
     padding: 5px 10px;
     word-wrap: break-word;
+}
+
+.friend-list__link {
+    text-decoration: none;
+    &:hover:not(:has(.transparent-svg-button:hover)) .friend-list__item__friend-name {
+        color: var(--main-selected-color);
+    }
+}
+
+.friend-list__link-invite-block {
+    @extend .friend-list__link;
+    align-self: center;
+    margin-right: 8px;
+
+    &:hover svg * {
+        stroke: var(--main-selected-color);
+    }
 }
 
 .friend-list__item__avatar-block {
@@ -99,6 +131,9 @@
 
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
+
+    color: black;
 }
 
 .tick-friend-icon-container * {

@@ -31,7 +31,13 @@ export class ModalWindow extends Component<ModalWindowProps> {
 
     render(): JSX.Element {
         return (
-            <div className="modal" onMouseDown={this.handleOutModalMouseDown}>
+            <div
+                className="modal"
+                onMouseDown={this.handleOutModalMouseDown}
+                onScroll={(e) => {
+                    e.stopPropagation();
+                }}
+            >
                 {Array.isArray(this.props.children)
                     ? this.props.children.map((child) => child).flat()
                     : this.props.children}

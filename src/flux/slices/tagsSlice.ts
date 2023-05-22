@@ -37,6 +37,14 @@ const tagsSlice = createSlice({
             state.tags[tag].selected = !state.tags[tag].selected;
             return state;
         },
+        clearTags: (state: TagsState) => {
+            if (state.tags) {
+                for (const tagName in state.tags) {
+                    state.tags[tagName].selected = false;
+                }
+            }
+            return state;
+        },
     },
 });
 
@@ -49,5 +57,5 @@ export const getSelectedTags = (state: TagsState): string[] => {
         .map(([tag, _]) => tag);
 };
 
-export const { setTags, toggleTag } = tagsSlice.actions;
+export const { setTags, toggleTag, clearTags } = tagsSlice.actions;
 export default tagsSlice;

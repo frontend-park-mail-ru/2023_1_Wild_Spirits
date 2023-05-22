@@ -2,7 +2,7 @@
     margin: 15px 0;
 }
 
-.row {
+.row-old {
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -10,7 +10,21 @@
 }
 
 .content {
-    flex: 60%;
+    @media screen and (max-width: 16000px) {
+        max-width: 90%;
+    }
+    margin: 0 auto;
+    @each $name, $size, $max-content-size in $grid-size {
+        @media screen and (max-width: $size) {
+            max-width: $max-content-size;
+        }
+    }
+}
+
+.sidebar {
+    min-width: 400px;
+    max-width: 400px;
+    margin: 40px 20px 0;
 }
 
 .flex {
@@ -22,7 +36,7 @@ $table-collapse: 500px;
 .table {
     display: grid;
     grid-template-columns: auto auto;
-    max-width: 700px;
+    width: 100%;
     @media (max-width: 500px) {
         margin-top: 10px;
         grid-template-columns: 1fr;
@@ -138,4 +152,16 @@ $table-collapse: 500px;
 
 .danger {
     color: #eb4848;
+}
+
+.notification-icon {
+    width: 40px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
 }

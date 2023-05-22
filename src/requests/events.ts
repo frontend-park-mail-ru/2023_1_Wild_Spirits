@@ -19,6 +19,9 @@ import {
     setPlannedEventsLoadError,
     setSubbedEvents,
     setSubbedEventsLoadError,
+    setEventsCardsLoadError,
+    addEventsInfinityCards,
+    setEventsInfinityLoadError,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -27,8 +30,9 @@ import { EventProcessingType } from "models/Events";
 import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSlice";
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
 import { LoadStatus } from "./LoadStatus";
+import { openLogin } from "flux/slices/modalWindowSlice";
 
-const getLoadEventFilterProps = (): UrlPropsType => {
+const getLoadEventFilterProps = (page = 1): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
 
     const dateToString = (date: Date | undefined) => {
@@ -57,6 +61,7 @@ const getLoadEventFilterProps = (): UrlPropsType => {
         dateStart: dateToString(startDate),
         dateEnd: dateToString(finishDate),
         search: store.state.header.searchQuery,
+        page: page.toString(),
     });
 
     return props;
@@ -75,12 +80,35 @@ export const loadEvents = (resolveRequest: TRequestResolver) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(setEventsCards(json.body.events));
             } else {
-                store.dispatch(setEventProcessingLoadError());
+                store.dispatch(setEventsCardsLoadError());
             }
             resolveRequest();
         })
         .catch(() => {
-            store.dispatch(setEventProcessingLoadError());
+            store.dispatch(setEventsCardsLoadError());
+            resolveRequest();
+        });
+};
+
+/**
+ * fill itself with events from server
+ */
+export const loadInfinityEvents = (resolveRequest: TRequestResolver, page: number) => {
+    ajax.get<ResponseEventsLight>({
+        url: "/events",
+        urlProps: getLoadEventFilterProps(page),
+        credentials: true,
+    })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(addEventsInfinityCards(json.body.events));
+            } else {
+                store.dispatch(setEventsInfinityLoadError());
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            store.dispatch(setEventsInfinityLoadError());
             resolveRequest();
         });
 };
@@ -219,9 +247,11 @@ export const likeEvent = (resolveRequest: TRequestResolver, eventId: number) => 
         url: `/events/${eventId}/like`,
         credentials: true,
     })
-        .then(({ status }) => {
+        .then(({ status, response }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(like({ eventId: eventId }));
+            } else if (response.status === 401) {
+                store.dispatch(openLogin());
             }
             resolveRequest();
         })
@@ -251,9 +281,11 @@ export const featureEvent = (resolveRequest: TRequestResolver, eventId: number) 
         url: `/events/${eventId}/remind`,
         credentials: true,
     })
-        .then(({ status }) => {
+        .then(({ status, response }) => {
             if (status === AjaxResultStatus.SUCCESS) {
                 store.dispatch(feature({ eventId: eventId }));
+            } else if (response.status === 401) {
+                store.dispatch(openLogin());
             }
             resolveRequest();
         })

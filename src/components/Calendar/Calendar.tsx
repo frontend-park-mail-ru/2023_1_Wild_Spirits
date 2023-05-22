@@ -16,6 +16,7 @@ import {
 
 import { store } from "flux";
 import { requestManager } from "requests";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
 /**
  * @class
@@ -48,26 +49,29 @@ export class Calendar extends Component {
         const startDate = store.state.calendar.startDate;
         const finishDate = store.state.calendar.finishDate;
 
+        const dispatchQueue = [setEventsCardsLoadStart()];
+
         if (startDate === undefined) {
-            store.dispatch(setStartDate({ date: date }));
+            dispatchQueue.push(setStartDate({ date: date }));
         } else {
             if (date > startDate) {
                 if (finishDate?.getTime() === date.getTime()) {
-                    store.dispatch(setStartDate({ date: finishDate }), clearFinishDate());
+                    dispatchQueue.push(setStartDate({ date: finishDate }), clearFinishDate());
                 } else {
-                    store.dispatch(setFinishDate({ date: date }));
+                    dispatchQueue.push(setFinishDate({ date: date }));
                 }
             } else if (date < startDate) {
-                store.dispatch(setStartDate({ date: date }));
+                dispatchQueue.push(setStartDate({ date: date }));
             } else {
                 if (finishDate) {
-                    store.dispatch(clearFinishDate());
+                    dispatchQueue.push(clearFinishDate());
                 } else {
-                    store.dispatch(clearStartDate());
+                    dispatchQueue.push(clearStartDate());
                 }
             }
         }
 
+        store.dispatch(...dispatchQueue);
         requestManager.request(loadEvents);
     }
 

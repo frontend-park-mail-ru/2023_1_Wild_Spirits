@@ -38,8 +38,17 @@ export namespace AjaxMethod {
 }
 /** class representing an asynchronous request. */
 class Ajax {
-    #host: string = "";
+    #host: string;
     #headers: HeadersType = {};
+
+    constructor() {
+        this.#host = "";
+
+        this.get = this.get.bind(this);
+        this.post = this.post.bind(this);
+        this.patch = this.patch.bind(this);
+        this.delete = this.delete.bind(this);
+    }
 
     /**
      * host address
@@ -55,6 +64,10 @@ class Ajax {
      */
     addHeaders(values: HeadersType) {
         this.#headers = { ...this.#headers, ...values };
+    }
+
+    getHeaders(key: string): string | undefined {
+        return this.#headers[key];
     }
 
     /**

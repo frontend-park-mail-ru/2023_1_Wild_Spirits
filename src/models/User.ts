@@ -1,4 +1,4 @@
-interface TUserBase {
+export interface TUserBase {
     id: number;
     name: string;
     img: string;

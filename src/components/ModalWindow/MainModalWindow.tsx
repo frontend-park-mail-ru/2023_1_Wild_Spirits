@@ -8,6 +8,8 @@ import { CityPicker } from "components/CityPicker/CityPicker";
 import { OrganizerModal } from "components/Auth/OrganizerModal/OrganizerModal";
 import { store } from "flux";
 import { toEvent } from "modules/CastEvents";
+import { NotificationModal } from "components/Notification/NotificationModal";
+import { InviteModal } from "components/Notification/InviteModal";
 
 export class MainModalWindow extends ModalWindow {
     constructor() {
@@ -24,6 +26,8 @@ export class MainModalWindow extends ModalWindow {
                     {isTypeOf(ModalWindowName.FRIEND_LIST) && <FriendList />}
                     {isTypeOf(ModalWindowName.CITY_SELECTOR) && <CityPicker />}
                     {isTypeOf(ModalWindowName.ORGANIZER) && <OrganizerModal />}
+                    {isTypeOf(ModalWindowName.NOTIFICATION) && <NotificationModal />}
+                    {isTypeOf(ModalWindowName.INVITE) && <InviteModal />}
                 </div>
             ),
         });

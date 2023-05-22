@@ -9,6 +9,8 @@ export namespace ModalWindowName {
     export const ORGANIZER = "organizer";
     export const CALENDAR = "calendar";
     export const SEARCH = "search";
+    export const NOTIFICATION = "notification";
+    export const INVITE = "invite";
 
     export type NameType =
         | typeof NONE
@@ -18,6 +20,8 @@ export namespace ModalWindowName {
         | typeof CITY_SELECTOR
         | typeof ORGANIZER
         | typeof CALENDAR
+        | typeof NOTIFICATION
+        | typeof INVITE;
 }
 
 interface ModalWindowState {
@@ -44,34 +48,43 @@ const modalWindowSlice = createSlice({
             state.name = ModalWindowName.REGISTER;
             return state;
         },
-        openFriendsList: (state) => {
+        openFriendsList: (state: ModalWindowState) => {
             state.name = ModalWindowName.FRIEND_LIST;
             return state;
         },
-        openCitySelector: (state) => {
+        openCitySelector: (state: ModalWindowState) => {
             state.name = ModalWindowName.CITY_SELECTOR;
             return state;
         },
-        openOrganizerModal: (state) => {
+        openOrganizerModal: (state: ModalWindowState) => {
             state.name = ModalWindowName.ORGANIZER;
             return state;
         },
-        openCalendarModal: (state) => {
+        openCalendarModal: (state: ModalWindowState) => {
             state.name = ModalWindowName.CALENDAR;
             return state;
-        }
+        },
+        openNotificationModal: (state: ModalWindowState) => {
+            state.name = ModalWindowName.NOTIFICATION;
+            return state;
+        },
+        openInviteModal: (state: ModalWindowState) => {
+            state.name = ModalWindowName.INVITE;
+            return state;
+        },
     },
 });
 
-export const { 
-                closeModal, 
-                openLogin, 
-                openRegister, 
-                openFriendsList, 
-                openCitySelector, 
-                openOrganizerModal, 
-                openCalendarModal,
-            } =
-    modalWindowSlice.actions;
+export const {
+    closeModal,
+    openLogin,
+    openRegister,
+    openFriendsList,
+    openCitySelector,
+    openOrganizerModal,
+    openCalendarModal,
+    openNotificationModal,
+    openInviteModal,
+} = modalWindowSlice.actions;
 
 export default modalWindowSlice;

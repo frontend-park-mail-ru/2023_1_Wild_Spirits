@@ -11,6 +11,7 @@ import friendsListSlice from "./slices/friendsListSlice";
 import placesSlice from "./slices/placesSlice";
 import metaSlice from "./slices/metaSlice";
 import sideMenuSlice from "./slices/sideMenuSlice";
+import notificationSlice from "./slices/notificationSlice";
 
 export type SlicesMapObject<S = any> = {
     [K in keyof S]: Slice<S[K]>;
@@ -42,4 +43,5 @@ export const store = configureStore({
     events: eventsSlice,
     friendList: friendsListSlice,
     sideMenu: sideMenuSlice,
+    notification: notificationSlice,
 });

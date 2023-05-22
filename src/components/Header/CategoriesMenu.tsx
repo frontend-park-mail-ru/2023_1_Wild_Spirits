@@ -4,13 +4,14 @@ import { clearCategory, selectCategory } from "flux/slices/headerSlice";
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
 import { TCategory } from "models/Category";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
 export const CategoriesMenu = () => {
     const categoryLinkClick = (categoryId: number) => {
         if (store.state.header.selectedCategoryId === categoryId) {
-            store.dispatch(clearCategory());
+            store.dispatch(clearCategory(), setEventsCardsLoadStart());
         } else {
-            store.dispatch(selectCategory(categoryId));
+            store.dispatch(selectCategory(categoryId), setEventsCardsLoadStart());
         }
         requestManager.request(loadEvents);
     };
@@ -21,7 +22,7 @@ export const CategoriesMenu = () => {
         return (
             <div className="header__bottom-line">
                 {Array.from(Array(5)).map(() => (
-                    <div className="header__category-fake-item"> </div>
+                    <div className="header__category-fake-item"> </div> // eslint-disable-line
                 ))}
             </div>
         );

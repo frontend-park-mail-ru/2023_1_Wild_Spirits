@@ -44,6 +44,8 @@ export interface EventsStateCards {
 const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"];
 
 export interface EventsState extends EventsStateCards {
+    cardsInfinity: { status: LoadStatus.Type; pageNumber: number; isEnd: boolean };
+
     selectedEvent: LoadStatus.DataDoneOrNotDone<SelectedEventData>;
     processing: LoadStatus.DataDoneOrNotDone<EventProcessingData>;
     mapEvents: TEventMap[];
@@ -51,6 +53,7 @@ export interface EventsState extends EventsStateCards {
 
 const initialState: EventsState = {
     cards: { loadStatus: LoadStatus.NONE },
+    cardsInfinity: { status: LoadStatus.NONE, pageNumber: 1, isEnd: false },
     selectedEvent: { loadStatus: LoadStatus.NONE },
     processing: { loadStatus: LoadStatus.NONE },
     mapEvents: [],
@@ -79,6 +82,36 @@ const eventsSlice = createSlice({
         },
         setEventsCardsLoadError: (state: EventsState) => {
             state.cards = { loadStatus: LoadStatus.ERROR };
+            return state;
+        },
+        resetEventsCards: (state: EventsState) => {
+            state.cards = { loadStatus: LoadStatus.NONE };
+            state.cardsInfinity = { status: LoadStatus.NONE, pageNumber: 1, isEnd: false };
+
+            return state;
+        },
+        setEventsInfinityLoadStart: (state: EventsState) => {
+            state.cardsInfinity.status = LoadStatus.LOADING;
+            return state;
+        },
+        addEventsInfinityCards: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+            if (state.cards.loadStatus === LoadStatus.DONE) {
+                if (action.payload.length === 0) {
+                    state.cardsInfinity.isEnd = true;
+                    state.cardsInfinity.status = LoadStatus.DONE;
+
+                    return state;
+                }
+
+                state.cardsInfinity.status = LoadStatus.DONE;
+                state.cardsInfinity.pageNumber++;
+
+                state.cards.data = state.cards.data.concat(action.payload);
+            }
+            return state;
+        },
+        setEventsInfinityLoadError: (state: EventsState) => {
+            state.cardsInfinity.status = LoadStatus.ERROR;
             return state;
         },
         setSelectedEventLoadStart: (state: EventsState) => {
@@ -294,6 +327,11 @@ const eventsSlice = createSlice({
 
             return state;
         },
+
+        clearOrgEvents: (state: EventsState) => {
+            state.orgEvents = { loadStatus: LoadStatus.NONE };
+            return state;
+        },
         setOrgEventsLoadStart: (state: EventsState) => {
             state.orgEvents = { loadStatus: LoadStatus.LOADING };
             return state;
@@ -357,22 +395,31 @@ export const {
     setEventsCardsLoadStart,
     setEventsCards,
     setEventsCardsLoadError,
+    resetEventsCards,
+
+    setEventsInfinityLoadStart,
+    addEventsInfinityCards,
+    setEventsInfinityLoadError,
+
     setSelectedEventLoadStart,
     setSelectedEvent,
     setSelectedEventLoadError,
+
     setEventProcessingLoadStart,
     setEventProcessingFormData,
+    setEventProcessingLoadError,
     setEventProcessingErrors,
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
-    setMapEvents,
     toggleEventProcessingTag,
-    setEventProcessingLoadError,
+
+    setMapEvents,
     likeEvent,
     dislikeEvent,
     featureEvent,
     unfeatureEvent,
 
+    clearOrgEvents,
     setOrgEventsLoadStart,
     setOrgEvents,
     setOrgEventsLoadError,

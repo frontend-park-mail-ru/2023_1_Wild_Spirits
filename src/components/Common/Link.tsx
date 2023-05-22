@@ -21,6 +21,8 @@ interface LinkProps {
     className?: string;
     children: JSX.Element[] | JSX.Element | string;
     onClick?: () => void;
+    onUrlChange?: () => void;
+    onUrlNotChange?: () => void;
 }
 
 /**
@@ -43,6 +45,11 @@ export class Link extends Component<LinkProps> {
         if (this.props.onClick) {
             this.props.onClick();
         }
+        if (location.pathname + location.search !== this.props.href) {
+            this.props.onUrlChange && this.props.onUrlChange();
+        } else {
+            this.props.onUrlNotChange && this.props.onUrlNotChange();
+        }
     }
 
     render() {
@@ -51,7 +58,9 @@ export class Link extends Component<LinkProps> {
                 id={this.props.id}
                 className={this.props.className}
                 href={this.props.href}
-                onClick={(e) => this.handleClick(toPointerEvent(e))}
+                onClick={(e) => {
+                    this.handleClick(toPointerEvent(e));
+                }}
             >
                 {Array.isArray(this.props.children)
                     ? this.props.children.map((child) => child).flat()
@@ -76,9 +85,11 @@ export const loadProfileEvents = () => {
 
 export const ProfileLink = (props: LinkProps) => {
     const onClick = () => {
+        if (router.isUrlChanged()) {
+            loadProfileEvents();
+        }
         requestManager.removeDone(loadProfile);
         props.onClick && props.onClick();
-        loadProfileEvents();
     };
     return (
         <div>

@@ -1,19 +1,10 @@
 .event-page {
-    justify-content: center;
-    align-items: flex-start;
-    margin: 48px 0;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: row;
-    @media screen and (max-width: $event-page-collapse-width) {
-        flex-direction: column;
-    }
+    margin-top: 40px;
 }
 
 .event-page__content {
     min-width: 200px;
     width: 100%;
-    max-width: 800px;
     display: flex;
     flex-direction: column;
     @media screen and (max-width: $event-page-collapse-width) {
@@ -35,15 +26,19 @@
 }
 
 .event-page__img-block {
-    width: 100%;
+    width: 90%;
+    margin: 16px auto 0;
     display: flex;
     justify-content: center;
-    margin-top: 16px;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
 }
 
 .event-page__img {
-    max-width: 95%;
+    width: 95%;
     border-radius: 16px;
+    object-position: 0 0;
+    object-fit: cover;
 }
 
 .event-page__description {
@@ -124,6 +119,10 @@
     }
 }
 
+.event-page__link-icon {
+    align-self: flex-start;
+}
+
 .event-page__button-text {
     margin-left: 8px;
     display: flex;
@@ -131,7 +130,11 @@
 }
 
 .event-page__map {
-    width: 100%;
+    width: 90%;
     aspect-ratio: 3/2;
     margin: 10px auto -28px;
+
+    @media screen and (max-width: 600px) {
+        width: 100%;
+    }
 }

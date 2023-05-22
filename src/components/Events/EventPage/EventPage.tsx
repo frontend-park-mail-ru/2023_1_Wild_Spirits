@@ -4,7 +4,7 @@ import { VDOM, Component } from "modules/vdom";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, loadEventPage, featureEvent, unfeatureEvent } from "requests/events";
-import { setSelectedEventLoadStart } from "flux/slices/eventSlice";
+import { clearOrgEvents, setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
 import { Table } from "components/Common/Table";
@@ -15,6 +15,7 @@ import { SVGInline } from "components/Common/SVGInline";
 import { TEvent } from "models/Events";
 import { OrgEvents } from "../OrgEvents/OrgEvents";
 import { router } from "modules/router";
+import { CONTENT_CLASS_NAME } from "modules/commonClasses";
 
 /**
  * Event list component
@@ -31,6 +32,10 @@ export class EventPage extends Component {
         store.dispatch(setSelectedEventLoadStart());
         const eventId = this.getEventId();
         requestManager.request(loadEventPage, eventId);
+    }
+
+    willDestroy(): void {
+        store.dispatch(clearOrgEvents());
     }
 
     toggleLike(event: TEvent) {
@@ -72,14 +77,26 @@ export class EventPage extends Component {
         }));
 
         return (
-            <div className="event-page">
-                <div className="event-page__content">
+            <div className="event-page row">
+                <div className={`event-page__content ${CONTENT_CLASS_NAME} col-xl-12`}>
                     <div className="event-page__name">{event.name}</div>
                     <div className="event-page__img-block">
                         <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />
                     </div>
                     <div className="event-page__title">Подробнее о мероприятии</div>
                     <div className="event-page__description">{event.description}</div>
+                    <div className="event-page__title">Когда</div>
+                    <div>
+                        {event.dates.dateStart && <div>Начало: {event.dates.dateStart}</div>}
+                        {event.dates.dateEnd && <div>Конец: {event.dates.dateEnd}</div>}
+                        {(event.dates.timeStart || event.dates.timeEnd) && (
+                            <div>
+                                {event.dates.timeStart}
+                                {event.dates.timeStart && event.dates.timeEnd && " - "}
+                                {event.dates.timeEnd}
+                            </div>
+                        )}
+                    </div>
                     <div className="event-page__title">Где?</div>
                     <div className="event-page__where">
                         {fixedPlaces.map((place) => (
@@ -88,7 +105,7 @@ export class EventPage extends Component {
                             </div>
                         ))}
                     </div>
-                    <div className="">
+                    <div className="event-page__map">
                         <EventPageMap points={Object.values(places).map(({ lat, lon }) => ({ lat, lon }))} />
                     </div>
                     <div className="event-page__tags tags-menu">
@@ -101,6 +118,7 @@ export class EventPage extends Component {
                             { title: "Организатор", value: organizer.name },
                             { title: "Номер телефона", value: organizer.phone || "Не указан" },
                             { title: "Почта", value: organizer.email || "Не указана" },
+                            { title: "Сайт", value: organizer.website || "Не указан" },
                         ]}
                     />
                     <div className="event-page__button-block">
@@ -122,9 +140,9 @@ export class EventPage extends Component {
                             <span>{event.likes.toString()}</span>
                         </div>
                         {/* <div className="event-page__button-outline event-page__button-invite">
-                        <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
-                        <div className="event-page__button-text"> Пригласить друга </div>
-                    </div> */}
+                            <SVGInline src="/assets/img/page/invite-icon.svg" alt="invite" className="event-page__button-icon" />
+                            <div className="event-page__button-text"> Пригласить друга </div>
+                        </div> */}
                         {isAuthorized(store.state.user) && event.is_mine ? (
                             <button
                                 className="event-page__button-outline event-page__button"
@@ -152,6 +170,22 @@ export class EventPage extends Component {
                                 />
                             </button>
                         )}
+
+                        <a
+                            href={`https://vk.com/share.php?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
+                            target="_blank"
+                            className="event-page__link-icon"
+                        >
+                            <img src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg" width="60px"></img>
+                        </a>
+
+                        <a
+                            href={`https://t.me/share?url=https://event-radar.ru/events/${selectedEvent.event.id}`}
+                            target="_blank"
+                            className="event-page__link-icon"
+                        >
+                            <img src="/assets/img/page/tg-logo.svg" width="60px" />
+                        </a>
                     </div>
                 </div>
                 <OrgEvents />

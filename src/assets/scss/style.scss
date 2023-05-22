@@ -7,6 +7,7 @@
 @import "ModalWindow/";
 @import "SideMenu/";
 @import "Calendar/";
+@import "Notification/";
 
 @font-face {
     font-family: "Roboto";
@@ -30,6 +31,7 @@
     --input-el-color: #42c3ca;
     --disabled-input-el-color: #9ed8db;
     --hovering-el-color: rgb(231, 231, 231);
+    --danger-color: #eb4848;
 }
 
 body {

@@ -1,10 +1,11 @@
-import {VDOM, Component} from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 
 import { store } from "flux";
 import { setSearchQuery } from "flux/slices/headerSlice";
 import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
 import { closeMobileSearch } from "flux/slices/metaSlice";
+import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 
 export class HeaderSearch extends Component {
     didMount(): void {
@@ -19,15 +20,15 @@ export class HeaderSearch extends Component {
             return;
         }
 
-        store.dispatch(setSearchQuery(searchInput.value));
+        store.dispatch(setSearchQuery(searchInput.value.trim()), setEventsCardsLoadStart());
         requestManager.request(loadEvents);
     };
 
-    #onFocusOut= () => {
+    #onFocusOut = () => {
         if (store.state.meta.mobileSearch) {
             store.dispatch(closeMobileSearch());
         }
-    }
+    };
 
     render() {
         return (
@@ -43,6 +44,6 @@ export class HeaderSearch extends Component {
                     onBlur={() => this.#onFocusOut()}
                 />
             </div>
-        )
+        );
     }
 }

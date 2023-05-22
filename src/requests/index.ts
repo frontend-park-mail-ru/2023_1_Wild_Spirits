@@ -16,6 +16,7 @@ import {
     loadEventPageOrgEvents,
     loadProfileOrgEvents,
     loadSubbedEvents,
+    loadInfinityEvents,
 } from "./events";
 import {
     addFriend,
@@ -33,6 +34,7 @@ import {
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
 import { loadPlaces } from "./places";
+import { acceptInvitation, createWebSocket, declineInvitation, inviteUserToEvent, loadInvites } from "./notifications";
 
 interface SetupRequestsType {
     request: TRequest;
@@ -63,6 +65,10 @@ const requests: SetupRequestsType[] = [
     {
         request: loadEvents,
         dependencies: [loadAuthorization, loadCities, loadTags, loadCategories],
+    },
+    {
+        request: loadInfinityEvents,
+        dependencies: [loadEvents, loadAuthorization, loadCities, loadTags, loadCategories],
     },
     {
         request: loadLikedEvents,
@@ -155,7 +161,27 @@ const requests: SetupRequestsType[] = [
     {
         request: patchProfile,
         dependencies: [loadAuthorization],
-    }
+    },
+    {
+        request: loadInvites,
+        dependencies: [loadAuthorization],
+    },
+    {
+        request: createWebSocket,
+        dependencies: [loadAuthorization, loadInvites],
+    },
+    {
+        request: inviteUserToEvent,
+        dependencies: [],
+    },
+    {
+        request: acceptInvitation,
+        dependencies: [loadAuthorization],
+    },
+    {
+        request: declineInvitation,
+        dependencies: [loadAuthorization],
+    },
 ];
 
 export const requestManager = configureRequestManager(requests);

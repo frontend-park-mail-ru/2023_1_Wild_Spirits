@@ -1,0 +1,108 @@
+.invite-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.invite-card {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.invite-card__event {
+    display: flex;
+    flex-grow: 1;
+
+    justify-content: space-between;
+
+    max-width: 320px;
+    min-width: 60%;
+
+    height: 100px;
+}
+
+.invite-card__event-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.invite-card__resolve-block {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.invite-card__event-img-block {
+    aspect-ratio: 1 / 1;
+    height: 100%;
+}
+
+.invite-card__event-img {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+
+    border-radius: 20px;
+}
+
+.invite-card__user {
+    text-align: center;
+    align-self: center;
+}
+
+.invite-card__user-img-block {
+    display: flex;
+}
+
+.invite-card__user-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.invite-modal-parent {
+    overflow: hidden;
+    height: 100%;
+}
+
+.invite-modal {
+    overflow-y: auto;
+    max-height: 480px;
+    padding: 10px 0;
+}
+
+.invite-modal__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.accept-icon {
+    & svg * {
+        stroke: black;
+    }
+
+    &:hover svg * {
+        fill: var(--main-selected-color);
+        stroke: var(--main-selected-color);
+    }
+}
+
+.decline-icon {
+    & svg * {
+        stroke-width: 0.5px;
+        stroke: black;
+    }
+
+    &:hover svg * {
+        fill: var(--danger-color);
+        stroke: var(--danger-color);
+    }
+}

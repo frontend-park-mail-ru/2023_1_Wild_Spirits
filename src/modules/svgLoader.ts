@@ -42,7 +42,7 @@ class SVGLoader {
             });
         }
 
-        return this.images[url].data!;
+        return this.images[url].data || "";
     }
 }
 
