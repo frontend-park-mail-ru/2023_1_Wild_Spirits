@@ -31,7 +31,7 @@ export class FriendList extends Component {
             return;
         }
 
-        const searchName = input.value;
+        const searchName = input.value.trim();
         const id = store.state.user.currentProfile?.id;
         if (id === undefined) {
             return;

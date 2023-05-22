@@ -20,7 +20,7 @@ export class HeaderSearch extends Component {
             return;
         }
 
-        store.dispatch(setSearchQuery(searchInput.value), setEventsCardsLoadStart());
+        store.dispatch(setSearchQuery(searchInput.value.trim()), setEventsCardsLoadStart());
         requestManager.request(loadEvents);
     };
 

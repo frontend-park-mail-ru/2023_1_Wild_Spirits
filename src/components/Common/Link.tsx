@@ -40,15 +40,15 @@ export class Link extends Component<LinkProps> {
     handleClick(event: PointerEvent) {
         event.preventDefault();
 
-        if (location.pathname + location.search !== this.props.href) {
-            this.props.onUrlChange && this.props.onUrlChange();
-        } else {
-            this.props.onUrlNotChange && this.props.onUrlNotChange();
-        }
         router.go(this.props.href);
 
         if (this.props.onClick) {
             this.props.onClick();
+        }
+        if (location.pathname + location.search !== this.props.href) {
+            this.props.onUrlChange && this.props.onUrlChange();
+        } else {
+            this.props.onUrlNotChange && this.props.onUrlNotChange();
         }
     }
 

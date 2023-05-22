@@ -123,22 +123,22 @@ export class EventProcessing extends Component<EventProcessingProps> {
         const formData = new FormData();
         const errors: EventProcessingErrorsType = {};
 
-        processing.formData.name === ""
+        processing.formData.name.trim() === ""
             ? (errors.name = "Забыли указать название")
-            : formData.set("name", processing.formData.name);
+            : formData.set("name", processing.formData.name.trim());
 
-        processing.formData.description === ""
+        processing.formData.description.trim() === ""
             ? (errors.description = "Нет подробного описания")
-            : formData.set("description", processing.formData.description);
+            : formData.set("description", processing.formData.description.trim());
 
-        if (processing.formData.place === "") {
+        if (processing.formData.place.trim() === "") {
             errors.place = "Не выбрано место";
         } else {
-            formData.set("place", processing.formData.place);
+            formData.set("place", processing.formData.place.trim());
         }
 
-        if (processing.formData.category !== "") {
-            formData.set("categories", processing.formData.category);
+        if (processing.formData.category.trim() !== "") {
+            formData.set("categories", processing.formData.category.trim());
         }
 
         const dateStart = dateToServer(processing.formData.dateStart);
