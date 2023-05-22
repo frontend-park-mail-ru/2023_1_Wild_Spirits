@@ -8,17 +8,30 @@ type SVGInlineProps = {
     className?: string;
 };
 
-export class SVGInline extends Component<SVGInlineProps, { img: string }> {
+type SVGInlineState = {
+    img: string;
+    src: string;
+};
+
+export class SVGInline extends Component<SVGInlineProps, SVGInlineState> {
     constructor(props: SVGInlineProps) {
         super(props);
 
-        this.state = { img: this.props.alt };
+        this.state = { src: this.props.src, img: this.props.alt };
     }
 
     didCreate() {
         svgLoader.getImage(this.props.src).then(img => {
-            this.setState({img: img})
+            this.setState({src: this.props.src, img: img})
         });
+    }
+
+    didUpdate(): void {
+        if (this.props.src !== this.state.src) {
+            svgLoader.getImage(this.props.src).then(img => {
+                this.setState({src: this.props.src, img: img})
+            });
+        }
     }
 
     render(): JSX.Element {
