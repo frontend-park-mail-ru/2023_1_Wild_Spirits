@@ -26,6 +26,7 @@ export class Login extends Component {
     #formSubmit = (event: SubmitEvent) => {
         event.preventDefault();
         const formData = new FormData(event.target as HTMLFormElement);
+        formData.set("email", (formData.get("email") as string).trim());
 
         if (event.target) {
             if (validateForm(event.target as HTMLFormElement)) {

@@ -32,6 +32,8 @@ export class Registration extends Component {
         event.preventDefault();
 
         const formData = new FormData(event.target as HTMLFormElement);
+        formData.set("nickname", (formData.get("nickname") as string).trim());
+        formData.set("email", (formData.get("email") as string).trim());
 
         if (validateForm(event.target as HTMLFormElement)) {
             requestManager.request(registerUser, formData, warningMsg);
