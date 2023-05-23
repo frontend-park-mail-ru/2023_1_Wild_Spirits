@@ -12,7 +12,6 @@ import { loadEvents, loadInfinityEvents } from "requests/events";
 import { resetEventsCards, setEventsCardsLoadStart, setEventsInfinityLoadStart } from "flux/slices/eventSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import { Loading } from "components/Common/Loading";
-import { CONTENT_CLASS_NAME, SIDEBAR_CLASS_NAME } from "modules/commonClasses";
 
 const GoMapBtn = () => {
     return (
@@ -58,23 +57,23 @@ export class EventListPage extends Component {
         const { isEnd, status } = store.state.events.cardsInfinity;
         return (
             <div id="event-list-page" className="row">
-                <div className={CONTENT_CLASS_NAME}>
+                <div className="col-m-12 col-11">
                     <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true}>
                         {isEnd ? (
-                            <div className="w-100 text-center"> По данному запросу больше ничего нет </div>
+                            <div className="w-100 text-center col-12"> По данному запросу больше ничего нет </div>
                         ) : status === LoadStatus.LOADING ? (
                             Array.from(Array(6)).map(() => (
-                                <div className="card event-card-loading">
+                                <div className="card event-card col-l-12 col-xxl-6 col-4 event-card-loading">
                                     <Loading size="xl" />
                                 </div>
                             ))
                         ) : (
-                            status === LoadStatus.ERROR && <div>Error</div>
+                            status === LoadStatus.ERROR && <div className="w-100 text-center col-12">Error</div>
                         )}
                     </EventList>
                 </div>
                 {!store.state.meta.collapsed.headerCollapsed && (
-                    <div className={SIDEBAR_CLASS_NAME}>
+                    <div className="col sidebar">
                         {isAuthorized(store.state.user) && <EventCreateButton />}
                         <GoMapBtn />
                         <Calendar />

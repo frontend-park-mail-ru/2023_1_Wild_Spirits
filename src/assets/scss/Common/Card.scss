@@ -14,12 +14,12 @@
 
 .card {
     @extend .card-base;
-    min-width: 340px;
-    max-width: 340px;
-    @media screen and (max-width: 1250px) {
-        min-width: 290px;
-        max-width: 290px;
-    }
+    // min-width: 340px;
+    // max-width: 340px;
+    // @media screen and (max-width: 1250px) {
+    //     min-width: 290px;
+    //     max-width: 290px;
+    // }
 }
 
 .card__img-block {

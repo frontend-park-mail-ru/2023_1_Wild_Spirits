@@ -7,7 +7,7 @@
     cursor: pointer;
 }
 
-@mixin button-hover ($color, $disabled-color) {
+@mixin button-hover($color, $disabled-color) {
     background: $color;
     color: white;
     border: $color solid 1px;
@@ -55,7 +55,7 @@
     text-decoration: none;
     text-align: center;
     width: 100%;
-    font-size: 28px;
+    font-size: 24px;
     border-radius: 20px;
     padding: 10px;
 }
@@ -69,7 +69,7 @@
     margin-bottom: 40px;
 }
 
-@mixin button-outline ($color) {
+@mixin button-outline($color) {
     border: 1px solid $color;
     background-color: white;
     color: $color;

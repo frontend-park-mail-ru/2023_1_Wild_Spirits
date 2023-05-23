@@ -3,13 +3,15 @@
 .event-card {
     display: flex;
     flex-direction: column;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .event-card__content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-
     text-decoration: none;
     color: black;
 }

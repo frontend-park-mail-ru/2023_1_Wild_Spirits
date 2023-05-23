@@ -4,7 +4,6 @@ import { Link } from "components/Common/Link";
 import { store } from "flux";
 import { setOrgEventsLoadStart, setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { fixEventDates } from "models/Events";
-import { SIDEBAR_FLEX_CLASS_NAME } from "modules/commonClasses";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { router } from "modules/router";
 import { VDOM, Component } from "modules/vdom";
@@ -35,7 +34,7 @@ export class OrgEvents extends Component {
 
     render() {
         const { orgEvents, selectedEvent } = store.state.events;
-        const blockClassName = `col-xl-12 ${SIDEBAR_FLEX_CLASS_NAME}`;
+        const blockClassName = `col-xl-12 col-xxl-4 col-3`;
 
         if (orgEvents.loadStatus === LoadStatus.ERROR) {
             return <div> Error </div>;

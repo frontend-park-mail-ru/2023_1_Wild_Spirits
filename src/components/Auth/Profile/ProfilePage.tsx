@@ -4,7 +4,6 @@ import { router } from "modules/router";
 import { store } from "flux";
 import { FriendListCard } from "./FriendList/FriendListCard";
 import { EventCreateButton } from "components/Events/EventCreateButton/EventCreateButton";
-import { CONTENT_CLASS_NAME, SIDEBAR_CLASS_NAME } from "modules/commonClasses";
 import { EventsTab } from "components/Events/EventsTab/EventsTab";
 import { loadProfileEvents } from "components/Common/Link";
 import { clearOrgEvents } from "flux/slices/eventSlice";
@@ -31,7 +30,7 @@ export class ProfilePage extends Component {
 
         return (
             <div className="row">
-                <div className={`col-xl-12 ${CONTENT_CLASS_NAME}`}>
+                <div className="col-m-12 col-xl-12 col-xxl-8 col-9">
                     <div className="profile-page__content">
                         <Profile id={profileId} />
 
@@ -44,7 +43,7 @@ export class ProfilePage extends Component {
                     </div>
                 </div>
                 {!store.state.meta.collapsed.profileCollapsed && (
-                    <div className={`${SIDEBAR_CLASS_NAME}`}>
+                    <div className="col-xxl-4 col-3 sidebar">
                         <FriendListCard />
                         <EventCreateButton />
                     </div>

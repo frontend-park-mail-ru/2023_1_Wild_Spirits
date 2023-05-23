@@ -15,7 +15,6 @@ import { SVGInline } from "components/Common/SVGInline";
 import { TEvent } from "models/Events";
 import { OrgEvents } from "../OrgEvents/OrgEvents";
 import { router } from "modules/router";
-import { CONTENT_CLASS_NAME } from "modules/commonClasses";
 
 /**
  * Event list component
@@ -78,7 +77,7 @@ export class EventPage extends Component {
 
         return (
             <div className="event-page row">
-                <div className={`event-page__content ${CONTENT_CLASS_NAME} col-xl-12`}>
+                <div className={`event-page__content col-m-12 col-xl-12 col-xxl-8 col-9`}>
                     <div className="event-page__name">{event.name}</div>
                     <div className="event-page__img-block">
                         <img src={getUploadsImg(event.img)} alt={event.name} className="event-page__img" />

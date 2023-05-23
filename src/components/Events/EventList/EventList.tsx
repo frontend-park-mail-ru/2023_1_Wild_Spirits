@@ -45,7 +45,7 @@ export class EventList extends Component<EventListProps> {
 
         if (events.loadStatus !== LoadStatus.DONE) {
             return (
-                <div className="event-list-base">
+                <div className="w-100">
                     <EventListLoading size={6} />
                 </div>
             );
@@ -56,13 +56,13 @@ export class EventList extends Component<EventListProps> {
         if (cardsProps.length === 0 && this.props.showEmptyMessage) {
             return (
                 <div className="event-list-base">
-                    <div className="event-list-empty__text">Мероприятия по данным критериям не найдены</div>
+                    <div className="event-list-empty__text col-12">Мероприятия по данным критериям не найдены</div>
                 </div>
             );
         }
 
         return (
-            <div className="event-list">
+            <div className="event-list row">
                 {cardsProps.map((props) => (
                     <EventCard {...props} />
                 ))}

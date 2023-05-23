@@ -1,15 +1,21 @@
 .event-list-base {
-    margin-top: 40px;
-    justify-content: center;
-    display: flex;
+    margin: 40px 20px 100px;
+    @media screen and (max-width: 800px) {
+        margin: 40px 0 100px;
+    }
 }
 
 .event-list {
     @extend .event-list-base;
 
-    flex-wrap: wrap;
+    // flex-wrap: wrap;
 
-    gap: 40px;
+    column-gap: 40px;
+    row-gap: 40px;
+    @media screen and (max-width: 800px) {
+        column-gap: 0;
+        row-gap: 40px;
+    }
 }
 
 .event-list-loading {
