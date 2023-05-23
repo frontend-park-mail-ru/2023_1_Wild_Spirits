@@ -86,7 +86,7 @@ export class EventPage extends Component {
                     <div className="event-page__title">Подробнее о мероприятии</div>
                     <div className="event-page__description">{event.description}</div>
                     <div className="event-page__title">Когда</div>
-                    <div>
+                    <div className="event-page__when">
                         {event.dates.dateStart && <div>Начало: {event.dates.dateStart}</div>}
                         {event.dates.dateEnd && <div>Конец: {event.dates.dateEnd}</div>}
                         {(event.dates.timeStart || event.dates.timeEnd) && (

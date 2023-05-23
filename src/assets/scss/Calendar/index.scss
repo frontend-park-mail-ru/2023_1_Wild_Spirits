@@ -25,7 +25,7 @@
 }
 
 .calendar-header__month {
-    font-size: 40px;
+    font-size: 32px;
 
     @media screen and (max-width: 400px) {
         font-size: 24px;
@@ -33,7 +33,7 @@
 }
 
 .calendar-header__year {
-    font-size: 24px;
+    font-size: 20px;
 
     @media screen and (max-width: 400px) {
         font-size: 16px;
@@ -76,7 +76,7 @@
 
     aspect-ratio: 1 / 1;
 
-    font-size: 20px;
+    font-size: 16px;
 
     @media screen and (max-width: 400px) {
         font-size: 16px;
@@ -108,7 +108,7 @@
 }
 
 .calendar__weekday {
-    font-size: 24px;
+    font-size: 20px;
 
     @media screen and (max-width: 400px) {
         font-size: 16px;
