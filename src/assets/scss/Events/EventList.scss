@@ -1,5 +1,5 @@
 .event-list-base {
-    margin: 40px 20px 100px;
+    margin: 40px 50px 100px 20px;
     @media screen and (max-width: 800px) {
         margin: 40px 0 100px;
     }
@@ -10,11 +10,11 @@
 
     // flex-wrap: wrap;
 
-    column-gap: 40px;
-    row-gap: 40px;
+    column-gap: 32px;
+    row-gap: 32px;
     @media screen and (max-width: 800px) {
         column-gap: 0;
-        row-gap: 40px;
+        row-gap: 32px;
     }
 }
 
