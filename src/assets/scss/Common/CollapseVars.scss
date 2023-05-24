@@ -2,4 +2,20 @@ $event-page-collapse-width: 1250px;
 $profile-collapse-width: 750px;
 $profile-friends-collapse-width: 1250px;
 
-$grid-size: (xxl 1550px 1250px, xl 1250px 1000px, l 1000px 850px, m 850px 675px, s 600px 400px, xs 400px 380px);
+$grid-size: (
+    xs: 400px,
+    s: 600px,
+    m: 850px,
+    l: 1000px,
+    xl: 1250px,
+    xxl: 1550px,
+);
+
+$content-size: (
+    xs: 380px,
+    s: 750px,
+    m: 750px,
+    l: 850px,
+    xl: 1150px,
+    xxl: 1450px,
+);

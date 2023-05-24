@@ -1,25 +1,60 @@
+@use "sass:map";
+
 .row {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.col .col-auto {
-    grid-column: auto;
+.row-no-wrap {
+    display: flex;
+}
+
+.row-cols-auto > * {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+// @for $i from 1 through 12 {
+//     .row-cols-#{$i} > * {
+//         flex: 0 0 auto;
+//         min-width: calc(100% / $i);
+//         max-width: calc(100% / $i);
+//     }
+// }
+
+.col {
+    flex: 1 0 0%;
+    width: 100%;
+}
+
+.col-auto {
+    flex: 0 0 auto;
+    width: auto;
 }
 
 @for $i from 1 through 12 {
     .col-#{$i} {
-        @media screen and (max-width: 16000px) {
-            grid-column: auto/span $i;
-        }
+        flex: 0 0 auto;
+        width: calc(100% / 12 * $i);
     }
 }
 
+// @each $name, $size in $grid-size {
+//     @for $i from 1 through 12 {
+//         .col-#{$name}-#{$i} {
+//             @media screen and (max-width: $size) {
+//                 grid-column: auto/span $i;
+//             }
+//         }
+//     }
+// }
+
 @each $name, $size in $grid-size {
     @for $i from 1 through 12 {
-        .col-#{$name}-#{$i} {
-            @media screen and (max-width: $size) {
-                grid-column: auto/span $i;
+        @media screen and (min-width: map.get($grid-size, $name)) {
+            .col-#{$name}-#{$i} {
+                flex: 0 0 auto;
+                width: calc(100% / 12 * $i);
             }
         }
     }
