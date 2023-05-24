@@ -71,40 +71,45 @@ export class EventCard extends Component<EventCardProps> {
     render() {
         const className = this.props.className || "";
         return (
-            <div className={`card event-card ${className}`}>
-                <Link id={`event_${this.props.id}`} className="event-card__content" href={`/events/${this.props.id}`}>
-                    <div className="card__img-block">
-                        <img className="card__img" src={this.props.img} alt={this.props.name} />
-                    </div>
-                    <div className="card__body event-card__body">
-                        <div className="card__title">{this.props.name}</div>
-                        <div className="card__description">{this.props.description}</div>
-                        <hr className="card__hr" />
-                        <EventCardMarker
-                            img_src="/assets/img/card/calendar-icon.svg"
-                            title="Даты"
-                            items={this.props.dates}
-                        />
-                        <hr className="card__hr" />
-                        <EventCardMarker
-                            img_src="/assets/img/card/place-icon.svg"
-                            title="Места"
-                            items={this.props.places}
-                        />
-                    </div>
-                </Link>
-                <div className="event-card__footer">
-                    <div className="event-card__button-block">
-                        <div className="event-card__stats-container">
-                            <HoveredImg
-                                src="/assets/img/card/like-icon.svg"
-                                alt="like"
-                                iconClassName={`stroke-svg-icon${this.props.liked ? " filled" : ""}`}
-                                onClick={() => this.toggleLike(this.props.id, this.props.liked)}
-                            />
-                            <span>{this.props.likes.toString()}</span>
+            <div className={className}>
+                <div className="card event-card">
+                    <Link
+                        id={`event_${this.props.id}`}
+                        className="event-card__content"
+                        href={`/events/${this.props.id}`}
+                    >
+                        <div className="card__img-block">
+                            <img className="card__img" src={this.props.img} alt={this.props.name} />
                         </div>
-                        {/* <div className="event-card__stats-container">
+                        <div className="card__body event-card__body">
+                            <div className="card__title">{this.props.name}</div>
+                            <div className="card__description">{this.props.description}</div>
+                            <hr className="card__hr" />
+                            <EventCardMarker
+                                img_src="/assets/img/card/calendar-icon.svg"
+                                title="Даты"
+                                items={this.props.dates}
+                            />
+                            <hr className="card__hr" />
+                            <EventCardMarker
+                                img_src="/assets/img/card/place-icon.svg"
+                                title="Места"
+                                items={this.props.places}
+                            />
+                        </div>
+                    </Link>
+                    <div className="event-card__footer">
+                        <div className="event-card__button-block">
+                            <div className="event-card__stats-container">
+                                <HoveredImg
+                                    src="/assets/img/card/like-icon.svg"
+                                    alt="like"
+                                    iconClassName={`stroke-svg-icon${this.props.liked ? " filled" : ""}`}
+                                    onClick={() => this.toggleLike(this.props.id, this.props.liked)}
+                                />
+                                <span>{this.props.likes.toString()}</span>
+                            </div>
+                            {/* <div className="event-card__stats-container">
                             <HoveredImg
                                 src="/assets/img/card/comment-icon.svg"
                                 alt="comment"
@@ -112,28 +117,29 @@ export class EventCard extends Component<EventCardProps> {
                             />
                             <span>0</span>
                         </div> */}
-                        <HoveredImg
-                            src="/assets/img/card/invite-icon.svg"
-                            alt="invite"
-                            iconClassName="stroke-svg-icon"
-                            onClick={this.openInviteModal}
-                        />
-                        {isAuthorized(store.state.user) && this.props.is_mine ? (
-                            <Link href={`/editevent/${this.props.id}`} className="flex">
-                                <HoveredImg
-                                    src="/assets/img/card/edit-icon.svg"
-                                    alt="edit"
-                                    iconClassName="stroke-svg-icon"
-                                />
-                            </Link>
-                        ) : (
                             <HoveredImg
-                                src="/assets/img/card/save-icon.svg"
-                                alt="edit"
-                                iconClassName={`stroke-svg-icon${this.props.reminded ? " filled" : ""}`}
-                                onClick={() => this.toggleFeatured(this.props.id, this.props.reminded)}
+                                src="/assets/img/card/invite-icon.svg"
+                                alt="invite"
+                                iconClassName="stroke-svg-icon"
+                                onClick={this.openInviteModal}
                             />
-                        )}
+                            {isAuthorized(store.state.user) && this.props.is_mine ? (
+                                <Link href={`/editevent/${this.props.id}`} className="flex">
+                                    <HoveredImg
+                                        src="/assets/img/card/edit-icon.svg"
+                                        alt="edit"
+                                        iconClassName="stroke-svg-icon"
+                                    />
+                                </Link>
+                            ) : (
+                                <HoveredImg
+                                    src="/assets/img/card/save-icon.svg"
+                                    alt="edit"
+                                    iconClassName={`stroke-svg-icon${this.props.reminded ? " filled" : ""}`}
+                                    onClick={() => this.toggleFeatured(this.props.id, this.props.reminded)}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

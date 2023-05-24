@@ -55,11 +55,12 @@ export class EventListPage extends Component {
 
     render() {
         const { isEnd, status } = store.state.events.cardsInfinity;
-        const cardClassName = "col-l-12 col-xxl-6 col-4";
+        // const cardClassName = "col-l-12 col-xxl-6 col-4";
+        const cardClassName = "col-12 col-s-6 col-m-12 col-xl-6 col-xxl-4 event-card-container";
 
         return (
-            <div id="event-list-page" className="row">
-                <div className="col-m-12 col-11">
+            <div id="event-list-page" className="row-no-wrap">
+                <div className="col">
                     <EventList
                         request={loadEvents}
                         events={store.state.events.cards}

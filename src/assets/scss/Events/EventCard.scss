@@ -1,10 +1,13 @@
 @import "/src/assets/scss/Common/Card.scss";
 
+.event-card-container {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
 .event-card {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
-    width: 100%;
     margin: 0 auto;
 }
 
@@ -55,14 +58,16 @@
     position: relative;
     display: flex;
     justify-content: flex-end;
+    flex-grow: 1;
 
-    margin: 0 calc(var(--lm-card-border-body-margin) + 5px) var(--lm-card-border-body-margin);
+    margin: auto calc(var(--lm-card-border-body-margin) + 5px) var(--lm-card-border-body-margin);
 }
 
 .event-card__button-block {
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    align-self: flex-end;
     gap: 20%;
     width: 100%;
 }

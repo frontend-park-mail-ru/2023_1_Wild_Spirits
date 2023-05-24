@@ -1,7 +1,7 @@
 import { PayloadAction } from "flux/action";
 import { createSlice } from "flux/slice";
 
-const isCollapsed = (width: number) => window.matchMedia(`(max-width:${width}px)`).matches;
+const isCollapsed = (width: number) => !window.matchMedia(`(min-width:${width}px)`).matches;
 
 type ChangeMetaOnResizeType = { [key: string]: () => boolean };
 

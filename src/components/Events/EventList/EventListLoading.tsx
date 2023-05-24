@@ -11,8 +11,10 @@ export const EventListLoading = ({ size, className }: EventListLoadingProps) => 
     return (
         <div className="event-list row">
             {Array.from(Array(size)).map(() => (
-                <div className={`card event-card event-card-loading ${className}`}>
-                    <Loading size="xl" />
+                <div className={className}>
+                    <div className="card event-card event-card-loading">
+                        <Loading size="xl" />
+                    </div>
                 </div>
             ))}
         </div>

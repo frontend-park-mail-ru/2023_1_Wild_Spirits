@@ -175,7 +175,7 @@ export class EventPage extends Component {
                             target="_blank"
                             className="event-page__link-icon"
                         >
-                            <img src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg" width="60px"></img>
+                            <img src="https://vk.com/images/svg_icons/widgets/widgets_logo.svg" width="60px" />
                         </a>
 
                         <a
