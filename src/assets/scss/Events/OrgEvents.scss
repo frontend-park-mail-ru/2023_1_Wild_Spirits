@@ -1,3 +1,5 @@
+@use "sass:map";
+
 .org-events-list {
     display: flex;
     flex-direction: column;
@@ -6,7 +8,7 @@
 
     width: 100%;
 
-    @media screen and (max-width: $event-page-collapse-width) {
+    @media screen and (max-width: calc($event-page-collapse-width - 1px)) {
         max-width: 100%;
         margin: 40px auto;
     }
@@ -17,14 +19,12 @@
     padding: 10px;
     border-radius: 20px;
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     margin: 0 auto 20px;
     width: 100%;
     max-width: 400px;
-    @media screen and (max-width: 1550px) {
-    }
-    @media screen and (max-width: 1250px) {
-        width: 100%;
+    @media screen and (max-width: $event-page-collapse-width) {
+        width: calc(100% - 20px);
         max-width: 100%;
     }
 }
@@ -32,9 +32,13 @@
 .org-events-list__card-block {
     justify-content: center;
     margin-top: 20px;
-    gap: 32px;
+    margin-left: -10px;
+    margin-right: -10px;
 
+    row-gap: 32px;
     @media screen and (max-width: $event-page-collapse-width) {
+        margin-left: 0;
+        margin-right: 0;
         justify-content: center;
         flex-direction: row;
         flex-wrap: wrap;
