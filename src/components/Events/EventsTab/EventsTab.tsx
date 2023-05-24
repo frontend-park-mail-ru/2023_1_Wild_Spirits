@@ -34,6 +34,8 @@ export class EventsTab extends Component<any, EventsTabState> {
 
     render() {
         const { selectedTab } = this.state;
+        const { orgEvents, subbedEvents, likedEvents, plannedEvents } = store.state.events;
+        const cardClassName = "col-m-12 col-l-6 col-xxl-4 col-3";
 
         const items: { [key in ProfileEventsTab.Type]: string } = {
             [ProfileEventsTab.ORG]: "От этого организатора",
@@ -43,7 +45,7 @@ export class EventsTab extends Component<any, EventsTabState> {
         };
 
         return (
-            <div className="tab">
+            <div className="tab content">
                 <form className="tab__container">
                     <div className="tab__wrap">
                         {Object.entries(items).map(([type, title]) => (
@@ -57,10 +59,18 @@ export class EventsTab extends Component<any, EventsTabState> {
                     </div>
                 </form>
                 <div className="tab__content">
-                    {selectedTab === ProfileEventsTab.ORG && <EventList events={store.state.events.orgEvents} />}
-                    {selectedTab === ProfileEventsTab.OTHER && <EventList events={store.state.events.subbedEvents} />}
-                    {selectedTab === ProfileEventsTab.LIKE && <EventList events={store.state.events.likedEvents} />}
-                    {selectedTab === ProfileEventsTab.SAVED && <EventList events={store.state.events.plannedEvents} />}
+                    {selectedTab === ProfileEventsTab.ORG && (
+                        <EventList events={orgEvents} cardClassName={cardClassName} />
+                    )}
+                    {selectedTab === ProfileEventsTab.OTHER && (
+                        <EventList events={subbedEvents} cardClassName={cardClassName} />
+                    )}
+                    {selectedTab === ProfileEventsTab.LIKE && (
+                        <EventList events={likedEvents} cardClassName={cardClassName} />
+                    )}
+                    {selectedTab === ProfileEventsTab.SAVED && (
+                        <EventList events={plannedEvents} cardClassName={cardClassName} />
+                    )}
                 </div>
             </div>
         );

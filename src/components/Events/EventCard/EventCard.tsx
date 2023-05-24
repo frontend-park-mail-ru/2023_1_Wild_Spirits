@@ -26,6 +26,8 @@ export interface EventCardProps {
     liked: boolean;
     is_mine: boolean;
     reminded: boolean;
+
+    className?: string;
 }
 
 /**
@@ -67,8 +69,9 @@ export class EventCard extends Component<EventCardProps> {
     }
 
     render() {
+        const className = this.props.className || "";
         return (
-            <div className="card event-card col-l-12 col-xxl-6 col-4">
+            <div className={`card event-card ${className}`}>
                 <Link id={`event_${this.props.id}`} className="event-card__content" href={`/events/${this.props.id}`}>
                     <div className="card__img-block">
                         <img className="card__img" src={this.props.img} alt={this.props.name} />

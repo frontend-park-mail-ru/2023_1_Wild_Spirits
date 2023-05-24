@@ -55,15 +55,22 @@ export class EventListPage extends Component {
 
     render() {
         const { isEnd, status } = store.state.events.cardsInfinity;
+        const cardClassName = "col-l-12 col-xxl-6 col-4";
+
         return (
             <div id="event-list-page" className="row">
                 <div className="col-m-12 col-11">
-                    <EventList request={loadEvents} events={store.state.events.cards} showEmptyMessage={true}>
+                    <EventList
+                        request={loadEvents}
+                        events={store.state.events.cards}
+                        showEmptyMessage={true}
+                        cardClassName={cardClassName}
+                    >
                         {isEnd ? (
                             <div className="w-100 text-center col-12"> По данному запросу больше ничего нет </div>
                         ) : status === LoadStatus.LOADING ? (
                             Array.from(Array(6)).map(() => (
-                                <div className="card event-card col-l-12 col-xxl-6 col-4 event-card-loading">
+                                <div className={`card event-card event-card-loading ${cardClassName}`}>
                                     <Loading size="xl" />
                                 </div>
                             ))

@@ -3,13 +3,15 @@ import { Loading } from "components/Common/Loading";
 
 export interface EventListLoadingProps {
     size: number;
+    className?: string;
 }
 
-export const EventListLoading = ({ size }: EventListLoadingProps) => {
+export const EventListLoading = ({ size, className }: EventListLoadingProps) => {
+    className = className || "";
     return (
         <div className="event-list row">
             {Array.from(Array(size)).map(() => (
-                <div className="card event-card col-l-12 col-xxl-6 col-4 event-card-loading">
+                <div className={`card event-card event-card-loading ${className}`}>
                     <Loading size="xl" />
                 </div>
             ))}

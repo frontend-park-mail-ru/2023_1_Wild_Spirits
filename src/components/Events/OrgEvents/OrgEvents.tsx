@@ -10,7 +10,7 @@ import { VDOM, Component } from "modules/vdom";
 import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
 import { loadEventPage, loadEventPageOrgEvents } from "requests/events";
-import { EventListLoading } from "../EventList/EventListLoading";
+import { Loading } from "components/Common/Loading";
 
 export class OrgEvents extends Component {
     didCreate() {
@@ -35,17 +35,23 @@ export class OrgEvents extends Component {
     render() {
         const { orgEvents, selectedEvent } = store.state.events;
         const blockClassName = `col-xl-12 col-xxl-4 col-3`;
+        const cardClassName = "col-s-12 col-l-6 col-xl-4 col-12";
 
         if (orgEvents.loadStatus === LoadStatus.ERROR) {
             return <div> Error </div>;
         }
-
         if (orgEvents.loadStatus !== LoadStatus.DONE || selectedEvent.loadStatus !== LoadStatus.DONE) {
             return (
                 <div className={blockClassName}>
                     <div className="org-events-list">
                         <div className="org-events-list-title">От того же организатора</div>
-                        <EventListLoading size={2} />
+                        <div className="w-100 row org-events-list__loading">
+                            {Array.from(Array(2)).map(() => (
+                                <div className={`card event-card event-card-loading ${cardClassName}`}>
+                                    <Loading size="xl" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             );
@@ -56,10 +62,10 @@ export class OrgEvents extends Component {
                 <div className="org-events-list">
                     <div className="org-events-list-title">От того же организатора</div>
 
-                    <div className="org-events-list__card-block">
+                    <div className="org-events-list__card-block row">
                         {orgEvents.data.map((event) =>
                             selectedEvent.event.id === event.id ? undefined : (
-                                <div className="card event-card">
+                                <div className={`card event-card ${cardClassName}`}>
                                     <Link
                                         id={`event_${event.id}`}
                                         className="event-card__content"

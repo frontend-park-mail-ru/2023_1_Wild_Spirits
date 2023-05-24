@@ -17,6 +17,7 @@ export interface EventListProps {
     request?: TRequest;
     showEmptyMessage?: boolean;
     children?: ChildType[] | ChildType;
+    cardClassName?: string;
 }
 
 /**
@@ -38,6 +39,7 @@ export class EventList extends Component<EventListProps> {
 
     render() {
         const events = this.props.events;
+        const cardClassName = this.props.cardClassName || "";
 
         if (events.loadStatus === LoadStatus.ERROR) {
             return <div className="event-list-base"> Error </div>;
@@ -46,7 +48,7 @@ export class EventList extends Component<EventListProps> {
         if (events.loadStatus !== LoadStatus.DONE) {
             return (
                 <div className="w-100">
-                    <EventListLoading size={6} />
+                    <EventListLoading size={6} className={cardClassName} />
                 </div>
             );
         }
@@ -64,7 +66,7 @@ export class EventList extends Component<EventListProps> {
         return (
             <div className="event-list row">
                 {cardsProps.map((props) => (
-                    <EventCard {...props} />
+                    <EventCard {...props} className={cardClassName} />
                 ))}
                 {Array.isArray(this.props.children)
                     ? this.props.children.map((child) => child).flat()
