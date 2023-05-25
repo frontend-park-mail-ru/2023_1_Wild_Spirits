@@ -16,6 +16,7 @@ import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
 import { store } from "flux";
 import { mineProfile } from "./userSlice";
+import { setData, setLoadStart } from "./evetsInfinityUtils";
 
 interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
@@ -43,9 +44,13 @@ export interface EventsStateCards {
 }
 const subSlices: (keyof EventsStateCards)[] = ["cards", "likedEvents", "plannedEvents", "subbedEvents", "orgEvents"];
 
-export interface EventsState extends EventsStateCards {
+export interface EventsStateCardsInfinity {
     cardsInfinity: { status: LoadStatus.Type; pageNumber: number; isEnd: boolean };
+}
 
+type EventsStateCardsCombined = EventsStateCards & EventsStateCardsInfinity;
+
+export interface EventsState extends EventsStateCardsCombined {
     selectedEvent: LoadStatus.DataDoneOrNotDone<SelectedEventData>;
     processing: LoadStatus.DataDoneOrNotDone<EventProcessingData>;
     mapEvents: TEventMap[];
@@ -72,14 +77,8 @@ const eventsSlice = createSlice({
     name: "events",
     initialState: initialState,
     reducers: {
-        setEventsCardsLoadStart: (state: EventsState) => {
-            state.cards = { loadStatus: LoadStatus.LOADING };
-            return state;
-        },
-        setEventsCards: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            state.cards = { loadStatus: LoadStatus.DONE, data: action.payload };
-            return state;
-        },
+        setEventsCardsLoadStart: (state: EventsState) => setLoadStart(state, "cards"),
+        setEventsCards: (state: EventsState, action: PayloadAction<TEventLight[]>) => setData(state, action, "cards"),
         setEventsCardsLoadError: (state: EventsState) => {
             state.cards = { loadStatus: LoadStatus.ERROR };
             return state;
@@ -90,11 +89,11 @@ const eventsSlice = createSlice({
 
             return state;
         },
-        setEventsInfinityLoadStart: (state: EventsState) => {
+        setEventsCardsInfinityLoadStart: (state: EventsState) => {
             state.cardsInfinity.status = LoadStatus.LOADING;
             return state;
         },
-        addEventsInfinityCards: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
+        addEventsCardsInfinity: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
             if (state.cards.loadStatus === LoadStatus.DONE) {
                 if (action.payload.length === 0) {
                     state.cardsInfinity.isEnd = true;
@@ -110,10 +109,11 @@ const eventsSlice = createSlice({
             }
             return state;
         },
-        setEventsInfinityLoadError: (state: EventsState) => {
+        setEventsCardsInfinityLoadError: (state: EventsState) => {
             state.cardsInfinity.status = LoadStatus.ERROR;
             return state;
         },
+
         setSelectedEventLoadStart: (state: EventsState) => {
             state.selectedEvent = { loadStatus: LoadStatus.LOADING };
             return state;
@@ -126,6 +126,7 @@ const eventsSlice = createSlice({
             state.selectedEvent = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+
         setEventProcessingLoadStart: (state: EventsState) => {
             state.processing.loadStatus = LoadStatus.LOADING;
             return state;
@@ -176,10 +177,6 @@ const eventsSlice = createSlice({
 
             return state;
         },
-        setMapEvents: (state: EventsState, action: PayloadAction<TEventMap[]>) => {
-            state.mapEvents = action.payload;
-            return state;
-        },
         toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
             if (state.processing.loadStatus === LoadStatus.DONE) {
                 const tag = state.processing.tags[action.payload];
@@ -193,6 +190,12 @@ const eventsSlice = createSlice({
             state.processing = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+
+        setMapEvents: (state: EventsState, action: PayloadAction<TEventMap[]>) => {
+            state.mapEvents = action.payload;
+            return state;
+        },
+
         likeEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             let likedEvent: TEventLight | undefined = undefined;
             const like = (subSlice: keyof EventsStateCards) => {
@@ -261,6 +264,7 @@ const eventsSlice = createSlice({
 
             return state;
         },
+
         featureEvent: (state: EventsState, action: PayloadAction<{ eventId: number }>) => {
             let featuredEvent: TEventLight | undefined = undefined;
             const feature = (subSlice: keyof EventsStateCards) => {
@@ -397,9 +401,9 @@ export const {
     setEventsCardsLoadError,
     resetEventsCards,
 
-    setEventsInfinityLoadStart,
-    addEventsInfinityCards,
-    setEventsInfinityLoadError,
+    setEventsCardsInfinityLoadStart,
+    addEventsCardsInfinity,
+    setEventsCardsInfinityLoadError,
 
     setSelectedEventLoadStart,
     setSelectedEvent,

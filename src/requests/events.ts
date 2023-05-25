@@ -20,8 +20,8 @@ import {
     setSubbedEvents,
     setSubbedEventsLoadError,
     setEventsCardsLoadError,
-    addEventsInfinityCards,
-    setEventsInfinityLoadError,
+    addEventsCardsInfinity,
+    setEventsCardsInfinityLoadError,
 } from "flux/slices/eventSlice";
 import { UrlPropsType } from "modules/ajax";
 import { TRequestResolver } from "./requestTypes";
@@ -62,6 +62,7 @@ const getLoadEventFilterProps = (page = 1): UrlPropsType => {
         dateEnd: dateToString(finishDate),
         search: store.state.header.searchQuery,
         page: page.toString(),
+        limit: "6",
     });
 
     return props;
@@ -101,14 +102,14 @@ export const loadInfinityEvents = (resolveRequest: TRequestResolver, page: numbe
     })
         .then(({ json, status }) => {
             if (status === AjaxResultStatus.SUCCESS) {
-                store.dispatch(addEventsInfinityCards(json.body.events));
+                store.dispatch(addEventsCardsInfinity(json.body.events));
             } else {
-                store.dispatch(setEventsInfinityLoadError());
+                store.dispatch(setEventsCardsInfinityLoadError());
             }
             resolveRequest();
         })
         .catch(() => {
-            store.dispatch(setEventsInfinityLoadError());
+            store.dispatch(setEventsCardsInfinityLoadError());
             resolveRequest();
         });
 };

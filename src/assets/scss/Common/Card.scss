@@ -42,20 +42,27 @@
 }
 
 .card__title {
-    flex: 1;
     color: #008666;
+    margin-top: 3px;
     font-size: 20px;
     line-height: 23px;
     text-decoration-line: underline;
     text-underline-offset: 0.15em;
+    min-height: 3.5em;
+    max-height: 3.5em;
+    overflow: hidden;
 }
 
 .card__description {
     flex-grow: 1;
-    margin-top: 5px;
+    margin-top: 10px;
     font-size: 16px;
     line-height: 19px;
     color: #565656;
+
+    min-height: 6em;
+    max-height: 6em;
+    overflow: hidden;
 }
 
 .card__hr {

@@ -89,12 +89,14 @@ export class EventCard extends Component<EventCardProps> {
                                 img_src="/assets/img/card/calendar-icon.svg"
                                 title="Даты"
                                 items={this.props.dates}
+                                className="event-card__marked-date"
                             />
                             <hr className="card__hr" />
                             <EventCardMarker
                                 img_src="/assets/img/card/place-icon.svg"
                                 title="Места"
                                 items={this.props.places}
+                                className="event-card__marked-place"
                             />
                         </div>
                     </Link>

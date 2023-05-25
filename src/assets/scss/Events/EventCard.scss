@@ -29,6 +29,16 @@
     display: flex;
 }
 
+.event-card__marked-date {
+    min-height: 120px;
+    max-height: 120px;
+}
+
+.event-card__marked-place {
+    min-height: 3.5em;
+    max-height: 3.5em;
+}
+
 .event-card__marked-content-block {
     font-size: 16px;
     line-height: 19px;
@@ -42,6 +52,7 @@
 
 .event-card__marked-text {
     display: flex;
+    overflow: hidden;
 }
 
 .event-card__logo-block {

@@ -3,11 +3,13 @@ interface EventCardMarkProps {
     img_src: string;
     title: string;
     items: string[];
+    className?: string;
 }
 
-export const EventCardMarker = ({ img_src, title, items }: EventCardMarkProps) => {
+export const EventCardMarker = ({ img_src, title, items, className }: EventCardMarkProps) => {
+    className = `event-card__marked ${className || ""}`;
     return (
-        <div className="event-card__marked">
+        <div className={className}>
             <div className="event-card__logo-block">
                 <img className="event-card__logo" src={img_src} alt={title} />
             </div>

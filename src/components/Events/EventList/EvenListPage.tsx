@@ -9,9 +9,10 @@ import { toggleTag } from "flux/slices/tagsSlice";
 import { requestManager } from "requests";
 import { Link } from "components/Common/Link";
 import { loadEvents, loadInfinityEvents } from "requests/events";
-import { resetEventsCards, setEventsCardsLoadStart, setEventsInfinityLoadStart } from "flux/slices/eventSlice";
+import { resetEventsCards, setEventsCardsLoadStart, setEventsCardsInfinityLoadStart } from "flux/slices/eventSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import { Loading } from "components/Common/Loading";
+import { EventCarousel } from "../EventCarousel/EventCarousel";
 
 const GoMapBtn = () => {
     return (
@@ -49,7 +50,7 @@ export class EventListPage extends Component {
             return;
         }
 
-        store.dispatch(setEventsInfinityLoadStart());
+        store.dispatch(setEventsCardsInfinityLoadStart());
         requestManager.request(loadInfinityEvents, pageNumber + 1);
     }
 
@@ -59,42 +60,48 @@ export class EventListPage extends Component {
         const cardClassName = "col-12 col-s-6 col-m-12 col-xl-6 col-xxl-4 event-card-container";
 
         return (
-            <div id="event-list-page" className="row-no-wrap">
-                <div className="col">
-                    <EventList
-                        request={loadEvents}
-                        events={store.state.events.cards}
-                        showEmptyMessage={true}
-                        cardClassName={cardClassName}
-                    >
-                        {isEnd ? (
-                            <div className="w-100 text-center col-12"> По данному запросу больше ничего нет </div>
-                        ) : status === LoadStatus.LOADING ? (
-                            Array.from(Array(6)).map(() => (
-                                <div className={`card event-card event-card-loading ${cardClassName}`}>
-                                    <Loading size="xl" />
-                                </div>
-                            ))
-                        ) : (
-                            status === LoadStatus.ERROR && <div className="w-100 text-center col-12">Error</div>
-                        )}
-                    </EventList>
-                </div>
-                {!store.state.meta.collapsed.headerCollapsed && (
-                    <div className="col sidebar">
-                        {isAuthorized(store.state.user) && <EventCreateButton />}
-                        <GoMapBtn />
-                        <Calendar />
+            <div id="event-list-page">
+                <div className="row-no-wrap">
+                    {/* <EventCarousel /> */}
 
-                        <Tags
-                            tagsState={store.state.tags}
-                            toggleTag={(tag) => {
-                                store.dispatch(toggleTag(tag), setEventsCardsLoadStart());
-                                requestManager.request(loadEvents);
-                            }}
-                        />
+                    <div className="col">
+                        <EventList
+                            request={loadEvents}
+                            events={store.state.events.cards}
+                            showEmptyMessage={true}
+                            cardClassName={cardClassName}
+                        >
+                            {isEnd ? (
+                                <div className="w-100 text-center col-12"> По данному запросу больше ничего нет </div>
+                            ) : status === LoadStatus.LOADING ? (
+                                Array.from(Array(6)).map(() => (
+                                    <div className={cardClassName}>
+                                        <div className="card event-card event-card-loading">
+                                            <Loading size="xl" />
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                status === LoadStatus.ERROR && <div className="w-100 text-center col-12">Error</div>
+                            )}
+                        </EventList>
                     </div>
-                )}
+                    {!store.state.meta.collapsed.headerCollapsed && (
+                        <div className="col sidebar">
+                            {isAuthorized(store.state.user) && <EventCreateButton />}
+                            <GoMapBtn />
+                            <Calendar />
+
+                            <Tags
+                                tagsState={store.state.tags}
+                                toggleTag={(tag) => {
+                                    store.dispatch(toggleTag(tag), setEventsCardsLoadStart());
+                                    requestManager.request(loadEvents);
+                                }}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
         );
     }

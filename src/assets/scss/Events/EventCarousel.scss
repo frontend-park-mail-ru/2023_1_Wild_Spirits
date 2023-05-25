@@ -1,0 +1,29 @@
+.event-carousel {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.event-carousel__title {
+    font-size: 32px;
+    text-align: center;
+}
+
+.event-carousel__content-block {
+    margin: 0 auto;
+    width: 100%;
+}
+
+.event-carousel__prev-next {
+    width: 40px;
+}
+
+.event-carousel__prev-next.disable {
+    opacity: 10%;
+}
+
+.event-carousel__card-block {
+    margin: 0 auto;
+    width: 100%;
+}
