@@ -5,6 +5,7 @@ import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
 import { TCategory } from "models/Category";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
+import { Link } from "components/Common/Link";
 
 export const CategoriesMenu = () => {
     const categoryLinkClick = (categoryId: number) => {
@@ -31,12 +32,13 @@ export const CategoriesMenu = () => {
     return (
         <div className="header__bottom-line">
             {store.state.header.categories.map((category) => (
-                <a
+                <Link
+                    href="/"
                     onClick={() => categoryLinkClick(category.id)}
                     className={`header__category ${isSelected(category) ? "category-selected" : ""}`}
                 >
                     {category.name}
-                </a>
+                </Link>
             ))}
         </div>
     );
