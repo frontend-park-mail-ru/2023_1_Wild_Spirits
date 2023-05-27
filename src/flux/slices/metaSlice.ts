@@ -3,23 +3,33 @@ import { createSlice } from "flux/slice";
 
 const isCollapsed = (width: number) => !window.matchMedia(`(min-width:${width}px)`).matches;
 
-type ChangeMetaOnResizeType = { [key: string]: () => boolean };
+type ChangeMetaOnResizeType = {
+    xsCollapsed: () => boolean;
+    searchCollapsed: () => boolean;
+    headerCollapsed: () => boolean;
+    lCollapsed: () => boolean;
+    profileCollapsed: () => boolean;
+    xxlCollapsed: () => boolean;
+};
 
 export const changeMetaOnResize: ChangeMetaOnResizeType = {
-    searchCollapsed: () => isCollapsed(500),
+    xsCollapsed: () => isCollapsed(400),
+    searchCollapsed: () => isCollapsed(600),
     headerCollapsed: () => isCollapsed(850),
+    lCollapsed: () => isCollapsed(1000),
     profileCollapsed: () => isCollapsed(1250),
-    eventPageCollapsed: () => isCollapsed(1100),
+    xxlCollapsed: () => isCollapsed(1550),
 };
 
 type CollapsedMeta = { [key in keyof typeof changeMetaOnResize]: boolean };
 
-export const createCollapsed = () =>
-    Object.fromEntries(
+export const createCollapsed = () => {
+    return Object.fromEntries(
         Object.entries(changeMetaOnResize).map(([key, func]) => {
             return [key, func()];
         })
-    );
+    ) as CollapsedMeta;
+};
 
 const initialCollapsed = createCollapsed();
 

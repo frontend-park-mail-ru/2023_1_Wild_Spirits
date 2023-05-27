@@ -172,6 +172,7 @@ export const createDOMNode = (vNode: VNodeType) => {
     });
 
     if (isNodeTypeComponent(vNode)) {
+        (node as any).v = vNode;
         vNode._instance.didCreate();
         didMountInstaces.push(vNode._instance);
     }
@@ -218,6 +219,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
             }
             const nextNode = createDOMNode(nextVNode);
             node.replaceWith(nextNode);
+            destroy(node);
             return nextNode;
         }
 
@@ -231,6 +233,7 @@ export const patchNode = (node: DOMNodeType, vNode: VNodeType, nextVNode: VNodeT
 
         const nextNode = createDOMNode(nextVNode);
         node.replaceWith(nextNode);
+        destroy(node);
         return nextNode;
     }
 
@@ -366,10 +369,9 @@ const destroy = (node: DOMNodeType) => {
         if (isComponent) {
             vnode._instance.willDestroy();
         }
-
-        for (const child of node.childNodes) {
-            destroy(child);
-        }
+    }
+    for (const child of node.childNodes) {
+        destroy(child);
     }
 };
 

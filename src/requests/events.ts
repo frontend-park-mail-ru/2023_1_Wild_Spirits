@@ -62,7 +62,7 @@ const getLoadEventFilterProps = (page = 1): UrlPropsType => {
         dateEnd: dateToString(finishDate),
         search: store.state.header.searchQuery,
         page: page.toString(),
-        limit: "6",
+        page_size: "13",
     });
 
     return props;

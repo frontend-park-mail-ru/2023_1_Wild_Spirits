@@ -62,9 +62,9 @@ export class EventListPage extends Component {
         return (
             <div id="event-list-page">
                 <div className="row-no-wrap">
-                    {/* <EventCarousel /> */}
+                    <EventCarousel events={store.state.events.cards} request={loadEvents} />
 
-                    <div className="col">
+                    {/* <div className="col">
                         <EventList
                             request={loadEvents}
                             events={store.state.events.cards}
@@ -85,7 +85,7 @@ export class EventListPage extends Component {
                                 status === LoadStatus.ERROR && <div className="w-100 text-center col-12">Error</div>
                             )}
                         </EventList>
-                    </div>
+                    </div> */}
                     {!store.state.meta.collapsed.headerCollapsed && (
                         <div className="col sidebar">
                             {isAuthorized(store.state.user) && <EventCreateButton />}

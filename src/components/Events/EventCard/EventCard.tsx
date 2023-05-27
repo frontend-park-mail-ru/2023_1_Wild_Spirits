@@ -13,6 +13,7 @@ import { HoveredImg } from "components/Common/HoveredImg";
 import { openInviteModal, openRegister } from "flux/slices/modalWindowSlice";
 import { loadFriends } from "requests/user";
 import { setInviteModalEventId } from "flux/slices/metaSlice";
+import { Loading } from "components/Common/Loading";
 
 export interface EventCardProps {
     id: number;
@@ -30,16 +31,31 @@ export interface EventCardProps {
     className?: string;
 }
 
+interface EventCardState {
+    isImgLoaded: boolean;
+}
+
 /**
  * event card component
  * @class
  * @extends Component
  */
-export class EventCard extends Component<EventCardProps> {
+export class EventCard extends Component<EventCardProps, EventCardState> {
     constructor(props: EventCardProps) {
         super(props);
 
+        this.state = { isImgLoaded: false };
+
         this.openInviteModal = this.openInviteModal.bind(this);
+        this.onImgLoaded = this.onImgLoaded.bind(this);
+    }
+
+    willUpdate() {
+        this.setState({ isImgLoaded: false });
+    }
+
+    onImgLoaded() {
+        this.setState({ isImgLoaded: true });
     }
 
     toggleLike(eventId: number, liked: boolean) {
@@ -79,7 +95,13 @@ export class EventCard extends Component<EventCardProps> {
                         href={`/events/${this.props.id}`}
                     >
                         <div className="card__img-block">
-                            <img className="card__img" src={this.props.img} alt={this.props.name} />
+                            <Loading />
+                            <img
+                                className={`card__img ${this.state.isImgLoaded ? "loaded" : ""}`}
+                                src={this.props.img}
+                                alt={this.props.name}
+                                onLoad={this.onImgLoaded}
+                            />
                         </div>
                         <div className="card__body event-card__body">
                             <div className="card__title">{this.props.name}</div>

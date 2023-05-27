@@ -16,7 +16,15 @@ import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
 import { store } from "flux";
 import { mineProfile } from "./userSlice";
-import { setData, setLoadStart } from "./evetsInfinityUtils";
+import {
+    addInf,
+    resetAll,
+    setData,
+    setInfLoadError,
+    setInfLoadStart,
+    setLoadError,
+    setLoadStart,
+} from "./evetsInfinityUtils";
 
 interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
@@ -79,40 +87,12 @@ const eventsSlice = createSlice({
     reducers: {
         setEventsCardsLoadStart: (state: EventsState) => setLoadStart(state, "cards"),
         setEventsCards: (state: EventsState, action: PayloadAction<TEventLight[]>) => setData(state, action, "cards"),
-        setEventsCardsLoadError: (state: EventsState) => {
-            state.cards = { loadStatus: LoadStatus.ERROR };
-            return state;
-        },
-        resetEventsCards: (state: EventsState) => {
-            state.cards = { loadStatus: LoadStatus.NONE };
-            state.cardsInfinity = { status: LoadStatus.NONE, pageNumber: 1, isEnd: false };
-
-            return state;
-        },
-        setEventsCardsInfinityLoadStart: (state: EventsState) => {
-            state.cardsInfinity.status = LoadStatus.LOADING;
-            return state;
-        },
-        addEventsCardsInfinity: (state: EventsState, action: PayloadAction<TEventLight[]>) => {
-            if (state.cards.loadStatus === LoadStatus.DONE) {
-                if (action.payload.length === 0) {
-                    state.cardsInfinity.isEnd = true;
-                    state.cardsInfinity.status = LoadStatus.DONE;
-
-                    return state;
-                }
-
-                state.cardsInfinity.status = LoadStatus.DONE;
-                state.cardsInfinity.pageNumber++;
-
-                state.cards.data = state.cards.data.concat(action.payload);
-            }
-            return state;
-        },
-        setEventsCardsInfinityLoadError: (state: EventsState) => {
-            state.cardsInfinity.status = LoadStatus.ERROR;
-            return state;
-        },
+        setEventsCardsLoadError: (state: EventsState) => setLoadError(state, "cards"),
+        resetEventsCards: (state: EventsState) => resetAll(state, "cards", "cardsInfinity"),
+        setEventsCardsInfinityLoadStart: (state: EventsState) => setInfLoadStart(state, "cardsInfinity"),
+        addEventsCardsInfinity: (state: EventsState, action: PayloadAction<TEventLight[]>) =>
+            addInf(state, action, "cards", "cardsInfinity"),
+        setEventsCardsInfinityLoadError: (state: EventsState) => setInfLoadError(state, "cardsInfinity"),
 
         setSelectedEventLoadStart: (state: EventsState) => {
             state.selectedEvent = { loadStatus: LoadStatus.LOADING };

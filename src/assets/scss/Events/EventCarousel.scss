@@ -1,3 +1,5 @@
+@use "sass:map";
+
 .event-carousel {
     margin-top: 40px;
     display: flex;
@@ -11,19 +13,35 @@
 }
 
 .event-carousel__content-block {
+    position: relative;
     margin: 0 auto;
     width: 100%;
 }
 
 .event-carousel__prev-next {
     width: 40px;
+    padding: 4px;
+
+    @media screen and (max-width: calc(map.get($grid-size, "xs") - 1px)) {
+        top: 40px;
+        width: 24px;
+        margin-left: -8px;
+        margin-right: -8px;
+    }
 }
 
 .event-carousel__prev-next.disable {
     opacity: 10%;
 }
 
+.event-carousel__prev-next.reversed {
+    @media screen and (max-width: calc(map.get($grid-size, "xs") - 1px)) {
+        right: 0;
+    }
+}
+
 .event-carousel__card-block {
     margin: 0 auto;
     width: 100%;
+    min-height: 600px;
 }
