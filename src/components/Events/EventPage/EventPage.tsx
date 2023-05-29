@@ -114,7 +114,7 @@ export class EventPage extends Component {
                     </div>
                     <Table
                         data={[
-                            { title: "Организатор", value: organizer.name },
+                            { title: "Организатор", value: organizer.name, href: `/profile/${organizer.id}` },
                             { title: "Номер телефона", value: organizer.phone || "Не указан" },
                             { title: "Почта", value: organizer.email || "Не указана" },
                             { title: "Сайт", value: organizer.website || "Не указан" },

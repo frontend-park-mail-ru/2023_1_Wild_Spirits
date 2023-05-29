@@ -1,28 +1,13 @@
 import { VDOM, Component } from "modules/vdom";
 import { EventList } from "./EventList";
-import { isAuthorized } from "flux/slices/userSlice";
 import { store } from "flux";
-import { EventCreateButton } from "../EventCreateButton/EventCreateButton";
-import { Calendar } from "components/Calendar/Calendar";
-import { Tags } from "components/Tags/Tags";
-import { toggleTag } from "flux/slices/tagsSlice";
 import { requestManager } from "requests";
-import { Link } from "components/Common/Link";
 import { loadEvents, loadInfinityEvents } from "requests/events";
-import { resetEventsCards, setEventsCardsLoadStart, setEventsCardsInfinityLoadStart } from "flux/slices/eventSlice";
+import { resetEventsCards, setEventsCardsInfinityLoadStart } from "flux/slices/eventSlice";
 import { LoadStatus } from "requests/LoadStatus";
 import { Loading } from "components/Common/Loading";
-import { EventCarousel } from "../EventCarousel/EventCarousel";
-
-const GoMapBtn = () => {
-    return (
-        <div className="full-button-link-container">
-            <Link href="/map" className="full-button-link">
-                Поиск по карте
-            </Link>
-        </div>
-    );
-};
+import { EventListSidebar } from "./EventListSidebar";
+import { clearFilters } from "modules/filters";
 
 export class EventListPage extends Component {
     didCreate() {
@@ -60,11 +45,18 @@ export class EventListPage extends Component {
         const cardClassName = "col-12 col-s-6 col-m-12 col-xl-6 col-xxl-4 event-card-container";
 
         return (
-            <div id="event-list-page">
+            <div id="event-list-page" className="event-list-page">
                 <div className="row-no-wrap">
-                    <EventCarousel events={store.state.events.cards} request={loadEvents} />
-
-                    {/* <div className="col">
+                    <div className="col">
+                        <div
+                            className="event-list__clear link-button"
+                            onClick={() => {
+                                clearFilters();
+                                requestManager.request(loadEvents);
+                            }}
+                        >
+                            Сбросить фильтры
+                        </div>
                         <EventList
                             request={loadEvents}
                             events={store.state.events.cards}
@@ -85,22 +77,8 @@ export class EventListPage extends Component {
                                 status === LoadStatus.ERROR && <div className="w-100 text-center col-12">Error</div>
                             )}
                         </EventList>
-                    </div> */}
-                    {!store.state.meta.collapsed.headerCollapsed && (
-                        <div className="col sidebar">
-                            {isAuthorized(store.state.user) && <EventCreateButton />}
-                            <GoMapBtn />
-                            <Calendar />
-
-                            <Tags
-                                tagsState={store.state.tags}
-                                toggleTag={(tag) => {
-                                    store.dispatch(toggleTag(tag), setEventsCardsLoadStart());
-                                    requestManager.request(loadEvents);
-                                }}
-                            />
-                        </div>
-                    )}
+                    </div>
+                    {!store.state.meta.collapsed.headerCollapsed && <EventListSidebar />}
                 </div>
             </div>
         );

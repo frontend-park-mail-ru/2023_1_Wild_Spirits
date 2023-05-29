@@ -26,6 +26,7 @@ import { SideMenu } from "./SideMenu/SideMenu";
 import { CalendarModal } from "./Calendar/CalendarModal";
 import { MainModalWindow } from "./ModalWindow/MainModalWindow";
 import { createWebSocket, loadInvites } from "requests/notifications";
+import { MainPage } from "./MainPage";
 
 /**
  * @classdesc Main app component
@@ -61,8 +62,9 @@ export class App extends Component {
                     <Header />
                 </div>
 
-                <div className="content">
-                    {url === "/" && <EventListPage />}
+                <div className="content main-content">
+                    {url === "/" && <MainPage />}
+                    {url === "/eventslist" && <EventListPage />}
                     {url === "/events" && <EventPage />}
                     {url === "/profile" && <ProfilePage />}
                     {url === "/createevent" && <EventProcessing type={EventProcessingType.CREATE} />}

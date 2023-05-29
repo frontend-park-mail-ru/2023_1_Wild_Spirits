@@ -14,13 +14,10 @@ import { openSideMenu } from "flux/slices/sideMenuSlice";
 import { openMobileSearch } from "flux/slices/metaSlice";
 import { HeaderSearch } from "./HeaderSearch";
 import { CityPickerButton } from "./CityPickerButton";
-import { clearCategory, clearSearchQuery } from "flux/slices/headerSlice";
-import { clearTags } from "flux/slices/tagsSlice";
-import { clearFinishDate, clearStartDate } from "flux/slices/calendarSlice";
 import { loadEvents } from "requests/events";
-import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { NotfificationButton } from "components/Notification/NotificationButton";
 import { isAuthorizedOrNotDone } from "flux/slices/userSlice";
+import { clearFilters } from "modules/filters";
 
 /**
  * @class
@@ -77,17 +74,6 @@ export class Header extends Component {
                         Регистрация
                     </a>
                 </div>
-            );
-        };
-
-        const clearFilters = () => {
-            store.dispatch(
-                clearCategory(),
-                clearSearchQuery(),
-                clearTags(),
-                clearStartDate(),
-                clearFinishDate(),
-                setEventsCardsLoadStart()
             );
         };
 

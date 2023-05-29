@@ -105,6 +105,7 @@ class RequestManager {
 
     request<T extends TRequest | string>(request: T, ...args: Parameters<OmitFirstArg<T>>) {
         const name = typeof request === "string" ? request : request.name;
+        console.warn(name);
 
         this.#doneRequests.delete(name);
 

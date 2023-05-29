@@ -11,6 +11,10 @@
     margin: 0 auto;
 }
 
+.main-content {
+    margin-top: 40px;
+}
+
 .content {
     max-width: 100%;
     width: 100%;
@@ -29,7 +33,7 @@
 .sidebar {
     min-width: 320px;
     max-width: 320px;
-    margin: 40px 20px 0;
+    margin: 0 20px 0;
 }
 
 .flex {
@@ -52,7 +56,6 @@ $table-collapse: 500px;
     display: flex;
     align-self: flex-end;
     grid-column: span 1;
-    font-size: 24px;
     padding: 15px 20px 5px 0;
     border-bottom: 1px solid black;
 
@@ -67,6 +70,7 @@ $table-collapse: 500px;
 
 .table__cell-title {
     @extend .table__cell;
+    font-size: 20px;
     min-width: 100px;
     word-wrap: break-word;
     color: grey;

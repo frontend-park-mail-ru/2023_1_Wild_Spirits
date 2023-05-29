@@ -72,11 +72,11 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadLikedEvents,
-        dependencies: [loadProfile, loadCities, loadTags, loadCategories],
+        dependencies: [loadAuthorization, loadCities, loadTags, loadCategories],
     },
     {
         request: loadPlannedEvents,
-        dependencies: [loadProfile, loadCities, loadTags, loadCategories],
+        dependencies: [loadAuthorization, loadCities, loadTags, loadCategories],
     },
     {
         request: loadEventPageOrgEvents,
@@ -88,7 +88,7 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadSubbedEvents,
-        dependencies: [loadProfile, loadCities, loadTags, loadCategories],
+        dependencies: [loadAuthorization, loadCities, loadTags, loadCategories],
     },
     {
         request: loadProfile,

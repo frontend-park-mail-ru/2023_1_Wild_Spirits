@@ -62,7 +62,7 @@ const getLoadEventFilterProps = (page = 1): UrlPropsType => {
         dateEnd: dateToString(finishDate),
         search: store.state.header.searchQuery,
         page: page.toString(),
-        page_size: "13",
+        page_size: "12",
     });
 
     return props;
@@ -118,13 +118,13 @@ export const loadInfinityEvents = (resolveRequest: TRequestResolver, page: numbe
  * fill itself with events from server that current user liked
  */
 export const loadLikedEvents = (resolveRequest: TRequestResolver) => {
-    const userId = store.state.user.currentProfile?.id;
-    if (userId === undefined) {
+    const { authorized } = store.state.user;
+    if (authorized.loadStatus !== LoadStatus.DONE || authorized.data === undefined) {
         return;
     }
 
     ajax.get<ResponseEventsLight>({
-        url: `/users/${userId}/liked`,
+        url: `/users/${authorized.data.id}/liked`,
         urlProps: getLoadEventFilterProps(),
         credentials: true,
     })
@@ -146,13 +146,13 @@ export const loadLikedEvents = (resolveRequest: TRequestResolver) => {
  * fill itself with events from server that current user planned to visit
  */
 export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
-    const userId = store.state.user.currentProfile?.id;
-    if (userId === undefined) {
+    const { authorized } = store.state.user;
+    if (authorized.loadStatus !== LoadStatus.DONE || authorized.data === undefined) {
         return;
     }
 
     ajax.get<ResponseEventsLight>({
-        url: `/users/${userId}/reminded`,
+        url: `/users/${authorized.data.id}/reminded`,
         urlProps: getLoadEventFilterProps(),
         credentials: true,
     })
@@ -174,13 +174,13 @@ export const loadPlannedEvents = (resolveRequest: TRequestResolver) => {
  * fill itself with events from server that current user subbed
  */
 export const loadSubbedEvents = (resolveRequest: TRequestResolver) => {
-    const userId = store.state.user.currentProfile?.id;
-    if (userId === undefined) {
+    const { authorized } = store.state.user;
+    if (authorized.loadStatus !== LoadStatus.DONE || authorized.data === undefined) {
         return;
     }
 
     ajax.get<ResponseEventsLight>({
-        url: `/users/${userId}/subevents`,
+        url: `/users/${authorized.data.id}/subevents`,
         urlProps: getLoadEventFilterProps(),
         credentials: true,
     })

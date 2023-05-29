@@ -5,7 +5,7 @@ import { requestManager } from "requests";
 import { loadEvents } from "requests/events";
 import { TCategory } from "models/Category";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
-import { Link } from "components/Common/Link";
+import { router } from "modules/router";
 
 export const CategoriesMenu = () => {
     const categoryLinkClick = (categoryId: number) => {
@@ -29,16 +29,24 @@ export const CategoriesMenu = () => {
         );
     }
 
+    const handleClick = (categoryId: number) => {
+        const urlParts = router.getFullUrl().slice(1).split("/");
+        console.log(urlParts);
+        categoryLinkClick(categoryId);
+        if (urlParts.at(0) !== "" && urlParts.at(0) !== "eventslist") {
+            router.go("/");
+        }
+    };
+
     return (
         <div className="header__bottom-line">
             {store.state.header.categories.map((category) => (
-                <Link
-                    href="/"
-                    onClick={() => categoryLinkClick(category.id)}
+                <div
+                    onClick={() => handleClick(category.id)}
                     className={`header__category ${isSelected(category) ? "category-selected" : ""}`}
                 >
                     {category.name}
-                </Link>
+                </div>
             ))}
         </div>
     );

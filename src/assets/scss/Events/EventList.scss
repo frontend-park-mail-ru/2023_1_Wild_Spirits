@@ -1,8 +1,16 @@
-.event-list-base {
-    margin: 40px 50px 100px 20px;
+.event-list-mx {
+    margin-right: 50px;
+    margin-left: 20px;
     @media screen and (max-width: 800px) {
-        margin: 40px 0 100px;
+        margin-right: 0;
+        margin-left: 0;
     }
+}
+
+.event-list-base {
+    @extend .event-list-mx;
+
+    margin-bottom: 100px;
 }
 
 .event-list {
@@ -32,6 +40,16 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    margin: 40px;
     max-width: 380px;
+}
+
+.event-list__clear {
+    margin-right: 66px;
+    margin-left: 36px;
+    text-align: center;
+    margin-bottom: 40px;
+    @media screen and (max-width: 800px) {
+        margin-right: 16px;
+        margin-left: 16px;
+    }
 }

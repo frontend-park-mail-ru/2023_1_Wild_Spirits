@@ -6,8 +6,11 @@ import { requestManager } from "requests";
 import { LoadStatus } from "requests/LoadStatus";
 import { TRequest } from "requests/requestTypes";
 import { EventCarouselContent } from "./EventCarouselContent";
+import { Link } from "components/Common/Link";
 
 export interface EventCarouselProps {
+    title: string;
+    href?: string;
     events: LoadStatus.DataDoneOrNotDone<{ data: TEventLight[] }>;
     request?: TRequest;
 }
@@ -19,6 +22,7 @@ interface EventCarouselState {
 export class EventCarousel extends Component<EventCarouselProps, EventCarouselState> {
     start = 0;
     pageSize = this.getPageSize();
+    cardsCount = 0;
 
     constructor(props: EventCarouselProps) {
         super(props);
@@ -85,6 +89,10 @@ export class EventCarousel extends Component<EventCarouselProps, EventCarouselSt
         const { events } = this.props;
         const pageSize = this.getPageSize();
         const newStart = this.getStart(pageSize);
+        if (events.loadStatus === LoadStatus.DONE && events.data.length !== this.cardsCount) {
+            this.cardsCount = events.data.length;
+            this.setState({ pageNumber: 1 });
+        }
         if (pageSize !== this.pageSize) {
             console.log("============================");
             console.log(Math.floor(this.start / pageSize) + 1);
@@ -97,7 +105,15 @@ export class EventCarousel extends Component<EventCarouselProps, EventCarouselSt
         const cardClassName = "col-12 col-s-6 col-m-12 col-xl-6 col-xxl-4 event-card-container";
         return (
             <div className="event-carousel">
-                <div className="event-carousel__title">title</div>
+                <div className="event-carousel__title">
+                    {this.props.href ? (
+                        <Link className="link" href={this.props.href}>
+                            {this.props.title}
+                        </Link>
+                    ) : (
+                        <>{this.props.title}</>
+                    )}
+                </div>
                 <div className="row-no-wrap event-carousel__content-block">
                     <img
                         src="/assets/img/arrow-icon.svg"

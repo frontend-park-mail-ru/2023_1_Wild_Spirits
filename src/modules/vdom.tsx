@@ -137,8 +137,8 @@ export namespace VDOM {
         };
     };
 
-    export const createFragment = (_: any, args: any[]) => {
-        return args;
+    export const createFragment = (_: any, _args: any[]) => {
+        return _.children;
     };
 }
 

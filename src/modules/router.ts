@@ -28,6 +28,10 @@ class Router {
         this.#nowUrl = location.pathname + location.search;
     }
 
+    getFullUrl() {
+        return this.#nowUrl;
+    }
+
     getNextUrl() {
         const result = this.#locationParts.splice(0, 1)[0];
         return result;
