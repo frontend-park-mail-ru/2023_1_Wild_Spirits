@@ -75,7 +75,7 @@ export class OrgEvents extends Component {
                                         >
                                             <div className="card__img-block">
                                                 <img
-                                                    className="card__img"
+                                                    className="card__img loaded"
                                                     src={getUploadsImg(event.img)}
                                                     alt={event.name}
                                                 />
