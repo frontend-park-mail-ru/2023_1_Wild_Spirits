@@ -46,6 +46,7 @@ const userInitialState: UserState = {
 
 export interface TOrganizer extends TUser {
     org_id?: number;
+    user_id?: number;
     phone?: string;
     website?: string;
 }
@@ -69,7 +70,7 @@ const userSlice = createSlice({
             };
             return state;
         },
-        addToFriends: (state: UserState,  action: PayloadAction<FriendState>) => {
+        addToFriends: (state: UserState, action: PayloadAction<FriendState>) => {
             const user = action.payload;
             if (state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data) {
                 state.authorized.data.friends?.push({
@@ -146,12 +147,12 @@ const userSlice = createSlice({
             };
             return state;
         },
-        setOrgId: (state: UserState, action: PayloadAction<{orgId: number}>) => {
+        setOrgId: (state: UserState, action: PayloadAction<{ orgId: number }>) => {
             if (state.authorized.loadStatus === LoadStatus.DONE && state.authorized.data) {
                 state.authorized.data.organizer_id = action.payload.orgId;
             }
             return state;
-        }
+        },
     },
 });
 
