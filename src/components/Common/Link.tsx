@@ -7,7 +7,7 @@ import { VDOM, Component } from "modules/vdom";
 import { store } from "flux";
 import { requestManager } from "requests";
 import { loadLikedEvents, loadPlannedEvents, loadProfileOrgEvents, loadSubbedEvents } from "requests/events";
-import { loadOrganizers, loadProfile } from "requests/user";
+import { loadProfile } from "requests/user";
 import {
     setLikedEventsLoadStart,
     setOrgEventsLoadStart,

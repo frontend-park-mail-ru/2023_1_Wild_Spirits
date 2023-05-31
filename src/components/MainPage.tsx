@@ -5,7 +5,6 @@ import { resetEventsCards } from "flux/slices/eventSlice";
 import { EventCarousel } from "./Events/EventCarousel/EventCarousel";
 import { EventListSidebar } from "./Events/EventList/EventListSidebar";
 import { isAuthorized } from "flux/slices/userSlice";
-import { LoadStatus } from "requests/LoadStatus";
 
 export class MainPage extends Component {
     willDestroy() {

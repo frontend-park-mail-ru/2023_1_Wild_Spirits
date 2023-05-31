@@ -11,7 +11,6 @@ import { FriendPreview } from "./FriendList/FriendPreview";
 import { requestManager } from "requests";
 import { loadOrganizers } from "requests/user";
 import { mineProfile } from "flux/slices/userSlice";
-import { getUploadsImg } from "modules/getUploadsImg";
 
 export class ProfilePage extends Component {
     didCreate(): void {
@@ -61,24 +60,24 @@ export class ProfilePage extends Component {
                         <EventCreateButton />
                     </div>
                 )}
-                {
-                    isMine &&
+                {isMine && (
                     <div className="col-12">
                         <div className="event-carousel__title">Рекоммендации</div>
                         <div className="row gap-row">
-                            {orgs && orgs.map(org => 
-                                <div className="col-12 col-s-6 col-m-6 col-xl-4 col-xxl-3 event-card-container">
-                                    <FriendPreview
-                                        user_id={org.id}
-                                        avatar={org.img}
-                                        name={org.name}
-                                        is_friend={false}
-                                    />
-                                </div>
-                            )}
+                            {orgs &&
+                                orgs.map((org) => (
+                                    <div className="col-12 col-s-6 col-m-6 col-xl-4 col-xxl-3 event-card-container">
+                                        <FriendPreview
+                                            user_id={org.id}
+                                            avatar={org.img}
+                                            name={org.name}
+                                            is_friend={false}
+                                        />
+                                    </div>
+                                ))}
                         </div>
                     </div>
-                }
+                )}
                 <div className="col-12">
                     <div className="event-carousel__title">Мои мероприятия</div>
                     <EventList events={orgEvents} cardClassName={cardClassName} />
