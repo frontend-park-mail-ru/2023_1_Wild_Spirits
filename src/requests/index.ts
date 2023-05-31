@@ -33,7 +33,7 @@ import {
 } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
-import { loadPlaces } from "./places";
+import { findEventPlaces, loadPlaces } from "./places";
 import { acceptInvitation, createWebSocket, declineInvitation, inviteUserToEvent, loadInvites } from "./notifications";
 
 interface SetupRequestsType {
@@ -60,6 +60,10 @@ const requests: SetupRequestsType[] = [
     },
     {
         request: loadPlaces,
+        dependencies: [],
+    },
+    {
+        request: findEventPlaces,
         dependencies: [],
     },
     {

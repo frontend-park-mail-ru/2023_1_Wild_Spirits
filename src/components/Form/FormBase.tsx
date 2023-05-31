@@ -26,7 +26,7 @@ export interface InputFieldProps<T> extends BaseTextProps<T> {
 export type TextareaFieldProps<T> = BaseTextProps<T>;
 
 export interface FormFieldBaseProps<T> extends FormLabelProps<T> {
-    children: JSX.Element;
+    children: JSX.Element | JSX.Element[];
 }
 
 export const FormLabel = <T,>({ prefix, fieldName, required, title }: FormLabelProps<T>) => {

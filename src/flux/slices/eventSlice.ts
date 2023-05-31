@@ -11,7 +11,6 @@ import {
 } from "models/Events";
 import { TEventLight } from "models/Events";
 import { LoadStatus } from "requests/LoadStatus";
-import { StateTagsType } from "./tagsSlice";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { dateFromServer } from "modules/dateParser";
 import { store } from "flux";
@@ -30,15 +29,14 @@ interface EventProcessingPayload {
     processingState: EventProcessingType.Type;
     event: TEvent;
     places?: TEventPlace[];
-    tags: StateTagsType;
+    tags: string[];
 }
 
-export type EventProcessingErrorsType = { [key in keyof EventProcessingForm | "default"]?: string };
+export type EventProcessingErrorsType = { [key in keyof EventProcessingForm | "default" | "place"]?: string };
 
 export interface EventProcessingData {
     processingState: EventProcessingType.Type;
     formData: EventProcessingForm;
-    tags: StateTagsType;
     errors: EventProcessingErrorsType;
     tempFileUrl?: string;
 }
@@ -112,7 +110,7 @@ const eventsSlice = createSlice({
             return state;
         },
         setEventProcessingFormData: (state: EventsState, action: PayloadAction<EventProcessingPayload>) => {
-            const { event, places, tags, processingState } = action.payload;
+            const { event, tags, processingState } = action.payload;
             state.processing = {
                 loadStatus: LoadStatus.DONE,
                 processingState,
@@ -124,11 +122,11 @@ const eventsSlice = createSlice({
                     dateEnd: dateFromServer(event.dates.dateEnd),
                     timeStart: event.dates.timeStart,
                     timeEnd: event.dates.timeEnd,
-                    place: places && places.length > 0 ? places[0].name : "",
                     category: event.categories && event.categories.length > 0 ? event.categories[0] : "",
                     img: getUploadsImg(event.img),
+                    tags: tags.join(", "),
+                    place: "",
                 },
-                tags: tags,
                 errors: {},
             };
             return state;
@@ -155,15 +153,6 @@ const eventsSlice = createSlice({
                 delete state.processing.errors.img;
             }
 
-            return state;
-        },
-        toggleEventProcessingTag: (state: EventsState, action: PayloadAction<string>) => {
-            if (state.processing.loadStatus === LoadStatus.DONE) {
-                const tag = state.processing.tags[action.payload];
-                if (tag !== undefined) {
-                    state.processing.tags[action.payload].selected = !tag.selected;
-                }
-            }
             return state;
         },
         setEventProcessingLoadError: (state: EventsState) => {
@@ -395,7 +384,6 @@ export const {
     setEventProcessingErrors,
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
-    toggleEventProcessingTag,
 
     setMapEvents,
     likeEvent,

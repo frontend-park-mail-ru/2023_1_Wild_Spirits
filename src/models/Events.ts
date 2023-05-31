@@ -76,8 +76,10 @@ export interface EventProcessingForm {
     dateEnd?: string;
     timeStart?: string;
     timeEnd?: string;
-    place: string;
     img: string;
+    tags: string;
+
+    place: string;
 }
 
 export const fixEventDates = (dates: TEventDates): string[] => {

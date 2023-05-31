@@ -50,9 +50,9 @@ export class EventCard extends Component<EventCardProps, EventCardState> {
         this.onImgLoaded = this.onImgLoaded.bind(this);
     }
 
-    willUpdate() {
-        this.setState({ isImgLoaded: false });
-    }
+    // willUpdate() {
+    //     this.setState({ isImgLoaded: false });
+    // }
 
     onImgLoaded() {
         this.setState({ isImgLoaded: true });

@@ -1,5 +1,5 @@
 import { store } from "flux";
-import { StateTagsType, getSelectedTags } from "flux/slices/tagsSlice";
+import { getSelectedTags } from "flux/slices/tagsSlice";
 import { getSelectedCityName } from "flux/slices/headerSlice";
 import { getSelectedCategory } from "flux/slices/headerSlice";
 import { AjaxResultStatus, ajax } from "modules/ajax";
@@ -31,6 +31,7 @@ import { likeEvent as like, dislikeEvent as dislike } from "flux/slices/eventSli
 import { featureEvent as feature, unfeatureEvent as unfeature } from "flux/slices/eventSlice";
 import { LoadStatus } from "./LoadStatus";
 import { openLogin } from "flux/slices/modalWindowSlice";
+import { setSelectedPlace } from "flux/slices/placesSlice";
 
 const getLoadEventFilterProps = (page = 1): UrlPropsType => {
     const zeroPad = (num: number, places: number) => String(num).padStart(places, "0");
@@ -324,31 +325,14 @@ export const loadEventPage = (resolveRequest: TRequestResolver, eventId: number)
     });
 };
 
-const getTags = (tags: string[] | null): StateTagsType => {
-    if (store.state.tags.tags === null) {
-        return {};
-    }
-
-    return Object.fromEntries(
-        Object.entries(store.state.tags.tags).map(([key, value]) => {
-            return [
-                key,
-                {
-                    id: value.id,
-                    selected: tags !== null ? tags.includes(key) : false,
-                },
-            ];
-        })
-    );
-};
-
 export const loadEventProcessingEdit = (resolveRequest: TRequestResolver, eventId: number) => {
     loadEvent({
         eventId,
         onSuccess: (json) => {
-            const event = json.body.event;
-            const tags = getTags(event.tags);
+            const { event, places } = json.body;
+            const tags: string[] = event.tags ? event.tags : [];
             store.dispatch(
+                setSelectedPlace(places[0]),
                 setEventProcessingFormData({
                     ...json.body,
                     tags: tags,
@@ -385,7 +369,7 @@ export const loadEventProcessingCreate = (resolveRequest: TRequestResolver) => {
                 categories: [""],
             },
             processingState: EventProcessingType.CREATE,
-            tags: getTags([]),
+            tags: [],
             places: [],
         })
     );

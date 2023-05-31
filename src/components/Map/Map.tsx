@@ -1,15 +1,12 @@
 /** @module Components */
 
-import { VDOM, Component, createDOMNode, JSXToVNode } from "modules/vdom";
+import { VDOM, Component } from "modules/vdom";
 import * as ymaps from "yandex-maps";
 import { store } from "flux";
 import { loadEnventsMap } from "requests/events";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
-import { MapEventCard } from "components/Events/EventCard/MapEventCard";
 import { router } from "modules/router";
-import { fixEventDates } from "models/Events";
-import { getUploadsImg } from "modules/getUploadsImg";
 
 interface MapState {
     map: ymaps.Map | undefined;
@@ -77,23 +74,23 @@ export class Map extends Component<any, MapState> {
         if (this.state.map) {
             this.state.map.geoObjects.removeAll();
             for (const event of mapEvents) {
-                const card = (
-                    createDOMNode(
-                        JSXToVNode(
-                            <div>
-                                <MapEventCard
-                                    id={event.id}
-                                    name={event.name}
-                                    img={getUploadsImg(event.img)}
-                                    dates={fixEventDates(event.dates)}
-                                />
-                            </div>
-                        )
-                    ) as HTMLElement
-                ).innerHTML;
+                // const card = (
+                //     createDOMNode(
+                //         JSXToVNode(
+                //             <div>
+                //                 <MapEventCard
+                //                     id={event.id}
+                //                     name={event.name}
+                //                     img={getUploadsImg(event.img)}
+                //                     dates={fixEventDates(event.dates)}
+                //                 />
+                //             </div>
+                //         )
+                //     ) as HTMLElement
+                // ).innerHTML;
 
                 const placemark = new ymaps.Placemark([event.coords.lat, event.coords.lon], {
-                    hintContent: card,
+                    hintContent: event.name,
                 });
                 placemark.events.add("click", () => router.go(`/events/${event.id}`));
                 this.state.map.geoObjects.add(placemark);

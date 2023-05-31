@@ -13,17 +13,16 @@ import {
     setEventProcessingFormDataField,
     setEventProcessingFormImg,
     setEventProcessingLoadStart,
-    toggleEventProcessingTag,
 } from "flux/slices/eventSlice";
 import { requestManager } from "requests";
 import { loadEventProcessingCreate, loadEventProcessingEdit } from "requests/events";
 import { dateToServer } from "modules/dateParser";
-import { Tags, ToggleTagFuncProps } from "components/Tags/Tags";
 import { toEvent, toSubmitEvent } from "modules/CastEvents";
 import { loadPlaces } from "requests/places";
 import { Loading } from "components/Common/Loading";
 import { InputFieldType } from "components/Form/FormBase";
 import { EPFormFieldBase, EPFormFieldNames, EPInputField, EPTextareaField } from "./FormFields";
+import { EventProcessingPlace } from "./EventProcessingPlace";
 
 export interface EventProcessingProps {
     type: EventProcessingType.Type;
@@ -107,10 +106,6 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
     }
 
-    handleChangePlace(place: string) {
-        store.dispatch(setEventProcessingFormDataField({ field: "place", value: place }));
-    }
-
     handleChangeCategory(category: string) {
         store.dispatch(setEventProcessingFormDataField({ field: "category", value: category }));
     }
@@ -131,10 +126,10 @@ export class EventProcessing extends Component<EventProcessingProps> {
             ? (errors.description = "Нет подробного описания")
             : formData.set("description", processing.formData.description.trim());
 
-        if (processing.formData.place.trim() === "") {
+        if (store.state.places.selectedPlace === undefined) {
             errors.place = "Не выбрано место";
         } else {
-            formData.set("place", processing.formData.place.trim());
+            formData.set("place", store.state.places.selectedPlace.name.trim());
         }
 
         if (processing.formData.category.trim() !== "") {
@@ -152,9 +147,9 @@ export class EventProcessing extends Component<EventProcessingProps> {
 
         formData.set(
             "tags",
-            Object.entries(processing.tags)
-                .filter(([_, value]) => value.selected)
-                .map(([key, _]) => key)
+            processing.formData.tags
+                .split(",")
+                .map((name) => name.trim())
                 .join(",")
         );
 
@@ -253,7 +248,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
         }
 
         const { formData } = processing;
-        const places = store.state.places.places.loadStatus === LoadStatus.DONE ? store.state.places.places.data : [];
+
         const categories = store.state.header.categories;
         const isEdit = this.props.type === EventProcessingType.EDIT;
         const hasImg = formData.img !== "" || processing.tempFileUrl;
@@ -297,19 +292,21 @@ export class EventProcessing extends Component<EventProcessingProps> {
                     <EPInputField {...this.getFieldData("dateEnd", "Дата конца", "date", false, "2023-01-01")} />
                     <EPInputField {...this.getFieldData("timeEnd", "Время конца", "time")} />
 
-                    <div className="event-processing__tags">
-                        <Tags
-                            tagsState={{ tags: processing.tags }}
-                            toggleTag={({ tag }: ToggleTagFuncProps) => {
-                                store.dispatch(toggleEventProcessingTag(tag));
-                            }}
-                        />
-                    </div>
+                    <EPTextareaField
+                        prefix="event-processing"
+                        fieldName="tags"
+                        title="Теги (вводите через запятую)"
+                        value={formData.tags}
+                        changeHandler={this.handleChangeField}
+                        required={false}
+                        errorMsg={processing.errors.tags}
+                    />
 
                     <EPFormFieldBase
                         prefix="event-processing"
                         fieldName="category"
                         title="Категория"
+                        required={true}
                         errorMsg={processing.errors.category}
                     >
                         <select
@@ -330,30 +327,7 @@ export class EventProcessing extends Component<EventProcessingProps> {
                         </select>
                     </EPFormFieldBase>
 
-                    <EPFormFieldBase
-                        prefix="event-processing"
-                        fieldName="place"
-                        title="Место проведения"
-                        required={true}
-                        errorMsg={processing.errors.place}
-                    >
-                        <select
-                            name="place"
-                            className="form-control"
-                            id="event-processing-place"
-                            placeholder="Выберите место проведения..."
-                            onChange={(e) => this.handleChangePlace(e.target.value)}
-                        >
-                            <option selected={formData.place === ""} disabled value={""}>
-                                Выберите место проведения...
-                            </option>
-                            {places.map((place) => (
-                                <option selected={formData.place === place.name} value={place.name}>
-                                    {place.name}
-                                </option>
-                            ))}
-                        </select>
-                    </EPFormFieldBase>
+                    <EventProcessingPlace errorMsg={processing.errors.place} />
 
                     <div className="event-processing__form-block">
                         {hasImg ? (
