@@ -102,6 +102,10 @@ export class EventCarousel extends Component<EventCarouselProps, EventCarouselSt
         }
         this.start = newStart;
 
+        if (events.loadStatus === LoadStatus.DONE && events.data.length === 0) {
+            return <div></div>;
+        }
+
         const cardClassName = "col-12 col-s-6 col-m-12 col-xl-6 col-xxl-4 event-card-container";
         return (
             <div className="event-carousel">
