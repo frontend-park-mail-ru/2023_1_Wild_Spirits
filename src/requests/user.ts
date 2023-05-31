@@ -10,17 +10,18 @@ import {
     authorizedLoadStart,
     authorizedLoadError,
     removeFromFriends,
-    TOrganizer,
     FriendState,
     isAuthorizedOrNotDone,
     setOrgId,
+    setRecommendedOrgs,
+    mineProfile,
 } from "flux/slices/userSlice";
 import { addToFriendsList, setFoundUsers, setFriends } from "flux/slices/friendsListSlice";
 import { closeModal } from "flux/slices/modalWindowSlice";
 import { TRequestResolver } from "./requestTypes";
 import { addToFriends } from "flux/slices/userSlice";
 import { router } from "modules/router";
-import { TFriend, TUserLight } from "models/User";
+import { TFriend, TOrganizer, TUserLight } from "models/User";
 import { addUploadsUrl } from "modules/getUploadsImg";
 import { requestManager } from "requests";
 import { createWebSocket, loadInvites } from "./notifications";
@@ -301,3 +302,27 @@ export const logoutUser = (resolveRequest: TRequestResolver) =>
         .catch(() => {
             resolveRequest();
         });
+
+
+export const loadOrganizers = (resolveRequest: TRequestResolver) => {
+    if (!mineProfile(store.state.user)) {
+        return;
+    }
+    return ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
+        url: "/users",
+        urlProps: {
+            "is_organizer": "true",
+            "page_size": "12"
+        }
+    })
+    .then(({ json, status}) => {
+        if (status === AjaxResultStatus.SUCCESS) {
+            console.log(json.body);
+            store.dispatch(setRecommendedOrgs({orgs: addUploadsUrl(json.body.users)}))
+        }
+        resolveRequest();
+    })
+    .catch(() => {
+        resolveRequest();
+    });
+}

@@ -1,6 +1,6 @@
 import { getUploadsImg } from "modules/getUploadsImg";
 import { EventCardProps } from "components/Events/EventCard/EventCard";
-import { TOrganizer } from "flux/slices/userSlice";
+import { TOrganizer } from "./User";
 
 const SLICE_SIZE = 160;
 

@@ -30,6 +30,7 @@ import {
     registerOrganizer,
     deleteFriend,
     patchProfile,
+    loadOrganizers,
 } from "./user";
 import { loadTags } from "./tags";
 import { TRequest } from "./requestTypes";
@@ -186,6 +187,10 @@ const requests: SetupRequestsType[] = [
         request: declineInvitation,
         dependencies: [loadAuthorization],
     },
+    {
+        request: loadOrganizers,
+        dependencies: [loadProfile]
+    }
 ];
 
 export const requestManager = configureRequestManager(requests);

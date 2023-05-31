@@ -1,5 +1,5 @@
 import { createSlice } from "flux/slice";
-import { TFriend, TUser, TUserLight } from "models/User";
+import { TFriend, TUserLight, TOrganizer } from "models/User";
 import { LoadStatus } from "requests/LoadStatus";
 
 import { router } from "modules/router";
@@ -37,19 +37,13 @@ type AuthorizedWithLoadType = LoadStatus.DataDoneOrNotDone<{ data: TUserLightDat
 interface UserState {
     authorized: AuthorizedWithLoadType;
     currentProfile?: CurrentProfileState;
+    recommended?: FriendState[];
 }
 
 const userInitialState: UserState = {
     authorized: { loadStatus: LoadStatus.NONE },
     currentProfile: undefined,
 };
-
-export interface TOrganizer extends TUser {
-    org_id?: number;
-    user_id?: number;
-    phone?: string;
-    website?: string;
-}
 
 const userSlice = createSlice({
     name: "user",
@@ -153,6 +147,10 @@ const userSlice = createSlice({
             }
             return state;
         },
+        setRecommendedOrgs: (state: UserState, action: PayloadAction<{orgs: FriendState[]}>) => {
+            state.recommended = action.payload.orgs;
+            return state;
+        }
     },
 });
 
@@ -215,6 +213,7 @@ export const {
     setFriendsPreview,
 
     setOrgId,
+    setRecommendedOrgs,
 } = userSlice.actions;
 
 export default userSlice;

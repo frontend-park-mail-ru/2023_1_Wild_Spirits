@@ -37,9 +37,6 @@ export class FriendListCard extends Component {
                 return (
                     <span>
                         У вас пока нет подписок
-                        <Link href="#" className="link friend-list-card__friend-button" onClick={this.#openFriendsList}>
-                            найти
-                        </Link>
                     </span>
                 );
             }

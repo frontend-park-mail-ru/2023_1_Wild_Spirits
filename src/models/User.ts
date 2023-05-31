@@ -16,3 +16,10 @@ export interface TUser extends TUserBase {
 export type TFriend = TUserBase;
 
 export type TUserAvailable = TUserLight | TUser | undefined;
+
+export interface TOrganizer extends TUser {
+    org_id?: number;
+    user_id?: number;
+    phone?: string;
+    website?: string;
+}

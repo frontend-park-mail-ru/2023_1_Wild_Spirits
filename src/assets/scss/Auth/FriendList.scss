@@ -127,6 +127,10 @@ $avatar-size: 65px;
 }
 
 .friend-list__item__friend-name {
+    display: block;
+    height: 65px;
+    word-break: break-all;
+    overflow: hidden;
     font-size: 20px;
 
     overflow: hidden;
