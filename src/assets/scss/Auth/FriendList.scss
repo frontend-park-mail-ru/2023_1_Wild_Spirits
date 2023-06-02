@@ -139,6 +139,9 @@ $avatar-size: 65px;
     text-overflow: ellipsis;
     text-decoration: none;
 
+    display: flex;
+    align-items: center;
+
     color: black;
 }
 

@@ -313,7 +313,8 @@ export const loadOrganizers = (resolveRequest: TRequestResolver) => {
         urlProps: {
             "is_organizer": "true",
             "page_size": "12"
-        }
+        },
+        credentials: true
     })
     .then(({ json, status}) => {
         if (status === AjaxResultStatus.SUCCESS) {

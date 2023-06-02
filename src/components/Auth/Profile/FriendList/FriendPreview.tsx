@@ -67,7 +67,7 @@ export const FriendPreview = (user: FriendPreviewProps) => {
                     }
                 }
             >
-                <FriendPreviewNoLink avatar={user.avatar} name={user.name} />
+            <FriendPreviewNoLink avatar={user.avatar} name={user.name} />
             </ProfileLink>
             {
                 user.is_friend
