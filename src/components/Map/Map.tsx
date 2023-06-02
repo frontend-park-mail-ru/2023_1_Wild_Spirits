@@ -1,12 +1,14 @@
 /** @module Components */
 
-import { VDOM, Component } from "modules/vdom";
+import { VDOM, Component, createDOMNode, JSXToVNode } from "modules/vdom";
 import * as ymaps from "yandex-maps";
 import { store } from "flux";
 import { loadEnventsMap } from "requests/events";
 import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
-import { router } from "modules/router";
+import { MapEventCard } from "components/Events/EventCard/MapEventCard";
+import { fixEventDates } from "models/Events";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 interface MapState {
     map: ymaps.Map | undefined;
@@ -32,7 +34,7 @@ export class Map extends Component<any, MapState> {
     }
 
     didCreate() {
-        window.addEventListener("mouseup", this.handleMouseUp);
+        // window.addEventListener("mouseup", this.handleMouseUp);
         store.dispatch(setEventsCardsLoadStart());
     }
 
@@ -41,7 +43,7 @@ export class Map extends Component<any, MapState> {
     }
 
     willDestroy() {
-        window.removeEventListener("mouseup", this.handleMouseUp);
+        // window.removeEventListener("mouseup", this.handleMouseUp);
         if (this.state.map) {
             this.state.map.destroy();
         }
@@ -64,7 +66,7 @@ export class Map extends Component<any, MapState> {
 
     handleMouseUp() {
         if (this.isMapMouseDown) {
-            this.timer = setTimeout(this.loadGeoEvents, 1000);
+            // this.timer = setTimeout(this.loadGeoEvents, 1000);
             this.isMapMouseDown = false;
         }
     }
@@ -74,25 +76,25 @@ export class Map extends Component<any, MapState> {
         if (this.state.map) {
             this.state.map.geoObjects.removeAll();
             for (const event of mapEvents) {
-                // const card = (
-                //     createDOMNode(
-                //         JSXToVNode(
-                //             <div>
-                //                 <MapEventCard
-                //                     id={event.id}
-                //                     name={event.name}
-                //                     img={getUploadsImg(event.img)}
-                //                     dates={fixEventDates(event.dates)}
-                //                 />
-                //             </div>
-                //         )
-                //     ) as HTMLElement
-                // ).innerHTML;
+                const card = (
+                    createDOMNode(
+                        JSXToVNode(
+                            <div>
+                                <MapEventCard
+                                    id={event.id}
+                                    name={event.name}
+                                    img={getUploadsImg(event.img)}
+                                    dates={fixEventDates(event.dates)}
+                                />
+                            </div>
+                        )
+                    ) as HTMLElement
+                ).innerHTML;
 
                 const placemark = new ymaps.Placemark([event.coords.lat, event.coords.lon], {
                     hintContent: event.name,
+                    balloonContentBody: card,
                 });
-                placemark.events.add("click", () => router.go(`/events/${event.id}`));
                 this.state.map.geoObjects.add(placemark);
             }
         }
@@ -120,7 +122,7 @@ export class Map extends Component<any, MapState> {
                     id="map-container"
                     className="map map-container"
                     {...{ stopPatch: true }}
-                    onMouseDown={this.handleMouseDown}
+                    // onMouseDown={this.handleMouseDown}
                 ></div>
             </div>
         );
