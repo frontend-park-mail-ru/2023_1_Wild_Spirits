@@ -80,9 +80,7 @@ export const declineInvitation = (resolveRequest: TRequestResolver, authorId: nu
 };
 
 export const createWebSocket = (resolveRequest: TRequestResolver) => {
-    console.log("create websocket");
     setTimeout(() => {
-        console.log("websocket created");
         const ws = new WebSocket(
             config.WEBSOCKET + `?x-csrf-token=${encodeURIComponent(ajax.getHeaders("x-csrf-token") || "")}`
         );
@@ -90,7 +88,6 @@ export const createWebSocket = (resolveRequest: TRequestResolver) => {
         // });
 
         ws.addEventListener("close", () => {
-            console.log("on close");
             createWebSocket(resolveRequest);
         });
 

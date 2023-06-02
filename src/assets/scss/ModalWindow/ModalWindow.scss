@@ -60,4 +60,7 @@
     margin-top: -3px;
     margin-bottom: 16px;
     font-size: 32px;
+    @media screen and (max-width: 500px) {
+        margin-right: 20px;
+    }
 }

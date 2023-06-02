@@ -38,13 +38,11 @@ export class EventCarousel extends Component<EventCarouselProps, EventCarouselSt
     }
 
     handleClickPrev() {
-        console.log(this.state.pageNumber);
         if (!this.hasPrev()) return;
         this.setState({ pageNumber: this.state.pageNumber - 1 });
     }
 
     handleClickNext() {
-        console.log(this.state.pageNumber);
         if (!this.hasNext()) return;
         this.setState({ pageNumber: this.state.pageNumber + 1 });
     }
@@ -94,9 +92,6 @@ export class EventCarousel extends Component<EventCarouselProps, EventCarouselSt
             this.setState({ pageNumber: 1 });
         }
         if (pageSize !== this.pageSize) {
-            console.log("============================");
-            console.log(Math.floor(this.start / pageSize) + 1);
-            console.log(this.pageSize, pageSize, this.start, newStart);
             this.pageSize = pageSize;
             this.setState({ pageNumber: Math.floor(this.start / pageSize) + 1 });
         }

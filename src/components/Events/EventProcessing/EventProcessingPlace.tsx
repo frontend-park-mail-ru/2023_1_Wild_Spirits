@@ -137,8 +137,6 @@ class CreateContent extends Component<CreateContentProps, CreateContentState> {
             });
             this.#ymap.geoObjects.add(placemark);
         });
-
-        console.log("ymap", coords);
     }
 
     createMap() {

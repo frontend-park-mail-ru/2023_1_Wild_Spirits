@@ -31,7 +31,6 @@ export const CategoriesMenu = () => {
 
     const handleClick = (categoryId: number) => {
         const urlParts = router.getFullUrl().slice(1).split("/");
-        console.log(urlParts);
         categoryLinkClick(categoryId);
         if (urlParts.at(0) !== "" && urlParts.at(0) !== "eventslist") {
             router.go("/");
