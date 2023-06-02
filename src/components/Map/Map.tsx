@@ -8,6 +8,7 @@ import { requestManager } from "requests";
 import { setEventsCardsLoadStart } from "flux/slices/eventSlice";
 import { MapEventCard } from "components/Events/EventCard/MapEventCard";
 import { fixEventDates } from "models/Events";
+import { getUploadsImg } from "modules/getUploadsImg";
 
 interface MapState {
     map: ymaps.Map | undefined;
@@ -33,7 +34,7 @@ export class Map extends Component<any, MapState> {
     }
 
     didCreate() {
-        window.addEventListener("mouseup", this.handleMouseUp);
+        // window.addEventListener("mouseup", this.handleMouseUp);
         store.dispatch(setEventsCardsLoadStart());
     }
 
@@ -42,7 +43,7 @@ export class Map extends Component<any, MapState> {
     }
 
     willDestroy() {
-        window.removeEventListener("mouseup", this.handleMouseUp);
+        // window.removeEventListener("mouseup", this.handleMouseUp);
         if (this.state.map) {
             this.state.map.destroy();
         }
@@ -65,7 +66,7 @@ export class Map extends Component<any, MapState> {
 
     handleMouseUp() {
         if (this.isMapMouseDown) {
-            this.timer = setTimeout(this.loadGeoEvents, 1000);
+            // this.timer = setTimeout(this.loadGeoEvents, 1000);
             this.isMapMouseDown = false;
         }
     }
@@ -82,7 +83,7 @@ export class Map extends Component<any, MapState> {
                                 <MapEventCard
                                     id={event.id}
                                     name={event.name}
-                                    img={event.img}
+                                    img={getUploadsImg(event.img)}
                                     dates={fixEventDates(event.dates)}
                                 />
                             </div>
@@ -121,7 +122,7 @@ export class Map extends Component<any, MapState> {
                     id="map-container"
                     className="map map-container"
                     {...{ stopPatch: true }}
-                    onMouseDown={this.handleMouseDown}
+                    // onMouseDown={this.handleMouseDown}
                 ></div>
             </div>
         );
