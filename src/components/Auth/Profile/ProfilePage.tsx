@@ -41,8 +41,8 @@ export class ProfilePage extends Component {
         const isMine = mineProfile(store.state.user);
 
         return (
-            <div className="row">
-                <div className="col-m-12 col-xl-12 col-xxl-8 col-9">
+            <div className="row profile-page">
+                <div className="col-9 col-m-12 col-xl-12 col-xxl-8 ">
                     <div className="profile-page__content">
                         <Profile id={profileId} />
 
@@ -55,14 +55,14 @@ export class ProfilePage extends Component {
                     </div>
                 </div>
                 {!store.state.meta.collapsed.profileCollapsed && (
-                    <div className="col-xxl-4 col-3 sidebar">
+                    <div className="col-3 col-xxl-4">
                         <FriendListCard />
                         <EventCreateButton />
                     </div>
                 )}
                 {isMine && (
                     <div className="col-12">
-                        <div className="event-carousel__title">Рекоммендации</div>
+                        <div className="event-carousel__title">Рекомендации</div>
                         <div className="row gap-row">
                             {orgs &&
                                 orgs.map((org) => (

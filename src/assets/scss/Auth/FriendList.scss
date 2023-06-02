@@ -27,6 +27,8 @@ $avatar-size: 65px;
     text-align: center;
 
     text-decoration: none;
+    overflow: hidden;
+    width: 65px;
 
     &:hover .friend-list-card__friends-block__avatar {
         border-color: var(--link-color);

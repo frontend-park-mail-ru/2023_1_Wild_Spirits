@@ -75,7 +75,7 @@ const userSlice = createSlice({
                     state.currentProfile.is_friend = true;
                 } else if (state.currentProfile?.id === state.authorized.data.id) {
                     if (state.currentProfile.friendsPreview) {
-                        if (state.currentProfile.friendsPreview.length < 4) {
+                        if (state.currentProfile.friendsPreview.length < 5) {
                             state.currentProfile.friendsPreview = [...state.currentProfile.friendsPreview, user];
                         }
                     } else {
@@ -147,10 +147,10 @@ const userSlice = createSlice({
             }
             return state;
         },
-        setRecommendedOrgs: (state: UserState, action: PayloadAction<{orgs: FriendState[]}>) => {
+        setRecommendedOrgs: (state: UserState, action: PayloadAction<{ orgs: FriendState[] }>) => {
             state.recommended = action.payload.orgs;
             return state;
-        }
+        },
     },
 });
 
