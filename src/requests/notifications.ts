@@ -80,24 +80,25 @@ export const declineInvitation = (resolveRequest: TRequestResolver, authorId: nu
 };
 
 export const createWebSocket = (resolveRequest: TRequestResolver) => {
-    console.log('create websocket')
+    console.log("create websocket");
     setTimeout(() => {
-        console.log('websocket created')
+        console.log("websocket created");
         const ws = new WebSocket(
             config.WEBSOCKET + `?x-csrf-token=${encodeURIComponent(ajax.getHeaders("x-csrf-token") || "")}`
         );
         // ws.addEventListener("open", () => {
         // });
 
-        ws.addEventListener('close', ()=>{
-            console.log('on close')
+        ws.addEventListener("close", () => {
+            console.log("on close");
             createWebSocket(resolveRequest);
-
         });
 
         ws.addEventListener("message", ({ data }) => {
             const result = JSON.parse(data) as WSResponseInvite;
-            store.dispatch(addInvite(result.body.invite));
+            if (result.body.invite) {
+                store.dispatch(addInvite(result.body.invite));
+            }
         });
 
         resolveRequest();

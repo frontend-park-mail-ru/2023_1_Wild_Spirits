@@ -303,26 +303,25 @@ export const logoutUser = (resolveRequest: TRequestResolver) =>
             resolveRequest();
         });
 
-
 export const loadOrganizers = (resolveRequest: TRequestResolver) => {
     if (!mineProfile(store.state.user)) {
         return;
     }
-    return ajax.get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
-        url: "/users",
-        urlProps: {
-            "is_organizer": "true",
-            "page_size": "12"
-        }
-    })
-    .then(({ json, status}) => {
-        if (status === AjaxResultStatus.SUCCESS) {
-            console.log(json.body);
-            store.dispatch(setRecommendedOrgs({orgs: addUploadsUrl(json.body.users)}))
-        }
-        resolveRequest();
-    })
-    .catch(() => {
-        resolveRequest();
-    });
-}
+    return ajax
+        .get<ResponseBody<{ users: { id: number; name: string; img: string }[] }>>({
+            url: "/users",
+            urlProps: {
+                is_organizer: "true",
+                page_size: "12",
+            },
+        })
+        .then(({ json, status }) => {
+            if (status === AjaxResultStatus.SUCCESS) {
+                store.dispatch(setRecommendedOrgs({ orgs: addUploadsUrl(json.body.users) }));
+            }
+            resolveRequest();
+        })
+        .catch(() => {
+            resolveRequest();
+        });
+};
