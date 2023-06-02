@@ -35,7 +35,7 @@ export class OrgEvents extends Component {
     render() {
         const { orgEvents, selectedEvent } = store.state.events;
         const blockClassName = `col`;
-        const cardClassName = "col-xs-12 col-s-6 col-xl-12 col-xxl-12 event-card-container";
+        const cardClassName = "col-12 col-xs-12 col-s-6 col-xl-12 col-xxl-12 event-card-container";
 
         if (orgEvents.loadStatus === LoadStatus.ERROR) {
             return <div> Error </div>;

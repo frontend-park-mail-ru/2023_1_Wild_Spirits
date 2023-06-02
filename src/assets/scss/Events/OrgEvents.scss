@@ -32,13 +32,11 @@
 .org-events-list__card-block {
     justify-content: center;
     margin-top: 20px;
-    margin-left: -10px;
-    margin-right: -10px;
+    width: calc(100% + 20px);
 
     row-gap: 32px;
     @media screen and (max-width: $event-page-collapse-width) {
-        margin-left: 0;
-        margin-right: 0;
+        width: 100%;
         justify-content: center;
         flex-direction: row;
         flex-wrap: wrap;

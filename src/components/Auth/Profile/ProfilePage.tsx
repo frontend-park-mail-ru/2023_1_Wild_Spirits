@@ -61,7 +61,7 @@ export class ProfilePage extends Component {
                     </div>
                 )}
                 {isMine && (
-                    <div className="col-12">
+                    <div className="col-12 profile-page__rec">
                         <div className="event-carousel__title">Рекомендации</div>
                         <div className="row gap-row">
                             {orgs &&
