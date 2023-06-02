@@ -104,6 +104,10 @@ const eventsSlice = createSlice({
             state.selectedEvent = { loadStatus: LoadStatus.ERROR };
             return state;
         },
+        clearSelectedEvent: (state: EventsState) => {
+            state.selectedEvent = { loadStatus: LoadStatus.NONE };
+            return state;
+        },
 
         setEventProcessingLoadStart: (state: EventsState) => {
             state.processing.loadStatus = LoadStatus.LOADING;
@@ -377,6 +381,7 @@ export const {
     setSelectedEventLoadStart,
     setSelectedEvent,
     setSelectedEventLoadError,
+    clearSelectedEvent,
 
     setEventProcessingLoadStart,
     setEventProcessingFormData,

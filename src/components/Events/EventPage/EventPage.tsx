@@ -4,7 +4,7 @@ import { VDOM, Component } from "modules/vdom";
 import { getUploadsImg } from "modules/getUploadsImg";
 import { requestManager } from "requests";
 import { dislikeEvent, likeEvent, loadEventPage, featureEvent, unfeatureEvent } from "requests/events";
-import { clearOrgEvents, setSelectedEventLoadStart } from "flux/slices/eventSlice";
+import { clearOrgEvents, clearSelectedEvent, setSelectedEventLoadStart } from "flux/slices/eventSlice";
 import { store } from "flux";
 import { LoadStatus } from "requests/LoadStatus";
 import { Table } from "components/Common/Table";
@@ -34,7 +34,7 @@ export class EventPage extends Component {
     }
 
     willDestroy(): void {
-        store.dispatch(clearOrgEvents());
+        store.dispatch(clearSelectedEvent(), clearOrgEvents());
     }
 
     toggleLike(event: TEvent) {
